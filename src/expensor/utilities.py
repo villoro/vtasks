@@ -6,9 +6,10 @@ import pandas as pd
 from v_crypt import Cipher
 
 from . import constants as c
+from . import config
 
 
-cipher = Cipher(secrets_file=c.FILE_SECRETS)
+cipher = Cipher(secrets_file=config.FILE_SECRETS, filename_master_password=config.FILE_MASTER_PASSWORD)
 
 
 def get_secret(key):

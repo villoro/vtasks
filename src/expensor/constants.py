@@ -7,7 +7,6 @@ VAR_USER = "EXPENSOR_USER"
 VAR_PASSWORD = "EXPENSOR_PASSWORD"
 
 PATH_MONEY_LOVER = "/Money Lover/"
-FILE_SECRETS = "secrets.yaml"
 FILE_TRANSACTIONS = "/transactions.xlsx"
 
 FORBIDDEN_CATEGORIES = ["Debt", "Loan"]

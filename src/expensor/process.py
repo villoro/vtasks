@@ -11,6 +11,10 @@ import pandas as pd
 from . import constants as c
 from . import utilities as u
 
+import os
+
+print(os.getcwd())
+
 
 DBX = dropbox.Dropbox(u.get_secret(c.VAR_DROPBOX_TOKEN))
 
@@ -64,11 +68,14 @@ def upload_excel(df, filename):
     DBX.files_upload(output.getvalue(), filename, mode=dropbox.files.WriteMode.overwrite)
 
 
-def do():
+def do(*args, **kwa):
     """ Retrives all dataframes and update DFS global var """
 
     df = get_df_transactions()
     upload_excel(df, c.FILE_TRANSACTIONS)
+
+    return "Transactions processed"
+
 
 
 if __name__ == "__main__":
