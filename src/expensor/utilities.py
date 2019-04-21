@@ -5,7 +5,7 @@
 import pandas as pd
 from v_crypt import Cipher
 
-import constants as c
+from . import constants as c
 
 
 cipher = Cipher(secrets_file=c.FILE_SECRETS)

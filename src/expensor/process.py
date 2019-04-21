@@ -9,8 +9,8 @@ import dropbox
 import pandas as pd
 import oyaml as yaml
 
-import constants as c
-import utilities as u
+from . import constants as c
+from . import utilities as u
 
 
 DBX = dropbox.Dropbox(u.get_secret(c.VAR_DROPBOX_TOKEN))
@@ -62,7 +62,7 @@ def upload_excel(df, filename):
     writer.save()
     output.seek(0)
 
-    DBX.files_upload(output.getvalue(), filename)
+    DBX.files_upload(output.getvalue(), filename, mode=dropbox.files.WriteMode.overwrite)
 
 
 def do():
