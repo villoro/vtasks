@@ -39,6 +39,8 @@ dist/
 # Executables
 *.exe
 
+# Passwords
+*.password
 
 # --------------------- PERSONAL EXCLUSIONS -----------------------------------
 # Data folders
@@ -47,3 +49,4 @@ dist/
 
 
 # --------------------- PROJECT EXCLUSIONS ------------------------------------
+*config.py
