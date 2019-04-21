@@ -7,7 +7,6 @@ import io
 
 import dropbox
 import pandas as pd
-import oyaml as yaml
 
 from . import constants as c
 from . import utilities as u
