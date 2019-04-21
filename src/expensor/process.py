@@ -13,8 +13,6 @@ from . import utilities as u
 
 import os
 
-print(os.getcwd())
-
 
 DBX = dropbox.Dropbox(u.get_secret(c.VAR_DROPBOX_TOKEN))
 
@@ -75,7 +73,6 @@ def do(*args, **kwa):
     upload_excel(df, c.FILE_TRANSACTIONS)
 
     return "Transactions processed"
-
 
 
 if __name__ == "__main__":

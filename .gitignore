@@ -49,5 +49,4 @@ dist/
 
 
 # --------------------- PROJECT EXCLUSIONS ------------------------------------
-*/config.py
-
+*config.py
