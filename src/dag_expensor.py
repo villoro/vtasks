@@ -4,10 +4,11 @@
 
 from datetime import datetime, timedelta
 from airflow import DAG
-from airflow.operators import BashOperator
+from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
 
 from expensor import process
+from expensor.config import PATH_ROOT
 
 default_args = {
     "owner": "airflow",
@@ -23,7 +24,8 @@ default_args = {
 dag = DAG("expensor", default_args=default_args, schedule_interval=timedelta(days=1))
 
 
-fetch_code = """
+fetch_code = f"""
+cd {PATH_ROOT}
 git fetch
 git checkout master
 git pull origin master
