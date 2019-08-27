@@ -1,5 +1,7 @@
 dropbox==9.3.0
 openpyxl==2.6.2
+oyaml==0.7
 pandas==0.24.2
 v-crypt==1.0.4
+v-palette>=1.1.0
 xlrd==1.2.0
