@@ -1,5 +1,5 @@
 """
-    Utilities for pandas dataframes
+    Utilities
 """
 
 import numpy as np

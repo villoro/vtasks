@@ -29,6 +29,7 @@ EXPENSES = "Expenses"
 INCOMES = "Incomes"
 EBIT = "EBIT"
 LIQUID = "liquid"
+INVEST = "investment"
 ACCOUNTS = "accounts"
 
 DF_TRANS = "trans_m"

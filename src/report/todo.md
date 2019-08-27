@@ -44,32 +44,3 @@
 * Survival months
 * Passive income vs expenses
 * Total month survival
-
-
-# Data
-
-## Month
-
-	* expenses
-	* incomes
-	* ebit
-* liquid
-* worth
-* invested
-
-* expenses by category
-* incomes by category
-
-* fixed expenses
-
-## Year
-
-	* expenses
-	* incomes
-	* ebit
-* liquid
-* worth
-* invested
-
-* expenses by category
-* incomes by category
