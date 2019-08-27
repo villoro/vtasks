@@ -2,7 +2,6 @@
     Extract transactions from money lover file
 """
 
-import os
 import io
 
 import dropbox
@@ -10,8 +9,6 @@ import pandas as pd
 
 from . import constants as c
 from . import utilities as u
-
-import os
 
 
 DBX = dropbox.Dropbox(u.get_secret(c.VAR_DROPBOX_TOKEN))
