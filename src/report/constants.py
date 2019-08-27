@@ -27,7 +27,9 @@ COL_TYPE = "Type"
 
 EXPENSES = "Expenses"
 INCOMES = "Incomes"
-
+EBIT = "EBIT"
+LIQUID = "liquid"
+ACCOUNTS = "accounts"
 
 DF_TRANS = "trans_m"
 DF_LIQUID = "liquid_m"
