@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 
-from expensor import process
+from money_lover import process
 
 default_args = {
     "owner": "airflow",
