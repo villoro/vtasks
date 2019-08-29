@@ -5,9 +5,9 @@
 import oyaml as yaml
 import pandas as pd
 
-from . import data_loader as dl
 from . import constants as c
 from . import utilities as u
+from .data_loader import get_dfs, get_config
 
 
 def get_raw_data(dfs, col_period):
@@ -52,10 +52,22 @@ def get_investment_or_liquid(dfs, entity):
     return series
 
 
+def get_colors():
+    """ Get colors from config file """
+
+    out = {name: u.get_colors(data) for name, data in c.DEFAULT_COLORS.items()}
+
+    for entity in [c.LIQUID, c.INVEST]:
+        for name, config in get_config()[entity].items():
+            out[name] = u.get_colors((config[c.COLOR_NAME], config[c.COLOR_INDEX]))
+
+    return out
+
+
 def get_report_data():
     """ Create the report """
 
-    dfs = dl.get_dfs()
+    dfs = get_dfs()
 
     out = {}
 
@@ -68,5 +80,7 @@ def get_report_data():
         dfs[name] = dfs[name].set_index(c.COL_DATE)
 
         out["Month"].update(get_investment_or_liquid(dfs, name))
+
+    out["colors"] = get_colors()
 
     return out

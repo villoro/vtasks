@@ -31,6 +31,8 @@ EBIT = "EBIT"
 LIQUID = "liquid"
 INVEST = "investment"
 ACCOUNTS = "accounts"
+COLOR_NAME = "color_name"
+COLOR_INDEX = "color_index"
 
 DF_TRANS = "trans_m"
 DF_LIQUID = "liquid_m"
@@ -40,3 +42,16 @@ DF_WORTH = "worth_m"
 
 DFS_ALL_FROM_DATA = [DF_CATEG, DF_LIQUID, DF_INVEST, DF_WORTH]
 DFS_ALL = [DF_TRANS] + DFS_ALL_FROM_DATA
+
+DEFAULT_COLORS = {
+    EXPENSES: ("red", 500),
+    INCOMES: ("green", 500),
+    "Incomes_passive": ("green", 700),
+    EBIT: ("amber", 500),
+    "EBIT_cum": ("blue", 500),
+    LIQUID: ("blue", 400),
+    "liquid_min_rec": ("grey", 700),
+    "liquid_rec": ("grey", 400),
+    "worth": ("lime", 400),
+    "savings": ("purple", 500),
+}
