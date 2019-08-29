@@ -16,7 +16,7 @@
   <style>
     /* Set the width of the sidebar to 58px */
     .w3-sidebar {width: 58px}
-    .w3-sidebar-item {font-size: 24px}
+    .w3-sidebar-item {font-size: 24px; margin-top: 16px}
     .w3-navbar {height: 48px}
 
     /* Add a left margin to the "page content" that matches the width of the sidebar (58px) */
@@ -26,7 +26,10 @@
       padding:2px 16px!important
     }
     /* Remove margins from "page content" on small screens */
-    @media only screen and (max-width: 600px) {.main {margin-left: 0; margin-top: 48px}}
+    @media only screen and (max-width: 600px) {
+      .main {margin-left: 0; margin-top: 48px}
+      .w3-sidebar-item {margin-top: 0px}
+    }
 
     .plot {
       padding: 8px;
@@ -42,51 +45,51 @@
 
     <!-- Icon Bar (Sidebar - hidden on small screens) -->
     <div class="w3-sidebar w3-blue w3-hide-small w3-center">
-      <a href="#" class="w3-bar-item w3-button w3-hover-orange">
-        <i class="fas fa-table w3-sidebar-item"></i>
+      <a href="#" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+        <i class="fas fa-table"></i>
       </a>
-      <a href="#about" class="w3-bar-item w3-button w3-hover-orange">
-        <i class="fas fa-chart-line w3-sidebar-item"></i>
+      <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+        <i class="fas fa-chart-line"></i>
       </a>
-      <a href="#about" class="w3-bar-item w3-button w3-hover-orange">
-        <i class="fas fa-poll w3-sidebar-item"></i>
+      <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+        <i class="fas fa-poll"></i>
       </a>
-      <a href="#about" class="w3-bar-item w3-button w3-hover-orange">
-        <i class="fas fa-chart-pie w3-sidebar-item"></i>
+      <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+        <i class="fas fa-chart-pie"></i>
       </a>
-      <a href="#about" class="w3-bar-item w3-button w3-hover-orange">
-        <i class="fas fa-coins w3-sidebar-item"></i>
+      <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+        <i class="fas fa-coins"></i>
       </a>
-      <a href="#about" class="w3-bar-item w3-button w3-hover-orange">
-        <i class="fas fa-wallet w3-sidebar-item"></i>
+      <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+        <i class="fas fa-wallet"></i>
       </a>
-      <a href="#about" class="w3-bar-item w3-button w3-hover-orange">
-        <i class="fas fa-fire w3-sidebar-item"></i>
+      <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+        <i class="fas fa-fire"></i>
       </a>
     </div>
 
     <!-- Navbar on small screens (Hidden on medium and large screens) -->
     <div class="w3-top w3-hide-large w3-hide-medium w3-card">
       <div class="w3-bar w3-blue w3-center w3-small">
-        <a href="#" class="w3-bar-item w3-button w3-hover-orange">
+        <a href="#" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
           <i class="fas fa-table w3-sidebar-item"></i>
         </a>
-        <a href="#about" class="w3-bar-item w3-button w3-hover-orange">
+        <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
           <i class="fas fa-chart-line w3-sidebar-item"></i>
         </a>
-        <a href="#about" class="w3-bar-item w3-button w3-hover-orange">
+        <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
           <i class="fas fa-poll w3-sidebar-item"></i>
         </a>
-        <a href="#about" class="w3-bar-item w3-button w3-hover-orange">
+        <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
           <i class="fas fa-chart-pie w3-sidebar-item"></i>
         </a>
-        <a href="#about" class="w3-bar-item w3-button w3-hover-orange">
+        <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
           <i class="fas fa-coins w3-sidebar-item"></i>
         </a>
-        <a href="#about" class="w3-bar-item w3-button w3-hover-orange">
+        <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
           <i class="fas fa-wallet w3-sidebar-item"></i>
         </a>
-        <a href="#about" class="w3-bar-item w3-button w3-hover-orange">
+        <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
           <i class="fas fa-fire w3-sidebar-item"></i>
         </a>
       </div>
