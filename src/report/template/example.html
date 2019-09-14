@@ -39,57 +39,61 @@
       margin-top: 16px;
       margin-bottom: 16px;
     }
+
+    .sidebar a.active{
+      color:#000000!important
+    }
   </style>
 
   <body class="w3-light-grey">
 
     <!-- Icon Bar (Sidebar - hidden on small screens) -->
-    <div class="w3-sidebar w3-blue w3-hide-small w3-center">
-      <a href="#" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+    <div class="w3-sidebar w3-blue w3-hide-small w3-center sidebar">
+      <a onclick="openSite(event, 'dashboard')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
         <i class="fas fa-table"></i>
       </a>
-      <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+      <a onclick="openSite(event, 'evolution')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
         <i class="fas fa-chart-line"></i>
       </a>
-      <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+      <a onclick="openSite(event, 'comparison')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
         <i class="fas fa-poll"></i>
       </a>
-      <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+      <a onclick="openSite(event, 'pies')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
         <i class="fas fa-chart-pie"></i>
       </a>
-      <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+      <a onclick="openSite(event, 'liquid')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
         <i class="fas fa-coins"></i>
       </a>
-      <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+      <a onclick="openSite(event, 'investments')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
         <i class="fas fa-wallet"></i>
       </a>
-      <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+      <a onclick="openSite(event, 'fire')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
         <i class="fas fa-fire"></i>
       </a>
     </div>
 
     <!-- Navbar on small screens (Hidden on medium and large screens) -->
     <div class="w3-top w3-hide-large w3-hide-medium w3-card">
-      <div class="w3-bar w3-blue w3-center w3-small">
-        <a href="#" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
+      <div class="w3-bar w3-blue w3-center w3-small sidebar">
+        <a onclick="openSite(event, 'dashboard')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
           <i class="fas fa-table w3-sidebar-item"></i>
         </a>
-        <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
+        <a onclick="openSite(event, 'evolution')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
           <i class="fas fa-chart-line w3-sidebar-item"></i>
         </a>
-        <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
+        <a onclick="openSite(event, 'comparison')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
           <i class="fas fa-poll w3-sidebar-item"></i>
         </a>
-        <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
+        <a onclick="openSite(event, 'pies')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
           <i class="fas fa-chart-pie w3-sidebar-item"></i>
         </a>
-        <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
+        <a onclick="openSite(event, 'liquid')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
           <i class="fas fa-coins w3-sidebar-item"></i>
         </a>
-        <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
+        <a onclick="openSite(event, 'investments')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
           <i class="fas fa-wallet w3-sidebar-item"></i>
         </a>
-        <a href="#about" class="w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
+        <a onclick="openSite(event, 'fire')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
           <i class="fas fa-fire w3-sidebar-item"></i>
         </a>
       </div>
@@ -99,11 +103,11 @@
     <div class="main">
 
       <!-- DASH -->
-      <div id="section_dashboard">
+      <div id="dashboard" class="section">
       </div>
 
       <!-- EVO -->
-      <div id="section_evolution">
+      <div id="evolution" class="section">
         <div class="w3-card w3-round w3-center w3-white elem">
           <div id="EVO_evolution_month" class="plot" style="height: 450px"></div>
         </div>
@@ -122,7 +126,7 @@
       </div>
 
       <!-- COMP -->
-      <div id="section_comparison">
+      <div id="comparison" class="section">
         <div class="w3-card w3-round w3-center w3-white elem">
           <div id="COMP_incomes" class="plot" style="height: 450px"></div>
         </div>
@@ -141,24 +145,40 @@
       </div>
 
       <!-- PIE -->
-      <div id="section_pies">
+      <div id="pies" class="section">
       </div>
 
       <!-- LIQ -->
-      <div id="section_liquid">
+      <div id="liquid" class="section">
       </div>
 
       <!-- INV -->
-      <div id="section_investments">
+      <div id="investments" class="section">
       </div>
 
       <!-- FIRE -->
-      <div id="section_fire">
+      <div id="fire" class="section">
       </div>
 
     </div>
 
   </body>
+
+  <script>
+    function openSite(evt, section_name) {
+      var i, sections, section_buttons;
+      sections = document.getElementsByClassName("section");
+      for (i = 0; i < sections.length; i++) {
+        sections[i].style.display = "none";
+      }
+      section_buttons = document.getElementsByClassName("section_button");
+      for (i = 0; i < section_buttons.length; i++) {
+        section_buttons[i].className = section_buttons[i].className.replace(" active", "");
+      }
+      document.getElementById(section_name).style.display = "block";
+      evt.currentTarget.className += " active";
+    }
+  </script>
 
   <script>
     Highcharts.chart('EVO_evolution_month', {
