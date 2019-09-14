@@ -49,7 +49,7 @@
 
     <!-- Icon Bar (Sidebar - hidden on small screens) -->
     <div class="w3-sidebar w3-blue w3-hide-small w3-center sidebar">
-      <a onclick="openSite(event, 'dashboard')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+      <a onclick="openSite(event, 'dashboard')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item active">
         <i class="fas fa-table"></i>
       </a>
       <a onclick="openSite(event, 'evolution')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
@@ -75,7 +75,7 @@
     <!-- Navbar on small screens (Hidden on medium and large screens) -->
     <div class="w3-top w3-hide-large w3-hide-medium w3-card">
       <div class="w3-bar w3-blue w3-center w3-small sidebar">
-        <a onclick="openSite(event, 'dashboard')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
+        <a onclick="openSite(event, 'dashboard')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange active">
           <i class="fas fa-table w3-sidebar-item"></i>
         </a>
         <a onclick="openSite(event, 'evolution')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange">
@@ -107,7 +107,7 @@
       </div>
 
       <!-- EVO -->
-      <div id="evolution" class="section">
+      <div id="evolution" class="section" style="display: none">
         <div class="w3-card w3-round w3-center w3-white elem">
           <div id="EVO_evolution_month" class="plot" style="height: 450px"></div>
         </div>
@@ -126,7 +126,7 @@
       </div>
 
       <!-- COMP -->
-      <div id="comparison" class="section">
+      <div id="comparison" class="section" style="display: none">
         <div class="w3-card w3-round w3-center w3-white elem">
           <div id="COMP_incomes" class="plot" style="height: 450px"></div>
         </div>
@@ -145,19 +145,19 @@
       </div>
 
       <!-- PIE -->
-      <div id="pies" class="section">
+      <div id="pies" class="section" style="display: none">
       </div>
 
       <!-- LIQ -->
-      <div id="liquid" class="section">
+      <div id="liquid" class="section" style="display: none">
       </div>
 
       <!-- INV -->
-      <div id="investments" class="section">
+      <div id="investments" class="section" style="display: none">
       </div>
 
       <!-- FIRE -->
-      <div id="fire" class="section">
+      <div id="fire" class="section" style="display: none">
       </div>
 
     </div>
