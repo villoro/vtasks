@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block body %}
+<!-- DASH -->
+<div id="dashboard" class="section">
+</div>
+
+<!-- EVO -->
+<div id="evolution" class="section">
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_evolution_month" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_evolution_year" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_expenses_by_categ" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_incomes_by_categ" class="plot" style="height: 450px"></div>
+  </div>
+</div>
+
+<!-- COMP -->
+<div id="comparison" class="section">
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="COMP_incomes" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="COMP_expenses" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="COMP_EBIT" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="COMP_liquid" class="plot" style="height: 450px"></div>
+  </div>
+</div>
+
+<!-- PIE -->
+<div id="pies" class="section">
+</div>
+
+<!-- LIQ -->
+<div id="liquid" class="section">
+</div>
+
+<!-- INV -->
+<div id="investments" class="section">
+</div>
+
+<!-- FIRE -->
+<div id="fire" class="section">
+</div>
+{% endblock %}
+
+
+{% block plots %}
+<script>
+  Highcharts.chart('EVO_evolution_month', {
+    title: {
+      text: 'Month evolution'
+    },
+    xAxis: {
+      type: 'datetime',
+    },
+    yAxis: {
+      title: {
+        text: null
+      }
+    },
+    plotOptions: {
+      series: {
+        marker: {
+          enabled: false
+        },
+      }
+    },
+    series: [
+      {% for name in ["Incomes", "Expenses", "EBIT"] %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{% for mdate, value in month[name].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+
+  Highcharts.chart('EVO_evolution_year', {
+    title: {
+      text: 'Year evolution'
+    },
+    xAxis: {
+      type: 'datetime',
+    },
+    yAxis: {
+      title: {
+        text: null
+      }
+    },
+    plotOptions: {
+      series: {
+        marker: {
+          enabled: false
+        },
+      }
+    },
+    series: [
+      {% for name in ["Incomes", "Expenses", "EBIT"] %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{% for mdate, value in year[name].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('EVO_expenses_by_categ', {title: {text: 'Expenses evolution by category'},});
+  Highcharts.chart('EVO_incomes_by_categ', {title: {text: 'Incomes evolution by category'},});
+
+
+  Highcharts.chart('COMP_incomes', {title: {text: 'Expenses comparison'},});
+  Highcharts.chart('COMP_expenses', {title: {text: 'Incomes comparison'},});
+  Highcharts.chart('COMP_EBIT', {title: {text: 'EBIT comparison'},});
+  Highcharts.chart('COMP_liquid', {title: {text: 'Liquid comparison'},});
+</script>
+{% endblock %}

@@ -11,13 +11,14 @@ from config import PATH_ROOT
 def create_report(filename=f"{PATH_ROOT}data.yaml"):
     """ Creates the report """
 
+    # Set up jinja to render parent templates and retrive template
+    template = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(f"{PATH_ROOT}report/templates")
+    ).get_template("template.html")
+
     # Read data
     with open(filename, "r") as file:
         data = yaml.safe_load(file)
-
-    # Get template
-    with open(f"{PATH_ROOT}report/template/template.html", "r") as file:
-        template = jinja2.Template(file.read())
 
     # Render template and save file
     with open(f"{PATH_ROOT}report.html", "w") as file:
