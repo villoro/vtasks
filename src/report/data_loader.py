@@ -37,3 +37,39 @@ def get_dfs():
         dfs[c.DF_TRANS] = pd.read_excel(stream, index_col=0)
 
     return dfs
+
+
+def upload_text_file(text, filename):
+    """ Uploads a text file in dropbox. """
+
+    with io.BytesIO(text.encode()) as stream:
+        stream.seek(0)
+
+        # Write a text file
+        DBX.files_upload(stream.read(), filename, mode=dropbox.files.WriteMode.overwrite)
+
+
+def upload_yaml(data, filename):
+    """
+        Uploads a dict/ordered dict as yaml in dropbox.
+
+        Args:
+            data:       dict or dict-like info
+            filename:   info to read
+
+    """
+
+    with io.StringIO() as file:
+        yaml.dump(data, file, default_flow_style=False)
+        file.seek(0)
+
+        DBX.files_upload(file.read().encode(), filename, mode=dropbox.files.WriteMode.overwrite)
+
+
+def read_yaml(filename):
+    """ Read a yaml as an ordered dict from dropbox """
+
+    _, res = DBX.files_download(filename)
+
+    with io.BytesIO(res.content) as stream:
+        return yaml.safe_load(stream)

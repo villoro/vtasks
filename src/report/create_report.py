@@ -7,6 +7,8 @@ import jinja2
 
 from config import PATH_ROOT
 
+from .data_loader import read_yaml, upload_text_file
+
 
 def create_report(filename=f"{PATH_ROOT}data.yaml"):
     """ Creates the report """
@@ -17,9 +19,7 @@ def create_report(filename=f"{PATH_ROOT}data.yaml"):
     ).get_template("template.html")
 
     # Read data
-    with open(filename, "r") as file:
-        data = yaml.safe_load(file)
+    data = read_yaml("/data.yaml")
 
-    # Render template and save file
-    with open(f"{PATH_ROOT}report.html", "w") as file:
-        file.write(template.render(**data))
+    # Create report
+    upload_text_file(template.render(**data), "/report.html")

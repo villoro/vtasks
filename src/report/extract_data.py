@@ -2,12 +2,13 @@
     Create the raw data for the reprot
 """
 
+from collections import OrderedDict
 import oyaml as yaml
 import pandas as pd
 
 from . import constants as c
 from . import utilities as u
-from .data_loader import get_dfs, get_config
+from .data_loader import get_dfs, get_config, upload_yaml
 
 
 def get_raw_data(dfs, col_period):
@@ -24,14 +25,30 @@ def get_raw_data(dfs, col_period):
 
     # Get by groups
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
+
         df = dfg.pivot_table(c.COL_AMOUNT, col_period, c.COL_CATEGORY, "sum").fillna(0)
-        series[f"{name}_by_groups"] = u.series_to_dicts({x: df[x] for x in df.columns})
+
+        df_categ = dfs[c.DF_CATEG]
+        df_categ = df_categ[df_categ[c.COL_TYPE] == name]
+
+        aux = OrderedDict()
+        for x in reversed(df_categ[c.COL_NAME].to_list()):
+            aux[x] = df[x]
+
+        series[f"{name}_by_groups"] = u.series_to_dicts(aux)
 
     return series
 
 
-def get_investment_or_liquid(dfs, entity):
-    """ Retrives investment or liquid data """
+def get_investment_or_liquid(dfs, yml, entity):
+    """
+        Retrives investment or liquid data
+
+        Args:
+            dfs:    dict with dataframes
+            yml:    dict with config info
+            entity: entity to process
+    """
 
     entity_name = entity.split("_")[0]
 
@@ -39,8 +56,8 @@ def get_investment_or_liquid(dfs, entity):
 
     series = {entity_name: u.serie_to_dict(dfg["Total"])}
 
-    aux = {}
-    for name, config in YML[c.INVEST].items():
+    aux = OrderedDict()
+    for name, config in yml[c.INVEST].items():
 
         # Check that accounts are in the config
         mlist = [x for x in config[c.ACCOUNTS] if x in dfg.columns]
@@ -52,14 +69,20 @@ def get_investment_or_liquid(dfs, entity):
     return series
 
 
-def get_colors():
+def get_colors(dfs, yml):
     """ Get colors from config file """
 
     out = {name: u.get_colors(data) for name, data in c.DEFAULT_COLORS.items()}
 
     for entity in [c.LIQUID, c.INVEST]:
-        for name, config in get_config()[entity].items():
-            out[name] = u.get_colors((config[c.COLOR_NAME], config[c.COLOR_INDEX]))
+        out[entity] = OrderedDict()
+        for name, config in yml[entity].items():
+            out[entity][name] = u.get_colors((config[c.COLOR_NAME], config[c.COLOR_INDEX]))
+
+    for entity, df in dfs["trans_categ"].set_index("Name").groupby("Type"):
+        out[f"{entity}_categ"] = OrderedDict()
+        for name, row in df.iterrows():
+            out[f"{entity}_categ"][name] = u.get_colors((row["Color Name"], row["Color Index"]))
 
     return out
 
@@ -68,19 +91,20 @@ def get_report_data():
     """ Create the report """
 
     dfs = get_dfs()
+    yml = get_config()
 
     out = {}
 
     # Expenses, incomes and EBIT
-    for period, col_period in {"Month": c.COL_MONTH_DATE, "Year": c.COL_YEAR}.items():
+    for period, col_period in {"month": c.COL_MONTH_DATE, "year": c.COL_YEAR}.items():
         out[period] = get_raw_data(dfs, col_period)
 
     # Liquid, worth and invested
     for name in [c.DF_LIQUID, c.DF_WORTH, c.DF_INVEST]:
         dfs[name] = dfs[name].set_index(c.COL_DATE)
 
-        out["Month"].update(get_investment_or_liquid(dfs, name))
+        out["month"].update(get_investment_or_liquid(dfs, yml, name))
 
-    out["colors"] = get_colors()
+    out["colors"] = get_colors(dfs, yml)
 
-    return out
+    upload_yaml(out, "/data.yaml")  # TODO: change that name
