@@ -16,11 +16,19 @@
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="EVO_expenses_by_categ" class="plot" style="height: 450px"></div>
+    <div id="EVO_expenses_by_categ_month" class="plot" style="height: 600px"></div>
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="EVO_incomes_by_categ" class="plot" style="height: 450px"></div>
+    <div id="EVO_incomes_by_categ_month" class="plot" style="height: 600px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_expenses_by_categ_year" class="plot" style="height: 600px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_incomes_by_categ_year" class="plot" style="height: 600px"></div>
   </div>
 </div>
 
@@ -122,8 +130,154 @@
       }, {% endfor %}
     ],
   });
-  Highcharts.chart('EVO_expenses_by_categ', {title: {text: 'Expenses evolution by category'},});
-  Highcharts.chart('EVO_incomes_by_categ', {title: {text: 'Incomes evolution by category'},});
+  Highcharts.chart('EVO_expenses_by_categ_month', {
+    title: {
+      text: 'Expenses evolution by category and month'
+    },
+    xAxis: {
+      type: 'datetime',
+    },
+    yAxis: {
+      title: {
+        text: null
+      }
+    },
+    plotOptions: {
+      series: {
+        marker: {
+          enabled: false
+        },
+        stacking: 'normal',
+      }
+    },
+    series: [
+      {
+        name: "Total",
+        color: "#000000",
+        data: [{% for mdate, value in month["Expenses"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% for name, data in month["Expenses_by_groups"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors['Expenses_categ'][name] }}",
+        type: 'column',
+        data: [{% for mdate, value in data.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('EVO_incomes_by_categ_month', {
+    title: {
+      text: 'Incomes evolution by category and month'
+    },
+    xAxis: {
+      type: 'datetime',
+    },
+    yAxis: {
+      title: {
+        text: null
+      }
+    },
+    plotOptions: {
+      series: {
+        marker: {
+          enabled: false
+        },
+        stacking: 'normal',
+      }
+    },
+    series: [
+      {
+        name: "Total",
+        color: "#000000",
+        data: [{% for mdate, value in month["Incomes"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% for name, data in month["Incomes_by_groups"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors['Incomes_categ'][name] }}",
+        type: 'column',
+        data: [{% for mdate, value in data.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('EVO_expenses_by_categ_year', {
+    title: {
+      text: 'Expenses evolution by category and year'
+    },
+    xAxis: {
+      type: 'datetime',
+    },
+    yAxis: {
+      title: {
+        text: null
+      }
+    },
+    plotOptions: {
+      series: {
+        marker: {
+          enabled: false
+        },
+        stacking: 'normal',
+      }
+    },
+    series: [
+      {
+        name: "Total",
+        color: "#000000",
+        data: [{% for mdate, value in year["Expenses"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% for name, data in year["Expenses_by_groups"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors['Expenses_categ'][name] }}",
+        type: 'column',
+        data: [{% for mdate, value in data.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('EVO_incomes_by_categ_year', {
+    title: {
+      text: 'Incomes evolution by category and year'
+    },
+    xAxis: {
+      type: 'datetime',
+    },
+    yAxis: {
+      title: {
+        text: null
+      }
+    },
+    plotOptions: {
+      series: {
+        marker: {
+          enabled: false
+        },
+        stacking: 'normal',
+      }
+    },
+    series: [
+      {
+        name: "Total",
+        color: "#000000",
+        data: [{% for mdate, value in year["Incomes"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% for name, data in year["Incomes_by_groups"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors['Incomes_categ'][name] }}",
+        type: 'column',
+        data: [{% for mdate, value in data.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
 
 
   Highcharts.chart('COMP_incomes', {title: {text: 'Expenses comparison'},});

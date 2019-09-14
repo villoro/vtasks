@@ -230,7 +230,56 @@
     });
 
     Highcharts.chart('EVO_evolution_year', {title: {text: 'Year evolution'},});
-    Highcharts.chart('EVO_expenses_by_categ', {title: {text: 'Expenses evolution by category'},});
+    Highcharts.chart('EVO_expenses_by_categ', {
+      title: {
+        text: 'Expenses evolution by category'
+      },
+      xAxis: {
+        type: 'datetime',
+      },
+      yAxis: {
+        title: {
+          text: null
+        }
+      },
+      plotOptions: {
+        series: {
+          marker: {
+            enabled: false
+          },
+          stacking: 'normal',
+        }
+      },
+      series: [
+        {
+          color: "#4CAF50",
+          name: 'Incomes',
+          type: 'column',
+          data: [
+            [Date.parse("2011-12-01"), 200],
+            [Date.parse("2012-01-01"), 300],
+            [Date.parse("2012-02-01"), 250],
+          ]
+        }, {
+          color: "#F44336",
+          name: 'Expenses',
+          type: 'column',
+          data: [
+            [Date.parse("2011-12-01"), 210],
+            [Date.parse("2012-01-01"), 220],
+            [Date.parse("2012-02-01"), 200],
+          ]
+        }, {
+          color: "#FFC107",
+          name: 'EBIT',
+          data: [
+            [Date.parse("2011-12-01"), -10],
+            [Date.parse("2012-01-01"), 80],
+            [Date.parse("2012-02-01"), 50],
+          ]
+        }
+      ],
+    });
     Highcharts.chart('EVO_incomes_by_categ', {title: {text: 'Incomes evolution by category'},});
 
 
