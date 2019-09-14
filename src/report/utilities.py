@@ -2,6 +2,8 @@
     Utilities
 """
 
+from collections import OrderedDict
+
 import numpy as np
 
 from v_palette import get_colors
@@ -41,4 +43,9 @@ def serie_to_dict(serie):
 def series_to_dicts(series):
     """ Transform a dict with series to a dict of dicts """
 
-    return {name: serie_to_dict(x) for name, x in series.items()}
+    out = OrderedDict()
+
+    for name, x in series.items():
+        out[name] = serie_to_dict(x)
+
+    return out
