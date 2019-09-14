@@ -97,14 +97,63 @@
 
     <!-- Page Content -->
     <div class="main">
-      <!-- Header/Home -->
-      <div class="w3-card w3-round w3-center w3-white elem">
-        <div id="plot-example" class="plot" style="height: 450px"></div>
+
+      <!-- DASH -->
+      <div id="section_dashboard">
       </div>
 
-      <!-- Header/Home -->
-      <div class="w3-card w3-round w3-center w3-white elem">
-        <div id="plot-example2" class="plot" style="height: 450px"></div>
+      <!-- EVO -->
+      <div id="section_evolution">
+        <div class="w3-card w3-round w3-center w3-white elem">
+          <div id="EVO_evolution_month" class="plot" style="height: 450px"></div>
+        </div>
+
+        <div class="w3-card w3-round w3-center w3-white elem">
+          <div id="EVO_evolution_year" class="plot" style="height: 450px"></div>
+        </div>
+
+        <div class="w3-card w3-round w3-center w3-white elem">
+          <div id="EVO_expenses_by_categ" class="plot" style="height: 450px"></div>
+        </div>
+
+        <div class="w3-card w3-round w3-center w3-white elem">
+          <div id="EVO_incomes_by_categ" class="plot" style="height: 450px"></div>
+        </div>
+      </div>
+
+      <!-- COMP -->
+      <div id="section_comparison">
+        <div class="w3-card w3-round w3-center w3-white elem">
+          <div id="COMP_incomes" class="plot" style="height: 450px"></div>
+        </div>
+
+        <div class="w3-card w3-round w3-center w3-white elem">
+          <div id="COMP_expenses" class="plot" style="height: 450px"></div>
+        </div>
+
+        <div class="w3-card w3-round w3-center w3-white elem">
+          <div id="COMP_EBIT" class="plot" style="height: 450px"></div>
+        </div>
+
+        <div class="w3-card w3-round w3-center w3-white elem">
+          <div id="COMP_liquid" class="plot" style="height: 450px"></div>
+        </div>
+      </div>
+
+      <!-- PIE -->
+      <div id="section_pies">
+      </div>
+
+      <!-- LIQ -->
+      <div id="section_liquid">
+      </div>
+
+      <!-- INV -->
+      <div id="section_investments">
+      </div>
+
+      <!-- FIRE -->
+      <div id="section_fire">
       </div>
 
     </div>
@@ -112,9 +161,9 @@
   </body>
 
   <script>
-    Highcharts.chart('plot-example', {
+    Highcharts.chart('EVO_evolution_month', {
       title: {
-        text: 'Evolution'
+        text: 'Month evolution'
       },
       xAxis: {
         type: 'datetime',
@@ -136,28 +185,38 @@
           color: "#4CAF50",
           name: 'Incomes',
           data: [
-            [Date.UTC(2011, 12, 1), 200],
-            [Date.UTC(2012, 1, 1), 300],
-            [Date.UTC(2012, 2, 1), 250],
+            [Date.parse("2011-12-01"), 200],
+            [Date.parse("2012-01-01"), 300],
+            [Date.parse("2012-02-01"), 250],
           ]
         }, {
           color: "#F44336",
           name: 'Expenses',
           data: [
-            [Date.UTC(2011, 12, 1), 210],
-            [Date.UTC(2012, 1, 1), 220],
-            [Date.UTC(2012, 2, 1), 200],
+            [Date.parse("2011-12-01"), 210],
+            [Date.parse("2012-01-01"), 220],
+            [Date.parse("2012-02-01"), 200],
           ]
         }, {
           color: "#FFC107",
           name: 'EBIT',
           data: [
-            [Date.UTC(2011, 12, 1), -10],
-            [Date.UTC(2012, 1, 1), 80],
-            [Date.UTC(2012, 2, 1), 50],
+            [Date.parse("2011-12-01"), -10],
+            [Date.parse("2012-01-01"), 80],
+            [Date.parse("2012-02-01"), 50],
           ]
         }
       ],
     });
+
+    Highcharts.chart('EVO_evolution_year', {title: {text: 'Year evolution'},});
+    Highcharts.chart('EVO_expenses_by_categ', {title: {text: 'Expenses evolution by category'},});
+    Highcharts.chart('EVO_incomes_by_categ', {title: {text: 'Incomes evolution by category'},});
+
+
+    Highcharts.chart('COMP_incomes', {title: {text: 'Expenses comparison'},});
+    Highcharts.chart('COMP_expenses', {title: {text: 'Incomes comparison'},});
+    Highcharts.chart('COMP_EBIT', {title: {text: 'EBIT comparison'},});
+    Highcharts.chart('COMP_liquid', {title: {text: 'Liquid comparison'},});
   </script>
 </html>
