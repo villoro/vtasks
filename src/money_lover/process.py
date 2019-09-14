@@ -52,15 +52,15 @@ def get_df_transactions():
 def upload_excel(df, filename):
     """ Uploads a pandas dataframe as an excel to dropbox """
 
-    output = io.BytesIO()
+    with io.BytesIO() as stream:
 
-    writer = pd.ExcelWriter(output)
-    df.to_excel(writer)
+        with pd.ExcelWriter(stream) as writer:
+            df.to_excel(writer)
+            writer.save()
 
-    writer.save()
-    output.seek(0)
+        stream.seek(0)
 
-    DBX.files_upload(output.getvalue(), filename, mode=dropbox.files.WriteMode.overwrite)
+        DBX.files_upload(stream.getvalue(), filename, mode=dropbox.files.WriteMode.overwrite)
 
 
 def do(*args, **kwa):

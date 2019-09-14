@@ -19,7 +19,8 @@ def get_config():
     """ retrives config yaml as ordered dict """
 
     _, res = DBX.files_download(c.FILE_CONFIG)
-    return yaml.load(io.BytesIO(res.content), Loader=yaml.SafeLoader)
+    with io.BytesIO(res.content) as stream:
+        return yaml.safe_load(stream)
 
 
 def get_dfs():
@@ -27,10 +28,12 @@ def get_dfs():
 
     # Dataframes from data.xlsx
     _, res = DBX.files_download(c.FILE_DATA)
-    dfs = {x: pd.read_excel(io.BytesIO(res.content), sheet_name=x) for x in c.DFS_ALL_FROM_DATA}
+    with io.BytesIO(res.content) as stream:
+        dfs = {x: pd.read_excel(stream, sheet_name=x) for x in c.DFS_ALL_FROM_DATA}
 
     # Transactions
     _, res = DBX.files_download(c.FILE_TRANSACTIONS)
-    dfs[c.DF_TRANS] = pd.read_excel(io.BytesIO(res.content), index_col=0)
+    with io.BytesIO(res.content) as stream:
+        dfs[c.DF_TRANS] = pd.read_excel(stream, index_col=0)
 
     return dfs
