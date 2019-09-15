@@ -57,6 +57,17 @@
 
 <!-- LIQ -->
 <div id="liquid" class="section">
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="LIQ_evolution" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="LIQ_vs_expenses" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="LIQ_survivial_rate" class="plot" style="height: 450px"></div>
+  </div>
 </div>
 
 <!-- INV -->
@@ -71,6 +82,8 @@
 
 {% block plots %}
 <script>
+
+  // EVOLUTION SECTION
   Highcharts.chart('EVO_evolution_month', {
     title: {
       text: 'Month evolution'
@@ -100,7 +113,6 @@
       }, {% endfor %}
     ],
   });
-
   Highcharts.chart('EVO_evolution_year', {
     title: {
       text: 'Year evolution'
@@ -279,10 +291,135 @@
     ],
   });
 
-
+  // COMPARISON SECTION
   Highcharts.chart('COMP_incomes', {title: {text: 'Expenses comparison'},});
   Highcharts.chart('COMP_expenses', {title: {text: 'Incomes comparison'},});
   Highcharts.chart('COMP_EBIT', {title: {text: 'EBIT comparison'},});
   Highcharts.chart('COMP_liquid', {title: {text: 'Liquid comparison'},});
+
+  // LIQUID SECTION
+  Highcharts.chart('LIQ_evolution', {
+    title: {
+      text: 'Liquid evolution'
+    },
+    xAxis: {
+      type: 'datetime',
+    },
+    yAxis: {
+      title: {
+        text: null
+      }
+    },
+    plotOptions: {
+      series: {
+        marker: {
+          enabled: false
+        },
+        stacking: 'normal',
+      }
+    },
+    series: [
+      {
+        name: "Total",
+        color: "#000000",
+        data: [{% for mdate, value in month["liquid"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% for name, data in month["liquid_by_groups"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors['liquid_categ'][name] }}",
+        type: 'column',
+        data: [{% for mdate, value in data.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('LIQ_vs_expenses', {
+    title: {
+      text: 'Liquid vs Expenses'
+    },
+    xAxis: {
+      type: 'datetime',
+    },
+    yAxis: {
+      title: {
+        text: null
+      }
+    },
+    plotOptions: {
+      series: {
+        marker: {
+          enabled: false
+        },
+      }
+    },
+    series: [
+      {% for name in ["Expenses", "liquid"] %}{
+        name: "{{ name.title() }}",
+        color: "{{ colors[name] }}",
+        data: [{% for mdate, value in month[name].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+      {
+        name: "Minimum liquid recomended",
+        color: "{{ colors['liquid_min_rec'] }}",
+        data: [{% for mdate, value in month['Expenses'].items() %}
+          [Date.parse("{{ mdate }}"), {{ 3*value }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Liquid recomended",
+        color: "{{ colors['liquid_rec'] }}",
+        data: [{% for mdate, value in month['Expenses'].items() %}
+          [Date.parse("{{ mdate }}"), {{ 6*value }}], {% endfor %}
+        ]
+      }
+    ],
+  });
+  Highcharts.chart('LIQ_survivial_rate', {
+    title: {
+      text: 'Survival months with current liquid'
+    },
+    xAxis: {
+      type: 'datetime',
+    },
+    yAxis: {
+      title: {
+        text: null
+      }
+    },
+    plotOptions: {
+      series: {
+        marker: {
+          enabled: false
+        },
+      }
+    },
+    series: [
+      {
+        name: "Months",
+        color: "{{ colors['liquid'] }}",
+        data: [{% for mdate in month['Expenses'].keys() %}
+          [Date.parse("{{ mdate }}"), {{ month['liquid'][mdate] / month['Expenses'][mdate] }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Minimum liquid recomended",
+        color: "{{ colors['liquid_min_rec'] }}",
+        data: [{% for mdate in month['Expenses'].keys() %}
+          [Date.parse("{{ mdate }}"), {{ 3 }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Liquid recomended",
+        color: "{{ colors['liquid_rec'] }}",
+        data: [{% for mdate in month['Expenses'].keys() %}
+          [Date.parse("{{ mdate }}"), {{ 6 }}], {% endfor %}
+        ]
+      }
+    ],
+  });
 </script>
 {% endblock %}

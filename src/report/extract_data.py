@@ -57,12 +57,12 @@ def get_investment_or_liquid(dfs, yml, entity):
     series = {entity_name: u.serie_to_dict(dfg["Total"])}
 
     aux = OrderedDict()
-    for name, config in yml.items():
+    for name in reversed(list(yml.keys())):
 
-        # Check that accounts are in the config
-        mlist = [x for x in config[c.ACCOUNTS] if x in dfg.columns]
+        # Check that accounts are in the yml
+        mlist = [x for x in yml[name][c.ACCOUNTS] if x in dfg.columns]
 
-        aux[name] = dfg.sum(axis=1)
+        aux[name] = dfg[mlist].sum(axis=1)
 
     series[f"{entity_name}_by_groups"] = u.series_to_dicts(aux)
 
@@ -75,9 +75,11 @@ def get_colors(dfs, yml):
     out = {name: u.get_colors(data) for name, data in c.DEFAULT_COLORS.items()}
 
     for entity in [c.LIQUID, c.INVEST]:
-        out[entity] = OrderedDict()
+        out[f"{entity}_categ"] = OrderedDict()
         for name, config in yml[entity].items():
-            out[entity][name] = u.get_colors((config[c.COLOR_NAME], config[c.COLOR_INDEX]))
+            out[f"{entity}_categ"][name] = u.get_colors(
+                (config[c.COLOR_NAME], config[c.COLOR_INDEX])
+            )
 
     for entity, df in dfs["trans_categ"].set_index("Name").groupby("Type"):
         out[f"{entity}_categ"] = OrderedDict()
