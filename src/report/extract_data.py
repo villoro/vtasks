@@ -57,7 +57,7 @@ def get_investment_or_liquid(dfs, yml, entity):
     series = {entity_name: u.serie_to_dict(dfg["Total"])}
 
     aux = OrderedDict()
-    for name, config in yml[c.INVEST].items():
+    for name, config in yml.items():
 
         # Check that accounts are in the config
         mlist = [x for x in config[c.ACCOUNTS] if x in dfg.columns]
@@ -100,10 +100,14 @@ def get_report_data():
         out[period] = get_raw_data(dfs, col_period)
 
     # Liquid, worth and invested
-    for name in [c.DF_LIQUID, c.DF_WORTH, c.DF_INVEST]:
+    for name, yml_name in [
+        (c.DF_LIQUID, c.LIQUID),
+        (c.DF_WORTH, c.INVEST),
+        (c.DF_INVEST, c.INVEST),
+    ]:
         dfs[name] = dfs[name].set_index(c.COL_DATE)
 
-        out["month"].update(get_investment_or_liquid(dfs, yml, name))
+        out["month"].update(get_investment_or_liquid(dfs, yml[yml_name], name))
 
     out["colors"] = get_colors(dfs, yml)
 
