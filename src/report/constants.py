@@ -46,11 +46,14 @@ DFS_ALL = [DF_TRANS] + DFS_ALL_FROM_DATA
 
 DEFAULT_COLORS = {
     EXPENSES: ("red", 500),
+    f"{EXPENSES}_smooth": ("red", 300),
     INCOMES: ("green", 500),
+    f"{INCOMES}_smooth": ("green", 300),
     "Incomes_passive": ("green", 700),
     EBIT: ("amber", 500),
-    "EBIT_cum": ("blue", 500),
-    LIQUID: ("blue", 400),
+    f"{EBIT}_smooth": ("amber", 300),
+    LIQUID: ("blue", 500),
+    f"{LIQUID}_smooth": ("blue", 300),
     "liquid_min_rec": ("grey", 700),
     "liquid_rec": ("grey", 400),
     "worth": ("lime", 400),
