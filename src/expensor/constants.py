@@ -14,7 +14,15 @@ VAR_PASSWORD = "EXPENSOR_PASSWORD"
 PATH_MONEY_LOVER = "/Money Lover/"
 FILE_TRANSACTIONS = "/transactions.xlsx"
 
-FORBIDDEN_CATEGORIES = ["Debt", "Loan", "Colección de pago", "Deuda", "Otros", "Pago", "Préstamo"]
+# fmt: off
+FORBIDDEN_CATEGORIES = [
+    "Debt", "Deuda",
+    "Préstamo", "Loan",
+    "Pago", "Repayment",
+    "Colección de pago", "Debt Collection",
+    "Otros",
+]
+# fmt: on
 
 COL_DATE = "Date"
 COL_MONTH_DATE = "Month_date"
