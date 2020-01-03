@@ -12,7 +12,7 @@ from config import PATH_ROOT
 PATH_LUIGI_YAML = f"{PATH_ROOT}runs/"
 
 
-class YamlTask(luigi.Task):
+class StandardTask(luigi.Task):
     """
         Extends luigi task, instead of calling run, one must call run_std
 
@@ -108,14 +108,27 @@ class YamlTask(luigi.Task):
         self.save_result()
 
 
-class InstallRequirementsTask(YamlTask):
+class GitFetchAndPull(StandardTask):
+    """ Install python requirements task """
+
+    sentences = ["git fetch", "git checkout master", "git pull origin master"]
+
+    def run_std(self):
+        for x in self.sentences:
+            check_output(x)
+
+
+class InstallRequirementsTask(StandardTask):
     """ Install python requirements task """
 
     def run_std(self):
         check_output("pip install -r requirements.txt")
 
+    def requires(self):
+        yield GitFetchAndPull(self.mdate)
 
-class StandardTask(YamlTask):
+
+class Task(StandardTask):
     """ Standard tasks required pre-tasks to be run """
 
     def requires(self):
