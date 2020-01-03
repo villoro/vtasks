@@ -1,6 +1,7 @@
 import os
 import time
 from datetime import date, datetime
+from subprocess import check_output
 
 import luigi
 import oyaml as yaml
@@ -105,3 +106,30 @@ class StandardTask(luigi.Task):
         # Run the task and store the resutls
         self.run_std()
         self.save_result()
+
+
+class GitFetchAndPull(StandardTask):
+    """ Install python requirements task """
+
+    sentences = ["git fetch", "git checkout master", "git pull origin master"]
+
+    def run_std(self):
+        for x in self.sentences:
+            check_output(x)
+
+
+class InstallRequirementsTask(StandardTask):
+    """ Install python requirements task """
+
+    def run_std(self):
+        check_output("pip install -r requirements.txt")
+
+    def requires(self):
+        yield GitFetchAndPull(self.mdate)
+
+
+class Task(StandardTask):
+    """ Standard tasks required pre-tasks to be run """
+
+    def requires(self):
+        yield InstallRequirementsTask(self.mdate)
