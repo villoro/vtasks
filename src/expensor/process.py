@@ -66,7 +66,7 @@ def upload_excel(df, filename):
     DBX.files_upload(output.getvalue(), filename, mode=dropbox.files.WriteMode.overwrite)
 
 
-def do(*args, **kwa):
+def main(*args, **kwa):
     """ Retrives all dataframes and update DFS global var """
 
     df = get_df_transactions()
@@ -76,4 +76,4 @@ def do(*args, **kwa):
 
 
 if __name__ == "__main__":
-    do()
+    main()
