@@ -115,7 +115,7 @@ class GitFetchAndPull(StandardTask):
 
     def run_std(self):
         for x in self.sentences:
-            check_output(x)
+            check_output(x, shell=True)
 
 
 class InstallRequirementsTask(StandardTask):
@@ -124,7 +124,7 @@ class InstallRequirementsTask(StandardTask):
     def run_std(self):
         # Install requirements on ubuntu or windows
         try:
-            check_output("pip3 install -r requirements.txt")
+            check_output("pip3 install -r requirements.txt", shell=True)
         except:
             check_output("pip install -r requirements.txt")
 
