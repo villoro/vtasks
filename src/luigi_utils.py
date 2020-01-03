@@ -122,7 +122,11 @@ class InstallRequirementsTask(StandardTask):
     """ Install python requirements task """
 
     def run_std(self):
-        check_output("pip install -r requirements.txt")
+        # Install requirements on ubuntu or windows
+        try:
+            check_output("pip3 install -r requirements.txt")
+        except:
+            check_output("pip install -r requirements.txt")
 
     def requires(self):
         yield GitFetchAndPull(self.mdate)
