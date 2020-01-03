@@ -1,6 +1,7 @@
 import os
 import time
 from datetime import date, datetime
+from subprocess import check_output
 
 import luigi
 import oyaml as yaml
@@ -11,7 +12,7 @@ from config import PATH_ROOT
 PATH_LUIGI_YAML = f"{PATH_ROOT}runs/"
 
 
-class StandardTask(luigi.Task):
+class YamlTask(luigi.Task):
     """
         Extends luigi task, instead of calling run, one must call run_std
 
@@ -105,3 +106,17 @@ class StandardTask(luigi.Task):
         # Run the task and store the resutls
         self.run_std()
         self.save_result()
+
+
+class InstallRequirementsTask(YamlTask):
+    """ Install python requirements task """
+
+    def run_std(self):
+        check_output("pip install -r requirements.txt")
+
+
+class StandardTask(YamlTask):
+    """ Standard tasks required pre-tasks to be run """
+
+    def requires(self):
+        yield InstallRequirementsTask(self.mdate)
