@@ -29,12 +29,6 @@ class StandardTask(luigi.Task):
     # This is meant to be overwritten
     module = "change_this_to_module_name"
 
-    def __init__(self, *args, **kwargs):
-        """ Extends init in order to store task name before task init """
-
-        self.name = self.__class__.__name__
-        super().__init__(*args, **kwargs)
-
     def output_filename(self, success=True):
         """ Get output filename """
 
@@ -45,7 +39,7 @@ class StandardTask(luigi.Task):
         os.makedirs(uri, exist_ok=True)
 
         # add task name
-        uri += self.name
+        uri += self.__class__.__name__
 
         # If task fails write a file with different name
         # This allows re-runs to retry the failed task while keeping info about fails
@@ -99,7 +93,7 @@ class StandardTask(luigi.Task):
 
     def run(self):
         # Store start time and task name
-        self.t_data["name"] = self.name
+        self.t_data["name"] = self.__class__.__name__
         self.start_time = time.time()
         self.t_data["start_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
