@@ -7,7 +7,7 @@ import luigi
 import oyaml as yaml
 from v_time import time_human
 
-from config import PATH_ROOT, SWITCH_TO_MASTER
+from config import PATH_ROOT, SWITCH_TO_MASTER, PRO
 from slackbot import send_message
 
 PATH_LUIGI_YAML = f"{PATH_ROOT}runs/"
@@ -124,9 +124,9 @@ class InstallRequirementsTask(StandardTask):
 
     def run_std(self):
         # Install requirements on ubuntu or windows
-        try:
+        if PRO:
             check_output("pip3 install -r requirements.txt", shell=True)
-        except:
+        else:
             check_output("pip install -r requirements.txt")
 
     def requires(self):
