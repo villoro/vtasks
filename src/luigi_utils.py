@@ -8,6 +8,7 @@ import oyaml as yaml
 from v_time import time_human
 
 from config import PATH_ROOT, SWITCH_TO_MASTER
+from slackbot import send_message
 
 PATH_LUIGI_YAML = f"{PATH_ROOT}runs/"
 
@@ -66,6 +67,9 @@ class StandardTask(luigi.Task):
         # Export them as an ordered yaml
         with open(self.output_filename(success), "w") as stream:
             yaml.dump(self.t_data, stream)
+
+        # Send slack notification
+        send_message(**self.t_data)
 
     def on_failure(self, exception):
 
