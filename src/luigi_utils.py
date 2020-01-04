@@ -7,7 +7,7 @@ import luigi
 import oyaml as yaml
 from v_time import time_human
 
-from config import PATH_ROOT
+from config import PATH_ROOT, SWITCH_TO_MASTER
 
 PATH_LUIGI_YAML = f"{PATH_ROOT}runs/"
 
@@ -108,8 +108,11 @@ class GitFetchAndPull(StandardTask):
     sentences = ["git fetch", "git checkout master", "git pull origin master"]
 
     def run_std(self):
-        for x in self.sentences:
-            check_output(x, shell=True)
+
+        # Allow to skip this in development environment
+        if SWITCH_TO_MASTER:
+            for x in self.sentences:
+                check_output(x, shell=True)
 
 
 class InstallRequirementsTask(StandardTask):
