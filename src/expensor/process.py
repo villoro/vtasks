@@ -8,13 +8,14 @@ import io
 import dropbox
 import pandas as pd
 
+from global_utilities import get_secret
 from . import constants as c
 from . import utilities as u
 
 import os
 
 
-DBX = dropbox.Dropbox(u.get_secret(c.VAR_DROPBOX_TOKEN))
+DBX = dropbox.Dropbox(get_secret(c.VAR_DROPBOX_TOKEN))
 
 
 def get_money_lover_filename():
