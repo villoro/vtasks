@@ -1,4 +1,5 @@
 import slack
+from time import sleep
 
 from config import PRO
 from global_utilities import get_secret
@@ -27,6 +28,9 @@ def send_message(name, success, duration_human=None, exception=None, **kwa):
         msg = f"*{name}*: {exception} :x:"
 
     response = CLIENT.chat_postMessage(channel="#events" if PRO else "#test", text=msg)
+
+    # To avoid some problems with luigi sleep a little bit
+    sleep(1)
 
     # Check result
     assert response["ok"]
