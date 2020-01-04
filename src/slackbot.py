@@ -26,6 +26,7 @@ def send_message(name, success, duration_human=None, exception=None, **kwa):
     else:
         msg = f"*{name}*: {exception} :x:"
 
-    CLIENT.chat_postMessage(channel="#events" if PRO else "#test", text=msg)
+    response = CLIENT.chat_postMessage(channel="#events" if PRO else "#test", text=msg)
 
-    print(name, success, duration_human, exception)
+    # Check result
+    assert response["ok"]
