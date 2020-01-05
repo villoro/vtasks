@@ -1,9 +1,9 @@
 import luigi
 
-from luigi_utils import Task, date
+from luigi_utils import StandardTask, date
 
 
-class ExpensorTask(Task):
+class ExpensorTask(StandardTask):
     module = "expensor"
 
 

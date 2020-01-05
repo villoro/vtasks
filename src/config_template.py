@@ -6,5 +6,4 @@
 
 
 PATH_ROOT = "C:/PYTHON/villoro_tasks/"
-SWITCH_TO_MASTER = False
 PRO = False
