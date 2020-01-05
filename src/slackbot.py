@@ -41,8 +41,6 @@ def send_message(name, success, duration_human=None, exception=None, **kwa):
 
 if __name__ == "__main__":
 
-    # Concat all params with spaces since this would be the name
-    name = " ".join(sys.argv[1:])
-
     # Send a message with the name as OK
+    name = sys.argv[1]
     slack_send(f"*{name}*: :heavy_check_mark:")
