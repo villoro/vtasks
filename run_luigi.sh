@@ -10,7 +10,7 @@ git checkout master
 git pull origin master
 
 # Activate virtual environment
-source venv/vtasks/bin/activate
+source /home/ubuntu/venv/vtasks/bin/activate
 
 # Install requirements
 pip install -r requirements.txt
