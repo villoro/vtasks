@@ -1,9 +1,19 @@
+import sys
 import slack
 
 from config import PRO
 from global_utilities import get_secret
 
 CLIENT = slack.WebClient(token=get_secret("SLACK_LUIGI_TOKEN"))
+
+
+def slack_send(msg):
+    """ Sends a message to slack """
+
+    response = CLIENT.chat_postMessage(channel="#events" if PRO else "#test", text=msg)
+
+    # Check result
+    assert response["ok"]
 
 
 def send_message(name, success, duration_human=None, exception=None, **kwa):
@@ -26,7 +36,13 @@ def send_message(name, success, duration_human=None, exception=None, **kwa):
     else:
         msg = f"*{name}*: {exception} :x:"
 
-    response = CLIENT.chat_postMessage(channel="#events" if PRO else "#test", text=msg)
+    slack_send(msg)
 
-    # Check result
-    assert response["ok"]
+
+if __name__ == "__main__":
+
+    # Concat all params with spaces since this would be the name
+    name = " ".join(sys.argv[1:])
+
+    # Send a message with the name as OK
+    slack_send(f"*{name}*: :heavy_check_mark:")
