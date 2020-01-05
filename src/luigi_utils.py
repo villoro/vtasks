@@ -7,7 +7,7 @@ import luigi
 import oyaml as yaml
 from v_time import time_human
 
-from config import PATH_ROOT, SWITCH_TO_MASTER
+from config import PATH_ROOT
 from slackbot import send_message
 
 PATH_LUIGI_YAML = f"{PATH_ROOT}runs/"
@@ -104,34 +104,3 @@ class StandardTask(luigi.Task):
         # Run the task and store the resutls
         self.run_std()
         self.save_result()
-
-
-class GitFetchAndPull(StandardTask):
-    """ Install python requirements task """
-
-    sentences = ["git fetch", "git checkout master", "git pull origin master"]
-
-    def run_std(self):
-
-        # Allow to skip this in development environment
-        if SWITCH_TO_MASTER:
-            for x in self.sentences:
-                check_output(x, shell=True)
-
-
-class InstallRequirementsTask(StandardTask):
-    """ Install python requirements task """
-
-    def run_std(self):
-        # Install requirements on ubuntu or windows
-        check_output("pip install -r requirements.txt", shell=True)
-
-    def requires(self):
-        yield GitFetchAndPull(self.mdate)
-
-
-class Task(StandardTask):
-    """ Standard tasks required pre-tasks to be run """
-
-    def requires(self):
-        yield InstallRequirementsTask(self.mdate)
