@@ -4,6 +4,7 @@ openpyxl==2.6.4
 oyaml==0.9
 pandas==0.25.3
 slackclient==2.5.0
+virtualenv==16.7.9
 v_crypt==1.0.4
 v_time==1.2.0
 xlrd==1.2.0
