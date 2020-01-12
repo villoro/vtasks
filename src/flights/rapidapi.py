@@ -22,7 +22,7 @@ def query_flights(
     origin,
     destination,
     day,
-    max_attempts=10,
+    max_attempts=20,
     seconds_sleep=1,
     country="ES",
     currency="EUR",
@@ -53,7 +53,7 @@ def query_flights(
 
         # If there are 'Too many requests' sleep a little
         elif response.status_code == 429:
-            sleep(attemp_num + 1)
+            sleep(2 * attemp_num + 1)
 
         # Raise unknown cases
         else:

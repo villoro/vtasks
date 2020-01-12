@@ -28,7 +28,7 @@ def retrive_all_flights():
     for origin, dest in tqdm(get_airports_pairs()):
         df = query_pair(origin, dest)
 
-        if df:
+        if df is not None:
             dfs.append(df)
 
     if dfs:
