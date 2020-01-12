@@ -1,6 +1,8 @@
+from datetime import date
+
 import luigi
 
-from luigi_utils import StandardTask, date
+from global_utilities.luigi import StandardTask
 
 
 class ExpensorTask(StandardTask):
