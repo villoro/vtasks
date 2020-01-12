@@ -19,7 +19,6 @@ HEADERS = {
 }
 
 
-@logger.catch
 def query_flights(
     origin,
     destination,

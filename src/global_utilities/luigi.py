@@ -84,7 +84,7 @@ class StandardTask(luigi.Task):
         self.disabled = True
 
         # If needed, do extra stuff (like log.error)
-        log.error(f"{self.name} failed: {exception}")
+        log.exception(exception)
 
         # End up raising the error to Luigi
         super().on_failure(exception)
@@ -105,7 +105,7 @@ class StandardTask(luigi.Task):
     def run(self):
         # Store start time and task name
         self.name = self.__class__.__name__
-        self.t_data["name"] = name
+        self.t_data["name"] = self.name
         self.start_time = time.time()
         self.t_data["start_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
