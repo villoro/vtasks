@@ -1,4 +1,5 @@
 dropbox==9.4.0
+loguru==0.4.0
 luigi==2.8.11
 openpyxl==2.6.4
 oyaml==0.9

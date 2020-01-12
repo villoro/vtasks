@@ -1,13 +1,13 @@
 import os
 import time
 from datetime import date, datetime
-from subprocess import check_output
 
 import luigi
 import oyaml as yaml
 from v_time import time_human
 
 from config import PATH_ROOT
+from .log import log
 from .slackbot import send_message
 
 PATH_LUIGI_YAML = f"{PATH_ROOT}runs/"
@@ -61,6 +61,9 @@ class StandardTask(luigi.Task):
         self.t_data["duration_human"] = time_human(self.t_data["duration"])
         self.t_data["success"] = success
 
+        if success:
+            log.info(self.t_data["name"] + " ended in " + self.t_data["duration_human"])
+
         # Allow extra params like 'exception'
         self.t_data.update(**kwa)
 
@@ -78,6 +81,7 @@ class StandardTask(luigi.Task):
         self.disabled = True
 
         # If needed, do extra stuff (like log.error)
+        log.error(self.t_data["name"] + f" failed: {exception}")
 
         # End up raising the error to Luigi
         super().on_failure(exception)

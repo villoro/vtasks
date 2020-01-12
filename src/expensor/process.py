@@ -5,6 +5,7 @@
 import pandas as pd
 
 import global_utilities as gu
+from global_utilities.log import log
 from . import constants as c
 from . import utilities as u
 
@@ -24,34 +25,24 @@ def get_money_lover_filename(dbx):
         except (TypeError, ValueError):
             pass
 
-    return max(names)
-
-
-def get_df_transactions(dbx):
-    """
-        Retrives the df with transactions. It will read the newest money lover excel file
-
-        Args:
-            dbx:    dropbox connector needed to call the dropbox api
-
-        Returns:
-            raw dataframe with transactions
-    """
-    filename = get_money_lover_filename(dbx)
-
-    df = gu.dropbox.read_excel(dbx, c.PATH_MONEY_LOVER + filename, index_col=0)
-    return u.fix_df_trans(df)
+    return c.PATH_MONEY_LOVER + max(names)
 
 
 def main(*args, **kwa):
     """ Retrives all dataframes and update DFS global var """
 
+    # Get data
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
+    filename = get_money_lover_filename(dbx)
+    df = gu.dropbox.read_excel(dbx, filename, index_col=0)
+    log.info(f"File '{filename}' read from dropbox")
 
-    df = get_df_transactions(dbx)
+    # Process dataframe
+    df = u.fix_df_trans(df)
+
+    # Store data
     gu.dropbox.write_excel(dbx, df, c.FILE_TRANSACTIONS)
-
-    return "Transactions processed"
+    log.info(f"Transactions processed")
 
 
 if __name__ == "__main__":
