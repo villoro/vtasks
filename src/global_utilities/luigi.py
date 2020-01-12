@@ -7,8 +7,8 @@ import oyaml as yaml
 from v_time import time_human
 
 from config import PATH_ROOT
+from slackbot import send_message
 from .log import log
-from .slackbot import send_message
 
 PATH_LUIGI_YAML = f"{PATH_ROOT}runs/"
 
