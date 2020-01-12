@@ -172,6 +172,7 @@ def query_pair(origin, destination, n_days=366):
         # Only do first day of month
         if (query_day.day != 1) and (query_day != start_day):
             log.debug(f"Skiping day '{query_day}'")
+            continue
 
         response = query_flights(origin, destination, query_day)
         data = response.json()
