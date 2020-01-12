@@ -35,19 +35,20 @@ def read_excel(dbx, filename, **kwa):
     return pd.read_excel(io.BytesIO(res.content), **kwa)
 
 
-def write_excel(dbx, df, filename):
+def write_excel(dbx, df, filename, **kwa):
     """
         Write an excel to dropbox from a pandas dataframe
 
         Args:
             dbx:
             filename:   name of the excel file
+            **kwa:      keyworded arguments for the df.to_excel inner function
     """
 
     output = io.BytesIO()
 
     writer = pd.ExcelWriter(output)
-    df.to_excel(writer)
+    df.to_excel(writer, **kwa)
 
     writer.save()
     output.seek(0)

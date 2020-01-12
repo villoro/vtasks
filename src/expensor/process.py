@@ -2,13 +2,9 @@
     Extract transactions from money lover file
 """
 
-import os
-import io
-
-import dropbox
 import pandas as pd
 
-from global_utilities.gu_dropbox import get_dbx_connector, read_excel, write_excel
+import global_utilities as gu
 from . import constants as c
 from . import utilities as u
 
@@ -43,17 +39,17 @@ def get_df_transactions(dbx):
     """
     filename = get_money_lover_filename(dbx)
 
-    df = read_excel(dbx, c.PATH_MONEY_LOVER + filename, index_col=0)
+    df = gu.dropbox.read_excel(dbx, c.PATH_MONEY_LOVER + filename, index_col=0)
     return u.fix_df_trans(df)
 
 
 def main(*args, **kwa):
     """ Retrives all dataframes and update DFS global var """
 
-    dbx = get_dbx_connector(c.VAR_DROPBOX_TOKEN)
+    dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
 
     df = get_df_transactions(dbx)
-    write_excel(dbx, df, c.FILE_TRANSACTIONS)
+    gu.dropbox.write_excel(dbx, df, c.FILE_TRANSACTIONS)
 
     return "Transactions processed"
 
