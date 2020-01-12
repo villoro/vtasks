@@ -77,7 +77,7 @@ def fix_places(df, data):
 
     # Rename places for origin and destination
     for x in [c.COL_ORIGIN, c.COL_DESTINATION]:
-        df[f"{x}Id"] = df[x].replace(places)
+        df[x] = df[f"{x}Id"].replace(places)
         df = df.drop(f"{x}Id", axis=1)
 
     return df
@@ -142,7 +142,7 @@ def parse_data(data):
     df = fix_places(df, data)
     df = fix_carriers(df, data)
 
-    df[c.COL_INSTERTED] = date.today()
+    df[c.COL_INSTERTED] = pd.to_datetime(date.today())
 
     return df
 
@@ -174,4 +174,5 @@ def query_pair(origin, destination, n_days=366):
         if data["Quotes"]:
             dfs.append(parse_data(data))
 
-    return pd.concat(dfs).reset_index(drop=True)
+    if dfs:
+        return pd.concat(dfs).reset_index(drop=True)
