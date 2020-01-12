@@ -9,7 +9,7 @@ from global_utilities import get_secret
 
 
 BASE_URL = (
-    "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsedates/v1.0/"
+    "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browseroutes/v1.0/"
 )
 
 HEADERS = {
@@ -18,9 +18,18 @@ HEADERS = {
 }
 
 
-def query_flights(origin, destination, day, max_attempts=10, seconds_sleep=1):
+def query_flights(
+    origin,
+    destination,
+    day,
+    country="ES",
+    currency="EUR",
+    locale="en-US",
+    max_attempts=10,
+    seconds_sleep=1,
+):
 
-    url = f"{BASE_URL}ES/EUR/en-US/{origin}/{destination}/{day:%Y-%m-%d}"
+    url = f"{BASE_URL}{country}/{currency}/{locale}/{origin}/{destination}/{day:%Y-%m-%d}"
 
     for attemp_num in range(max_attempts):
         response = requests.get(url, headers=HEADERS)
@@ -103,14 +112,20 @@ def parse_data(data):
     return df
 
 
-def query_pair(origin, destination, n_days=360):
+def query_pair(origin, destination, n_days=366):
+
+    # Start at day 1 since it will only query when day==1
+    start_day = date.today().replace(day=1)
 
     dfs = []
-
     for x in tqdm(range(n_days)):
-        day = date.today() + timedelta(x)
+        query_day = start_day + timedelta(x)
 
-        response = query_flights("BCN", "CAG", day)
+        # Only do first day of month
+        if query_day.day != 1:
+            break
+
+        response = query_flights("BCN", "CAG", query_day)
         data = response.json()
 
         if data["Quotes"]:
