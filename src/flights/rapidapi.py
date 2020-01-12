@@ -1,10 +1,43 @@
 import requests
-from datetime import date
+from time import sleep
+from datetime import date, timedelta
 
 import pandas as pd
-
+from tqdm import tqdm
 
 from global_utilities import get_secret
+
+
+BASE_URL = (
+    "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsedates/v1.0/"
+)
+
+HEADERS = {
+    "x-rapidapi-host": "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com",
+    "x-rapidapi-key": get_secret("RAPIDAPI_KEY"),
+}
+
+
+def query_flights(origin, destination, day, max_attempts=10, seconds_sleep=1):
+
+    url = f"{BASE_URL}ES/EUR/en-US/{origin}/{destination}/{day:%Y-%m-%d}"
+
+    for attemp_num in range(max_attempts):
+        response = requests.get(url, headers=HEADERS)
+
+        if response.status_code == 200:
+            sleep(seconds_sleep)
+            return response
+
+        # If there are 'Too many requests' sleep a little
+        elif response.status_code == 429:
+            sleep(attemp_num + 1)
+
+        # Raise unknown cases
+        else:
+            response.raise_for_status()
+
+    raise TimeoutError("TimeOut")
 
 
 def fix_places(df, data):
@@ -68,3 +101,19 @@ def parse_data(data):
     df["Inserted"] = date.today()
 
     return df
+
+
+def query_pair(origin, destination, n_days=360):
+
+    dfs = []
+
+    for x in tqdm(range(n_days)):
+        day = date.today() + timedelta(x)
+
+        response = query_flights("BCN", "CAG", day)
+        data = response.json()
+
+        if data["Quotes"]:
+            dfs.append(parse_data(data))
+
+    return pd.concat(dfs)
