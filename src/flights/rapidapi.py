@@ -6,7 +6,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from global_utilities import get_secret
-
+from . import constants as c
 
 BASE_URL = (
     "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browseroutes/v1.0/"
@@ -76,9 +76,9 @@ def fix_places(df, data):
     places = df_places.set_index("PlaceId")["IataCode"].to_dict()
 
     # Rename places for origin and destination
-    for x in ["OriginId", "DestinationId"]:
-        df[x.replace("Id", "")] = df[x].replace(places)
-        df = df.drop(x, axis=1)
+    for x in [c.COL_ORIGIN, c.COL_DESTINATION]:
+        df[f"{x}Id"] = df[x].replace(places)
+        df = df.drop(f"{x}Id", axis=1)
 
     return df
 
@@ -96,7 +96,7 @@ def fix_carriers(df, data):
     carriers = df_carriers.set_index("CarrierId")["Name"].to_dict()
 
     # Rename carriers
-    df["Carrier"] = df["Carrier"].replace(carriers)
+    df[c.COL_CARRIER] = df[c.COL_CARRIER].replace(carriers)
 
     return df
 
@@ -114,7 +114,7 @@ def retrive_quotes(data):
         # For all possible Carrier, create an entry
         for carrier in quote.pop("CarrierIds"):
             aux = quote.copy()
-            aux.update({"Carrier": carrier})
+            aux.update({c.COL_CARRIER: carrier})
 
             out.append(aux)
 
@@ -132,14 +132,17 @@ def parse_data(data):
 
     df = retrive_quotes(data)
 
+    # Rename columns
+    df = df.rename(columns=c.COL_RENAMES)
+
     # Fix dates
-    for x in ["QuoteDateTime", "DepartureDate"]:
+    for x in [c.COL_QUOTE_DATE, c.COL_DATE]:
         df[x] = pd.to_datetime(df[x])
 
     df = fix_places(df, data)
     df = fix_carriers(df, data)
 
-    df["Inserted"] = date.today()
+    df[c.COL_INSTERTED] = date.today()
 
     return df
 
@@ -165,7 +168,7 @@ def query_pair(origin, destination, n_days=366):
         if (query_day.day != 1) and (query_day != start_day):
             continue
 
-        response = query_flights("BCN", "CAG", query_day)
+        response = query_flights(origin, destination, query_day)
         data = response.json()
 
         if data["Quotes"]:

@@ -2,7 +2,7 @@
     Constants and config vars
 """
 
-VAR_DROPBOX_TOKEN = "EXPENSOR_DROPBOX_TOKEN"
+VAR_DROPBOX_TOKEN = "DROPBOX_TOKEN_EXPENSOR"
 
 PATH_MONEY_LOVER = "/Money Lover/"
 FILE_TRANSACTIONS = "/transactions.xlsx"
