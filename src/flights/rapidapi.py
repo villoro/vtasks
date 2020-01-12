@@ -122,8 +122,8 @@ def query_pair(origin, destination, n_days=366):
         query_day = start_day + timedelta(x)
 
         # Only do first day of month
-        if query_day.day != 1:
-            break
+        if (query_day.day != 1) and (query_day != start_day):
+            continue
 
         response = query_flights("BCN", "CAG", query_day)
         data = response.json()
@@ -131,4 +131,4 @@ def query_pair(origin, destination, n_days=366):
         if data["Quotes"]:
             dfs.append(parse_data(data))
 
-    return pd.concat(dfs)
+    return pd.concat(dfs).reset_index(drop=True)
