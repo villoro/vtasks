@@ -1,10 +1,17 @@
+from datetime import date
+
 import luigi
 
-from luigi_utils import StandardTask, date
+from global_utilities.luigi import StandardTask
+from global_utilities.log import log
 
 
 class ExpensorTask(StandardTask):
     module = "expensor"
+
+
+class FlightsTask(StandardTask):
+    module = "flights"
 
 
 class DoAllTask(luigi.WrapperTask):
@@ -12,7 +19,12 @@ class DoAllTask(luigi.WrapperTask):
 
     def requires(self):
         yield ExpensorTask(self.mdate)
+        yield FlightsTask(self.mdate)
 
 
 if __name__ == "__main__":
+
+    log.info("Starting vtasks")
     luigi.build([DoAllTask()])
+
+    log.info("End of vtasks")

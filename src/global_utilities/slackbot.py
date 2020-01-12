@@ -2,7 +2,7 @@ import sys
 import slack
 
 from config import PRO
-from global_utilities import get_secret
+from .secrets import get_secret
 
 CLIENT = slack.WebClient(token=get_secret("SLACK_LUIGI_TOKEN"))
 
