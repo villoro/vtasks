@@ -1,13 +1,13 @@
 import os
 import time
 from datetime import date, datetime
-from subprocess import check_output
 
 import luigi
 import oyaml as yaml
 from v_time import time_human
 
 from config import PATH_ROOT
+from .log import log
 from .slackbot import send_message
 
 PATH_LUIGI_YAML = f"{PATH_ROOT}runs/"
@@ -55,11 +55,17 @@ class StandardTask(luigi.Task):
     def save_result(self, success=True, **kwa):
         """ Stores result as a yaml file """
 
+        duration = time.time() - self.start_time
+        duration_human = time_human(duration)
+
         # Store basic execution info
         self.t_data["end_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.t_data["duration"] = time.time() - self.start_time
-        self.t_data["duration_human"] = time_human(self.t_data["duration"])
+        self.t_data["duration"] = duration
+        self.t_data["duration_human"] = duration_human
         self.t_data["success"] = success
+
+        if success:
+            log.info(f"{self.name} ended in {duration_human}")
 
         # Allow extra params like 'exception'
         self.t_data.update(**kwa)
@@ -78,6 +84,7 @@ class StandardTask(luigi.Task):
         self.disabled = True
 
         # If needed, do extra stuff (like log.error)
+        log.exception(exception)
 
         # End up raising the error to Luigi
         super().on_failure(exception)
@@ -97,10 +104,12 @@ class StandardTask(luigi.Task):
 
     def run(self):
         # Store start time and task name
-        self.t_data["name"] = self.__class__.__name__
+        self.name = self.__class__.__name__
+        self.t_data["name"] = self.name
         self.start_time = time.time()
         self.t_data["start_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         # Run the task and store the resutls
+        log.info(f"Starting {self.name}")
         self.run_std()
         self.save_result()

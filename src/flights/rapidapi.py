@@ -6,6 +6,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from global_utilities import get_secret
+from global_utilities.log import log
 from . import constants as c
 
 BASE_URL = (
@@ -53,12 +54,14 @@ def query_flights(
 
         # If there are 'Too many requests' sleep a little
         elif response.status_code == 429:
+            log.warning(f"API limit reached at attempt {attemp_num + 1}")
             sleep(2 * attemp_num + 1)
 
         # Raise unknown cases
         else:
             response.raise_for_status()
 
+    log.error(f"Number max of attempts reached ({max_attempts})")
     raise TimeoutError("TimeOut")
 
 
@@ -160,13 +163,15 @@ def query_pair(origin, destination, n_days=366):
     # Start at day 1 since it will only query when day==1
     start_day = date.today()
 
+    log.info(f"Quering flights from '{origin}' to '{destination}'")
+
     dfs = []
     for x in tqdm(range(n_days)):
         query_day = start_day + timedelta(x)
 
         # Only do first day of month
         if (query_day.day != 1) and (query_day != start_day):
-            continue
+            log.debug(f"Skiping day '{query_day}'")
 
         response = query_flights(origin, destination, query_day)
         data = response.json()
@@ -176,3 +181,5 @@ def query_pair(origin, destination, n_days=366):
 
     if dfs:
         return pd.concat(dfs).reset_index(drop=True)
+    else:
+        log.warning(f"No flights from '{origin}' to '{destination}'")

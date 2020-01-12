@@ -3,6 +3,7 @@ from datetime import date
 import luigi
 
 from global_utilities.luigi import StandardTask
+from global_utilities.log import log
 
 
 class ExpensorTask(StandardTask):
@@ -22,4 +23,8 @@ class DoAllTask(luigi.WrapperTask):
 
 
 if __name__ == "__main__":
+
+    log.info("Starting vtasks")
     luigi.build([DoAllTask()])
+
+    log.info("End of vtasks")
