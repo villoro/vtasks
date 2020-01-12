@@ -22,12 +22,25 @@ def query_flights(
     origin,
     destination,
     day,
+    max_attempts=10,
+    seconds_sleep=1,
     country="ES",
     currency="EUR",
     locale="en-US",
-    max_attempts=10,
-    seconds_sleep=1,
 ):
+    """
+        Query flights iterating until there is a result
+
+        Args:
+            origin:         code for origin airport
+            destination:    code for destination airport
+            day:            day for the flights [date]
+            max_attempts:   number of retries
+            seconds_sleep:  seconds to sleep before returning a result
+            country:        code for country (default: ES)
+            currency:       code for currency (default: EUR)
+            locale:         code for output info (default: en-US)
+    """
 
     url = f"{BASE_URL}{country}/{currency}/{locale}/{origin}/{destination}/{day:%Y-%m-%d}"
 
@@ -50,6 +63,13 @@ def query_flights(
 
 
 def fix_places(df, data):
+    """
+        Map Places id to actual airport code
+        
+        Args:
+            df:     dataframe with flights
+            data:   output of the request as dict containg 'Places' info
+    """
 
     # Get places
     df_places = pd.DataFrame(data["Places"])
@@ -64,7 +84,13 @@ def fix_places(df, data):
 
 
 def fix_carriers(df, data):
-
+    """
+        Map Carriers id to actual carrier name
+        
+        Args:
+            df:     dataframe with flights
+            data:   output of the request as dict containg 'Carriers' info
+    """
     # Get carriers
     df_carriers = pd.DataFrame(data["Carriers"])
     carriers = df_carriers.set_index("CarrierId")["Name"].to_dict()
@@ -76,6 +102,9 @@ def fix_carriers(df, data):
 
 
 def retrive_quotes(data):
+    """
+        Get info from quotes as a pandas dataframe
+    """
 
     out = []
     for quote in data["Quotes"]:
@@ -97,6 +126,9 @@ def retrive_quotes(data):
 
 
 def parse_data(data):
+    """
+        Parse all data from the request and create a pandas dataframe with fligths
+    """
 
     df = retrive_quotes(data)
 
@@ -113,9 +145,17 @@ def parse_data(data):
 
 
 def query_pair(origin, destination, n_days=366):
+    """
+        Query all flights between 2 airports
+
+        Args:
+            origin:         code for origin airport
+            destination:    code for destination airport
+            n_days:         max days of history
+    """
 
     # Start at day 1 since it will only query when day==1
-    start_day = date.today().replace(day=1)
+    start_day = date.today()
 
     dfs = []
     for x in tqdm(range(n_days)):
