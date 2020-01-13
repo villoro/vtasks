@@ -47,14 +47,14 @@ def main(mdate):
     df_history = gu.dropbox.read_excel(dbx, c.FILE_FLIGHTS)
 
     # Get new data
-    df = retrive_all_flights()
+    df_new = retrive_all_flights()
 
     # Merge data
     log.info("Merging flights history")
-    df_out = pd.concat([df_history, df]).drop_duplicates(c.COLS_INDEX)
+    df_out = pd.concat([df_history, df_new]).drop_duplicates(c.COLS_INDEX)
 
     # Store data
-    gu.dropbox.write_excel(dbx, df, c.FILE_FLIGHTS, index=False)
+    gu.dropbox.write_excel(dbx, df_out, c.FILE_FLIGHTS, index=False)
     log.info("Flights exported to dropbox")
 
 
