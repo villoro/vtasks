@@ -3,12 +3,10 @@
 """
 
 from collections import OrderedDict
-import oyaml as yaml
-import pandas as pd
 
+import global_utilities as gu
 from . import constants as c
 from . import utilities as u
-from .data_loader import get_dfs, get_config, upload_yaml
 
 
 def get_raw_data(dfs, col_period):
@@ -92,8 +90,13 @@ def get_colors(dfs, yml):
 def get_report_data():
     """ Create the report """
 
-    dfs = get_dfs()
-    yml = get_config()
+    dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
+
+    # Get dfs
+    dfs = gu.dropbox.read_excel(dbx, c.FILE_DATA, c.DFS_ALL_FROM_DATA)
+    dfs[c.DF_TRANS] = gu.dropbox.read_excel(dbx, c.FILE_TRANSACTIONS)
+
+    yml = gu.dropbox.read_yaml(dbx, c.FILE_CONFIG)
 
     out = {}
 

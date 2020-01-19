@@ -2,16 +2,12 @@
     Constants and config vars
 """
 
-from config import PATH_ROOT
-
-FILE_SECRETS = f"{PATH_ROOT}secrets.yaml"
-FILE_MASTER_PASSWORD = f"{PATH_ROOT}master.password"
 
 FILE_TRANSACTIONS = "/transactions.xlsx"
 FILE_DATA = "/data.xlsx"
 FILE_CONFIG = "/config.yml"
 
-VAR_DROPBOX_TOKEN = "EXPENSOR_DROPBOX_TOKEN"
+VAR_DROPBOX_TOKEN = "DROPBOX_TOKEN_EXPENSOR"
 
 PATH_MONEY_LOVER = "/Money Lover/"
 FILE_TRANSACTIONS = "/transactions.xlsx"

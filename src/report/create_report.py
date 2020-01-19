@@ -7,11 +7,13 @@ import jinja2
 
 from config import PATH_ROOT
 
-from .data_loader import read_yaml, upload_text_file
+import global_utilities as gu
 
 
 def create_report(filename=f"{PATH_ROOT}data.yaml"):
     """ Creates the report """
+
+    dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
 
     # Set up jinja to render parent templates and retrive template
     template = jinja2.Environment(
@@ -19,7 +21,7 @@ def create_report(filename=f"{PATH_ROOT}data.yaml"):
     ).get_template("template.html")
 
     # Read data
-    data = read_yaml("/data.yaml")
+    data = gu.dropbox.read_yaml(dbx, "/data.yaml")
 
     # Create report
-    upload_text_file(template.render(**data), "/report.html")
+    gu.dropbox.write_textfile(dbx, template.render(**data), "/report.html")
