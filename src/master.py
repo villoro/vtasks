@@ -8,10 +8,12 @@ from global_utilities.log import log
 
 class ExpensorTask(StandardTask):
     module = "expensor"
+    priority = 80
 
 
 class FlightsTask(StandardTask):
     module = "flights"
+    priority = 50
 
 
 class DoAllTask(luigi.WrapperTask):
