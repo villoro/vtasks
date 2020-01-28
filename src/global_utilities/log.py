@@ -6,10 +6,12 @@ from datetime import date
 
 from loguru import logger as log
 
+from config import PATH_ROOT
+
 # fmt: off
 CONFIG = {
     "handlers": [
-    	{"sink": f"logs/{date.today():%Y_%m_%d}.log", "level": "INFO"}
+    	{"sink": f"{PATH_ROOT}logs/{date.today():%Y_%m_%d}.log", "level": "INFO"}
     ]
 }
 # fmt: om
