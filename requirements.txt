@@ -9,4 +9,5 @@ tqdm==4.41.1
 virtualenv==16.7.9
 v_crypt==1.0.4
 v_time==1.2.0
+v-palette>=1.1.0
 xlrd==1.2.0
