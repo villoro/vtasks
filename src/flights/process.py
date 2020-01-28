@@ -1,8 +1,7 @@
 import pandas as pd
-from tqdm import tqdm
 
 import global_utilities as gu
-from global_utilities.log import log
+from global_utilities import log
 
 from . import constants as c
 from .rapidapi import query_pair
@@ -28,7 +27,8 @@ def retrive_all_flights():
     """ Get a dataframe with all flights """
 
     dfs = []
-    for origin, dest in tqdm(get_airports_pairs()):
+    for origin, dest in get_airports_pairs():
+
         df = query_pair(origin, dest)
 
         if df is not None:
