@@ -51,3 +51,5 @@ dist/
 # --------------------- PROJECT EXCLUSIONS ------------------------------------
 *config.py
 runs/
+
+*Test.ipynb

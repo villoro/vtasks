@@ -6,8 +6,8 @@ from global_utilities.luigi import StandardTask
 from global_utilities.log import log
 
 
-class ExpensorTask(StandardTask):
-    module = "expensor"
+class MoneyLoverTask(StandardTask):
+    module = "money_lover"
     priority = 80
 
 
@@ -20,7 +20,7 @@ class DoAllTask(luigi.WrapperTask):
     mdate = luigi.DateParameter(default=date.today())
 
     def requires(self):
-        yield ExpensorTask(self.mdate)
+        yield MoneyLoverTask(self.mdate)
         yield FlightsTask(self.mdate)
 
 
