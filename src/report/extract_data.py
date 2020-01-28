@@ -116,4 +116,8 @@ def get_report_data():
 
     out["colors"] = get_colors(dfs, yml)
 
-    upload_yaml(out, "/data.yaml")  # TODO: change that name
+    gu.dropbox.write_yaml(dbx, out, "/data.yaml")  # TODO: change that name
+
+
+if __name__ == "__main__":
+    get_report_data()

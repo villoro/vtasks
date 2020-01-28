@@ -31,7 +31,7 @@ def read_yaml(dbx, filename):
             filename:   name of the yaml file
     """
 
-    _, res = DBX.files_download(filename)
+    _, res = dbx.files_download(filename)
     with io.BytesIO(res.content) as stream:
         return yaml.safe_load(stream)
 

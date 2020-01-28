@@ -8,6 +8,7 @@ import jinja2
 from config import PATH_ROOT
 
 import global_utilities as gu
+from . import constants as c
 
 
 def create_report(filename=f"{PATH_ROOT}data.yaml"):
@@ -17,7 +18,7 @@ def create_report(filename=f"{PATH_ROOT}data.yaml"):
 
     # Set up jinja to render parent templates and retrive template
     template = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(f"{PATH_ROOT}report/templates")
+        loader=jinja2.FileSystemLoader(f"{PATH_ROOT}src/report/templates")
     ).get_template("template.html")
 
     # Read data
@@ -25,3 +26,7 @@ def create_report(filename=f"{PATH_ROOT}data.yaml"):
 
     # Create report
     gu.dropbox.write_textfile(dbx, template.render(**data), "/report.html")
+
+
+if __name__ == "__main__":
+    create_report()
