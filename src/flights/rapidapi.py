@@ -6,7 +6,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from global_utilities import get_secret
-from global_utilities.log import log
+from global_utilities import log
 from . import constants as c
 
 BASE_URL = (

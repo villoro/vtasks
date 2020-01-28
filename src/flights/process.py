@@ -2,7 +2,7 @@ import pandas as pd
 from tqdm import tqdm
 
 import global_utilities as gu
-from global_utilities.log import log
+from global_utilities import log
 
 from . import constants as c
 from .rapidapi import query_pair

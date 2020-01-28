@@ -5,7 +5,7 @@
 import pandas as pd
 
 import global_utilities as gu
-from global_utilities.log import log
+from global_utilities import log
 from . import constants as c
 from . import utilities as u
 
