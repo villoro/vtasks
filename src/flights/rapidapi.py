@@ -3,7 +3,6 @@ from time import sleep
 from datetime import date, timedelta
 
 import pandas as pd
-from tqdm import tqdm
 
 from global_utilities import get_secret
 from global_utilities import log
@@ -46,6 +45,9 @@ def query_flights(
     url = f"{BASE_URL}{country}/{currency}/{locale}/{origin}/{destination}/{day:%Y-%m-%d}"
 
     for attemp_num in range(max_attempts):
+
+        log.info(f"Quering {origin}-{destination} for date '{day}' (attempt {attemp_num})")
+
         response = requests.get(url, headers=HEADERS)
 
         if response.status_code == 200:
@@ -166,7 +168,7 @@ def query_pair(origin, destination, n_days=366):
     log.info(f"Quering flights from '{origin}' to '{destination}'")
 
     dfs = []
-    for x in tqdm(range(n_days)):
+    for x in range(n_days):
         query_day = start_day + timedelta(x)
 
         # Only do first day of month
