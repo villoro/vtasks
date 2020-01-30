@@ -2,6 +2,7 @@
     Create the raw data for the reprot
 """
 
+from datetime import date
 from collections import OrderedDict
 
 import global_utilities as gu
@@ -87,7 +88,7 @@ def get_colors(dfs, yml):
     return out
 
 
-def get_report_data():
+def get_report_data(mdate=date.today()):
     """ Create the report """
 
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
@@ -116,7 +117,7 @@ def get_report_data():
 
     out["colors"] = get_colors(dfs, yml)
 
-    gu.dropbox.write_yaml(dbx, out, "/data.yaml")  # TODO: change that name
+    gu.dropbox.write_yaml(dbx, out, f"/report_data/{mdate:%Y_%m}.yaml")
 
 
 if __name__ == "__main__":

@@ -2,6 +2,8 @@
     Create the raw data for the reprot
 """
 
+from datetime import date
+
 import oyaml as yaml
 import jinja2
 
@@ -11,7 +13,7 @@ import global_utilities as gu
 from . import constants as c
 
 
-def create_report(filename=f"{PATH_ROOT}data.yaml"):
+def create_report(mdate=date.today()):
     """ Creates the report """
 
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
@@ -22,10 +24,10 @@ def create_report(filename=f"{PATH_ROOT}data.yaml"):
     ).get_template("template.html")
 
     # Read data
-    data = gu.dropbox.read_yaml(dbx, "/data.yaml")
+    data = gu.dropbox.read_yaml(dbx, f"/report_data/{mdate:%Y_%m}.yaml")
 
     # Create report
-    gu.dropbox.write_textfile(dbx, template.render(**data), "/report.html")
+    gu.dropbox.write_textfile(dbx, template.render(**data), f"/reports/{mdate:%Y_%m}.html")
 
 
 if __name__ == "__main__":
