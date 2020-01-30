@@ -17,7 +17,7 @@ class FlightsTask(StandardTask):
 
 
 class ReportsTask(StandardTask):
-    module = "report"
+    module = "reports"
     priority = 80
 
     def requires(self):
