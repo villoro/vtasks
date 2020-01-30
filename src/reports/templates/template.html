@@ -348,12 +348,21 @@
     title: {text: 'Worth evolution'},
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
-    plotOptions: options_maker_enabled,
+    plotOptions: options_maker_enabled_stacked,
     series: [
       {
         name: "Worth",
         color: "{{ colors['worth'] }}",
+        type: 'column',
         data: [{% for mdate, value in month['worth'].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Liquid",
+        color: "{{ colors['liquid'] }}",
+        type: 'column',
+        data: [{% for mdate, value in month["liquid"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
@@ -363,19 +372,49 @@
     title: {text: 'Invested evolution'},
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
-    plotOptions: options_maker_enabled,
+    plotOptions: options_maker_enabled_stacked,
     series: [
       {
         name: "Invested",
+        type: 'column',
         color: "{{ colors['invest'] }}",
         data: [{% for mdate, value in month['invest'].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+       {
+        name: "Liquid",
+        color: "{{ colors['liquid'] }}",
+        type: 'column',
+        data: [{% for mdate, value in month["liquid"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
     ],
   });
   Highcharts.chart('INV_performance_by_type', {title: {text: 'Performance by type'},});
-  Highcharts.chart('INV_worth_by_type', {title: {text: 'Worth by type'},});
+  Highcharts.chart('INV_worth_by_type', {
+    title: {text: 'Worth by type'},
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
+    series: [
+      {
+        name: "Total",
+        color: "#000000",
+        data: [{% for mdate, value in month["worth"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% for name, data in month["worth_by_groups"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors['investment_categ'][name] }}",
+        type: 'column',
+        data: [{% for mdate, value in data.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
 
   // FIRE SECTION
   Highcharts.chart('FIRE_savings_ratio_month', {title: {text: 'Savings ratio by month'},});

@@ -52,7 +52,7 @@ DEFAULT_COLORS = {
     f"{LIQUID}_smooth": ("blue", 300),
     "liquid_min_rec": ("grey", 700),
     "liquid_rec": ("grey", 400),
-    "worth": ("teal", 400),
-    "invest": ("lime", 400),
+    "worth": ("lime", 400),
+    "invest": ("orange", 400),
     "savings": ("purple", 500),
 }
