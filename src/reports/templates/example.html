@@ -146,6 +146,9 @@
 
       <!-- PIE -->
       <div id="pies" class="section">
+        <div class="w3-card w3-round w3-center w3-white elem">
+          <div id="PIE_last_year" class="plot" style="height: 450px"></div>
+        </div>
       </div>
 
       <!-- LIQ -->
@@ -281,6 +284,8 @@
       ],
     });
     Highcharts.chart('EVO_incomes_by_categ', {title: {text: 'Incomes evolution by category'},});
+
+    Highcharts.chart('PIE_last_year', {title: {text: 'Year evolution'},});
 
 
     Highcharts.chart('COMP_incomes', {title: {text: 'Expenses comparison'},});
