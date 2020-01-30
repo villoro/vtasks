@@ -89,7 +89,7 @@ def get_colors(dfs, yml):
     return out
 
 
-def get_report_data(mdate=date.today()):
+def main(mdate=date.today()):
     """ Create the report """
 
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
@@ -126,4 +126,4 @@ def get_report_data(mdate=date.today()):
 
 
 if __name__ == "__main__":
-    get_report_data()
+    main()

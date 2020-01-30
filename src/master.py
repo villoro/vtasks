@@ -8,7 +8,7 @@ from global_utilities.log import log
 
 class MoneyLoverTask(StandardTask):
     module = "money_lover"
-    priority = 80
+    priority = 100
 
 
 class FlightsTask(StandardTask):
@@ -16,11 +16,19 @@ class FlightsTask(StandardTask):
     priority = 50
 
 
+class ReportsTask(StandardTask):
+    module = "report"
+    priority = 80
+
+    def requires(self):
+        yield MoneyLoverTask(self.mdate)
+
+
 class DoAllTask(luigi.WrapperTask):
     mdate = luigi.DateParameter(default=date.today())
 
     def requires(self):
-        yield MoneyLoverTask(self.mdate)
+        yield ReportsTask(self.mdate)
         yield FlightsTask(self.mdate)
 
 

@@ -14,7 +14,7 @@ from global_utilities import log
 from . import constants as c
 
 
-def create_report(mdate=date.today()):
+def main(mdate=date.today()):
     """ Creates the report """
 
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
@@ -33,4 +33,4 @@ def create_report(mdate=date.today()):
 
 
 if __name__ == "__main__":
-    create_report()
+    main()
