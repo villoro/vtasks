@@ -53,5 +53,6 @@ DEFAULT_COLORS = {
     "liquid_min_rec": ("grey", 700),
     "liquid_rec": ("grey", 400),
     "worth": ("lime", 400),
+    "invest": ("orange", 400),
     "savings": ("purple", 500),
 }
