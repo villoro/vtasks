@@ -132,26 +132,24 @@
 {% block plots %}
 <script>
 
+  // SHARED INFO
+  var axe_no_title = {title: {text: null}}
+  var options_maker_enabled = {series: {marker: {enabled: false}}}
+  var options_maker_enabled_stacked = {
+    series: {
+      marker: {enabled: false},
+      stacking: 'normal',
+    }
+  }
+
   // EVOLUTION SECTION
   Highcharts.chart('EVO_evolution_month', {
     title: {
       text: 'Month evolution'
     },
-    xAxis: {
-      type: 'datetime',
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        },
-      }
-    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
     series: [
       {% for name in ["Incomes", "Expenses", "EBIT"] %}{
         name: "{{ name }}",
@@ -166,21 +164,9 @@
     title: {
       text: 'Year evolution'
     },
-    xAxis: {
-      type: 'datetime',
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        },
-      }
-    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
     series: [
       {% for name in ["Incomes", "Expenses", "EBIT"] %}{
         name: "{{ name }}",
@@ -195,22 +181,9 @@
     title: {
       text: 'Expenses evolution by category and month'
     },
-    xAxis: {
-      type: 'datetime',
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        },
-        stacking: 'normal',
-      }
-    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
     series: [
       {
         name: "Total",
@@ -232,22 +205,9 @@
     title: {
       text: 'Incomes evolution by category and month'
     },
-    xAxis: {
-      type: 'datetime',
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        },
-        stacking: 'normal',
-      }
-    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
     series: [
       {
         name: "Total",
@@ -269,22 +229,9 @@
     title: {
       text: 'Expenses evolution by category and year'
     },
-    xAxis: {
-      type: 'datetime',
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        },
-        stacking: 'normal',
-      }
-    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
     series: [
       {
         name: "Total",
@@ -306,22 +253,9 @@
     title: {
       text: 'Incomes evolution by category and year'
     },
-    xAxis: {
-      type: 'datetime',
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        },
-        stacking: 'normal',
-      }
-    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
     series: [
       {
         name: "Total",
@@ -357,22 +291,9 @@
     title: {
       text: 'Liquid evolution'
     },
-    xAxis: {
-      type: 'datetime',
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        },
-        stacking: 'normal',
-      }
-    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
     series: [
       {
         name: "Total",
@@ -394,21 +315,9 @@
     title: {
       text: 'Liquid vs Expenses'
     },
-    xAxis: {
-      type: 'datetime',
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        },
-      }
-    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
     series: [
       {% for name in ["Expenses", "liquid"] %}{
         name: "{{ name.title() }}",
@@ -447,21 +356,9 @@
     title: {
       text: 'Survival months with current liquid'
     },
-    xAxis: {
-      type: 'datetime',
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        },
-      }
-    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
     series: [
       {
         name: "Months",
