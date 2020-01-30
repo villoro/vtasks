@@ -58,11 +58,19 @@
 <!-- PIE -->
 <div id="pies" class="section">
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="PIE_last_year" class="plot" style="height: 450px"></div>
+    <div id="PIE_expenses_last_year" class="plot" style="height: 450px"></div>
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="PIE_all" class="plot" style="height: 450px"></div>
+    <div id="PIE_incomes_last_year" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="PIE_expenses_all" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="PIE_incomes_all" class="plot" style="height: 450px"></div>
   </div>
 </div>
 
@@ -92,7 +100,7 @@
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="INV_worth_per_type" class="plot" style="height: 450px"></div>
+    <div id="INV_worth_by_type" class="plot" style="height: 450px"></div>
   </div>
 </div>
 
@@ -124,26 +132,24 @@
 {% block plots %}
 <script>
 
+  // SHARED INFO
+  var axe_no_title = {title: {text: null}}
+  var options_maker_enabled = {series: {marker: {enabled: false}}}
+  var options_maker_enabled_stacked = {
+    series: {
+      marker: {enabled: false},
+      stacking: 'normal',
+    }
+  }
+
   // EVOLUTION SECTION
   Highcharts.chart('EVO_evolution_month', {
     title: {
       text: 'Month evolution'
     },
-    xAxis: {
-      type: 'datetime',
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        },
-      }
-    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
     series: [
       {% for name in ["Incomes", "Expenses", "EBIT"] %}{
         name: "{{ name }}",
@@ -158,21 +164,9 @@
     title: {
       text: 'Year evolution'
     },
-    xAxis: {
-      type: 'datetime',
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        },
-      }
-    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
     series: [
       {% for name in ["Incomes", "Expenses", "EBIT"] %}{
         name: "{{ name }}",
@@ -187,22 +181,9 @@
     title: {
       text: 'Expenses evolution by category and month'
     },
-    xAxis: {
-      type: 'datetime',
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        },
-        stacking: 'normal',
-      }
-    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
     series: [
       {
         name: "Total",
@@ -224,22 +205,9 @@
     title: {
       text: 'Incomes evolution by category and month'
     },
-    xAxis: {
-      type: 'datetime',
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        },
-        stacking: 'normal',
-      }
-    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
     series: [
       {
         name: "Total",
@@ -261,22 +229,9 @@
     title: {
       text: 'Expenses evolution by category and year'
     },
-    xAxis: {
-      type: 'datetime',
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        },
-        stacking: 'normal',
-      }
-    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
     series: [
       {
         name: "Total",
@@ -298,22 +253,9 @@
     title: {
       text: 'Incomes evolution by category and year'
     },
-    xAxis: {
-      type: 'datetime',
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        },
-        stacking: 'normal',
-      }
-    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
     series: [
       {
         name: "Total",
@@ -338,27 +280,20 @@
   Highcharts.chart('COMP_EBIT', {title: {text: 'EBIT comparison'},});
   Highcharts.chart('COMP_liquid', {title: {text: 'Liquid comparison'},});
 
+  // PIES SECTION
+  Highcharts.chart('PIE_expenses_last_year', {title: {text: 'Expenses last year'},});
+  Highcharts.chart('PIE_incomes_last_year', {title: {text: 'Incomes last year'},});
+  Highcharts.chart('PIE_expenses_all', {title: {text: 'Expenses all time'},});
+  Highcharts.chart('PIE_incomes_all', {title: {text: 'Incomes all time'},});
+
   // LIQUID SECTION
   Highcharts.chart('LIQ_evolution', {
     title: {
       text: 'Liquid evolution'
     },
-    xAxis: {
-      type: 'datetime',
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        },
-        stacking: 'normal',
-      }
-    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
     series: [
       {
         name: "Total",
@@ -380,21 +315,9 @@
     title: {
       text: 'Liquid vs Expenses'
     },
-    xAxis: {
-      type: 'datetime',
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        },
-      }
-    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
     series: [
       {% for name in ["Expenses", "liquid"] %}{
         name: "{{ name.title() }}",
@@ -419,25 +342,23 @@
       }
     ],
   });
+
+  // INVESTMENTS SECTION
+  Highcharts.chart('INV_worth_evolution', {title: {text: 'Worth evolution'},});
+  Highcharts.chart('INV_invest_evolution', {title: {text: 'IInvested evolution'},});
+  Highcharts.chart('INV_performance_by_type', {title: {text: 'Performance by type'},});
+  Highcharts.chart('INV_worth_by_type', {title: {text: 'Worth by type'},});
+
+  // FIRE SECTION
+  Highcharts.chart('FIRE_savings_ratio_month', {title: {text: 'Savings ratio by month'},});
+  Highcharts.chart('FIRE_savings_ratio_year', {title: {text: 'Savings ratio by year'},});
   Highcharts.chart('FIRE_survivial_rate', {
     title: {
       text: 'Survival months with current liquid'
     },
-    xAxis: {
-      type: 'datetime',
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        },
-      }
-    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
     series: [
       {
         name: "Months",
@@ -462,5 +383,7 @@
       }
     ],
   });
+  Highcharts.chart('FIRE_passive_income_vs_expenses', {title: {text: 'Passive income vs Expenses'},});
+  Highcharts.chart('FIRE_total_month_survival', {title: {text: 'Total months survival'},});
 </script>
 {% endblock %}
