@@ -49,7 +49,12 @@ dist/
 
 
 # --------------------- PROJECT EXCLUSIONS ------------------------------------
-*config.py
+# Luigi folders
 runs/
+logs/
 
+# Configuration info
+*config.py
+
+# Working notebook
 *Test.ipynb
