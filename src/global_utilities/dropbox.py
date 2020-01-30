@@ -9,6 +9,7 @@ import pandas as pd
 import oyaml as yaml
 
 from .secrets import get_secret
+from .log import log
 
 
 def get_dbx_connector(key):
@@ -52,6 +53,8 @@ def write_yaml(dbx, data, filename):
 
         dbx.files_upload(file.read().encode(), filename, mode=dropbox.files.WriteMode.overwrite)
 
+    log.info(f"File '{filename}' exported to dropbox")
+
 
 def write_textfile(dbx, text, filename):
     """
@@ -68,6 +71,8 @@ def write_textfile(dbx, text, filename):
 
         # Write a text file
         dbx.files_upload(stream.read(), filename, mode=dropbox.files.WriteMode.overwrite)
+
+    log.info(f"File '{filename}' exported to dropbox")
 
 
 def read_excel(dbx, filename, sheet_names=None, **kwa):
@@ -111,3 +116,5 @@ def write_excel(dbx, df, filename, **kwa):
     output.seek(0)
 
     dbx.files_upload(output.getvalue(), filename, mode=dropbox.files.WriteMode.overwrite)
+
+    log.info(f"File '{filename}' exported to dropbox")

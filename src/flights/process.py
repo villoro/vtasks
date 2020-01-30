@@ -55,7 +55,6 @@ def main(mdate):
 
     # Store data
     gu.dropbox.write_excel(dbx, df_out, c.FILE_FLIGHTS, index=False)
-    log.info("Flights exported to dropbox")
 
 
 if __name__ == "__main__":

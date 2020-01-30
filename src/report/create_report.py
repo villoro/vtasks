@@ -10,6 +10,7 @@ import jinja2
 from config import PATH_ROOT
 
 import global_utilities as gu
+from global_utilities import log
 from . import constants as c
 
 
@@ -24,6 +25,7 @@ def create_report(mdate=date.today()):
     ).get_template("template.html")
 
     # Read data
+    log.info("Reading report_data from dropbox")
     data = gu.dropbox.read_yaml(dbx, f"/report_data/{mdate:%Y_%m}.yaml")
 
     # Create report

@@ -6,6 +6,7 @@ from datetime import date
 from collections import OrderedDict
 
 import global_utilities as gu
+from global_utilities import log
 from . import constants as c
 from . import utilities as u
 
@@ -94,6 +95,7 @@ def get_report_data(mdate=date.today()):
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
 
     # Get dfs
+    log.info("Reading excels from dropbox")
     dfs = gu.dropbox.read_excel(dbx, c.FILE_DATA, c.DFS_ALL_FROM_DATA)
     dfs[c.DF_TRANS] = gu.dropbox.read_excel(dbx, c.FILE_TRANSACTIONS)
 
@@ -102,10 +104,12 @@ def get_report_data(mdate=date.today()):
     out = {}
 
     # Expenses, incomes and EBIT
+    log.info("Extracting expenses, incomes and EBIT")
     for period, col_period in {"month": c.COL_MONTH_DATE, "year": c.COL_YEAR}.items():
         out[period] = get_raw_data(dfs, col_period)
 
     # Liquid, worth and invested
+    log.info("Adding liquid, worth and invested")
     for name, yml_name in [
         (c.DF_LIQUID, c.LIQUID),
         (c.DF_WORTH, c.INVEST),
@@ -115,6 +119,7 @@ def get_report_data(mdate=date.today()):
 
         out["month"].update(get_investment_or_liquid(dfs, yml[yml_name], name))
 
+    log.info("Appending colors")
     out["colors"] = get_colors(dfs, yml)
 
     gu.dropbox.write_yaml(dbx, out, f"/report_data/{mdate:%Y_%m}.yaml")
