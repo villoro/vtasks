@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block title %}
+  {{ title }}
+{% endblock %}
+
 {% block body %}
 <!-- DASH -->
 <div id="dashboard" class="section">
@@ -53,6 +57,13 @@
 
 <!-- PIE -->
 <div id="pies" class="section">
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="PIE_last_year" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="PIE_all" class="plot" style="height: 450px"></div>
+  </div>
 </div>
 
 <!-- LIQ -->
@@ -64,18 +75,48 @@
   <div class="w3-card w3-round w3-center w3-white elem">
     <div id="LIQ_vs_expenses" class="plot" style="height: 450px"></div>
   </div>
-
-  <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="LIQ_survivial_rate" class="plot" style="height: 450px"></div>
-  </div>
 </div>
 
 <!-- INV -->
 <div id="investments" class="section">
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="INV_worth_evolution" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="INV_invest_evolution" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="INV_performance_by_type" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="INV_worth_per_type" class="plot" style="height: 450px"></div>
+  </div>
 </div>
 
 <!-- FIRE -->
 <div id="fire" class="section">
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="FIRE_savings_ratio_month" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="FIRE_savings_ratio_year" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="FIRE_survivial_rate" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="FIRE_passive_income_vs_expenses" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="FIRE_total_month_survival" class="plot" style="height: 450px"></div>
+  </div>
 </div>
 {% endblock %}
 
@@ -378,7 +419,7 @@
       }
     ],
   });
-  Highcharts.chart('LIQ_survivial_rate', {
+  Highcharts.chart('FIRE_survivial_rate', {
     title: {
       text: 'Survival months with current liquid'
     },

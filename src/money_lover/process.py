@@ -42,7 +42,6 @@ def main(*args, **kwa):
 
     # Store data
     gu.dropbox.write_excel(dbx, df, c.FILE_TRANSACTIONS)
-    log.info(f"Transactions processed")
 
 
 if __name__ == "__main__":
