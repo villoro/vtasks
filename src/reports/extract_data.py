@@ -13,7 +13,7 @@ from . import utilities as u
 
 def get_basic_traces(dfs, col_period):
     """
-        Extract Incomes, Expenses and EBIT traces
+        Extract Incomes, Expenses, EBIT and savings traces
 
         Args:
             dfs:        dict with dataframes
@@ -29,12 +29,15 @@ def get_basic_traces(dfs, col_period):
     series[c.EXPENSES], series[c.INCOMES] = u.normalize_index(series[c.EXPENSES], series[c.INCOMES])
     series[c.EBIT] = series[c.INCOMES] - series[c.EXPENSES]
 
+    # Add savings ratio
+    series[c.SAVINGS] = (series[c.EBIT] / series[c.INCOMES]).apply(lambda x: max(0, x))
+
     out = u.series_to_dicts(series)
 
     # Append time averaged data
     if col_period == c.COL_MONTH_DATE:
-        for name in [c.EXPENSES, c.INCOMES, c.EBIT]:
-            out[f"{name}_12m"] = u.serie_to_dict(u.time_average(series[name], months=12))
+        for name, serie in series.items():
+            out[f"{name}_12m"] = u.serie_to_dict(u.time_average(serie, months=12))
 
     # Get by groups
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
@@ -121,8 +124,8 @@ def main(mdate=date.today()):
 
     out = {}
 
-    # Expenses, incomes and EBIT
-    log.info("Extracting expenses, incomes and EBIT")
+    # Expenses, incomes, EBIT and Savings ratio
+    log.info("Extracting expenses, incomes, EBIT and savings ratio")
     for period, col_period in {"month": c.COL_MONTH_DATE, "year": c.COL_YEAR}.items():
         out[period] = get_basic_traces(dfs, col_period)
 
