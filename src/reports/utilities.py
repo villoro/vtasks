@@ -40,7 +40,7 @@ def series_to_dicts(series):
     return out
 
 
-def time_average(df_in, months=12, exponential=True):
+def time_average(df_in, months=12, exponential=False):
     """ do some time average """
 
     # Exponential moving average
