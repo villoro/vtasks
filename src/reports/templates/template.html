@@ -16,6 +16,10 @@
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_evolution_month_12m" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
     <div id="EVO_evolution_year" class="plot" style="height: 450px"></div>
   </div>
 
@@ -160,6 +164,24 @@
       }, {% endfor %}
     ],
   });
+  Highcharts.chart('EVO_evolution_month_12m', {
+    title: {
+      text: 'Month evolution (12 months MA)'
+    },
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
+    series: [
+      {% for name in ["Incomes", "Expenses", "EBIT"] %}
+      {
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{% for mdate, value in month[name + "_12m"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
   Highcharts.chart('EVO_evolution_year', {
     title: {
       text: 'Year evolution'
@@ -171,6 +193,7 @@
       {% for name in ["Incomes", "Expenses", "EBIT"] %}{
         name: "{{ name }}",
         color: "{{ colors[name] }}",
+        type: 'column',
         data: [{% for mdate, value in year[name].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
@@ -417,8 +440,44 @@
   });
 
   // FIRE SECTION
-  Highcharts.chart('FIRE_savings_ratio_month', {title: {text: 'Savings ratio by month'},});
-  Highcharts.chart('FIRE_savings_ratio_year', {title: {text: 'Savings ratio by year'},});
+  Highcharts.chart('FIRE_savings_ratio_month', {
+    title: {text: 'Savings ratio by month'},
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
+    series: [
+      {
+        name: "Savings ratio",
+        color: "{{ colors['Savings_dim'] }}",
+        data: [{% for mdate, value in month["Savings"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+       {
+        name: "12 months MA",
+        color: "{{ colors['Savings'] }}",
+        data: [{% for mdate, value in month["Savings_12m"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+    ],
+  });
+  Highcharts.chart('FIRE_savings_ratio_year', {
+    title: {text: 'Savings ratio by year'},
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
+    series: [
+      {
+        name: "Savings ratio",
+        color: "{{ colors['Savings'] }}",
+        type: 'column',
+        data: [{% for mdate, value in year["Savings"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+    ],
+  });
   Highcharts.chart('FIRE_survivial_rate', {
     title: {
       text: 'Survival months with current liquid'
@@ -467,8 +526,15 @@
       },
       {
         name: "Expenses",
-        color: "{{ colors['Expenses'] }}",
+        color: "{{ colors['Expenses_dim'] }}",
         data: [{% for mdate, value in month['Expenses'].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Expenses 12m MA",
+        color: "{{ colors['Expenses'] }}",
+        data: [{% for mdate, value in month['Expenses_12m'].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },

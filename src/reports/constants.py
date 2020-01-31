@@ -44,14 +44,14 @@ DFS_ALL = [DF_TRANS] + DFS_ALL_FROM_DATA
 
 # fmt: off
 DEFAULT_COLORS = {
-    EXPENSES: ("red", 500), f"{EXPENSES}_dim": ("red", 300),
-    INCOMES: ("green", 500), f"{INCOMES}_dim": ("green", 300),
+    EXPENSES: ("red", 500), f"{EXPENSES}_dim": ("red", 100),
+    INCOMES: ("green", 500), f"{INCOMES}_dim": ("green", 100),
     "Incomes_passive": ("green", 700),
-    EBIT: ("amber", 500), f"{EBIT}_dim": ("amber", 300),
-    LIQUID: ("blue", 500), f"{LIQUID}_dim": ("blue", 300),
+    EBIT: ("amber", 500), f"{EBIT}_dim": ("amber", 100),
+    LIQUID: ("blue", 500), f"{LIQUID}_dim": ("blue", 100),
     "Liquid_min_rec": ("grey", 700), "Liquid_rec": ("grey", 400),
     "Worth": ("lime", 400),
     "Invest": ("orange", 400),
-    SAVINGS: ("purple", 500), f"{SAVINGS}_dim": ("purple", 300),
+    SAVINGS: ("purple", 500), f"{SAVINGS}_dim": ("purple", 100),
 }
 # fmt: on
