@@ -66,7 +66,7 @@ def get_investment_or_liquid(dfs, yml, entity):
             entity: entity to process
     """
 
-    name = entity.split("_")[0]
+    name = entity.split("_")[0].title()
 
     dfg = dfs[entity].copy()
 
