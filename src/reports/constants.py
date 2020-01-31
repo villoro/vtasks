@@ -49,7 +49,7 @@ DEFAULT_COLORS = {
     "Incomes_passive": ("green", 700),
     EBIT: ("amber", 500), f"{EBIT}_dim": ("amber", 300),
     LIQUID: ("blue", 500), f"{LIQUID}_dim": ("blue", 300),
-    "liquid_min_rec": ("grey", 700), "liquid_rec": ("grey", 400),
+    "Liquid_min_rec": ("grey", 700), "Liquid_rec": ("grey", 400),
     "Worth": ("lime", 400),
     "Invest": ("orange", 400),
     SAVINGS: ("purple", 500), f"{SAVINGS}_dim": ("purple", 300),

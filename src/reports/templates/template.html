@@ -75,7 +75,7 @@
 </div>
 
 <!-- LIQ -->
-<div id="liquid" class="section">
+<div id="Liquid" class="section">
   <div class="w3-card w3-round w3-center w3-white elem">
     <div id="LIQ_evolution" class="plot" style="height: 450px"></div>
   </div>
@@ -298,12 +298,12 @@
       {
         name: "Total",
         color: "#000000",
-        data: [{% for mdate, value in month["liquid"].items() %}
+        data: [{% for mdate, value in month["Liquid"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
-      }, {% for name, data in month["liquid_by_groups"].items() %}{
+      }, {% for name, data in month["Liquid_by_groups"].items() %}{
         name: "{{ name }}",
-        color: "{{ colors['liquid_categ'][name] }}",
+        color: "{{ colors['Liquid_categ'][name] }}",
         type: 'column',
         data: [{% for mdate, value in data.items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
@@ -319,7 +319,7 @@
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
     series: [
-      {% for name in ["Expenses", "liquid"] %}{
+      {% for name in ["Expenses", "Liquid"] %}{
         name: "{{ name.title() }}",
         color: "{{ colors[name] }}",
         data: [{% for mdate, value in month[name].items() %}
@@ -328,14 +328,14 @@
       }, {% endfor %}
       {
         name: "Minimum liquid recomended",
-        color: "{{ colors['liquid_min_rec'] }}",
+        color: "{{ colors['Liquid_min_rec'] }}",
         data: [{% for mdate, value in month['Expenses'].items() %}
           [Date.parse("{{ mdate }}"), {{ 3*value }}], {% endfor %}
         ]
       },
       {
         name: "Liquid recomended",
-        color: "{{ colors['liquid_rec'] }}",
+        color: "{{ colors['Liquid_rec'] }}",
         data: [{% for mdate, value in month['Expenses'].items() %}
           [Date.parse("{{ mdate }}"), {{ 6*value }}], {% endfor %}
         ]
@@ -352,17 +352,17 @@
     series: [
       {
         name: "Worth",
-        color: "{{ colors['worth'] }}",
+        color: "{{ colors['Worth'] }}",
         type: 'column',
-        data: [{% for mdate, value in month['worth'].items() %}
+        data: [{% for mdate, value in month['Worth'].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
       {
         name: "Liquid",
-        color: "{{ colors['liquid'] }}",
+        color: "{{ colors['Liquid'] }}",
         type: 'column',
-        data: [{% for mdate, value in month["liquid"].items() %}
+        data: [{% for mdate, value in month["Liquid"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
@@ -377,16 +377,16 @@
       {
         name: "Invested",
         type: 'column',
-        color: "{{ colors['invest'] }}",
-        data: [{% for mdate, value in month['invest'].items() %}
+        color: "{{ colors['Invest'] }}",
+        data: [{% for mdate, value in month['Invest'].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
        {
         name: "Liquid",
-        color: "{{ colors['liquid'] }}",
+        color: "{{ colors['Liquid'] }}",
         type: 'column',
-        data: [{% for mdate, value in month["liquid"].items() %}
+        data: [{% for mdate, value in month["Liquid"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
@@ -402,12 +402,12 @@
       {
         name: "Total",
         color: "#000000",
-        data: [{% for mdate, value in month["worth"].items() %}
+        data: [{% for mdate, value in month["Worth"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
-      }, {% for name, data in month["worth_by_groups"].items() %}{
+      }, {% for name, data in month["Worth_by_groups"].items() %}{
         name: "{{ name }}",
-        color: "{{ colors['investment_categ'][name] }}",
+        color: "{{ colors['Investment_categ'][name] }}",
         type: 'column',
         data: [{% for mdate, value in data.items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
@@ -429,23 +429,23 @@
     series: [
       {
         name: "Months",
-        color: "{{ colors['liquid'] }}",
+        color: "{{ colors['Liquid'] }}",
         data: [{% for mdate in month['Expenses'].keys() %}
           [Date.parse("{{ mdate }}"), {{ 
-            (month['liquid'][mdate] / month['Expenses'][mdate]) | round(2)
+            (month['Liquid'][mdate] / month['Expenses'][mdate]) | round(2)
           }}], {% endfor %}
         ]
       },
       {
         name: "Minimum liquid recomended",
-        color: "{{ colors['liquid_min_rec'] }}",
+        color: "{{ colors['Liquid_min_rec'] }}",
         data: [{% for mdate in month['Expenses'].keys() %}
           [Date.parse("{{ mdate }}"), {{ 3 }}], {% endfor %}
         ]
       },
       {
         name: "Liquid recomended",
-        color: "{{ colors['liquid_rec'] }}",
+        color: "{{ colors['Liquid_rec'] }}",
         data: [{% for mdate in month['Expenses'].keys() %}
           [Date.parse("{{ mdate }}"), {{ 6 }}], {% endfor %}
         ]
@@ -461,7 +461,7 @@
       {
         name: "Passive Income",
         color: "{{ colors['Incomes_passive'] }}",
-        data: [{% for mdate, value in month['worth'].items() %}
+        data: [{% for mdate, value in month['Worth'].items() %}
           [Date.parse("{{ mdate }}"), {{ (value/300) | round(2) }}], {% endfor %}
         ]
       },
