@@ -70,7 +70,7 @@ def get_investment_or_liquid(dfs, yml, entity):
 
     entity = entity.split("_")[0].title()
 
-    series = {
+    out = {
         entity: u.serie_to_dict(dfg["Total"]),
         f"{entity}_12m": u.serie_to_dict(u.time_average(dfg, months=12)["Total"]),
     }
@@ -81,11 +81,11 @@ def get_investment_or_liquid(dfs, yml, entity):
         # Check that accounts are in the yml
         mlist = [x for x in yml[name][c.ACCOUNTS] if x in dfg.columns]
 
-        aux[entity] = dfg[mlist].sum(axis=1)
+        aux[name] = dfg[mlist].sum(axis=1)
 
-    series[f"{entity}_by_groups"] = u.series_to_dicts(aux)
+    out[f"{entity}_by_groups"] = u.series_to_dicts(aux)
 
-    return series
+    return out
 
 
 def get_colors(dfs, yml):
