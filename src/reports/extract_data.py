@@ -11,22 +11,30 @@ from . import constants as c
 from . import utilities as u
 
 
-def get_raw_data(dfs, col_period):
+def get_basic_traces(dfs, col_period):
+    """
+        Extract Incomes, Expenses and EBIT traces
+
+        Args:
+            dfs:        dict with dataframes
+            col_period: month or year
+    """
 
     series = {
         name: df.groupby(col_period)[c.COL_AMOUNT].sum()
         for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE)
     }
 
+    # Extract expenses and incomes
     series[c.EXPENSES], series[c.INCOMES] = u.normalize_index(series[c.EXPENSES], series[c.INCOMES])
     series[c.EBIT] = series[c.INCOMES] - series[c.EXPENSES]
 
-    series = u.series_to_dicts(series)
+    out = u.series_to_dicts(series)
 
     # Append time averaged data
-    for name in [c.EXPENSES, c.INCOMES, c.EBIT]:
-        aux = u.time_average(series[name], months=12)["Total"]
-        series[f"{name}_12m"] = u.serie_to_dict(aux)
+    if col_period == c.COL_MONTH_DATE:
+        for name in [c.EXPENSES, c.INCOMES, c.EBIT]:
+            out[f"{name}_12m"] = u.serie_to_dict(u.time_average(series[name], months=12))
 
     # Get by groups
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
@@ -40,9 +48,9 @@ def get_raw_data(dfs, col_period):
         for x in reversed(df_categ[c.COL_NAME].to_list()):
             aux[x] = df[x]
 
-        series[f"{name}_by_groups"] = u.series_to_dicts(aux)
+        out[f"{name}_by_groups"] = u.series_to_dicts(aux)
 
-    return series
+    return out
 
 
 def get_investment_or_liquid(dfs, yml, entity):
@@ -82,6 +90,7 @@ def get_colors(dfs, yml):
 
     out = {name: u.get_colors(data) for name, data in c.DEFAULT_COLORS.items()}
 
+    # Liquid and investments colors
     for entity in [c.LIQUID, c.INVEST]:
         out[f"{entity}_categ"] = OrderedDict()
         for name, config in yml[entity].items():
@@ -89,6 +98,7 @@ def get_colors(dfs, yml):
                 (config[c.COLOR_NAME], config[c.COLOR_INDEX])
             )
 
+    # Expenses and incomes colors
     for entity, df in dfs["trans_categ"].set_index("Name").groupby("Type"):
         out[f"{entity}_categ"] = OrderedDict()
         for name, row in df.iterrows():
@@ -114,7 +124,7 @@ def main(mdate=date.today()):
     # Expenses, incomes and EBIT
     log.info("Extracting expenses, incomes and EBIT")
     for period, col_period in {"month": c.COL_MONTH_DATE, "year": c.COL_YEAR}.items():
-        out[period] = get_raw_data(dfs, col_period)
+        out[period] = get_basic_traces(dfs, col_period)
 
     # Liquid, worth and invested
     log.info("Adding liquid, worth and invested")
@@ -127,6 +137,7 @@ def main(mdate=date.today()):
 
         out["month"].update(get_investment_or_liquid(dfs, yml[yml_name], name))
 
+    # Add colors
     log.info("Appending colors")
     out["colors"] = get_colors(dfs, yml)
 
