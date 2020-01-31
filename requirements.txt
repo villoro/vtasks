@@ -1,6 +1,8 @@
 dropbox==9.4.0
+jinja2==2.10.3
 loguru==0.4.1
 luigi==2.8.11
+numpy==1.18.1
 openpyxl==3.0.3
 oyaml==0.9
 pandas==1.0.0
