@@ -38,3 +38,23 @@ def series_to_dicts(series):
         out[name] = serie_to_dict(x)
 
     return out
+
+
+def time_average(df_in, months=12, exponential=False):
+    """ do some time average """
+
+    # Exponential moving average
+    if exponential:
+        # No negative values
+        months = max(0, months)
+
+        df = df_in.ewm(span=months, min_periods=0, adjust=False, ignore_na=False)
+
+    # Regular moving average
+    else:
+        # One month at least
+        months = max(1, months)
+
+        df = df_in.rolling(months, min_periods=1)
+
+    return df.mean().apply(lambda x: round(x, 2))

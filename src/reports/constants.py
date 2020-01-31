@@ -25,8 +25,10 @@ COL_NAME = "Name"
 EXPENSES = "Expenses"
 INCOMES = "Incomes"
 EBIT = "EBIT"
-LIQUID = "liquid"
-INVEST = "investment"
+LIQUID = "Liquid"
+INVEST = "Investment"
+SAVINGS = "Savings"
+
 ACCOUNTS = "accounts"
 COLOR_NAME = "color_name"
 COLOR_INDEX = "color_index"
@@ -40,19 +42,16 @@ DF_WORTH = "worth_m"
 DFS_ALL_FROM_DATA = [DF_CATEG, DF_LIQUID, DF_INVEST, DF_WORTH]
 DFS_ALL = [DF_TRANS] + DFS_ALL_FROM_DATA
 
+# fmt: off
 DEFAULT_COLORS = {
-    EXPENSES: ("red", 500),
-    f"{EXPENSES}_smooth": ("red", 300),
-    INCOMES: ("green", 500),
-    f"{INCOMES}_smooth": ("green", 300),
+    EXPENSES: ("red", 500), f"{EXPENSES}_dim": ("red", 100),
+    INCOMES: ("green", 500), f"{INCOMES}_dim": ("green", 100),
     "Incomes_passive": ("green", 700),
-    EBIT: ("amber", 500),
-    f"{EBIT}_smooth": ("amber", 300),
-    LIQUID: ("blue", 500),
-    f"{LIQUID}_smooth": ("blue", 300),
-    "liquid_min_rec": ("grey", 700),
-    "liquid_rec": ("grey", 400),
-    "worth": ("lime", 400),
-    "invest": ("orange", 400),
-    "savings": ("purple", 500),
+    EBIT: ("amber", 500), f"{EBIT}_dim": ("amber", 100),
+    LIQUID: ("blue", 500), f"{LIQUID}_dim": ("blue", 100),
+    "Liquid_min_rec": ("grey", 700), "Liquid_rec": ("grey", 400),
+    "Worth": ("lime", 400),
+    "Invest": ("orange", 400),
+    SAVINGS: ("purple", 500), f"{SAVINGS}_dim": ("purple", 100),
 }
+# fmt: on
