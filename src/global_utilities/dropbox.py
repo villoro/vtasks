@@ -95,11 +95,12 @@ def read_excel(dbx, filename, sheet_names=None, **kwa):
 
     # Read one dataframe
     if sheet_names is None:
-        return pd.read_excel(io.BytesIO(res.content), **kwa)
+        with io.BytesIO(res.content) as stream:
+            return pd.read_excel(stream, **kwa)
 
+    # TODO: use with clause (not working with pandas 1.0.0)
     # Read multiple dataframes
-    with io.BytesIO(res.content) as stream:
-        return {x: pd.read_excel(stream, sheet_name=x, **kwa) for x in sheet_names}
+    return {x: pd.read_excel(io.BytesIO(res.content), sheet_name=x, **kwa) for x in sheet_names}
 
 
 def write_excel(dbx, df, filename, **kwa):
@@ -112,14 +113,13 @@ def write_excel(dbx, df, filename, **kwa):
             **kwa:      keyworded arguments for the df.to_excel inner function
     """
 
-    output = io.BytesIO()
+    with io.BytesIO() as stream:
+        writer = pd.ExcelWriter(stream)
+        df.to_excel(writer, **kwa)
 
-    writer = pd.ExcelWriter(output)
-    df.to_excel(writer, **kwa)
+        writer.save()
+        stream.seek(0)
 
-    writer.save()
-    output.seek(0)
-
-    dbx.files_upload(output.getvalue(), filename, mode=dropbox.files.WriteMode.overwrite)
+        dbx.files_upload(stream.getvalue(), filename, mode=dropbox.files.WriteMode.overwrite)
 
     log.info(f"File '{filename}' exported to dropbox")
