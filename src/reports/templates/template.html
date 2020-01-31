@@ -79,7 +79,7 @@
 </div>
 
 <!-- LIQ -->
-<div id="Liquid" class="section">
+<div id="liquid" class="section">
   <div class="w3-card w3-round w3-center w3-white elem">
     <div id="LIQ_evolution" class="plot" style="height: 450px"></div>
   </div>
@@ -127,7 +127,7 @@
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="FIRE_total_month_survival" class="plot" style="height: 450px"></div>
+    <div id="FIRE_total_years_survival" class="plot" style="height: 450px"></div>
   </div>
 </div>
 {% endblock %}
@@ -374,6 +374,13 @@
     plotOptions: options_maker_enabled_stacked,
     series: [
       {
+        name: "Total",
+        color: "#000000",
+        data: [{% for mdate, value in month["Worth"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value + month["Liquid"][mdate] }}], {% endfor %}
+        ]
+      },
+      {
         name: "Worth",
         color: "{{ colors['Worth'] }}",
         type: 'column',
@@ -397,6 +404,13 @@
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
     series: [
+      {
+        name: "Total",
+        color: "#000000",
+        data: [{% for mdate, value in month["Invest"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value + month["Liquid"][mdate] }}], {% endfor %}
+        ]
+      },
       {
         name: "Invested",
         type: 'column',
@@ -540,6 +554,37 @@
       },
     ],
   });
-  Highcharts.chart('FIRE_total_month_survival', {title: {text: 'Total months survival'},});
+  Highcharts.chart('FIRE_total_years_survival', {
+    title: {text: 'Total years survival'},
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
+    series: [
+      {
+        name: "Years",
+        color: "{{ colors['Survival_dim'] }}",
+        data: [{% for mdate in month['Worth'].keys() %}
+          [Date.parse("{{ mdate }}"), {{ 
+            (
+              ( month['Worth'][mdate] + month['Liquid'][mdate] ) / 
+              (12*month['Expenses'][mdate])
+            ) | round(2)
+          }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Years 12m MA",
+        color: "{{ colors['Survival'] }}",
+        data: [{% for mdate in month['Worth'].keys() %}
+          [Date.parse("{{ mdate }}"), {{ 
+            (
+              ( month['Worth'][mdate] + month['Liquid'][mdate] ) / 
+              (12*month['Expenses_12m'][mdate])
+            ) | round(2)
+          }}], {% endfor %}
+        ]
+      },
+    ],
+  });
 </script>
 {% endblock %}
