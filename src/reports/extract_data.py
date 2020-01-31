@@ -66,13 +66,13 @@ def get_investment_or_liquid(dfs, yml, entity):
             entity: entity to process
     """
 
-    name = entity.split("_")[0].title()
-
     dfg = dfs[entity].copy()
 
+    entity = entity.split("_")[0].title()
+
     series = {
-        name: u.serie_to_dict(dfg["Total"]),
-        f"{name}_12m": u.serie_to_dict(u.time_average(dfg, months=12)["Total"]),
+        entity: u.serie_to_dict(dfg["Total"]),
+        f"{entity}_12m": u.serie_to_dict(u.time_average(dfg, months=12)["Total"]),
     }
 
     aux = OrderedDict()
@@ -81,9 +81,9 @@ def get_investment_or_liquid(dfs, yml, entity):
         # Check that accounts are in the yml
         mlist = [x for x in yml[name][c.ACCOUNTS] if x in dfg.columns]
 
-        aux[name] = dfg[mlist].sum(axis=1)
+        aux[entity] = dfg[mlist].sum(axis=1)
 
-    series[f"{name}_by_groups"] = u.series_to_dicts(aux)
+    series[f"{entity}_by_groups"] = u.series_to_dicts(aux)
 
     return series
 
