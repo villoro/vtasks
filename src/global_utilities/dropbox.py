@@ -33,6 +33,9 @@ def read_yaml(dbx, filename):
     """
 
     _, res = dbx.files_download(filename)
+
+    res.raise_for_status()
+
     with io.BytesIO(res.content) as stream:
         return yaml.safe_load(stream)
 
@@ -87,6 +90,8 @@ def read_excel(dbx, filename, sheet_names=None, **kwa):
     """
 
     _, res = dbx.files_download(filename)
+
+    res.raise_for_status()
 
     # Read one dataframe
     if sheet_names is None:

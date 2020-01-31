@@ -23,6 +23,11 @@ def get_raw_data(dfs, col_period):
 
     series = u.series_to_dicts(series)
 
+    # Append time averaged data
+    for name in [c.EXPENSES, c.INCOMES, c.EBIT]:
+        aux = u.time_average(series[name], months=12)["Total"]
+        series[f"{name}_12m"] = u.serie_to_dict(aux)
+
     # Get by groups
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
 
@@ -50,11 +55,14 @@ def get_investment_or_liquid(dfs, yml, entity):
             entity: entity to process
     """
 
-    entity_name = entity.split("_")[0]
+    name = entity.split("_")[0]
 
     dfg = dfs[entity].copy()
 
-    series = {entity_name: u.serie_to_dict(dfg["Total"])}
+    series = {
+        name: u.serie_to_dict(dfg["Total"]),
+        f"{name}_12m": u.serie_to_dict(u.time_average(dfg, months=12)["Total"]),
+    }
 
     aux = OrderedDict()
     for name in reversed(list(yml.keys())):
@@ -64,7 +72,7 @@ def get_investment_or_liquid(dfs, yml, entity):
 
         aux[name] = dfg[mlist].sum(axis=1)
 
-    series[f"{entity_name}_by_groups"] = u.series_to_dicts(aux)
+    series[f"{name}_by_groups"] = u.series_to_dicts(aux)
 
     return series
 
