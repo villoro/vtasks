@@ -142,10 +142,16 @@
 
   // SHARED INFO
   var axe_no_title = {title: {text: null}}
-  var options_maker_enabled = {series: {marker: {enabled: false}}}
+  var options_maker_enabled = {
+    series: {
+      marker: {enabled: false},
+      stickyTracking: false
+    }
+  }
   var options_maker_enabled_stacked = {
     series: {
       marker: {enabled: false},
+      stickyTracking: false,
       stacking: 'normal',
     }
   }
@@ -365,6 +371,7 @@
         name: "Liquid",
         color: "{{ colors['Liquid_dim'] }}",
         dashStyle: 'shortdot',
+        visible: false,
         data: [{% for mdate, value in month["Liquid"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
@@ -378,14 +385,14 @@
       },
       {
         name: "Minimum liquid recomended",
-        color: "{{ colors['Liquid_min_rec'] }}",
+        color: "{{ colors['Min_value'] }}",
         data: [{% for mdate, value in month['Expenses_12m'].items() %}
           [Date.parse("{{ mdate }}"), {{ 3*value | int }}], {% endfor %}
         ]
       },
       {
         name: "Liquid recomended",
-        color: "{{ colors['Liquid_rec'] }}",
+        color: "{{ colors['Recomended_value'] }}",
         data: [{% for mdate, value in month['Expenses_12m'].items() %}
           [Date.parse("{{ mdate }}"), {{ 6*value | int }}], {% endfor %}
         ]
@@ -511,7 +518,19 @@
   Highcharts.chart('FIRE_savings_ratio_month', {
     title: {text: 'Savings ratio by month'},
     xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
+    yAxis: {
+      title: {text: null},
+      plotLines: [
+        {
+          color: "{{ colors['Recomended_value'] }}",
+          value: 1,
+          label: {
+              align: 'left',
+              text: 'Max Savings Ratio',
+          },
+        },
+      ],
+    },
     plotOptions: options_maker_enabled,
     chart: {zoomType: "x"},
     series: [
@@ -553,7 +572,27 @@
       text: 'Survival months (Liquid / Expenses)'
     },
     xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
+    yAxis: {
+      title: {text: null},
+      plotLines: [
+        {
+          color: "{{ colors['Recomended_value'] }}",
+          value: 6,
+          label: {
+              align: 'left',
+              text: 'Liquid recomended',
+          },
+        },
+        {
+          color: "{{ colors['Min_value'] }}",
+          value: 3,
+          label: {
+              align: 'left',
+              text: 'Minimum liquid recomended',
+          },
+        }
+      ],
+    },
     plotOptions: options_maker_enabled,
     chart: {zoomType: "x"},
     series: [
@@ -561,6 +600,7 @@
         name: "Months",
         color: "{{ colors['Liquid_dim'] }}",
         dashStyle: 'shortdot',
+        visible: false,
         data: [{% for mdate in month['Expenses'].keys() %}
           [Date.parse("{{ mdate }}"), {{ 
             (month['Liquid'][mdate] / month['Expenses'][mdate]) | round(2)
@@ -574,20 +614,6 @@
           [Date.parse("{{ mdate }}"), {{ 
             (month['Liquid_6m_e'][mdate] / month['Expenses_12m'][mdate]) | round(2)
           }}], {% endfor %}
-        ]
-      },
-      {
-        name: "Minimum liquid recomended",
-        color: "{{ colors['Liquid_min_rec'] }}",
-        data: [{% for mdate in month['Expenses'].keys() %}
-          [Date.parse("{{ mdate }}"), {{ 3 }}], {% endfor %}
-        ]
-      },
-      {
-        name: "Liquid recomended",
-        color: "{{ colors['Liquid_rec'] }}",
-        data: [{% for mdate in month['Expenses'].keys() %}
-          [Date.parse("{{ mdate }}"), {{ 6 }}], {% endfor %}
         ]
       }
     ],
@@ -610,6 +636,7 @@
         name: "Expenses",
         color: "{{ colors['Expenses_dim'] }}",
         dashStyle: 'shortdot',
+        visible: false,
         data: [{% for mdate, value in month['Expenses'].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
@@ -626,7 +653,27 @@
   Highcharts.chart('FIRE_total_years_survival', {
     title: {text: 'Doomsday years (Assets / Expenses)'},
     xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
+    yAxis: {
+      title: {text: null},
+      plotLines: [
+        {
+          color: "{{ colors['Recomended_value'] }}",
+          value: 30,
+          label: {
+              align: 'left',
+              text: 'FIRE 3%',
+          },
+        },
+        {
+          color: "{{ colors['Min_value'] }}",
+          value: 25,
+          label: {
+              align: 'left',
+              text: 'FIRE 4%',
+          },
+        }
+      ],
+    },
     plotOptions: options_maker_enabled,
     chart: {zoomType: "x"},
     series: [
