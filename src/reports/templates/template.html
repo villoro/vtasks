@@ -155,7 +155,7 @@
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
     series: [
-      {% for name in ["Incomes", "Expenses", "EBIT"] %}{
+      {% for name in ["EBIT", "Incomes", "Expenses"] %}{
         name: "{{ name }}",
         color: "{{ colors[name] }}",
         data: [{% for mdate, value in month[name].items() %}
@@ -172,7 +172,7 @@
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
     series: [
-      {% for name in ["Incomes", "Expenses", "EBIT"] %}
+      {% for name in ["EBIT", "Incomes", "Expenses"] %}
       {
         name: "{{ name }}",
         color: "{{ colors[name] }}",
@@ -350,17 +350,17 @@
         ]
       },
       {
-        name: "Liquid 6m EWM",
-        color: "{{ colors['Liquid'] }}",
-        data: [{% for mdate, value in month["Liquid_6m_e"].items() %}
-          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
-        ]
-      },
-      {
         name: "Liquid",
         color: "{{ colors['Liquid_dim'] }}",
         dashStyle: 'shortdot',
         data: [{% for mdate, value in month["Liquid"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Liquid 6m EWM",
+        color: "{{ colors['Liquid'] }}",
+        data: [{% for mdate, value in month["Liquid_6m_e"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
@@ -475,18 +475,18 @@
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
     series: [
-       {
-        name: "12 months MA",
-        color: "{{ colors['Savings'] }}",
-        data: [{% for mdate, value in month["Savings_12m"].items() %}
-          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
-        ]
-      },
       {
         name: "Savings ratio",
         color: "{{ colors['Savings_dim'] }}",
         dashStyle: 'shortdot',
         data: [{% for mdate, value in month["Savings"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+       {
+        name: "12 months MA",
+        color: "{{ colors['Savings'] }}",
+        data: [{% for mdate, value in month["Savings_12m"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
@@ -510,21 +510,12 @@
   });
   Highcharts.chart('FIRE_survivial_rate', {
     title: {
-      text: 'Survival months with current liquid'
+      text: 'Survival months (Liquid / Expenses)'
     },
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
     series: [
-      {
-        name: "Months 6m EWM",
-        color: "{{ colors['Liquid'] }}",
-        data: [{% for mdate in month['Expenses'].keys() %}
-          [Date.parse("{{ mdate }}"), {{ 
-            (month['Liquid_6m_e'][mdate] / month['Expenses_6m_e'][mdate]) | round(2)
-          }}], {% endfor %}
-        ]
-      },
       {
         name: "Months",
         color: "{{ colors['Liquid_dim'] }}",
@@ -532,6 +523,15 @@
         data: [{% for mdate in month['Expenses'].keys() %}
           [Date.parse("{{ mdate }}"), {{ 
             (month['Liquid'][mdate] / month['Expenses'][mdate]) | round(2)
+          }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Months 6m EWM / 12m MA",
+        color: "{{ colors['Liquid'] }}",
+        data: [{% for mdate in month['Expenses'].keys() %}
+          [Date.parse("{{ mdate }}"), {{ 
+            (month['Liquid_6m_e'][mdate] / month['Expenses_12m'][mdate]) | round(2)
           }}], {% endfor %}
         ]
       },
@@ -582,7 +582,7 @@
     ],
   });
   Highcharts.chart('FIRE_total_years_survival', {
-    title: {text: 'Total years survival'},
+    title: {text: 'Doomsday years (Assets / Expenses)'},
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
