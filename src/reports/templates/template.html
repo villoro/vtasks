@@ -92,6 +92,10 @@
 <!-- INV -->
 <div id="investments" class="section">
   <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="INV_worth_vs_invest" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
     <div id="INV_worth_evolution" class="plot" style="height: 450px"></div>
   </div>
 
@@ -390,6 +394,30 @@
   });
 
   // INVESTMENTS SECTION
+  Highcharts.chart('INV_worth_vs_invest', {
+    title: {text: 'Worth vs Invested'},
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
+    chart: {zoomType: "xy"},
+    series: [
+      {
+        name: "Total Invested",
+        color: "{{ colors['Invest'] }}",
+        dashStyle: 'shortdot',
+        data: [{% for mdate, value in month["Invest"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value + month["Liquid"][mdate] }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Total Worth",
+        color: "{{ colors['Worth'] }}",
+        data: [{% for mdate, value in month["Worth"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value + month["Liquid"][mdate] }}], {% endfor %}
+        ]
+      },
+    ],
+  });
   Highcharts.chart('INV_worth_evolution', {
     title: {text: 'Worth evolution'},
     xAxis: {type: 'datetime'},
