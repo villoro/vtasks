@@ -38,6 +38,7 @@ def get_basic_traces(dfs, col_period):
     if col_period == c.COL_MONTH_DATE:
         for name, serie in series.items():
             out[f"{name}_12m"] = u.serie_to_dict(u.time_average(serie, months=12))
+            out[f"{name}_6m_e"] = u.serie_to_dict(u.time_average(serie, months=6, exponential=True))
 
     # Get by groups
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
@@ -73,6 +74,7 @@ def get_investment_or_liquid(dfs, yml, entity):
     out = {
         entity: u.serie_to_dict(dfg["Total"]),
         f"{entity}_12m": u.serie_to_dict(u.time_average(dfg, months=12)["Total"]),
+        f"{entity}_6m_e": u.serie_to_dict(u.time_average(dfg, months=6, exponential=True)["Total"]),
     }
 
     aux = OrderedDict()
