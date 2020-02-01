@@ -315,7 +315,7 @@
 
   // COMPARISON SECTION
   Highcharts.chart('COMP_incomes', {
-    title: {text: 'Incomes comparison'},
+    title: {text: 'Incomes comparison (12 months MA)'},
     xAxis: {
       title: {text: "Months"},
       type: 'category'
@@ -335,7 +335,7 @@
     ],
   });
   Highcharts.chart('COMP_expenses', {
-    title: {text: 'Expenses comparison'},
+    title: {text: 'Expenses comparison (12 months MA)'},
     xAxis: {
       title: {text: "Months"},
       type: 'category'
@@ -355,7 +355,7 @@
     ],
   });
   Highcharts.chart('COMP_EBIT', {
-    title: {text: 'EBIT comparison'},
+    title: {text: 'EBIT comparison (12 months MA)'},
     xAxis: {
       title: {text: "Months"},
       type: 'category'
@@ -374,7 +374,7 @@
       }, {% endfor %}
     ],
   });
-  Highcharts.chart('COMP_liquid', {
+  Highcharts.chart('COMP_liquid (3 months EWM)', {
     title: {text: 'Liquid comparison'},
     xAxis: {
       title: {text: "Months"},
