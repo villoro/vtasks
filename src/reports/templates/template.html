@@ -350,8 +350,16 @@
         ]
       },
       {
-        name: "Liquid",
+        name: "Liquid 6m EWM",
         color: "{{ colors['Liquid'] }}",
+        data: [{% for mdate, value in month["Liquid_6m_e"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Liquid",
+        color: "{{ colors['Liquid_dim'] }}",
+        dashStyle: 'shortdot',
         data: [{% for mdate, value in month["Liquid"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
@@ -467,17 +475,18 @@
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
     series: [
-      {
-        name: "Savings ratio",
-        color: "{{ colors['Savings_dim'] }}",
-        data: [{% for mdate, value in month["Savings"].items() %}
-          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
-        ]
-      },
        {
         name: "12 months MA",
         color: "{{ colors['Savings'] }}",
         data: [{% for mdate, value in month["Savings_12m"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Savings ratio",
+        color: "{{ colors['Savings_dim'] }}",
+        dashStyle: 'shortdot',
+        data: [{% for mdate, value in month["Savings"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
@@ -508,17 +517,18 @@
     plotOptions: options_maker_enabled,
     series: [
       {
-        name: "Months 12m MA",
+        name: "Months 6m EWM",
         color: "{{ colors['Liquid'] }}",
         data: [{% for mdate in month['Expenses'].keys() %}
           [Date.parse("{{ mdate }}"), {{ 
-            (month['Liquid'][mdate] / month['Expenses_12m'][mdate]) | round(2)
+            (month['Liquid_6m_e'][mdate] / month['Expenses_6m_e'][mdate]) | round(2)
           }}], {% endfor %}
         ]
       },
       {
         name: "Months",
         color: "{{ colors['Liquid_dim'] }}",
+        dashStyle: 'shortdot',
         data: [{% for mdate in month['Expenses'].keys() %}
           [Date.parse("{{ mdate }}"), {{ 
             (month['Liquid'][mdate] / month['Expenses'][mdate]) | round(2)
@@ -557,14 +567,15 @@
       {
         name: "Expenses",
         color: "{{ colors['Expenses_dim'] }}",
+        dashStyle: 'shortdot',
         data: [{% for mdate, value in month['Expenses'].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
       {
-        name: "Expenses 12m MA",
+        name: "Expenses 6m EWM",
         color: "{{ colors['Expenses'] }}",
-        data: [{% for mdate, value in month['Expenses_12m'].items() %}
+        data: [{% for mdate, value in month['Expenses_6m_e'].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
@@ -579,6 +590,7 @@
       {
         name: "Years",
         color: "{{ colors['Survival_dim'] }}",
+        dashStyle: 'shortdot',
         data: [{% for mdate in month['Worth'].keys() %}
           [Date.parse("{{ mdate }}"), {{ 
             (
@@ -589,13 +601,13 @@
         ]
       },
       {
-        name: "Years 12m MA",
+        name: "Years 6m EWM",
         color: "{{ colors['Survival'] }}",
         data: [{% for mdate in month['Worth'].keys() %}
           [Date.parse("{{ mdate }}"), {{ 
             (
-              ( month['Worth'][mdate] + month['Liquid'][mdate] ) / 
-              (12*month['Expenses_12m'][mdate])
+              ( month['Worth'][mdate] + month['Liquid_6m_e'][mdate] ) / 
+              (12*month['Expenses_6m_e'][mdate])
             ) | round(2)
           }}], {% endfor %}
         ]
