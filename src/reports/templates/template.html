@@ -576,11 +576,29 @@
       title: {text: null},
       plotLines: [
         {
+          color: "{{ colors['Expenses'] }}",
+          dashStyle: 'shortdot',
+          value: 24,
+          label: {
+              align: 'left',
+              text: '2 years',
+          },
+        },
+        {
+          color: "{{ colors['Max_value'] }}",
+          dashStyle: 'shortdashdot',
+          value: 12,
+          label: {
+              align: 'left',
+              text: '1 year',
+          },
+        },
+        {
           color: "{{ colors['Recomended_value'] }}",
           value: 6,
           label: {
               align: 'left',
-              text: 'Liquid recomended',
+              text: 'Liquid recomended (6 months)',
           },
         },
         {
@@ -588,7 +606,7 @@
           value: 3,
           label: {
               align: 'left',
-              text: 'Minimum liquid recomended',
+              text: 'Minimum liquid recomended (3 months)',
           },
         }
       ],
