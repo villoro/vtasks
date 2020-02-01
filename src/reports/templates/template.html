@@ -314,10 +314,86 @@
   });
 
   // COMPARISON SECTION
-  Highcharts.chart('COMP_incomes', {title: {text: 'Expenses comparison'},});
-  Highcharts.chart('COMP_expenses', {title: {text: 'Incomes comparison'},});
-  Highcharts.chart('COMP_EBIT', {title: {text: 'EBIT comparison'},});
-  Highcharts.chart('COMP_liquid', {title: {text: 'Liquid comparison'},});
+  Highcharts.chart('COMP_incomes', {
+    title: {text: 'Incomes comparison'},
+    xAxis: {
+      title: {text: "Months"},
+      type: 'category'
+    },
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
+    chart: {zoomType: "xy"},
+    series: [
+      {% for y, data in comp["Incomes"].items() %}{
+        name: "{{ y }}",
+        color: "{{ colors['comp']['Incomes'][y]['color'] }}",
+        lineWidth: {{ colors['comp']['Incomes'][y]['size'] }},
+        data: [{% for x, value in data.items() %}
+          [{{ x }}, {% if value is number %}{{ value }}{% else %}null{% endif %}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('COMP_expenses', {
+    title: {text: 'Expenses comparison'},
+    xAxis: {
+      title: {text: "Months"},
+      type: 'category'
+    },
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
+    chart: {zoomType: "xy"},
+    series: [
+      {% for y, data in comp["Expenses"].items() %}{
+        name: "{{ y }}",
+        color: "{{ colors['comp']['Expenses'][y]['color'] }}",
+        lineWidth: {{ colors['comp']['Expenses'][y]['size'] }},
+        data: [{% for x, value in data.items() %}
+          [{{ x }}, {% if value is number %}{{ value }}{% else %}null{% endif %}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('COMP_EBIT', {
+    title: {text: 'EBIT comparison'},
+    xAxis: {
+      title: {text: "Months"},
+      type: 'category'
+    },
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
+    chart: {zoomType: "xy"},
+    series: [
+      {% for y, data in comp["EBIT"].items() %}{
+        name: "{{ y }}",
+        color: "{{ colors['comp']['EBIT'][y]['color'] }}",
+        lineWidth: {{ colors['comp']['EBIT'][y]['size'] }},
+        data: [{% for x, value in data.items() %}
+          [{{ x }}, {% if value is number %}{{ value }}{% else %}null{% endif %}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('COMP_liquid', {
+    title: {text: 'Liquid comparison'},
+    xAxis: {
+      title: {text: "Months"},
+      type: 'category'
+    },
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
+    chart: {zoomType: "xy"},
+    series: [
+      {% for y, data in comp["Liquid"].items() %}{
+        name: "{{ y }}",
+        color: "{{ colors['comp']['Liquid'][y]['color'] }}",
+        lineWidth: {{ colors['comp']['Liquid'][y]['size'] }},
+        data: [{% for x, value in data.items() %}
+          [{{ x }}, {% if value is number %}{{ value }}{% else %}null{% endif %}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
 
   // PIES SECTION
   Highcharts.chart('PIE_expenses_last_year', {title: {text: 'Expenses last year'},});
