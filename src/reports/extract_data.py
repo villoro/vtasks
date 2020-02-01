@@ -2,6 +2,7 @@
     Create the raw data for the reprot
 """
 
+import pandas as pd
 from datetime import date
 from collections import OrderedDict
 
@@ -90,6 +91,87 @@ def get_investment_or_liquid(dfs, yml, entity):
     return out
 
 
+def get_comparison_traces(dfs):
+    """
+        Add traces for comparison plots
+
+        Args:
+            dfs:    dict with dataframes
+    """
+
+    out = {}
+
+    get_traces = (
+        lambda df: df.reset_index()
+        .pivot_table(c.COL_AMOUNT, c.COL_MONTH, c.COL_YEAR, "sum")
+        .apply(lambda x: round(x, 2))
+        .fillna("null")
+        .to_dict()
+    )
+
+    # Expenses and incomes
+    for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
+        df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
+        out[name] = get_traces(u.time_average(df))
+
+    # Prepare transactions for EBIT
+    dfg = dfs[c.DF_TRANS].copy()
+    mfilter = dfg[c.COL_TYPE] == c.EXPENSES
+    dfg.loc[mfilter, c.COL_AMOUNT] = -dfg.loc[mfilter, c.COL_AMOUNT]
+
+    # Add EBIT
+    df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
+    out[c.EBIT] = get_traces(u.time_average(df))
+
+    # Add liquid
+    dfg = dfs[c.DF_LIQUID].reset_index().copy()
+    dfg[c.COL_MONTH] = pd.to_datetime(dfg[c.COL_DATE]).dt.month
+    dfg[c.COL_YEAR] = pd.to_datetime(dfg[c.COL_DATE]).dt.year
+    dfg[c.COL_AMOUNT] = dfg["Total"]
+    df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
+    out[c.LIQUID] = get_traces(u.time_average(df, months=3, exponential=True))
+
+    return out
+
+
+def get_colors_comparisons(dfs):
+    """
+        Get colors for comparison plots
+        
+        Args:
+            dfs:    dict with dataframes
+    """
+
+    def extract_colors_from_years(years, color_name):
+        """
+            Extract colors from a list of years
+            
+            Args:
+                years:      series with years
+                color_name: name of the color
+        """
+
+        out = {}
+        for year in sorted(years.unique().tolist(), reverse=True):
+            color_index = max(100, 900 - 200 * (max(years) - year))
+            size = max(6 - (max(years) - year), 1)
+
+            out[year] = {"color": u.get_colors((color_name, color_index)), "size": size}
+
+        return out
+
+    # Incomes, Expenses and EBIT
+    out = {}
+    for name, color_name in [(c.INCOMES, "green"), (c.EXPENSES, "red"), (c.EBIT, "amber")]:
+        out[name] = extract_colors_from_years(dfs[c.DF_TRANS][c.COL_YEAR], color_name)
+
+    # Liquid
+    years = pd.to_datetime(dfs[c.DF_LIQUID].reset_index()[c.COL_DATE]).dt.year
+    out[c.LIQUID] = extract_colors_from_years(years, "blue")
+
+    return out
+
+
 def get_colors(dfs, yml):
     """ Get colors from config file """
 
@@ -108,6 +190,9 @@ def get_colors(dfs, yml):
         out[f"{entity}_categ"] = OrderedDict()
         for name, row in df.iterrows():
             out[f"{entity}_categ"][name] = u.get_colors((row["Color Name"], row["Color Index"]))
+
+    # Colors comparison plot
+    out["comp"] = get_colors_comparisons(dfs)
 
     return out
 
@@ -141,6 +226,10 @@ def main(mdate=date.today()):
         dfs[name] = dfs[name].set_index(c.COL_DATE)
 
         out["month"].update(get_investment_or_liquid(dfs, yml[yml_name], name))
+
+    # Comparison traces
+    log.info("Adding comparison traces")
+    out["comp"] = get_comparison_traces(dfs)
 
     # Add colors
     log.info("Appending colors")
