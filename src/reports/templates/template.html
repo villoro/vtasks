@@ -342,25 +342,32 @@
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
     series: [
-      {% for name in ["Expenses", "Liquid"] %}{
-        name: "{{ name.title() }}",
-        color: "{{ colors[name] }}",
-        data: [{% for mdate, value in month[name].items() %}
+      {
+        name: "Expenses 12m MA",
+        color: "{{ colors['Expenses'] }}",
+        data: [{% for mdate, value in month["Expenses_12m"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
-      }, {% endfor %}
+      },
+      {
+        name: "Liquid",
+        color: "{{ colors['Liquid'] }}",
+        data: [{% for mdate, value in month["Liquid"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
       {
         name: "Minimum liquid recomended",
         color: "{{ colors['Liquid_min_rec'] }}",
-        data: [{% for mdate, value in month['Expenses'].items() %}
-          [Date.parse("{{ mdate }}"), {{ 3*value }}], {% endfor %}
+        data: [{% for mdate, value in month['Expenses_12m'].items() %}
+          [Date.parse("{{ mdate }}"), {{ 3*value | int }}], {% endfor %}
         ]
       },
       {
         name: "Liquid recomended",
         color: "{{ colors['Liquid_rec'] }}",
-        data: [{% for mdate, value in month['Expenses'].items() %}
-          [Date.parse("{{ mdate }}"), {{ 6*value }}], {% endfor %}
+        data: [{% for mdate, value in month['Expenses_12m'].items() %}
+          [Date.parse("{{ mdate }}"), {{ 6*value | int }}], {% endfor %}
         ]
       }
     ],
@@ -501,8 +508,17 @@
     plotOptions: options_maker_enabled,
     series: [
       {
-        name: "Months",
+        name: "Months 12m MA",
         color: "{{ colors['Liquid'] }}",
+        data: [{% for mdate in month['Expenses'].keys() %}
+          [Date.parse("{{ mdate }}"), {{ 
+            (month['Liquid'][mdate] / month['Expenses_12m'][mdate]) | round(2)
+          }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Months",
+        color: "{{ colors['Liquid_dim'] }}",
         data: [{% for mdate in month['Expenses'].keys() %}
           [Date.parse("{{ mdate }}"), {{ 
             (month['Liquid'][mdate] / month['Expenses'][mdate]) | round(2)
