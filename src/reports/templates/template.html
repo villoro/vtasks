@@ -374,8 +374,8 @@
       }, {% endfor %}
     ],
   });
-  Highcharts.chart('COMP_liquid (3 months EWM)', {
-    title: {text: 'Liquid comparison'},
+  Highcharts.chart('COMP_liquid', {
+    title: {text: 'Liquid comparison (3 months EWM)'},
     xAxis: {
       title: {text: "Months"},
       type: 'category'
@@ -630,7 +630,19 @@
   Highcharts.chart('FIRE_savings_ratio_year', {
     title: {text: 'Savings ratio by year'},
     xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
+    yAxis: {
+      title: {text: null},
+      plotLines: [
+        {
+          color: "{{ colors['Recomended_value'] }}",
+          value: 1,
+          label: {
+              align: 'left',
+              text: 'Max Savings Ratio',
+          },
+        },
+      ],
+    },
     plotOptions: options_maker_enabled,
     series: [
       {
