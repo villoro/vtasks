@@ -92,6 +92,10 @@
 <!-- INV -->
 <div id="investments" class="section">
   <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="INV_worth_vs_invest" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
     <div id="INV_worth_evolution" class="plot" style="height: 450px"></div>
   </div>
 
@@ -138,10 +142,16 @@
 
   // SHARED INFO
   var axe_no_title = {title: {text: null}}
-  var options_maker_enabled = {series: {marker: {enabled: false}}}
+  var options_maker_enabled = {
+    series: {
+      marker: {enabled: false},
+      stickyTracking: false
+    }
+  }
   var options_maker_enabled_stacked = {
     series: {
       marker: {enabled: false},
+      stickyTracking: false,
       stacking: 'normal',
     }
   }
@@ -154,8 +164,9 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
+    chart: {zoomType: "xy"},
     series: [
-      {% for name in ["Incomes", "Expenses", "EBIT"] %}{
+      {% for name in ["EBIT", "Incomes", "Expenses"] %}{
         name: "{{ name }}",
         color: "{{ colors[name] }}",
         data: [{% for mdate, value in month[name].items() %}
@@ -171,8 +182,9 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
+    chart: {zoomType: "xy"},
     series: [
-      {% for name in ["Incomes", "Expenses", "EBIT"] %}
+      {% for name in ["EBIT", "Incomes", "Expenses"] %}
       {
         name: "{{ name }}",
         color: "{{ colors[name] }}",
@@ -207,6 +219,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
+    chart: {zoomType: "xy"},
     series: [
       {
         name: "Total",
@@ -231,6 +244,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
+    chart: {zoomType: "xy"},
     series: [
       {
         name: "Total",
@@ -255,6 +269,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
+    chart: {zoomType: "xy"},
     series: [
       {
         name: "Total",
@@ -279,6 +294,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
+    chart: {zoomType: "xy"},
     series: [
       {
         name: "Total",
@@ -298,10 +314,86 @@
   });
 
   // COMPARISON SECTION
-  Highcharts.chart('COMP_incomes', {title: {text: 'Expenses comparison'},});
-  Highcharts.chart('COMP_expenses', {title: {text: 'Incomes comparison'},});
-  Highcharts.chart('COMP_EBIT', {title: {text: 'EBIT comparison'},});
-  Highcharts.chart('COMP_liquid', {title: {text: 'Liquid comparison'},});
+  Highcharts.chart('COMP_incomes', {
+    title: {text: 'Incomes comparison'},
+    xAxis: {
+      title: {text: "Months"},
+      type: 'category'
+    },
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
+    chart: {zoomType: "xy"},
+    series: [
+      {% for y, data in comp["Incomes"].items() %}{
+        name: "{{ y }}",
+        color: "{{ colors['comp']['Incomes'][y]['color'] }}",
+        lineWidth: {{ colors['comp']['Incomes'][y]['size'] }},
+        data: [{% for x, value in data.items() %}
+          [{{ x }}, {% if value is number %}{{ value }}{% else %}null{% endif %}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('COMP_expenses', {
+    title: {text: 'Expenses comparison'},
+    xAxis: {
+      title: {text: "Months"},
+      type: 'category'
+    },
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
+    chart: {zoomType: "xy"},
+    series: [
+      {% for y, data in comp["Expenses"].items() %}{
+        name: "{{ y }}",
+        color: "{{ colors['comp']['Expenses'][y]['color'] }}",
+        lineWidth: {{ colors['comp']['Expenses'][y]['size'] }},
+        data: [{% for x, value in data.items() %}
+          [{{ x }}, {% if value is number %}{{ value }}{% else %}null{% endif %}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('COMP_EBIT', {
+    title: {text: 'EBIT comparison'},
+    xAxis: {
+      title: {text: "Months"},
+      type: 'category'
+    },
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
+    chart: {zoomType: "xy"},
+    series: [
+      {% for y, data in comp["EBIT"].items() %}{
+        name: "{{ y }}",
+        color: "{{ colors['comp']['EBIT'][y]['color'] }}",
+        lineWidth: {{ colors['comp']['EBIT'][y]['size'] }},
+        data: [{% for x, value in data.items() %}
+          [{{ x }}, {% if value is number %}{{ value }}{% else %}null{% endif %}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('COMP_liquid', {
+    title: {text: 'Liquid comparison'},
+    xAxis: {
+      title: {text: "Months"},
+      type: 'category'
+    },
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
+    chart: {zoomType: "xy"},
+    series: [
+      {% for y, data in comp["Liquid"].items() %}{
+        name: "{{ y }}",
+        color: "{{ colors['comp']['Liquid'][y]['color'] }}",
+        lineWidth: {{ colors['comp']['Liquid'][y]['size'] }},
+        data: [{% for x, value in data.items() %}
+          [{{ x }}, {% if value is number %}{{ value }}{% else %}null{% endif %}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
 
   // PIES SECTION
   Highcharts.chart('PIE_expenses_last_year', {title: {text: 'Expenses last year'},});
@@ -317,6 +409,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
+    chart: {zoomType: "xy"},
     series: [
       {
         name: "Total",
@@ -341,37 +434,79 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
+    chart: {zoomType: "xy"},
     series: [
-      {% for name in ["Expenses", "Liquid"] %}{
-        name: "{{ name.title() }}",
-        color: "{{ colors[name] }}",
-        data: [{% for mdate, value in month[name].items() %}
+      {
+        name: "Expenses 12m MA",
+        color: "{{ colors['Expenses'] }}",
+        data: [{% for mdate, value in month["Expenses_12m"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
-      }, {% endfor %}
+      },
+      {
+        name: "Liquid",
+        color: "{{ colors['Liquid_dim'] }}",
+        dashStyle: 'shortdot',
+        visible: false,
+        data: [{% for mdate, value in month["Liquid"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Liquid 6m EWM",
+        color: "{{ colors['Liquid'] }}",
+        data: [{% for mdate, value in month["Liquid_6m_e"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
       {
         name: "Minimum liquid recomended",
-        color: "{{ colors['Liquid_min_rec'] }}",
-        data: [{% for mdate, value in month['Expenses'].items() %}
-          [Date.parse("{{ mdate }}"), {{ 3*value }}], {% endfor %}
+        color: "{{ colors['Min_value'] }}",
+        data: [{% for mdate, value in month['Expenses_12m'].items() %}
+          [Date.parse("{{ mdate }}"), {{ 3*value | int }}], {% endfor %}
         ]
       },
       {
         name: "Liquid recomended",
-        color: "{{ colors['Liquid_rec'] }}",
-        data: [{% for mdate, value in month['Expenses'].items() %}
-          [Date.parse("{{ mdate }}"), {{ 6*value }}], {% endfor %}
+        color: "{{ colors['Recomended_value'] }}",
+        data: [{% for mdate, value in month['Expenses_12m'].items() %}
+          [Date.parse("{{ mdate }}"), {{ 6*value | int }}], {% endfor %}
         ]
       }
     ],
   });
 
   // INVESTMENTS SECTION
+  Highcharts.chart('INV_worth_vs_invest', {
+    title: {text: 'Worth vs Invested'},
+    xAxis: {type: 'datetime'},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled,
+    chart: {zoomType: "xy"},
+    series: [
+      {
+        name: "Total Invested",
+        color: "{{ colors['Invest'] }}",
+        dashStyle: 'shortdot',
+        data: [{% for mdate, value in month["Invest"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value + month["Liquid"][mdate] }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Total Worth",
+        color: "{{ colors['Worth'] }}",
+        data: [{% for mdate, value in month["Worth"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value + month["Liquid"][mdate] }}], {% endfor %}
+        ]
+      },
+    ],
+  });
   Highcharts.chart('INV_worth_evolution', {
     title: {text: 'Worth evolution'},
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
+    chart: {zoomType: "xy"},
     series: [
       {
         name: "Total",
@@ -403,6 +538,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
+    chart: {zoomType: "xy"},
     series: [
       {
         name: "Total",
@@ -435,6 +571,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
+    chart: {zoomType: "xy"},
     series: [
       {
         name: "Total",
@@ -457,12 +594,26 @@
   Highcharts.chart('FIRE_savings_ratio_month', {
     title: {text: 'Savings ratio by month'},
     xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
+    yAxis: {
+      title: {text: null},
+      plotLines: [
+        {
+          color: "{{ colors['Recomended_value'] }}",
+          value: 1,
+          label: {
+              align: 'left',
+              text: 'Max Savings Ratio',
+          },
+        },
+      ],
+    },
     plotOptions: options_maker_enabled,
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Savings ratio",
         color: "{{ colors['Savings_dim'] }}",
+        dashStyle: 'shortdot',
         data: [{% for mdate, value in month["Savings"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
@@ -494,15 +645,56 @@
   });
   Highcharts.chart('FIRE_survivial_rate', {
     title: {
-      text: 'Survival months with current liquid'
+      text: 'Survival months (Liquid / Expenses)'
     },
     xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
+    yAxis: {
+      title: {text: null},
+      plotLines: [
+        {
+          color: "{{ colors['Expenses'] }}",
+          dashStyle: 'shortdot',
+          value: 24,
+          label: {
+              align: 'left',
+              text: '2 years',
+          },
+        },
+        {
+          color: "{{ colors['Max_value'] }}",
+          dashStyle: 'shortdashdot',
+          value: 12,
+          label: {
+              align: 'left',
+              text: '1 year',
+          },
+        },
+        {
+          color: "{{ colors['Recomended_value'] }}",
+          value: 6,
+          label: {
+              align: 'left',
+              text: 'Liquid recomended (6 months)',
+          },
+        },
+        {
+          color: "{{ colors['Min_value'] }}",
+          value: 3,
+          label: {
+              align: 'left',
+              text: 'Minimum liquid recomended (3 months)',
+          },
+        }
+      ],
+    },
     plotOptions: options_maker_enabled,
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Months",
-        color: "{{ colors['Liquid'] }}",
+        color: "{{ colors['Liquid_dim'] }}",
+        dashStyle: 'shortdot',
+        visible: false,
         data: [{% for mdate in month['Expenses'].keys() %}
           [Date.parse("{{ mdate }}"), {{ 
             (month['Liquid'][mdate] / month['Expenses'][mdate]) | round(2)
@@ -510,17 +702,12 @@
         ]
       },
       {
-        name: "Minimum liquid recomended",
-        color: "{{ colors['Liquid_min_rec'] }}",
+        name: "Months 6m EWM / 12m MA",
+        color: "{{ colors['Liquid'] }}",
         data: [{% for mdate in month['Expenses'].keys() %}
-          [Date.parse("{{ mdate }}"), {{ 3 }}], {% endfor %}
-        ]
-      },
-      {
-        name: "Liquid recomended",
-        color: "{{ colors['Liquid_rec'] }}",
-        data: [{% for mdate in month['Expenses'].keys() %}
-          [Date.parse("{{ mdate }}"), {{ 6 }}], {% endfor %}
+          [Date.parse("{{ mdate }}"), {{ 
+            (month['Liquid_6m_e'][mdate] / month['Expenses_12m'][mdate]) | round(2)
+          }}], {% endfor %}
         ]
       }
     ],
@@ -530,6 +717,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
+    chart: {zoomType: "xy"},
     series: [
       {
         name: "Passive Income",
@@ -541,28 +729,52 @@
       {
         name: "Expenses",
         color: "{{ colors['Expenses_dim'] }}",
+        dashStyle: 'shortdot',
+        visible: false,
         data: [{% for mdate, value in month['Expenses'].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
       {
-        name: "Expenses 12m MA",
+        name: "Expenses 6m EWM",
         color: "{{ colors['Expenses'] }}",
-        data: [{% for mdate, value in month['Expenses_12m'].items() %}
+        data: [{% for mdate, value in month['Expenses_6m_e'].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
     ],
   });
   Highcharts.chart('FIRE_total_years_survival', {
-    title: {text: 'Total years survival'},
+    title: {text: 'Doomsday years (Assets / Expenses)'},
     xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
+    yAxis: {
+      title: {text: null},
+      plotLines: [
+        {
+          color: "{{ colors['Recomended_value'] }}",
+          value: 30,
+          label: {
+              align: 'left',
+              text: 'FIRE 3%',
+          },
+        },
+        {
+          color: "{{ colors['Min_value'] }}",
+          value: 25,
+          label: {
+              align: 'left',
+              text: 'FIRE 4%',
+          },
+        }
+      ],
+    },
     plotOptions: options_maker_enabled,
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Years",
         color: "{{ colors['Survival_dim'] }}",
+        dashStyle: 'shortdot',
         data: [{% for mdate in month['Worth'].keys() %}
           [Date.parse("{{ mdate }}"), {{ 
             (
@@ -573,13 +785,13 @@
         ]
       },
       {
-        name: "Years 12m MA",
+        name: "Years 6m EWM",
         color: "{{ colors['Survival'] }}",
         data: [{% for mdate in month['Worth'].keys() %}
           [Date.parse("{{ mdate }}"), {{ 
             (
-              ( month['Worth'][mdate] + month['Liquid'][mdate] ) / 
-              (12*month['Expenses_12m'][mdate])
+              ( month['Worth'][mdate] + month['Liquid_6m_e'][mdate] ) / 
+              (12*month['Expenses_6m_e'][mdate])
             ) | round(2)
           }}], {% endfor %}
         ]
