@@ -170,11 +170,14 @@ def extract_cards(data):
             data:   dict with data
     """
 
+    traces = [c.EXPENSES, c.INCOMES, c.EBIT]
+    traces += [x + "_12m" for x in traces] + [c.LIQUID, "Worth"]
+
     out = {}
 
     for tw in ["month", "year"]:
         out[tw] = {}
-        for name in [c.EXPENSES, c.INCOMES, c.EBIT, c.LIQUID, "Worth"]:
+        for name in traces:
             mdict = data[tw].get(name, None)
 
             if mdict is not None:

@@ -34,6 +34,11 @@
       <h1>{{ dash["month"]["Total_worth"] }} €</h1>
     </div>
   </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="DASH_basic_traces" class="plot" style="height: 450px"></div>
+  </div>
+
 </div>
 
 <!-- EVO -->
@@ -174,6 +179,53 @@
       stacking: 'normal',
     }
   }
+
+  // DASHBOARD SECTION
+  Highcharts.chart('DASH_basic_traces', {
+    title: {text: ""},
+    xAxis: {categories: ["Incomes", "Expenses", "EBIT"]},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
+    chart: {zoomType: "x", type: "bar"},
+    series: [
+      {
+        name: "Incomes",
+        color: "{{ colors['Incomes'] }}",
+        data: [{{ dash["month"]["Incomes"] }}, 0, 0],
+        stack: "last",
+      },
+      {
+        name: "Incomes 12m",
+        color: "{{ colors['Incomes_dim'] }}",
+        data: [{{ dash["month"]["Incomes_12m"] }}, 0, 0],
+        stack: "last_12m",
+      },
+      {
+        name: "Expenses",
+        color: "{{ colors['Expenses'] }}",
+        data: [0, {{ dash["month"]["Expenses"] }}, 0],
+        stack: "last",
+      },
+      {
+        name: "Expenses 12m",
+        color: "{{ colors['Expenses_dim'] }}",
+        data: [0, {{ dash["month"]["Expenses_12m"] }}, 0],
+        stack: "last_12m",
+      },
+      {
+        name: "EBIT",
+        color: "{{ colors['EBIT'] }}",
+        data: [0, 0, {{ dash["month"]["EBIT"] }}],
+        stack: "last",
+      },
+      {
+        name: "EBIT 12m",
+        color: "{{ colors['EBIT_dim'] }}",
+        data: [0, 0, {{ dash["month"]["EBIT_12m"] }}],
+        stack: "last_12m",
+      },
+    ],
+  });
 
   // EVOLUTION SECTION
   Highcharts.chart('EVO_evolution_month', {
