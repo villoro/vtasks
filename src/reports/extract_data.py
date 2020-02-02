@@ -146,11 +146,12 @@ def get_pie_traces(dfs):
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
 
         df_cat = dfs[c.DF_CATEG]
-        categories = sorted(df_cat[df_cat[c.COL_TYPE] == name][c.COL_NAME].tolist(), reverse=True)
+        categories = df_cat[df_cat[c.COL_TYPE] == name][c.COL_NAME].tolist()
 
         df = dfg.pivot_table(c.COL_AMOUNT, c.COL_MONTH_DATE, c.COL_CATEGORY, "sum").fillna(0)
 
-        export_trace = lambda serie: u.serie_to_dict(serie[categories])
+        # Reverse categories order
+        export_trace = lambda serie: u.serie_to_dict(serie[categories][::-1])
 
         out[name] = {
             "last_1m": export_trace(df.iloc[-1, :]),
