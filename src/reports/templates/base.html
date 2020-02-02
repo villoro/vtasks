@@ -42,8 +42,11 @@
       grid-column-gap: 16px;
       grid-template-columns: repeat(6, 1fr);
     }
-    @media only screen and (max-width: 600px) {
+    @media only screen and (min-width: 700px) and (max-width: 1250px) {
       .mgrid {grid-template-columns: repeat(3, 1fr);}
+    }
+    @media only screen and (max-width: 700px) {
+      .mgrid {grid-template-columns: repeat(2, 1fr);}
     }
 
     .plot {
