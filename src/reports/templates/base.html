@@ -34,6 +34,18 @@
       .w3-sidebar-item {font-size: 16px; margin-top: 0px}
     }
 
+    /* Grid for dashboard */
+    .mgrid {
+      padding-top: 16px;
+      display: grid;
+      grid-row-gap: 16px;
+      grid-column-gap: 16px;
+      grid-template-columns: repeat(6, 1fr);
+    }
+    @media only screen and (max-width: 600px) {
+      .mgrid {grid-template-columns: repeat(3, 1fr);}
+    }
+
     .plot {
       padding: 8px;
     }
