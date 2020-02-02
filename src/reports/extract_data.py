@@ -134,6 +134,27 @@ def get_comparison_traces(dfs):
     return out
 
 
+def get_pie_traces(dfs):
+    """
+        Add traces for pie plots
+
+        Args:
+            dfs:    dict with dataframes
+    """
+
+    out = {}
+    for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
+        df = dfg.pivot_table(c.COL_AMOUNT, c.COL_MONTH_DATE, c.COL_CATEGORY, "sum").fillna(0)
+
+        out[name] = {
+            "last_1m": u.serie_to_dict(df.iloc[-1, :]),
+            "last_12m": u.serie_to_dict(df.iloc[-12:, :].sum()),
+            "all": u.serie_to_dict(df.sum()),
+        }
+
+    return out
+
+
 def get_colors_comparisons(dfs):
     """
         Get colors for comparison plots
@@ -230,6 +251,10 @@ def main(mdate=date.today()):
     # Comparison traces
     log.info("Adding comparison traces")
     out["comp"] = get_comparison_traces(dfs)
+
+    # Pie traces
+    log.info("Adding pie traces")
+    out["pie"] = get_pie_traces(dfs)
 
     # Add colors
     log.info("Appending colors")
