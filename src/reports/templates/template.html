@@ -125,6 +125,10 @@
   <div class="w3-card w3-round w3-center w3-white elem">
     <div id="LIQ_vs_expenses" class="plot" style="height: 450px"></div>
   </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="LIQ_survival_ratio" class="plot" style="height: 450px"></div>
+  </div>
 </div>
 
 <!-- INV -->
@@ -139,10 +143,6 @@
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="INV_performance_by_type" class="plot" style="height: 450px"></div>
-  </div>
-
-  <div class="w3-card w3-round w3-center w3-white elem">
     <div id="INV_worth_by_type" class="plot" style="height: 450px"></div>
   </div>
 </div>
@@ -152,10 +152,6 @@
   <div class="w3-card w3-round w3-center w3-white elem">
     <div id="FIRE_savings_ratio_month" class="plot" style="height: 450px"></div>
     <div id="FIRE_savings_ratio_year" class="plot" style="height: 450px"></div>
-  </div>
-
-  <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="FIRE_survivial_rate" class="plot" style="height: 450px"></div>
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
@@ -703,6 +699,75 @@
       }
     ],
   });
+  Highcharts.chart('LIQ_survival_ratio', {
+    title: {
+      text: 'Survival months (Liquid / Expenses)'
+    },
+    xAxis: {type: 'datetime'},
+    yAxis: {
+      title: {text: null},
+      plotLines: [
+        {
+          color: "{{ colors['Expenses'] }}",
+          dashStyle: 'shortdot',
+          value: 24,
+          label: {
+              align: 'left',
+              text: '2 years',
+          },
+        },
+        {
+          color: "{{ colors['Max_value'] }}",
+          dashStyle: 'shortdashdot',
+          value: 12,
+          label: {
+              align: 'left',
+              text: '1 year',
+          },
+        },
+        {
+          color: "{{ colors['Recomended_value'] }}",
+          value: 6,
+          label: {
+              align: 'left',
+              text: 'Liquid recomended (6 months)',
+          },
+        },
+        {
+          color: "{{ colors['Min_value'] }}",
+          value: 3,
+          label: {
+              align: 'left',
+              text: 'Minimum liquid recomended (3 months)',
+          },
+        }
+      ],
+    },
+    plotOptions: options_maker_enabled,
+    chart: {zoomType: "x"},
+    series: [
+      {
+        name: "Months",
+        color: "{{ colors['Liquid_dim'] }}",
+        dashStyle: 'shortdot',
+        visible: false,
+        data: [{% for mdate in month['Expenses'].keys() %}
+          [Date.parse("{{ mdate }}"), {{ 
+            (month['Liquid'][mdate] / month['Expenses'][mdate]) | round(2)
+          }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Months 6m EWM / 12m MA",
+        color: "{{ colors['Liquid'] }}",
+        data: [{% for mdate in month['Expenses'].keys() %}
+          [Date.parse("{{ mdate }}"), {{ 
+            (month['Liquid_6m_e'][mdate] / month['Expenses_12m'][mdate]) | round(2)
+          }}], {% endfor %}
+        ]
+      }
+    ],
+  });
 
   // INVESTMENTS SECTION
   Highcharts.chart('INV_worth_vs_invest', {
@@ -793,7 +858,6 @@
       },
     ],
   });
-  Highcharts.chart('INV_performance_by_type', {title: {text: 'Performance by type'},});
   Highcharts.chart('INV_worth_by_type', {
     title: {text: 'Worth by type'},
     xAxis: {type: 'datetime'},
@@ -881,75 +945,6 @@
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
-    ],
-  });
-  Highcharts.chart('FIRE_survivial_rate', {
-    title: {
-      text: 'Survival months (Liquid / Expenses)'
-    },
-    xAxis: {type: 'datetime'},
-    yAxis: {
-      title: {text: null},
-      plotLines: [
-        {
-          color: "{{ colors['Expenses'] }}",
-          dashStyle: 'shortdot',
-          value: 24,
-          label: {
-              align: 'left',
-              text: '2 years',
-          },
-        },
-        {
-          color: "{{ colors['Max_value'] }}",
-          dashStyle: 'shortdashdot',
-          value: 12,
-          label: {
-              align: 'left',
-              text: '1 year',
-          },
-        },
-        {
-          color: "{{ colors['Recomended_value'] }}",
-          value: 6,
-          label: {
-              align: 'left',
-              text: 'Liquid recomended (6 months)',
-          },
-        },
-        {
-          color: "{{ colors['Min_value'] }}",
-          value: 3,
-          label: {
-              align: 'left',
-              text: 'Minimum liquid recomended (3 months)',
-          },
-        }
-      ],
-    },
-    plotOptions: options_maker_enabled,
-    chart: {zoomType: "x"},
-    series: [
-      {
-        name: "Months",
-        color: "{{ colors['Liquid_dim'] }}",
-        dashStyle: 'shortdot',
-        visible: false,
-        data: [{% for mdate in month['Expenses'].keys() %}
-          [Date.parse("{{ mdate }}"), {{ 
-            (month['Liquid'][mdate] / month['Expenses'][mdate]) | round(2)
-          }}], {% endfor %}
-        ]
-      },
-      {
-        name: "Months 6m EWM / 12m MA",
-        color: "{{ colors['Liquid'] }}",
-        data: [{% for mdate in month['Expenses'].keys() %}
-          [Date.parse("{{ mdate }}"), {{ 
-            (month['Liquid_6m_e'][mdate] / month['Expenses_12m'][mdate]) | round(2)
-          }}], {% endfor %}
-        ]
-      }
     ],
   });
   Highcharts.chart('FIRE_passive_income_vs_expenses', {
