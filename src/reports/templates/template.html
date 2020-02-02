@@ -62,19 +62,17 @@
 <!-- PIE -->
 <div id="pies" class="section">
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="PIE_expenses_last_year" class="plot" style="height: 450px"></div>
+    <h3>Expenses</h3>
+    <div id="PIE_expenses_last_1m" class="plot" style="height: 180px"></div>
+    <div id="PIE_expenses_last_12m" class="plot" style="height: 100px"></div>
+    <div id="PIE_expenses_all" class="plot" style="height: 100px"></div>
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="PIE_incomes_last_year" class="plot" style="height: 450px"></div>
-  </div>
-
-  <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="PIE_expenses_all" class="plot" style="height: 450px"></div>
-  </div>
-
-  <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="PIE_incomes_all" class="plot" style="height: 450px"></div>
+    <h3>Incomes</h3>
+    <div id="PIE_incomes_last_1m" class="plot" style="height: 180px"></div>
+    <div id="PIE_incomes_last_12m" class="plot" style="height: 100px"></div>
+    <div id="PIE_incomes_all" class="plot" style="height: 100px"></div>
   </div>
 </div>
 
@@ -97,9 +95,6 @@
 
   <div class="w3-card w3-round w3-center w3-white elem">
     <div id="INV_worth_evolution" class="plot" style="height: 450px"></div>
-  </div>
-
-  <div class="w3-card w3-round w3-center w3-white elem">
     <div id="INV_invest_evolution" class="plot" style="height: 450px"></div>
   </div>
 
@@ -116,9 +111,6 @@
 <div id="fire" class="section">
   <div class="w3-card w3-round w3-center w3-white elem">
     <div id="FIRE_savings_ratio_month" class="plot" style="height: 450px"></div>
-  </div>
-
-  <div class="w3-card w3-round w3-center w3-white elem">
     <div id="FIRE_savings_ratio_year" class="plot" style="height: 450px"></div>
   </div>
 
@@ -315,7 +307,7 @@
 
   // COMPARISON SECTION
   Highcharts.chart('COMP_incomes', {
-    title: {text: 'Incomes comparison'},
+    title: {text: 'Incomes comparison (12 months MA)'},
     xAxis: {
       title: {text: "Months"},
       type: 'category'
@@ -335,7 +327,7 @@
     ],
   });
   Highcharts.chart('COMP_expenses', {
-    title: {text: 'Expenses comparison'},
+    title: {text: 'Expenses comparison (12 months MA)'},
     xAxis: {
       title: {text: "Months"},
       type: 'category'
@@ -355,7 +347,7 @@
     ],
   });
   Highcharts.chart('COMP_EBIT', {
-    title: {text: 'EBIT comparison'},
+    title: {text: 'EBIT comparison (12 months MA)'},
     xAxis: {
       title: {text: "Months"},
       type: 'category'
@@ -375,7 +367,7 @@
     ],
   });
   Highcharts.chart('COMP_liquid', {
-    title: {text: 'Liquid comparison'},
+    title: {text: 'Liquid comparison (3 months EWM)'},
     xAxis: {
       title: {text: "Months"},
       type: 'category'
@@ -396,10 +388,105 @@
   });
 
   // PIES SECTION
-  Highcharts.chart('PIE_expenses_last_year', {title: {text: 'Expenses last year'},});
-  Highcharts.chart('PIE_incomes_last_year', {title: {text: 'Incomes last year'},});
-  Highcharts.chart('PIE_expenses_all', {title: {text: 'Expenses all time'},});
-  Highcharts.chart('PIE_incomes_all', {title: {text: 'Incomes all time'},});
+  pie_tooltip = {
+    formatter: function () {
+      return "<b>" + this.series.name + ":</b> " + this.percentage.toFixed(2) + "% (" + this.y + " €)";
+    }
+  }
+  Highcharts.chart('PIE_expenses_last_1m', {
+    title: {text: ""},
+    xAxis: {categories: ["Last month"]},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
+    chart: {zoomType: "x", type: "bar"},
+    tooltip: pie_tooltip,
+    series: [
+      {% for name, value in pies["Expenses"]["last_1m"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors['Expenses_categ'][name] }}",
+        data: [{{ value }}],
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('PIE_expenses_last_12m', {
+    title: {text: ""},
+    xAxis: {categories: ["Last year"]},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
+    chart: {zoomType: "x", type: "bar"},
+    tooltip: pie_tooltip,
+    legend: {enabled: false},
+    series: [
+      {% for name, value in pies["Expenses"]["last_12m"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors['Expenses_categ'][name] }}",
+        data: [{{ value }}],
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('PIE_expenses_all', {
+    title: {text: ""},
+    xAxis: {categories: ["All time"]},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
+    chart: {zoomType: "x", type: "bar"},
+    tooltip: pie_tooltip,
+    legend: {enabled: false},
+    series: [
+      {% for name, value in pies["Expenses"]["all"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors['Expenses_categ'][name] }}",
+        data: [{{ value }}],
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('PIE_incomes_last_1m', {
+    title: {text: ""},
+    xAxis: {categories: ["Last month"]},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
+    chart: {zoomType: "x", type: "bar"},
+    tooltip: pie_tooltip,
+    series: [
+      {% for name, value in pies["Incomes"]["last_1m"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors['Incomes_categ'][name] }}",
+        data: [{{ value }}],
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('PIE_incomes_last_12m', {
+    title: {text: ""},
+    xAxis: {categories: ["Last year"]},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
+    chart: {zoomType: "x", type: "bar"},
+    tooltip: pie_tooltip,
+    legend: {enabled: false},
+    series: [
+      {% for name, value in pies["Incomes"]["last_12m"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors['Incomes_categ'][name] }}",
+        data: [{{ value }}],
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('PIE_incomes_all', {
+    title: {text: ""},
+    xAxis: {categories: ["All time"]},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
+    chart: {zoomType: "x", type: "bar"},
+    tooltip: pie_tooltip,
+    legend: {enabled: false},
+    series: [
+      {% for name, value in pies["Incomes"]["all"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors['Incomes_categ'][name] }}",
+        data: [{{ value }}],
+      }, {% endfor %}
+    ],
+  });
 
   // LIQUID SECTION
   Highcharts.chart('LIQ_evolution', {
@@ -630,7 +717,19 @@
   Highcharts.chart('FIRE_savings_ratio_year', {
     title: {text: 'Savings ratio by year'},
     xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
+    yAxis: {
+      title: {text: null},
+      plotLines: [
+        {
+          color: "{{ colors['Recomended_value'] }}",
+          value: 1,
+          label: {
+              align: 'left',
+              text: 'Max Savings Ratio',
+          },
+        },
+      ],
+    },
     plotOptions: options_maker_enabled,
     series: [
       {
