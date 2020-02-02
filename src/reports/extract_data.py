@@ -134,6 +134,70 @@ def get_comparison_traces(dfs):
     return out
 
 
+def get_pie_traces(dfs):
+    """
+        Add traces for pie plots
+
+        Args:
+            dfs:    dict with dataframes
+    """
+
+    out = {}
+    for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
+
+        df_cat = dfs[c.DF_CATEG]
+        categories = df_cat[df_cat[c.COL_TYPE] == name][c.COL_NAME].tolist()
+
+        df = dfg.pivot_table(c.COL_AMOUNT, c.COL_MONTH_DATE, c.COL_CATEGORY, "sum").fillna(0)
+
+        # Reverse categories order
+        export_trace = lambda serie: u.serie_to_dict(serie[categories][::-1])
+
+        out[name] = {
+            "last_1m": export_trace(df.iloc[-1, :]),
+            "last_12m": export_trace(df.iloc[-12:, :].sum()),
+            "all": export_trace(df.sum()),
+        }
+
+    return out
+
+
+def extract_cards(data):
+    """
+        Extract data for dashboard cards
+        
+        Args:
+            data:   dict with data
+    """
+
+    traces = [c.EXPENSES, c.INCOMES, c.EBIT, c.LIQUID]
+    traces += [x + "_12m" for x in traces] + ["Worth", "Invest"]
+
+    out = {}
+
+    for tw in ["month", "year"]:
+        out[tw] = {}
+        for name in traces:
+            mdict = data[tw].get(name, None)
+
+            if mdict is not None:
+                out[tw][name] = mdict[max(mdict.keys())]
+
+    # Add year before for worth, invested and liquid
+    for name in [c.LIQUID, "Worth", "Invest"]:
+        mdict = data["month"][name]
+        out["month"][f"{name}_1y"] = mdict[list(mdict.keys())[-12]]
+
+    # Add totals
+    for name in ["Worth", "Invest"]:
+        out["month"][f"Total_{name}"] = out["month"][c.LIQUID] + out["month"][name]
+        out["month"][f"Total_{name}_1y"] = (
+            out["month"][f"{c.LIQUID}_1y"] + out["month"][f"{name}_1y"]
+        )
+
+    return out
+
+
 def get_colors_comparisons(dfs):
     """
         Get colors for comparison plots
@@ -230,6 +294,14 @@ def main(mdate=date.today()):
     # Comparison traces
     log.info("Adding comparison traces")
     out["comp"] = get_comparison_traces(dfs)
+
+    # Pie traces
+    log.info("Adding pie traces")
+    out["pies"] = get_pie_traces(dfs)
+
+    # Dashboard info
+    log.info("Adding dashboard info")
+    out["dash"] = extract_cards(out)
 
     # Add colors
     log.info("Appending colors")
