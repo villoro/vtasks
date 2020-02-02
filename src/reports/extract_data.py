@@ -162,6 +162,25 @@ def get_pie_traces(dfs):
     return out
 
 
+def extract_cards(data):
+    """
+        Extract data for dashboard cards
+        
+        Args:
+            data:   dict with data
+    """
+
+    out = {}
+
+    for name in [c.EXPENSES, c.INCOMES, c.EBIT, c.LIQUID, "Worth"]:
+        mdict = data["month"][name]
+        out[name] = mdict[max(mdict.keys())]
+
+    out["Total_worth"] = out[c.LIQUID] + out["Worth"]
+
+    return out
+
+
 def get_colors_comparisons(dfs):
     """
         Get colors for comparison plots
@@ -262,6 +281,10 @@ def main(mdate=date.today()):
     # Pie traces
     log.info("Adding pie traces")
     out["pies"] = get_pie_traces(dfs)
+
+    # Dashboard info
+    log.info("Adding dashboard info")
+    out["dash"] = extract_cards(out)
 
     # Add colors
     log.info("Appending colors")
