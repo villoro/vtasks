@@ -31,12 +31,20 @@
     </div>
     <div class="w3-card w3-round" style="background-color: {{ colors['Survival'] }}; color:white;">
       <h3 style="margin-bottom: -16px;">Total Worth</h3>
-      <h1>{{ dash["month"]["Total_worth"] }} €</h1>
+      <h1>{{ dash["month"]["Total_Worth"] }} €</h1>
     </div>
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="DASH_basic_traces" class="plot" style="height: 450px"></div>
+    <div id="DASH_basic_traces" class="plot" style="height: 350px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="DASH_liquid" class="plot" style="height: 180px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="DASH_investments" class="plot" style="height: 250px"></div>
   </div>
 
 </div>
@@ -226,7 +234,61 @@
       },
     ],
   });
-
+  Highcharts.chart('DASH_liquid', {
+    title: {text: ""},
+    xAxis: {categories: ["Liquid"]},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
+    chart: {zoomType: "x", type: "bar"},
+    series: [
+      {
+        name: "Liquid",
+        color: "{{ colors['Liquid'] }}",
+        data: [{{ dash["month"]["Liquid"] }}],
+        stack: "last",
+      },
+      {
+        name: "Liquid 12m",
+        color: "{{ colors['Liquid_dim'] }}",
+        data: [{{ dash["month"]["Liquid_12m"] }}],
+        stack: "last_12m",
+      },
+    ],
+  });
+  Highcharts.chart('DASH_investments', {
+    title: {text: ""},
+    xAxis: {categories: ["Total Worth", "Total Invested"]},
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
+    chart: {zoomType: "x", type: "bar"},
+    series: [
+      {
+        name: "Worth",
+        color: "{{ colors['Total_worth'] }}",
+        data: [{{ dash["month"]["Total_Worth"] }}, 0],
+        stack: "last",
+      },
+      {
+        name: "Worth year before",
+        color: "{{ colors['Total_worth_dim'] }}",
+        data: [{{ dash["month"]["Total_Worth_1y"] }}, 0],
+        stack: "year_before",
+      },
+      {
+        name: "Invested",
+        color: "{{ colors['Invest'] }}",
+        data: [0, {{ dash["month"]["Total_Invest"] }}],
+        stack: "last",
+      },
+      {
+        name: "Invested year before",
+        color: "{{ colors['Invest_dim'] }}",
+        data: [0, {{ dash["month"]["Total_Invest_1y"] }}],
+        stack: "year_before",
+      },
+    ],
+  });
+  
   // EVOLUTION SECTION
   Highcharts.chart('EVO_evolution_month', {
     title: {

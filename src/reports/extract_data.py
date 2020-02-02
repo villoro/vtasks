@@ -170,8 +170,8 @@ def extract_cards(data):
             data:   dict with data
     """
 
-    traces = [c.EXPENSES, c.INCOMES, c.EBIT]
-    traces += [x + "_12m" for x in traces] + [c.LIQUID, "Worth"]
+    traces = [c.EXPENSES, c.INCOMES, c.EBIT, c.LIQUID]
+    traces += [x + "_12m" for x in traces] + ["Worth", "Invest"]
 
     out = {}
 
@@ -183,8 +183,17 @@ def extract_cards(data):
             if mdict is not None:
                 out[tw][name] = mdict[max(mdict.keys())]
 
-    # Add total worth
-    out["month"]["Total_worth"] = out["month"][c.LIQUID] + out["month"]["Worth"]
+    # Add year before for worth, invested and liquid
+    for name in [c.LIQUID, "Worth", "Invest"]:
+        mdict = data["month"][name]
+        out["month"][f"{name}_1y"] = mdict[list(mdict.keys())[-12]]
+
+    # Add totals
+    for name in ["Worth", "Invest"]:
+        out["month"][f"Total_{name}"] = out["month"][c.LIQUID] + out["month"][name]
+        out["month"][f"Total_{name}_1y"] = (
+            out["month"][f"{c.LIQUID}_1y"] + out["month"][f"{name}_1y"]
+        )
 
     return out
 
