@@ -9,29 +9,29 @@
 <div id="dashboard" class="section w3-center">
   <h1>{{ mdate }} Report</h1>
   <div class="mgrid">
-    <div class="w3-card w3-round" style="background-color: {{ colors['Expenses'] }}; color:white;">
-      <h3 style="margin-bottom: -16px;">Expenses</h3>
-      <h1>{{ dash["Expenses"] }} €</h1>
-    </div>
     <div class="w3-card w3-round" style="background-color: {{ colors['Incomes'] }}; color:white;">
       <h3 style="margin-bottom: -16px;">Incomes</h3>
-      <h1>{{ dash["Incomes"] }} €</h1>
+      <h1>{{ dash["month"]["Incomes"] }} €</h1>
+    </div>
+    <div class="w3-card w3-round" style="background-color: {{ colors['Expenses'] }}; color:white;">
+      <h3 style="margin-bottom: -16px;">Expenses</h3>
+      <h1>{{ dash["month"]["Expenses"] }} €</h1>
     </div>
     <div class="w3-card w3-round" style="background-color: {{ colors['EBIT'] }}; color:white;">
       <h3 style="margin-bottom: -16px;">EBIT</h3>
-      <h1>{{ dash["EBIT"] }} €</h1>
+      <h1>{{ dash["month"]["EBIT"] }} €</h1>
     </div>
     <div class="w3-card w3-round" style="background-color: {{ colors['Liquid'] }}; color:white;">
       <h3 style="margin-bottom: -16px;">Liquid</h3>
-      <h1>{{ dash["Liquid"] }} €</h1>
+      <h1>{{ dash["month"]["Liquid"] }} €</h1>
     </div>
     <div class="w3-card w3-round" style="background-color: {{ colors['Worth'] }}; color:white;">
       <h3 style="margin-bottom: -16px;">Worth</h3>
-      <h1>{{ dash["Worth"] }} €</h1>
+      <h1>{{ dash["month"]["Worth"] }} €</h1>
     </div>
     <div class="w3-card w3-round" style="background-color: {{ colors['Survival'] }}; color:white;">
       <h3 style="margin-bottom: -16px;">Total Worth</h3>
-      <h1>{{ dash["Total_worth"] }} €</h1>
+      <h1>{{ dash["month"]["Total_worth"] }} €</h1>
     </div>
   </div>
 </div>

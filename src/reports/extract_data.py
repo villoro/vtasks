@@ -172,11 +172,16 @@ def extract_cards(data):
 
     out = {}
 
-    for name in [c.EXPENSES, c.INCOMES, c.EBIT, c.LIQUID, "Worth"]:
-        mdict = data["month"][name]
-        out[name] = mdict[max(mdict.keys())]
+    for tw in ["month", "year"]:
+        out[tw] = {}
+        for name in [c.EXPENSES, c.INCOMES, c.EBIT, c.LIQUID, "Worth"]:
+            mdict = data[tw].get(name, None)
 
-    out["Total_worth"] = out[c.LIQUID] + out["Worth"]
+            if mdict is not None:
+                out[tw][name] = mdict[max(mdict.keys())]
+
+    # Add total worth
+    out["month"]["Total_worth"] = out["month"][c.LIQUID] + out["month"]["Worth"]
 
     return out
 
