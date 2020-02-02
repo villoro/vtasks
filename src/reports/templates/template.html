@@ -396,10 +396,39 @@
   });
 
   // PIES SECTION
-  Highcharts.chart('PIE_expenses_last_year', {title: {text: 'Expenses last year'},});
-  Highcharts.chart('PIE_incomes_last_year', {title: {text: 'Incomes last year'},});
-  Highcharts.chart('PIE_expenses_all', {title: {text: 'Expenses all time'},});
-  Highcharts.chart('PIE_incomes_all', {title: {text: 'Incomes all time'},});
+  pie_xaxis = {
+    categories: [""],
+    title: {text: null}
+  }
+  pie_tooltip = {
+    formatter: function () {
+      return "<b>" + this.series.name + ":</b> " + this.percentage.toFixed(2) + "% (" + this.y + " €)";
+    }
+  }
+  Highcharts.chart('PIE_expenses_last_year', {
+    title: {text: 'Expenses last year'},
+    xAxis: pie_xaxis,
+    yAxis: axe_no_title,
+    plotOptions: options_maker_enabled_stacked,
+    chart: {zoomType: "x", type: "bar"},
+    tooltip: pie_tooltip,
+    series: [
+      {% for name, value in pies["Expenses"]["last_1m"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors['Expenses_categ'][name] }}",
+        data: [{{ value }}],
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('PIE_incomes_last_year', {
+    title: {text: 'Incomes last year'},
+  });
+  Highcharts.chart('PIE_expenses_all', {
+    title: {text: 'Expenses all time'},
+  });
+  Highcharts.chart('PIE_incomes_all', {
+    title: {text: 'Incomes all time'},
+  });
 
   // LIQUID SECTION
   Highcharts.chart('LIQ_evolution', {

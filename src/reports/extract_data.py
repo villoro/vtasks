@@ -144,12 +144,18 @@ def get_pie_traces(dfs):
 
     out = {}
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
+
+        df_cat = dfs[c.DF_CATEG]
+        categories = sorted(df_cat[df_cat[c.COL_TYPE] == name][c.COL_NAME].tolist(), reverse=True)
+
         df = dfg.pivot_table(c.COL_AMOUNT, c.COL_MONTH_DATE, c.COL_CATEGORY, "sum").fillna(0)
 
+        export_trace = lambda serie: u.serie_to_dict(serie[categories])
+
         out[name] = {
-            "last_1m": u.serie_to_dict(df.iloc[-1, :]),
-            "last_12m": u.serie_to_dict(df.iloc[-12:, :].sum()),
-            "all": u.serie_to_dict(df.sum()),
+            "last_1m": export_trace(df.iloc[-1, :]),
+            "last_12m": export_trace(df.iloc[-12:, :].sum()),
+            "all": export_trace(df.sum()),
         }
 
     return out
@@ -254,7 +260,7 @@ def main(mdate=date.today()):
 
     # Pie traces
     log.info("Adding pie traces")
-    out["pie"] = get_pie_traces(dfs)
+    out["pies"] = get_pie_traces(dfs)
 
     # Add colors
     log.info("Appending colors")
