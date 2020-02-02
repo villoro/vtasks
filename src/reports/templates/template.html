@@ -62,27 +62,17 @@
 <!-- PIE -->
 <div id="pies" class="section">
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="PIE_expenses_last_1m" class="plot" style="height: 200px"></div>
+    <h3>Expenses</h3>
+    <div id="PIE_expenses_last_1m" class="plot" style="height: 180px"></div>
+    <div id="PIE_expenses_last_12m" class="plot" style="height: 100px"></div>
+    <div id="PIE_expenses_all" class="plot" style="height: 100px"></div>
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="PIE_expenses_last_12m" class="plot" style="height: 150px"></div>
-  </div>
-
-  <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="PIE_expenses_all" class="plot" style="height: 150px"></div>
-  </div>
-
-  <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="PIE_incomes_last_1m" class="plot" style="height: 200px"></div>
-  </div>
-
-  <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="PIE_incomes_last_12m" class="plot" style="height: 150px"></div>
-  </div>
-
-  <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="PIE_incomes_all" class="plot" style="height: 150px"></div>
+    <h3>Incomes</h3>
+    <div id="PIE_incomes_last_1m" class="plot" style="height: 180px"></div>
+    <div id="PIE_incomes_last_12m" class="plot" style="height: 100px"></div>
+    <div id="PIE_incomes_all" class="plot" style="height: 100px"></div>
   </div>
 </div>
 
@@ -404,18 +394,14 @@
   });
 
   // PIES SECTION
-  pie_xaxis = {
-    categories: [""],
-    title: {text: null}
-  }
   pie_tooltip = {
     formatter: function () {
       return "<b>" + this.series.name + ":</b> " + this.percentage.toFixed(2) + "% (" + this.y + " €)";
     }
   }
   Highcharts.chart('PIE_expenses_last_1m', {
-    title: {text: 'Expenses last month'},
-    xAxis: pie_xaxis,
+    title: {text: ""},
+    xAxis: {categories: ["Last month"]},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
     chart: {zoomType: "x", type: "bar"},
@@ -429,8 +415,8 @@
     ],
   });
   Highcharts.chart('PIE_expenses_last_12m', {
-    title: {text: 'Expenses last year'},
-    xAxis: pie_xaxis,
+    title: {text: ""},
+    xAxis: {categories: ["Last year"]},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
     chart: {zoomType: "x", type: "bar"},
@@ -445,8 +431,8 @@
     ],
   });
   Highcharts.chart('PIE_expenses_all', {
-    title: {text: 'Expenses all time'},
-    xAxis: pie_xaxis,
+    title: {text: ""},
+    xAxis: {categories: ["All time"]},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
     chart: {zoomType: "x", type: "bar"},
@@ -461,8 +447,8 @@
     ],
   });
   Highcharts.chart('PIE_incomes_last_1m', {
-    title: {text: 'Incomes last month'},
-    xAxis: pie_xaxis,
+    title: {text: ""},
+    xAxis: {categories: ["Last month"]},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
     chart: {zoomType: "x", type: "bar"},
@@ -476,8 +462,8 @@
     ],
   });
   Highcharts.chart('PIE_incomes_last_12m', {
-    title: {text: 'Incomes last year'},
-    xAxis: pie_xaxis,
+    title: {text: ""},
+    xAxis: {categories: ["Last year"]},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
     chart: {zoomType: "x", type: "bar"},
@@ -492,8 +478,8 @@
     ],
   });
   Highcharts.chart('PIE_incomes_all', {
-    title: {text: 'Incomes all time'},
-    xAxis: pie_xaxis,
+    title: {text: ""},
+    xAxis: {categories: ["All time"]},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
     chart: {zoomType: "x", type: "bar"},
