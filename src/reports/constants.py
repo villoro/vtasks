@@ -52,8 +52,9 @@ DEFAULT_COLORS = {
     "Min_value": ("grey", 700), "Recomended_value": ("grey", 400),
     "Max_value": ("orange", 500),
     "Worth": ("green", 700),
-    "Invest": ("pink", 300),
+    "Invest": ("pink", 300), "Invest_dim": ("pink", 100),
     SAVINGS: ("purple", 500), f"{SAVINGS}_dim": ("purple", 100),
     "Survival": ("brown", 500), f"Survival_dim": ("brown", 100),
+    "Total_worth": ("brown", 500), "Total_worth_dim": ("brown", 100)
 }
 # fmt: on

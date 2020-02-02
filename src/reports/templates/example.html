@@ -40,6 +40,18 @@
       margin-bottom: 16px;
     }
 
+    /* Grid for dashboard */
+    .mgrid {
+      padding-top: 16px;
+      display: grid;
+      grid-row-gap: 16px;
+      grid-column-gap: 16px;
+      grid-template-columns: repeat(6, 1fr);
+    }
+    @media only screen and (max-width: 600px) {
+      .mgrid {grid-template-columns: repeat(3, 1fr)}
+    }
+
     .sidebar a.active{
       color:#000000!important
     }
@@ -104,6 +116,26 @@
 
       <!-- DASH -->
       <div id="dashboard" class="section">
+        <div class="mgrid">
+          <div class="w3-card w3-round w3-center w3-white">
+            <h1>Expenses</h1>
+          </div>
+          <div class="w3-card w3-round w3-center w3-white">
+            <h1>Incomes</h1>
+          </div>
+          <div class="w3-card w3-round w3-center w3-white">
+            <h1>EBIT</h1>
+          </div>
+          <div class="w3-card w3-round w3-center w3-white">
+            <h1>Liquid</h1>
+          </div>
+          <div class="w3-card w3-round w3-center w3-white">
+            <h1>Worth</h1>
+          </div>
+          <div class="w3-card w3-round w3-center w3-white">
+            <h1>Date</h1>
+          </div>
+        </div>
       </div>
 
       <!-- EVO -->

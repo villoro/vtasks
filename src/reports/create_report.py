@@ -29,6 +29,7 @@ def main(mdate=date.today()):
     data = gu.dropbox.read_yaml(dbx, f"/report_data/{mdate:%Y_%m}.yaml")
 
     # Add title
+    data["mdate"] = f"{mdate:%Y_%m}"
     data["title"] = f"{mdate:%Y_%m} Expensor"
 
     # Create report
