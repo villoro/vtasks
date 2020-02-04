@@ -9,6 +9,8 @@ import pandas as pd
 
 from v_palette import get_colors
 
+from . import constants as c
+
 
 def serie_to_dict(serie):
     """ Transform a serie to a dict """
@@ -63,13 +65,13 @@ def get_min_month_start(dfi):
 
     df = dfi.copy()
 
-    if c.COL_DATE in df.columns:
+    if isinstance(df, pd.DataFrame) and (c.COL_DATE in df.columns):
         df = df.set_index(c.COL_DATE)
 
     return df.resample("MS").first().index.min()
 
 
-def add_missing_months(df, mdate=date.today()):
+def add_missing_months(df, mdate):
     """
         Adds missing months from the min month to mdate
         
@@ -82,3 +84,32 @@ def add_missing_months(df, mdate=date.today()):
     max_date = mdate.replace(day=1)
 
     return df.reindex(pd.date_range(min_date, max_date, freq="MS"))
+
+
+def filter_by_date(dfs, mdate):
+    """
+        No data greater than mdate and complete missing months
+
+        Args:
+            dfs:    dict with dataframes
+            mdate:  date of the report
+    """
+
+    # Liquid, worth and invest dataframes
+    for name in [c.DF_LIQUID, c.DF_WORTH, c.DF_INVEST]:
+        df = dfs[name].set_index(c.COL_DATE)
+
+        # No future data
+        df = df[df.index <= pd.to_datetime(mdate)]
+
+        # No missing months
+        df = add_missing_months(df, mdate)
+        df.index.name = c.COL_DATE
+
+        dfs[name] = df
+
+    # Transactions df
+    df = dfs[c.DF_TRANS]
+    dfs[c.DF_TRANS] = df[df[c.COL_DATE] <= pd.to_datetime(mdate)]
+
+    return dfs
