@@ -751,19 +751,15 @@
         color: "{{ colors['Liquid_dim'] }}",
         dashStyle: 'shortdot',
         visible: false,
-        data: [{% for mdate in month['Expenses'].keys() %}
-          [Date.parse("{{ mdate }}"), {{ 
-            (month['Liquid'][mdate] / month['Expenses'][mdate]) | round(2)
-          }}], {% endfor %}
+        data: [{% for mdate, value in ratios['Liquid/Expenses'].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
       {
         name: "Months 6m EWM / 12m MA",
         color: "{{ colors['Liquid'] }}",
-        data: [{% for mdate in month['Expenses'].keys() %}
-          [Date.parse("{{ mdate }}"), {{ 
-            (month['Liquid_6m_e'][mdate] / month['Expenses_12m'][mdate]) | round(2)
-          }}], {% endfor %}
+        data: [{% for mdate, value in ratios['Liquid_6m_e/Expenses_12m'].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       }
     ],
@@ -1010,25 +1006,15 @@
         name: "Years",
         color: "{{ colors['Survival_dim'] }}",
         dashStyle: 'shortdot',
-        data: [{% for mdate in month['Worth'].keys() %}
-          [Date.parse("{{ mdate }}"), {{ 
-            (
-              ( month['Worth'][mdate] + month['Liquid'][mdate] ) / 
-              (12*month['Expenses'][mdate])
-            ) | round(2)
-          }}], {% endfor %}
+        data: [{% for mdate, value in ratios['Total_Worth/Expenses'].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
       {
         name: "Years 6m EWM",
         color: "{{ colors['Survival'] }}",
-        data: [{% for mdate in month['Worth'].keys() %}
-          [Date.parse("{{ mdate }}"), {{ 
-            (
-              ( month['Worth'][mdate] + month['Liquid_6m_e'][mdate] ) / 
-              (12*month['Expenses_6m_e'][mdate])
-            ) | round(2)
-          }}], {% endfor %}
+        data: [{% for mdate, value in ratios['Total_Worth_6m_e/Expenses_6m_e'].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
     ],

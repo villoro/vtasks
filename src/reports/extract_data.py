@@ -2,6 +2,7 @@
     Create the raw data for the reprot
 """
 
+import numpy as np
 import pandas as pd
 from datetime import date
 from collections import OrderedDict
@@ -210,6 +211,38 @@ def extract_cards(data):
     return out
 
 
+def get_ratios(out):
+    """ Calculate ratios """
+
+    aux = {}
+    names = [
+        c.EXPENSES,
+        c.LIQUID,
+        "Worth",
+        f"{c.EXPENSES}_12m",
+        f"{c.EXPENSES}_6m_e",
+        f"{c.LIQUID}_6m_e",
+    ]
+    for name in names:
+        aux[name] = pd.Series(out["month"][name])
+    liquid = pd.Series(out["month"][c.LIQUID])
+
+    out = {
+        f"{c.LIQUID}/{c.EXPENSES}": aux[c.LIQUID] / aux[c.EXPENSES],
+        f"{c.LIQUID}_6m_e/{c.EXPENSES}_12m": aux[f"{c.LIQUID}_6m_e"] / aux[f"{c.EXPENSES}_12m"],
+        f"Total_Worth/{c.EXPENSES}": (aux["Worth"] + aux[c.LIQUID]) / (12 * aux[c.EXPENSES]),
+        f"Total_Worth_6m_e/{c.EXPENSES}_6m_e": (aux["Worth"] + aux[f"{c.LIQUID}_6m_e"])
+        / (12 * aux[f"{c.EXPENSES}_12m"]),
+    }
+
+    # Drop nans and round values
+    for name, serie in out.items():
+        serie = serie.replace([np.inf, -np.inf], np.nan)
+        out[name] = u.serie_to_dict(serie.dropna())
+
+    return out
+
+
 def get_colors_comparisons(dfs):
     """
         Get colors for comparison plots
@@ -303,16 +336,11 @@ def main(mdate=date.today()):
     for name, yml_name in data:
         out["month"].update(get_investment_or_liquid(dfs, yml[yml_name], name))
 
-    # Comparison traces
     out["comp"] = get_comparison_traces(dfs)
-
-    # Pie traces
     out["pies"] = get_pie_traces(dfs)
-
-    # Dashboard info
     out["dash"] = extract_cards(out)
+    out["ratios"] = get_ratios(out)
 
-    # Add colors
     out["colors"] = get_colors(dfs, yml)
 
     gu.dropbox.write_yaml(dbx, out, f"/report_data/{mdate:%Y_%m}.yaml")
