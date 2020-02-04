@@ -12,22 +12,21 @@ from . import constants as c
 from . import utilities as u
 
 
-def get_basic_traces(dfs, col_period):
+def get_basic_traces(dfs, col_period, mdate):
     """
         Extract Incomes, Expenses, EBIT and savings traces
 
         Args:
             dfs:        dict with dataframes
             col_period: month or year
+            mdate:      date of the report
     """
 
-    series = {
-        name: df.groupby(col_period)[c.COL_AMOUNT].sum()
-        for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE)
-    }
+    series = {}
+    for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
+        series[name] = u.add_missing_months(df.groupby(col_period)[c.COL_AMOUNT].sum(), mdate)
 
     # Extract expenses and incomes
-    series[c.EXPENSES], series[c.INCOMES] = u.normalize_index(series[c.EXPENSES], series[c.INCOMES])
     series[c.EBIT] = series[c.INCOMES] - series[c.EXPENSES]
 
     # Add savings ratio
@@ -278,7 +277,7 @@ def main(mdate=date.today()):
     # Expenses, incomes, EBIT and Savings ratio
     log.info("Extracting expenses, incomes, EBIT and savings ratio")
     for period, col_period in {"month": c.COL_MONTH_DATE, "year": c.COL_YEAR}.items():
-        out[period] = get_basic_traces(dfs, col_period)
+        out[period] = get_basic_traces(dfs, col_period, mdate)
 
     # Liquid, worth and invested
     log.info("Adding liquid, worth and invested")
