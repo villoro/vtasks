@@ -2,6 +2,7 @@
     Create the raw data for the reprot
 """
 
+import numpy as np
 import pandas as pd
 from datetime import date
 from collections import OrderedDict
@@ -12,22 +13,28 @@ from . import constants as c
 from . import utilities as u
 
 
-def get_basic_traces(dfs, col_period):
+def get_basic_traces(dfs, col_period, mdate):
     """
         Extract Incomes, Expenses, EBIT and savings traces
 
         Args:
             dfs:        dict with dataframes
             col_period: month or year
+            mdate:      date of the report
     """
 
-    series = {
-        name: df.groupby(col_period)[c.COL_AMOUNT].sum()
-        for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE)
-    }
+    series = {}
+    for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
+
+        aux = df.groupby(col_period)[c.COL_AMOUNT].sum()
+
+        # Add missing months for month grouping
+        if col_period == c.COL_MONTH_DATE:
+            aux = u.add_missing_months(aux, mdate).fillna(0)
+
+        series[name] = aux
 
     # Extract expenses and incomes
-    series[c.EXPENSES], series[c.INCOMES] = u.normalize_index(series[c.EXPENSES], series[c.INCOMES])
     series[c.EBIT] = series[c.INCOMES] - series[c.EXPENSES]
 
     # Add savings ratio
@@ -131,6 +138,8 @@ def get_comparison_traces(dfs):
     df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
     out[c.LIQUID] = get_traces(u.time_average(df, months=3, exponential=True))
 
+    log.info("Comparison traces added")
+
     return out
 
 
@@ -158,6 +167,8 @@ def get_pie_traces(dfs):
             "last_12m": export_trace(df.iloc[-12:, :].sum()),
             "all": export_trace(df.sum()),
         }
+
+    log.info("Pie traces added")
 
     return out
 
@@ -194,6 +205,40 @@ def extract_cards(data):
         out["month"][f"Total_{name}_1y"] = (
             out["month"][f"{c.LIQUID}_1y"] + out["month"][f"{name}_1y"]
         )
+
+    log.info("Dashboard info added")
+
+    return out
+
+
+def get_ratios(out):
+    """ Calculate ratios """
+
+    aux = {}
+    names = [
+        c.EXPENSES,
+        c.LIQUID,
+        "Worth",
+        f"{c.EXPENSES}_12m",
+        f"{c.EXPENSES}_6m_e",
+        f"{c.LIQUID}_6m_e",
+    ]
+    for name in names:
+        aux[name] = pd.Series(out["month"][name])
+    liquid = pd.Series(out["month"][c.LIQUID])
+
+    out = {
+        f"{c.LIQUID}/{c.EXPENSES}": aux[c.LIQUID] / aux[c.EXPENSES],
+        f"{c.LIQUID}_6m_e/{c.EXPENSES}_12m": aux[f"{c.LIQUID}_6m_e"] / aux[f"{c.EXPENSES}_12m"],
+        f"Total_Worth/{c.EXPENSES}": (aux["Worth"] + aux[c.LIQUID]) / (12 * aux[c.EXPENSES]),
+        f"Total_Worth_6m_e/{c.EXPENSES}_6m_e": (aux["Worth"] + aux[f"{c.LIQUID}_6m_e"])
+        / (12 * aux[f"{c.EXPENSES}_12m"]),
+    }
+
+    # Drop nans and round values
+    for name, serie in out.items():
+        serie = serie.replace([np.inf, -np.inf], np.nan)
+        out[name] = u.serie_to_dict(serie.dropna())
 
     return out
 
@@ -258,6 +303,8 @@ def get_colors(dfs, yml):
     # Colors comparison plot
     out["comp"] = get_colors_comparisons(dfs)
 
+    log.info("Colors added")
+
     return out
 
 
@@ -271,6 +318,9 @@ def main(mdate=date.today()):
     dfs = gu.dropbox.read_excel(dbx, c.FILE_DATA, c.DFS_ALL_FROM_DATA)
     dfs[c.DF_TRANS] = gu.dropbox.read_excel(dbx, c.FILE_TRANSACTIONS)
 
+    # Filter dates
+    dfs = u.filter_by_date(dfs, mdate)
+
     yml = gu.dropbox.read_yaml(dbx, c.FILE_CONFIG)
 
     out = {}
@@ -278,33 +328,19 @@ def main(mdate=date.today()):
     # Expenses, incomes, EBIT and Savings ratio
     log.info("Extracting expenses, incomes, EBIT and savings ratio")
     for period, col_period in {"month": c.COL_MONTH_DATE, "year": c.COL_YEAR}.items():
-        out[period] = get_basic_traces(dfs, col_period)
+        out[period] = get_basic_traces(dfs, col_period, mdate)
 
     # Liquid, worth and invested
     log.info("Adding liquid, worth and invested")
-    for name, yml_name in [
-        (c.DF_LIQUID, c.LIQUID),
-        (c.DF_WORTH, c.INVEST),
-        (c.DF_INVEST, c.INVEST),
-    ]:
-        dfs[name] = dfs[name].set_index(c.COL_DATE)
-
+    data = [(c.DF_LIQUID, c.LIQUID), (c.DF_WORTH, c.INVEST), (c.DF_INVEST, c.INVEST)]
+    for name, yml_name in data:
         out["month"].update(get_investment_or_liquid(dfs, yml[yml_name], name))
 
-    # Comparison traces
-    log.info("Adding comparison traces")
     out["comp"] = get_comparison_traces(dfs)
-
-    # Pie traces
-    log.info("Adding pie traces")
     out["pies"] = get_pie_traces(dfs)
-
-    # Dashboard info
-    log.info("Adding dashboard info")
     out["dash"] = extract_cards(out)
+    out["ratios"] = get_ratios(out)
 
-    # Add colors
-    log.info("Appending colors")
     out["colors"] = get_colors(dfs, yml)
 
     gu.dropbox.write_yaml(dbx, out, f"/report_data/{mdate:%Y_%m}.yaml")
