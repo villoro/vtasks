@@ -40,21 +40,39 @@ def series_to_dicts(series):
     return out
 
 
-def time_average(df_in, months=12, exponential=False):
-    """ do some time average """
+def time_average(dfi, months=12, exponential=False):
+    """
+        Do some time average
+        
+        Args:
+            dfi:            input dataframe (or series)
+            months:         num of months for the average
+            exponential:    whether to use EWM or simple rolling
+    """
 
     # Exponential moving average
     if exponential:
         # No negative values
         months = max(0, months)
 
-        df = df_in.ewm(span=months, min_periods=0, adjust=False, ignore_na=False)
+        df = dfi.ewm(span=months, min_periods=0, adjust=False, ignore_na=False)
 
     # Regular moving average
     else:
         # One month at least
         months = max(1, months)
 
-        df = df_in.rolling(months, min_periods=1)
+        df = dfi.rolling(months, min_periods=1)
 
     return df.mean().apply(lambda x: round(x, 2))
+
+
+def get_min_month_start(dfi):
+    """ Extracts the min month_start of a dataframe """
+
+    df = dfi.copy()
+
+    if c.COL_DATE in df.columns:
+        df = df.set_index(c.COL_DATE)
+
+    return df.resample("MS").first().index.min()
