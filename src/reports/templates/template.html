@@ -297,7 +297,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {% for name in ["EBIT", "Incomes", "Expenses"] %}{
         name: "{{ name }}",
@@ -315,7 +315,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {% for name in ["EBIT", "Incomes", "Expenses"] %}
       {
@@ -352,7 +352,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -377,7 +377,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -402,7 +402,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -427,7 +427,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -455,7 +455,7 @@
     },
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "y"},
     series: [
       {% for y, data in comp["Incomes"].items() %}{
         name: "{{ y }}",
@@ -475,7 +475,7 @@
     },
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "y"},
     series: [
       {% for y, data in comp["Expenses"].items() %}{
         name: "{{ y }}",
@@ -495,7 +495,7 @@
     },
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "y"},
     series: [
       {% for y, data in comp["EBIT"].items() %}{
         name: "{{ y }}",
@@ -515,7 +515,7 @@
     },
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "y"},
     series: [
       {% for y, data in comp["Liquid"].items() %}{
         name: "{{ y }}",
@@ -637,7 +637,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -662,7 +662,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Expenses 12m MA",
@@ -775,7 +775,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Total Invested",
@@ -799,7 +799,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -831,7 +831,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -863,7 +863,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -952,7 +952,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Passive Income",
