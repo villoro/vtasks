@@ -161,6 +161,10 @@
   <div class="w3-card w3-round w3-center w3-white elem">
     <div id="FIRE_total_years_survival" class="plot" style="height: 450px"></div>
   </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="FIRE_investment_ratios" class="plot" style="height: 450px"></div>
+  </div>
 </div>
 {% endblock %}
 
@@ -293,7 +297,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {% for name in ["EBIT", "Incomes", "Expenses"] %}{
         name: "{{ name }}",
@@ -311,7 +315,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {% for name in ["EBIT", "Incomes", "Expenses"] %}
       {
@@ -348,7 +352,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -373,7 +377,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -398,7 +402,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -423,7 +427,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -451,7 +455,7 @@
     },
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "y"},
     series: [
       {% for y, data in comp["Incomes"].items() %}{
         name: "{{ y }}",
@@ -471,7 +475,7 @@
     },
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "y"},
     series: [
       {% for y, data in comp["Expenses"].items() %}{
         name: "{{ y }}",
@@ -491,7 +495,7 @@
     },
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "y"},
     series: [
       {% for y, data in comp["EBIT"].items() %}{
         name: "{{ y }}",
@@ -511,7 +515,7 @@
     },
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "y"},
     series: [
       {% for y, data in comp["Liquid"].items() %}{
         name: "{{ y }}",
@@ -633,7 +637,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -658,7 +662,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Expenses 12m MA",
@@ -771,7 +775,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Total Invested",
@@ -795,7 +799,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -827,7 +831,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -859,7 +863,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -948,7 +952,7 @@
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
     plotOptions: options_maker_enabled,
-    chart: {zoomType: "xy"},
+    chart: {zoomType: "x"},
     series: [
       {
         name: "Passive Income",
@@ -1014,6 +1018,42 @@
         name: "Years 6m EWM",
         color: "{{ colors['Survival'] }}",
         data: [{% for mdate, value in ratios['Total_Worth_6m_e/Expenses_6m_e'].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+    ],
+  });
+  Highcharts.chart('FIRE_investment_ratios', {
+    title: {text: 'Total Assets / Total income'},
+    xAxis: {type: 'datetime'},
+    yAxis: {
+      title: {text: null},
+      plotLines: [
+        {
+          color: "{{ colors['Recomended_value'] }}",
+          value: 1,
+          label: {
+              align: 'left',
+              text: 'All earned saved breakpoint',
+          },
+        },
+      ],
+    },
+    plotOptions: options_maker_enabled,
+    chart: {zoomType: "x"},
+    series: [
+      {
+        name: "Total Invest / Total income",
+        color: "{{ colors['Invest'] }}",
+        dashStyle: 'shortdot',
+        data: [{% for mdate, value in ratios['Total_invest_performance'].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Total Worth / Total income",
+        color: "{{ colors['Worth'] }}",
+        data: [{% for mdate, value in ratios['Total_worth_performance'].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },

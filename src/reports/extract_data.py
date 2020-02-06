@@ -4,7 +4,7 @@
 
 import numpy as np
 import pandas as pd
-from datetime import date
+from datetime import datetime
 from collections import OrderedDict
 
 import global_utilities as gu
@@ -216,9 +216,11 @@ def get_ratios(out):
 
     aux = {}
     names = [
+        c.INCOMES,
         c.EXPENSES,
         c.LIQUID,
         "Worth",
+        "Invest",
         f"{c.EXPENSES}_12m",
         f"{c.EXPENSES}_6m_e",
         f"{c.LIQUID}_6m_e",
@@ -233,6 +235,8 @@ def get_ratios(out):
         f"Total_Worth/{c.EXPENSES}": (aux["Worth"] + aux[c.LIQUID]) / (12 * aux[c.EXPENSES]),
         f"Total_Worth_6m_e/{c.EXPENSES}_6m_e": (aux["Worth"] + aux[f"{c.LIQUID}_6m_e"])
         / (12 * aux[f"{c.EXPENSES}_12m"]),
+        "Total_worth_performance": (aux["Worth"] + aux[c.LIQUID]) / aux[c.INCOMES].cumsum(),
+        "Total_invest_performance": (aux["Invest"] + aux[c.LIQUID]) / aux[c.INCOMES].cumsum(),
     }
 
     # Drop nans and round values
@@ -308,7 +312,7 @@ def get_colors(dfs, yml):
     return out
 
 
-def main(mdate=date.today()):
+def main(mdate=datetime.now()):
     """ Create the report """
 
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)

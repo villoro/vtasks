@@ -100,7 +100,7 @@ def filter_by_date(dfs, mdate):
         df = dfs[name].set_index(c.COL_DATE)
 
         # No future data
-        df = df[df.index <= pd.to_datetime(mdate)]
+        df = df[df.index <= mdate]
 
         # No missing months
         df = add_missing_months(df, mdate)
@@ -110,6 +110,6 @@ def filter_by_date(dfs, mdate):
 
     # Transactions df
     df = dfs[c.DF_TRANS]
-    dfs[c.DF_TRANS] = df[df[c.COL_DATE] <= pd.to_datetime(mdate)]
+    dfs[c.DF_TRANS] = df[df[c.COL_DATE] <= mdate]
 
     return dfs

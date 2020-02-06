@@ -1,6 +1,6 @@
 import os
 import time
-from datetime import date, datetime
+from datetime import datetime
 
 import luigi
 import oyaml as yaml
@@ -23,7 +23,7 @@ class StandardTask(luigi.Task):
             worker_timeout: maximum time allowed for a task to run in seconds
     """
 
-    mdate = luigi.DateParameter(default=date.today())
+    mdate = luigi.DateParameter(default=datetime.now())
     worker_timeout = 1 * 3600  # Default timeout is 1h per task
     t_data = {}
 
@@ -100,7 +100,7 @@ class StandardTask(luigi.Task):
 
         # By default run the 'main' function of the asked module
         module = __import__(self.module)
-        module.main(self.mdate.strftime("%Y_%m_%d"))
+        module.main(self.mdate)
 
     def run(self):
         # Store start time and task name
