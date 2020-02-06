@@ -2,7 +2,7 @@
     Create the raw data for the reprot
 """
 
-from datetime import date
+from datetime import datetime
 
 import oyaml as yaml
 import jinja2
@@ -14,7 +14,7 @@ from global_utilities import log
 from . import constants as c
 
 
-def main(mdate=date.today()):
+def main(mdate=datetime.now()):
     """ Creates the report """
 
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
