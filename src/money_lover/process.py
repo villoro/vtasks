@@ -28,7 +28,7 @@ def get_money_lover_filename(dbx):
     return c.PATH_MONEY_LOVER + max(names)
 
 
-def main(*args, **kwa):
+def main(mdate):
     """ Retrives all dataframes and update DFS global var """
 
     # Get data

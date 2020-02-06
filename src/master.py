@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 
 import luigi
 
@@ -25,7 +25,7 @@ class ReportsTask(StandardTask):
 
 
 class DoAllTask(luigi.WrapperTask):
-    mdate = luigi.DateParameter(default=date.today())
+    mdate = luigi.DateParameter(default=datetime.now())
 
     def requires(self):
         yield ReportsTask(self.mdate)

@@ -4,7 +4,7 @@
 
 import numpy as np
 import pandas as pd
-from datetime import date
+from datetime import datetime
 from collections import OrderedDict
 
 import global_utilities as gu
@@ -308,7 +308,7 @@ def get_colors(dfs, yml):
     return out
 
 
-def main(mdate=date.today()):
+def main(mdate=datetime.now()):
     """ Create the report """
 
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
