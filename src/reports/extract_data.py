@@ -348,7 +348,3 @@ def main(mdate=datetime.now()):
     out["colors"] = get_colors(dfs, yml)
 
     gu.dropbox.write_yaml(dbx, out, f"/report_data/{mdate:%Y_%m}.yaml")
-
-
-if __name__ == "__main__":
-    main()
