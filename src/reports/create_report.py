@@ -35,7 +35,3 @@ def main(mdate=datetime.now()):
     # Create report
     report = template.render(**data)
     gu.dropbox.write_textfile(dbx, report, f"/reports/{mdate.year}/{mdate:%Y_%m}.html")
-
-
-if __name__ == "__main__":
-    main()
