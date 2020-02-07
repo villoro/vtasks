@@ -223,8 +223,8 @@ def get_dashboard(data):
     for name in [c.LIQUID, "Worth", "Invest"]:
         mdict = data["month"][name]
 
-        if len(mdict) > 12:
-            value = mdict[list(mdict.keys())[-12]]
+        if len(mdict) > 13:
+            value = mdict[list(mdict.keys())[-13]]
         else:
             value = 0
 
