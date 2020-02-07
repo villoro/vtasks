@@ -99,6 +99,24 @@ def get_investment_or_liquid(dfs, yml, entity):
     return out
 
 
+def get_total_investments(data):
+    """
+        Extract data for dashboard cards
+        
+        Args:
+            data:   dict with data
+    """
+
+    liquid = pd.Series(data["month"][c.LIQUID])
+    worth = pd.Series(data["month"]["Worth"])
+    invest = pd.Series(data["month"]["Invest"])
+
+    return {
+        "Total_Worth": u.serie_to_dict((liquid + worth).dropna()),
+        "Total_Invest": u.serie_to_dict((liquid + invest).dropna()),
+    }
+
+
 def get_comparison_traces(dfs):
     """
         Add traces for comparison plots
@@ -354,6 +372,8 @@ def main(mdate=datetime.now()):
     data = [(c.DF_LIQUID, c.LIQUID), (c.DF_WORTH, c.INVEST), (c.DF_INVEST, c.INVEST)]
     for name, yml_name in data:
         out["month"].update(get_investment_or_liquid(dfs, yml[yml_name], name))
+
+    out["month"].update(get_total_investments(out))
 
     out["comp"] = get_comparison_traces(dfs)
     out["pies"] = get_pie_traces(dfs)
