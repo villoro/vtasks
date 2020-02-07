@@ -19,21 +19,22 @@ def main(mdate=datetime.now()):
 
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
 
-    # Set up jinja to render parent templates and retrive template
-    template = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(f"{PATH_ROOT}src/reports/templates")
-    ).get_template("template.html")
-
     # Read data
     log.info("Reading report_data from dropbox")
-    data = gu.dropbox.read_yaml(dbx, f"/report_data/{mdate:%Y_%m}.yaml")
+    data = gu.dropbox.read_yaml(dbx, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
 
     # Add title
     data["mdate"] = f"{mdate:%Y_%m}"
     data["title"] = f"{mdate:%Y_%m} Expensor"
 
+    # Set up jinja to render parent templates and retrive template
+    template = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(f"{PATH_ROOT}src/reports/templates")
+    ).get_template("template.html")
+
     # Create report
-    gu.dropbox.write_textfile(dbx, template.render(**data), f"/reports/{mdate:%Y_%m}.html")
+    report = template.render(**data)
+    gu.dropbox.write_textfile(dbx, report, f"/reports/{mdate.year}/{mdate:%Y_%m}.html")
 
 
 if __name__ == "__main__":

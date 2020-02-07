@@ -180,7 +180,7 @@ def get_pie_traces(dfs):
     return out
 
 
-def extract_cards(data):
+def get_dashboard(data):
     """
         Extract data for dashboard cards
         
@@ -214,10 +214,12 @@ def extract_cards(data):
 
     # Add totals
     for name in ["Worth", "Invest"]:
-        out["month"][f"Total_{name}"] = out["month"][c.LIQUID] + out["month"][name]
-        out["month"][f"Total_{name}_1y"] = (
-            out["month"][f"{c.LIQUID}_1y"] + out["month"][f"{name}_1y"]
-        )
+        # Values for actual year
+        out["month"][f"Total_{name}"] = round(out["month"][c.LIQUID] + out["month"][name], 2)
+
+        # Values for a year before
+        aux = out["month"][f"{c.LIQUID}_1y"] + out["month"][f"{name}_1y"]
+        out["month"][f"Total_{name}_1y"] = round(aux, 2)
 
     log.info("Dashboard info added")
 
@@ -355,9 +357,9 @@ def main(mdate=datetime.now()):
 
     out["comp"] = get_comparison_traces(dfs)
     out["pies"] = get_pie_traces(dfs)
-    out["dash"] = extract_cards(out)
+    out["dash"] = get_dashboard(out)
     out["ratios"] = get_ratios(out)
 
     out["colors"] = get_colors(dfs, yml)
 
-    gu.dropbox.write_yaml(dbx, out, f"/report_data/{mdate:%Y_%m}.yaml")
+    gu.dropbox.write_yaml(dbx, out, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
