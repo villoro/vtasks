@@ -95,6 +95,9 @@ def filter_by_date(dfs, mdate):
             mdate:  date of the report
     """
 
+    # Get last date of month
+    mdate = pd.to_datetime(mdate) + pd.tseries.offsets.MonthEnd(1)
+
     # Liquid, worth and invest dataframes
     for name in [c.DF_LIQUID, c.DF_WORTH, c.DF_INVEST]:
         df = dfs[name].set_index(c.COL_DATE)

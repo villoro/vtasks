@@ -12,7 +12,7 @@ from config import PATH_ROOT
 
 CONFIG = {
     "handlers": [
-        {"sink": sys.stdout, "level": "INFO"},
+        {"sink": sys.stdout, "level": "DEBUG"},
         {"sink": f"{PATH_ROOT}logs/{date.today():%Y_%m_%d}.log", "level": "INFO"},
     ]
 }

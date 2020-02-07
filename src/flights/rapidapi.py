@@ -46,7 +46,7 @@ def query_flights(
 
     for attemp_num in range(max_attempts):
 
-        log.info(f"Quering {origin}-{destination} for date '{day}' (attempt {attemp_num})")
+        log.debug(f"Quering {origin}-{destination} for date '{day}' (attempt {attemp_num})")
 
         response = requests.get(url, headers=HEADERS)
 
@@ -173,7 +173,7 @@ def query_pair(origin, destination, n_days=366):
 
         # Only do first day of month
         if (query_day.day != 1) and (query_day != start_day):
-            log.debug(f"Skiping day '{query_day}'")
+            log.trace(f"Skiping day '{query_day}'")
             continue
 
         response = query_flights(origin, destination, query_day)

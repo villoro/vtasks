@@ -781,15 +781,15 @@
         name: "Total Invested",
         color: "{{ colors['Invest'] }}",
         dashStyle: 'shortdot',
-        data: [{% for mdate, value in month["Invest"].items() %}
-          [Date.parse("{{ mdate }}"), {{ value + month["Liquid"][mdate] }}], {% endfor %}
+        data: [{% for mdate, value in month["Total_Invest"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
       {
         name: "Total Worth",
         color: "{{ colors['Worth'] }}",
-        data: [{% for mdate, value in month["Worth"].items() %}
-          [Date.parse("{{ mdate }}"), {{ value + month["Liquid"][mdate] }}], {% endfor %}
+        data: [{% for mdate, value in month["Total_Worth"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
     ],
@@ -804,8 +804,8 @@
       {
         name: "Total",
         color: "#000000",
-        data: [{% for mdate, value in month["Worth"].items() %}
-          [Date.parse("{{ mdate }}"), {{ value + month["Liquid"][mdate] }}], {% endfor %}
+        data: [{% for mdate, value in month["Total_Worth"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
       {
@@ -836,8 +836,8 @@
       {
         name: "Total",
         color: "#000000",
-        data: [{% for mdate, value in month["Invest"].items() %}
-          [Date.parse("{{ mdate }}"), {{ value + month["Liquid"][mdate] }}], {% endfor %}
+        data: [{% for mdate, value in month["Total_Invest"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
       {
