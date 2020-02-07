@@ -65,7 +65,7 @@ class StandardTask(luigi.Task):
         self.t_data["success"] = success
 
         if success:
-            log.info(f"{self.name} ended in {duration_human}")
+            log.success(f"{self.name} ended in {duration_human}")
 
         # Allow extra params like 'exception'
         self.t_data.update(**kwa)
