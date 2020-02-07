@@ -139,7 +139,7 @@ def get_comparison_traces(dfs):
     df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
     out[c.LIQUID] = get_traces(u.time_average(df, months=3, exponential=True))
 
-    log.info("Comparison traces added")
+    log.debug("Comparison traces added")
 
     return out
 
@@ -175,7 +175,7 @@ def get_pie_traces(dfs):
             "all": export_trace(df.sum()),
         }
 
-    log.info("Pie traces added")
+    log.debug("Pie traces added")
 
     return out
 
@@ -221,7 +221,7 @@ def get_dashboard(data):
         aux = out["month"][f"{c.LIQUID}_1y"] + out["month"][f"{name}_1y"]
         out["month"][f"Total_{name}_1y"] = round(aux, 2)
 
-    log.info("Dashboard info added")
+    log.debug("Dashboard info added")
 
     return out
 
@@ -322,7 +322,7 @@ def get_colors(dfs, yml):
     # Colors comparison plot
     out["comp"] = get_colors_comparisons(dfs)
 
-    log.info("Colors added")
+    log.debug("Colors added")
 
     return out
 
@@ -333,7 +333,7 @@ def main(mdate=datetime.now()):
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
 
     # Get dfs
-    log.info("Reading excels from dropbox")
+    log.debug("Reading excels from dropbox")
     dfs = gu.dropbox.read_excel(dbx, c.FILE_DATA, c.DFS_ALL_FROM_DATA)
     dfs[c.DF_TRANS] = gu.dropbox.read_excel(dbx, c.FILE_TRANSACTIONS)
 
@@ -345,12 +345,12 @@ def main(mdate=datetime.now()):
     out = {}
 
     # Expenses, incomes, EBIT and Savings ratio
-    log.info("Extracting expenses, incomes, EBIT and savings ratio")
+    log.debug("Extracting expenses, incomes, EBIT and savings ratio")
     for period, col_period in {"month": c.COL_MONTH_DATE, "year": c.COL_YEAR}.items():
         out[period] = get_basic_traces(dfs, col_period, mdate)
 
     # Liquid, worth and invested
-    log.info("Adding liquid, worth and invested")
+    log.debug("Adding liquid, worth and invested")
     data = [(c.DF_LIQUID, c.LIQUID), (c.DF_WORTH, c.INVEST), (c.DF_INVEST, c.INVEST)]
     for name, yml_name in data:
         out["month"].update(get_investment_or_liquid(dfs, yml[yml_name], name))

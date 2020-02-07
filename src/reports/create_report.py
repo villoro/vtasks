@@ -20,7 +20,7 @@ def main(mdate=datetime.now()):
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
 
     # Read data
-    log.info("Reading report_data from dropbox")
+    log.debug("Reading report_data from dropbox")
     data = gu.dropbox.read_yaml(dbx, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
 
     # Add title

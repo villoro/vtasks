@@ -14,6 +14,7 @@ def main(mdate):
 
     # Iterate all dates
     for x in all_dates.tolist():
-        log.info(f"Doing report {x:%Y-%m}")
         extract_data.main(x)
         create_report.main(x)
+
+        log.success(f"Report {x:%Y-%m} created")
