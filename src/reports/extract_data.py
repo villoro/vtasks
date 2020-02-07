@@ -204,7 +204,13 @@ def extract_cards(data):
     # Add year before for worth, invested and liquid
     for name in [c.LIQUID, "Worth", "Invest"]:
         mdict = data["month"][name]
-        out["month"][f"{name}_1y"] = mdict[list(mdict.keys())[-12]]
+
+        if len(mdict) > 12:
+            value = mdict[list(mdict.keys())[-12]]
+        else:
+            value = 0
+
+        out["month"][f"{name}_1y"] = value
 
     # Add totals
     for name in ["Worth", "Invest"]:
