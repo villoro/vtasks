@@ -58,7 +58,8 @@ def get_basic_traces(dfs, col_period, mdate):
 
         aux = OrderedDict()
         for x in reversed(df_categ[c.COL_NAME].to_list()):
-            aux[x] = df[x]
+            if x in df.columns:
+                aux[x] = df[x]
 
         out[f"{name}_by_groups"] = u.series_to_dicts(aux)
 
@@ -159,8 +160,14 @@ def get_pie_traces(dfs):
 
         df = dfg.pivot_table(c.COL_AMOUNT, c.COL_MONTH_DATE, c.COL_CATEGORY, "sum").fillna(0)
 
-        # Reverse categories order
-        export_trace = lambda serie: u.serie_to_dict(serie[categories][::-1])
+        def export_trace(serie):
+            """ Extract all possible categories """
+
+            # Keep only present categories
+            indexs = [x for x in categories if x in serie.index]
+
+            # Reverse categories order
+            return u.serie_to_dict(serie[indexs][::-1])
 
         out[name] = {
             "last_1m": export_trace(df.iloc[-1, :]),
@@ -348,7 +355,3 @@ def main(mdate=datetime.now()):
     out["colors"] = get_colors(dfs, yml)
 
     gu.dropbox.write_yaml(dbx, out, f"/report_data/{mdate:%Y_%m}.yaml")
-
-
-if __name__ == "__main__":
-    main()
