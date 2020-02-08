@@ -165,13 +165,16 @@
   <div class="w3-card w3-round w3-center w3-white elem">
     <div id="FIRE_investment_ratios" class="plot" style="height: 450px"></div>
   </div>
+</div>
 
+<!-- SANKEY -->
+<div id="sankey" class="section" style="display:none;">
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="SAN_month" class="plot" style="height: 600px"></div>
+    <div id="SAN_month" class="plot" style="height: 480px"></div>
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="SAN_year" class="plot" style="height: 600px"></div>
+    <div id="SAN_year" class="plot" style="height: 480px"></div>
   </div>
 </div>
 {% endblock %}
@@ -1077,13 +1080,13 @@
       data: [{% for value in sankey["month"] %}
         [{{ value }}], {% endfor %}
       ],
-      nodes: [
+      nodes: [{% for i, x in colors["Incomes_categ"].items() %}
+        {id: "{{ i }}", color: "{{ x }}" }, {% endfor %}
+
         {id: "Incomes", color: "{{ colors["Incomes"] }}" },
         {id: "Expenses", color: "{{ colors["Expenses"] }}" },
         {id: "Savings", color: "{{ colors["Savings"] }}" },
         {id: "Investments", color: "{{ colors["Invest"] }}" },
-        {% for i, x in colors["Incomes_categ"].items() %}
-        {id: "{{ i }}", color: "{{ x }}" }, {% endfor %}
         {% for i, x in colors["Expenses_categ"].items() %}
         {id: "{{ i }}", color: "{{ x }}" }, {% endfor %}
       ],
@@ -1097,13 +1100,13 @@
       data: [{% for value in sankey["year"] %}
         [{{ value }}], {% endfor %}
       ],
-      nodes: [
+      nodes: [{% for i, x in colors["Incomes_categ"].items() %}
+        {id: "{{ i }}", color: "{{ x }}" }, {% endfor %}
+
         {id: "Incomes", color: "{{ colors["Incomes"] }}" },
         {id: "Expenses", color: "{{ colors["Expenses"] }}" },
         {id: "Savings", color: "{{ colors["Savings"] }}" },
         {id: "Investments", color: "{{ colors["Invest"] }}" },
-        {% for i, x in colors["Incomes_categ"].items() %}
-        {id: "{{ i }}", color: "{{ x }}" }, {% endfor %}
         {% for i, x in colors["Expenses_categ"].items() %}
         {id: "{{ i }}", color: "{{ x }}" }, {% endfor %}
       ],
