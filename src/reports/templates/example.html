@@ -12,6 +12,9 @@
 
   <!-- Highcharts js -->
   <script src="https://code.highcharts.com/highcharts.src.js"></script>
+  <script src="https://code.highcharts.com/modules/sankey.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+  <script src="https://code.highcharts.com/modules/export-data.js"></script>
 
   <style>
     /* Set the width of the sidebar to 52px */
@@ -145,42 +148,19 @@
         </div>
 
         <div class="w3-card w3-round w3-center w3-white elem">
-          <div id="EVO_evolution_year" class="plot" style="height: 450px"></div>
-        </div>
-
-        <div class="w3-card w3-round w3-center w3-white elem">
           <div id="EVO_expenses_by_categ" class="plot" style="height: 450px"></div>
-        </div>
-
-        <div class="w3-card w3-round w3-center w3-white elem">
-          <div id="EVO_incomes_by_categ" class="plot" style="height: 450px"></div>
         </div>
       </div>
 
       <!-- COMP -->
       <div id="comparison" class="section">
         <div class="w3-card w3-round w3-center w3-white elem">
-          <div id="COMP_incomes" class="plot" style="height: 450px"></div>
-        </div>
-
-        <div class="w3-card w3-round w3-center w3-white elem">
-          <div id="COMP_expenses" class="plot" style="height: 450px"></div>
-        </div>
-
-        <div class="w3-card w3-round w3-center w3-white elem">
-          <div id="COMP_EBIT" class="plot" style="height: 450px"></div>
-        </div>
-
-        <div class="w3-card w3-round w3-center w3-white elem">
-          <div id="COMP_liquid" class="plot" style="height: 450px"></div>
+          <div id="SAN_month" class="plot" style="height: 600px"></div>
         </div>
       </div>
 
       <!-- PIE -->
       <div id="pies" class="section">
-        <div class="w3-card w3-round w3-center w3-white elem">
-          <div id="PIE_last_year" class="plot" style="height: 450px"></div>
-        </div>
       </div>
 
       <!-- LIQ -->
@@ -264,7 +244,6 @@
       ],
     });
 
-    Highcharts.chart('EVO_evolution_year', {title: {text: 'Year evolution'},});
     Highcharts.chart('EVO_expenses_by_categ', {
       title: {
         text: 'Expenses evolution by category'
@@ -315,14 +294,63 @@
         }
       ],
     });
-    Highcharts.chart('EVO_incomes_by_categ', {title: {text: 'Incomes evolution by category'},});
-
-    Highcharts.chart('PIE_last_year', {title: {text: 'Year evolution'},});
-
-
-    Highcharts.chart('COMP_incomes', {title: {text: 'Expenses comparison'},});
-    Highcharts.chart('COMP_expenses', {title: {text: 'Incomes comparison'},});
-    Highcharts.chart('COMP_EBIT', {title: {text: 'EBIT comparison'},});
-    Highcharts.chart('COMP_liquid', {title: {text: 'Liquid comparison'},});
+    Highcharts.chart('SAN_month', {
+      title: {
+        text: 'Highcharts Sankey Diagram'
+      },
+      series: [{
+        type: 'sankey',
+        keys: ['from', 'to', 'weight'],
+        data: [
+          ["Bonus", "Incomes", 340.85],
+          ["Nomina", "Incomes", 1633.34],
+          ["Incomes", "Expenses", 967.07],
+          ["Incomes", "Investments", 850],
+          ["Incomes", "Savings", 157.12],
+          ["Expenses", "Altres", 5.0],
+          ["Expenses", "Objectes", 33.6],
+          ["Expenses", "Regals", 37.98],
+          ["Expenses", "Viatges", 200.05],
+          ["Expenses", "Lleure", 33.0],
+          ["Expenses", "Salut", 19.9],
+          ["Expenses", "Transport", 6.02],
+          ["Expenses", "Gasolina", 52.89],
+          ["Expenses", "Menjar", 232.23],
+          ["Expenses", "Bar", 9.5],
+          ["Expenses", "Quotes", 49.8],
+          ["Expenses", "Subministres", 9.67],
+          ["Expenses", "Lloguer", 277.43],
+        ],
+        nodes: [
+          {id: "Nomina", color: '#FFF59D'},
+          {id: "Bonus", color: '#FFEB3B'},
+          {id: "Lloguer", color: '#FFF9C4'},
+          {id: "Subministres", color: '#FFF59D'},
+          {id: "Telefon", color: '#FFF176'},
+          {id: "Quotes", color: '#FFEB3B'},
+          {id: "Bar", color: '#FFB74D'},
+          {id: "Menjar", color: '#FF9800'},
+          {id: "Gasolina", color: '#DCE775'},
+          {id: "Transport", color: '#CDDC39'},
+          {id: "Salut", color: '#81C784'},
+          {id: "Estudis", color: '#4CAF50'},
+          {id: "Lleure", color: '#81D4FA'},
+          {id: "Viatges", color: '#03A9F4'},
+          {id: "Regals", color: '#E1BEE7'},
+          {id: "Tecnologia", color: '#7986CB'},
+          {id: "Objectes", color: '#3F51B5'},
+          {id: "Arracades", color: '#303F9F'},
+          {id: "Blog", color: '#A1887F'},
+          {id: "Moto", color: '#F06292'},
+          {id: "Mobles", color: '#E91E63'},
+          {id: "Altres", color: '#C2185B'},
+          {id: "Banc", color: '#F44336'},
+          {id: "Expenses", color: '#F44336'},
+          {id: "Incomes", color: '#4CAF50'},
+          {id: "Investments", color: '#388E3C'},
+          {id: "Savings", color: '#9C27B0'},
+        ],
+      }]
+    });
   </script>
 </html>

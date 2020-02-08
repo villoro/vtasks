@@ -211,22 +211,25 @@ def get_dashboard(data):
 
     out = {}
 
-    # Basic traces
     for tw in ["month", "year"]:
         out[tw] = {}
+
+        # Basic traces
         for name in traces:
             mdict = data[tw].get(name, None)
 
             if mdict is not None:
                 out[tw][name] = mdict[max(mdict.keys())]
 
-    # Traces by groups
-    for name in [f"{c.EXPENSES}_by_groups", f"{c.INCOMES}_by_groups"]:
+        # Traces by groups
+        for name in [f"{c.EXPENSES}_by_groups", f"{c.INCOMES}_by_groups"]:
 
-        out["month"][name] = {}
+            out[tw][name] = {}
 
-        for categ, mdict in data["month"][name].items():
-            out["month"][name][categ] = mdict[max(mdict.keys())]
+            for categ, mdict in data[tw][name].items():
+                value = mdict[max(mdict.keys())]
+                if value > 0:
+                    out[tw][name][categ] = value
 
     # Add year before for worth, invested and liquid
     for name in [c.LIQUID, "Worth", "Invest"]:
