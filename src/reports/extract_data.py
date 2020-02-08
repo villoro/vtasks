@@ -242,6 +242,10 @@ def get_dashboard(data):
 
         out["month"][f"{name}_1y"] = value
 
+    # Invest last month
+    mdict = data["month"]["Invest"]
+    out["month"]["Invest_1m"] = mdict[list(mdict.keys())[-2]]
+
     # Add totals
     for name in ["Worth", "Invest"]:
         # Values for actual year
@@ -289,6 +293,58 @@ def get_ratios(out):
         serie = serie.replace([np.inf, -np.inf], np.nan)
         out[name] = u.serie_to_dict(serie.dropna())
 
+    log.debug("Ratios info added")
+
+    return out
+
+
+def extract_sankey(data):
+    """ Calculate Sankey flows """
+
+    out = {}
+    for tw in ["month", "year"]:
+        mdict = data["dash"][tw].copy()
+
+        incomes = mdict[c.INCOMES]
+        expenses = mdict[c.EXPENSES]
+        ebit = incomes - expenses
+
+        if tw == "month":
+            invest = mdict["Invest"] - mdict["Invest_1m"]
+        else:
+            invest = data["dash"]["month"]["Invest"] - data["dash"]["month"]["Invest_1y"]
+
+        # Values for traces
+        incomes_to_invest = max(min(ebit, invest), 0)
+        incomes_to_savings = max(ebit - max(invest, 0), 0)
+        invest_to_expenses = max(-max(invest, ebit), 0)
+        invest_to_savings = -min(invest + invest_to_expenses, 0)
+        savings_to_expenses = -min(ebit + invest_to_expenses, 0)
+        savings_to_invest = max(invest - incomes_to_invest, 0)
+
+        # Create flows
+        aux = [
+            [c.INCOMES, c.EXPENSES, min(incomes, expenses)],
+            [c.INCOMES, "Investments", incomes_to_invest],
+            [c.INCOMES, "Savings", incomes_to_savings],
+            ["Investments", c.EXPENSES, invest_to_expenses],
+            ["Investments", "Savings", invest_to_savings],
+            ["Savings", c.EXPENSES, savings_to_expenses],
+            ["Savings", "Investments", savings_to_invest],
+        ]
+
+        # Add Incomes
+        for name, value in mdict[f"{c.INCOMES}_by_groups"].items():
+            aux.append([name, c.INCOMES, value])
+
+        # Add Expenes
+        for name, value in mdict[f"{c.EXPENSES}_by_groups"].items():
+            aux.append([c.EXPENSES, name, value])
+
+        # Prune flows = 0 and round the others
+        out[tw] = [f'"{x}", "{y}", {value:.2f}' for x, y, value in aux if value > 0]
+
+    log.debug("Sankey info added")
     return out
 
 
@@ -391,6 +447,7 @@ def main(mdate=datetime.now()):
     out["pies"] = get_pie_traces(dfs)
     out["dash"] = get_dashboard(out)
     out["ratios"] = get_ratios(out)
+    out["sankey"] = extract_sankey(out)
 
     out["colors"] = get_colors(dfs, yml)
 
