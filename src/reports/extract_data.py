@@ -198,12 +198,13 @@ def get_pie_traces(dfs):
     return out
 
 
-def get_dashboard(data):
+def get_dashboard(data, mdate):
     """
         Extract data for dashboard cards
         
         Args:
             data:   dict with data
+            mdate:  date of the report
     """
 
     traces = [c.EXPENSES, c.INCOMES, c.EBIT, c.LIQUID]
@@ -212,6 +213,12 @@ def get_dashboard(data):
     out = {}
 
     for tw in ["month", "year"]:
+
+        if tw == "month":
+            date_index = mdate.strftime("%Y-%m-%d")
+        else:
+            date_index = mdate.year
+
         out[tw] = {}
 
         # Basic traces
@@ -219,7 +226,7 @@ def get_dashboard(data):
             mdict = data[tw].get(name, None)
 
             if mdict is not None:
-                out[tw][name] = mdict[max(mdict.keys())]
+                out[tw][name] = mdict[date_index]
 
         # Traces by groups
         for name in [f"{c.EXPENSES}_by_groups", f"{c.INCOMES}_by_groups"]:
@@ -227,16 +234,18 @@ def get_dashboard(data):
             out[tw][name] = {}
 
             for categ, mdict in data[tw][name].items():
-                value = mdict[max(mdict.keys())]
+                value = mdict.get(date_index, 0)
                 if value > 0:
                     out[tw][name][categ] = value
 
-    # Add year before for worth, invested and liquid
+    # Add value of end of year before worth, invested and liquid
     for name in [c.LIQUID, "Worth", "Invest"]:
         mdict = data["month"][name]
 
-        if len(mdict) > 13:
-            value = mdict[list(mdict.keys())[-13]]
+        dates = [x for x in mdict.keys() if x.startswith(str(mdate.year - 1))]
+
+        if dates:
+            value = mdict.get(max(dates), 0)
         else:
             value = 0
 
@@ -445,7 +454,7 @@ def main(mdate=datetime.now()):
 
     out["comp"] = get_comparison_traces(dfs)
     out["pies"] = get_pie_traces(dfs)
-    out["dash"] = get_dashboard(out)
+    out["dash"] = get_dashboard(out, mdate)
     out["ratios"] = get_ratios(out)
     out["sankey"] = extract_sankey(out)
 
