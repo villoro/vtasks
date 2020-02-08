@@ -17,6 +17,8 @@ from . import constants as c
 def main(mdate=datetime.now()):
     """ Creates the report """
 
+    mdate = mdate.replace(day=1)
+
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
 
     # Read data
