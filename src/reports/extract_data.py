@@ -425,6 +425,8 @@ def get_colors(dfs, yml):
 def main(mdate=datetime.now()):
     """ Create the report """
 
+    mdate = mdate.replace(day=1)
+
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
 
     # Get dfs
