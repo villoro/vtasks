@@ -51,7 +51,7 @@ def write_yaml(dbx, data, filename):
     """
 
     with io.StringIO() as file:
-        yaml.dump(data, file, default_flow_style=False)
+        yaml.dump(data, file, default_flow_style=False, indent=4)
         file.seek(0)
 
         dbx.files_upload(file.read().encode(), filename, mode=dropbox.files.WriteMode.overwrite)

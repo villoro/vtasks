@@ -166,6 +166,17 @@
     <div id="FIRE_investment_ratios" class="plot" style="height: 450px"></div>
   </div>
 </div>
+
+<!-- SANKEY -->
+<div id="sankey" class="section" style="display:none;">
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="SAN_month" class="plot" style="height: 480px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="SAN_year" class="plot" style="height: 480px"></div>
+  </div>
+</div>
 {% endblock %}
 
 
@@ -1058,6 +1069,48 @@
         ]
       },
     ],
+  });
+
+  // SANKEY SECTION
+  Highcharts.chart('SAN_month', {
+    title: {text: 'Sankey month'},
+    series: [{
+      type: 'sankey',
+      keys: ['from', 'to', 'weight'],
+      data: [{% for value in sankey["month"] %}
+        [{{ value }}], {% endfor %}
+      ],
+      nodes: [{% for i, x in colors["Incomes_categ"].items() %}
+        {id: "{{ i }}", color: "{{ x }}" }, {% endfor %}
+
+        {id: "Incomes", color: "{{ colors["Incomes"] }}" },
+        {id: "Expenses", color: "{{ colors["Expenses"] }}" },
+        {id: "Savings", color: "{{ colors["Savings"] }}" },
+        {id: "Investments", color: "{{ colors["Total_worth"] }}" },
+        {% for i, x in colors["Expenses_categ"].items() %}
+        {id: "{{ i }}", color: "{{ x }}" }, {% endfor %}
+      ],
+    }],
+  });
+  Highcharts.chart('SAN_year', {
+    title: {text: 'Sankey year'},
+    series: [{
+      type: 'sankey',
+      keys: ['from', 'to', 'weight'],
+      data: [{% for value in sankey["year"] %}
+        [{{ value }}], {% endfor %}
+      ],
+      nodes: [{% for i, x in colors["Incomes_categ"].items() %}
+        {id: "{{ i }}", color: "{{ x }}" }, {% endfor %}
+
+        {id: "Incomes", color: "{{ colors["Incomes"] }}" },
+        {id: "Expenses", color: "{{ colors["Expenses"] }}" },
+        {id: "Savings", color: "{{ colors["Savings"] }}" },
+        {id: "Investments", color: "{{ colors["Total_worth"] }}" },
+        {% for i, x in colors["Expenses_categ"].items() %}
+        {id: "{{ i }}", color: "{{ x }}" }, {% endfor %}
+      ],
+    }],
   });
 </script>
 {% endblock %}
