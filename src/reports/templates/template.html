@@ -204,6 +204,7 @@
 
   // DASHBOARD SECTION
   Highcharts.chart('DASH_basic_traces', {
+    credits: false,
     title: {text: ""},
     xAxis: {categories: ["Incomes", "Expenses", "EBIT"]},
     yAxis: axe_no_title,
@@ -249,6 +250,7 @@
     ],
   });
   Highcharts.chart('DASH_liquid', {
+    credits: false,
     title: {text: ""},
     xAxis: {categories: ["Liquid"]},
     yAxis: axe_no_title,
@@ -270,6 +272,7 @@
     ],
   });
   Highcharts.chart('DASH_investments', {
+    credits: false,
     title: {text: ""},
     xAxis: {categories: ["Total Worth", "Total Invested"]},
     yAxis: axe_no_title,
@@ -305,6 +308,7 @@
   
   // EVOLUTION SECTION
   Highcharts.chart('EVO_evolution_month', {
+    credits: false,
     title: {
       text: 'Month evolution'
     },
@@ -323,6 +327,7 @@
     ],
   });
   Highcharts.chart('EVO_evolution_month_12m', {
+    credits: false,
     title: {
       text: 'Month evolution (12 months MA)'
     },
@@ -342,6 +347,7 @@
     ],
   });
   Highcharts.chart('EVO_evolution_year', {
+    credits: false,
     title: {
       text: 'Year evolution'
     },
@@ -360,6 +366,7 @@
     ],
   });
   Highcharts.chart('EVO_expenses_by_categ_month', {
+    credits: false,
     title: {
       text: 'Expenses evolution by category and month'
     },
@@ -385,6 +392,7 @@
     ],
   });
   Highcharts.chart('EVO_incomes_by_categ_month', {
+    credits: false,
     title: {
       text: 'Incomes evolution by category and month'
     },
@@ -410,6 +418,7 @@
     ],
   });
   Highcharts.chart('EVO_expenses_by_categ_year', {
+    credits: false,
     title: {
       text: 'Expenses evolution by category and year'
     },
@@ -435,6 +444,7 @@
     ],
   });
   Highcharts.chart('EVO_incomes_by_categ_year', {
+    credits: false,
     title: {
       text: 'Incomes evolution by category and year'
     },
@@ -462,6 +472,7 @@
 
   // COMPARISON SECTION
   Highcharts.chart('COMP_incomes', {
+    credits: false,
     title: {text: 'Incomes comparison (12 months MA)'},
     xAxis: {
       title: {text: "Months"},
@@ -482,6 +493,7 @@
     ],
   });
   Highcharts.chart('COMP_expenses', {
+    credits: false,
     title: {text: 'Expenses comparison (12 months MA)'},
     xAxis: {
       title: {text: "Months"},
@@ -502,6 +514,7 @@
     ],
   });
   Highcharts.chart('COMP_EBIT', {
+    credits: false,
     title: {text: 'EBIT comparison (12 months MA)'},
     xAxis: {
       title: {text: "Months"},
@@ -522,6 +535,7 @@
     ],
   });
   Highcharts.chart('COMP_liquid', {
+    credits: false,
     title: {text: 'Liquid comparison (3 months EWM)'},
     xAxis: {
       title: {text: "Months"},
@@ -549,6 +563,7 @@
     }
   }
   Highcharts.chart('PIE_expenses_last_1m', {
+    credits: false,
     title: {text: ""},
     xAxis: {categories: ["Last month"]},
     yAxis: axe_no_title,
@@ -564,6 +579,7 @@
     ],
   });
   Highcharts.chart('PIE_expenses_last_12m', {
+    credits: false,
     title: {text: ""},
     xAxis: {categories: ["Last year"]},
     yAxis: axe_no_title,
@@ -580,6 +596,7 @@
     ],
   });
   Highcharts.chart('PIE_expenses_all', {
+    credits: false,
     title: {text: ""},
     xAxis: {categories: ["All time"]},
     yAxis: axe_no_title,
@@ -596,6 +613,7 @@
     ],
   });
   Highcharts.chart('PIE_incomes_last_1m', {
+    credits: false,
     title: {text: ""},
     xAxis: {categories: ["Last month"]},
     yAxis: axe_no_title,
@@ -611,6 +629,7 @@
     ],
   });
   Highcharts.chart('PIE_incomes_last_12m', {
+    credits: false,
     title: {text: ""},
     xAxis: {categories: ["Last year"]},
     yAxis: axe_no_title,
@@ -627,6 +646,7 @@
     ],
   });
   Highcharts.chart('PIE_incomes_all', {
+    credits: false,
     title: {text: ""},
     xAxis: {categories: ["All time"]},
     yAxis: axe_no_title,
@@ -645,6 +665,7 @@
 
   // LIQUID SECTION
   Highcharts.chart('LIQ_evolution', {
+    credits: false,
     title: {
       text: 'Liquid evolution'
     },
@@ -670,6 +691,7 @@
     ],
   });
   Highcharts.chart('LIQ_vs_expenses', {
+    credits: false,
     title: {
       text: 'Liquid vs Expenses'
     },
@@ -718,6 +740,7 @@
     ],
   });
   Highcharts.chart('LIQ_survival_ratio', {
+    credits: false,
     title: {
       text: 'Survival months (Liquid / Expenses)'
     },
@@ -785,6 +808,7 @@
 
   // INVESTMENTS SECTION
   Highcharts.chart('INV_worth_vs_invest', {
+    credits: false,
     title: {text: 'Worth vs Invested'},
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
@@ -809,6 +833,7 @@
     ],
   });
   Highcharts.chart('INV_worth_evolution', {
+    credits: false,
     title: {text: 'Worth evolution'},
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
@@ -841,6 +866,7 @@
     ],
   });
   Highcharts.chart('INV_invest_evolution', {
+    credits: false,
     title: {text: 'Invested evolution'},
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
@@ -873,6 +899,7 @@
     ],
   });
   Highcharts.chart('INV_worth_by_type', {
+    credits: false,
     title: {text: 'Worth by type'},
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
@@ -898,6 +925,7 @@
 
   // FIRE SECTION
   Highcharts.chart('FIRE_savings_ratio_month', {
+    credits: false,
     title: {text: 'Savings ratio by month'},
     xAxis: {type: 'datetime'},
     yAxis: {
@@ -934,6 +962,7 @@
     ],
   });
   Highcharts.chart('FIRE_savings_ratio_year', {
+    credits: false,
     title: {text: 'Savings ratio by year'},
     xAxis: {type: 'datetime'},
     yAxis: {
@@ -962,6 +991,7 @@
     ],
   });
   Highcharts.chart('FIRE_passive_income_vs_expenses', {
+    credits: false,
     title: {text: 'Passive income vs Expenses'},
     xAxis: {type: 'datetime'},
     yAxis: axe_no_title,
@@ -994,6 +1024,7 @@
     ],
   });
   Highcharts.chart('FIRE_total_years_survival', {
+    credits: false,
     title: {text: 'Doomsday years (Assets / Expenses)'},
     xAxis: {type: 'datetime'},
     yAxis: {
@@ -1038,6 +1069,7 @@
     ],
   });
   Highcharts.chart('FIRE_investment_ratios', {
+    credits: false,
     title: {text: 'Total Assets / Total income'},
     xAxis: {type: 'datetime'},
     yAxis: {
@@ -1076,6 +1108,7 @@
 
   // SANKEY SECTION
   Highcharts.chart('SAN_month', {
+    credits: false,
     title: {text: 'Sankey month'},
     series: [{
       type: 'sankey',
@@ -1096,6 +1129,7 @@
     }],
   });
   Highcharts.chart('SAN_year', {
+    credits: false,
     title: {text: 'Sankey year'},
     series: [{
       type: 'sankey',
