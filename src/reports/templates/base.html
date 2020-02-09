@@ -25,6 +25,11 @@
     .w3-sidebar-item {font-size: 18px; margin-top: 12px}
     .w3-navbar {height: 48px}
 
+    .horizontal-scroll {      
+      overflow-x: scroll;
+      white-space: nowrap;
+    }
+
     /* Add a left margin to the "page content" that matches the width of the sidebar (52px) */
     .main{
       margin-left: 52px;
@@ -61,7 +66,7 @@
       margin-bottom: 16px;
     }
 
-    .sidebar a.active{
+    .navigation a.active{
       color:#000000!important
     }
   </style>
@@ -69,58 +74,58 @@
   <body class="w3-light-grey">
 
     <!-- Icon Bar (Sidebar - hidden on small screens) -->
-    <div class="w3-sidebar w3-blue w3-hide-small w3-center sidebar">
-      <a onclick="openSite(event, 'dashboard')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item active">
+    <div class="w3-sidebar w3-blue w3-hide-small w3-center navigation">
+      <a onclick="openSite(event, 'dashboard')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item active">
         <i class="fas fa-table"></i>
       </a>
-      <a onclick="openSite(event, 'evolution')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+      <a onclick="openSite(event, 'evolution')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
         <i class="fas fa-chart-line"></i>
       </a>
-      <a onclick="openSite(event, 'comparison')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+      <a onclick="openSite(event, 'comparison')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
         <i class="fas fa-poll"></i>
       </a>
-      <a onclick="openSite(event, 'pies')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+      <a onclick="openSite(event, 'pies')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
         <i class="fas fa-chart-pie"></i>
       </a>
-      <a onclick="openSite(event, 'liquid')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+      <a onclick="openSite(event, 'liquid')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
         <i class="fas fa-tint"></i>
       </a>
-      <a onclick="openSite(event, 'investments')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+      <a onclick="openSite(event, 'investments')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
         <i class="fas fa-wallet"></i>
       </a>
-      <a onclick="openSite(event, 'fire')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+      <a onclick="openSite(event, 'fire')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
         <i class="fas fa-fire-alt"></i>
       </a>
-      <a onclick="openSite(event, 'sankey')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+      <a onclick="openSite(event, 'sankey')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
         <i class="fas fa-stream"></i>
       </a>
     </div>
 
     <!-- Navbar on small screens (Hidden on medium and large screens) -->
     <div class="w3-top w3-hide-large w3-hide-medium w3-card">
-      <div class="w3-bar w3-blue w3-center w3-small sidebar">
-        <a onclick="openSite(event, 'dashboard')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item active">
+      <div class="w3-bar w3-blue w3-center w3-small navigation horizontal-scroll">
+        <a onclick="openSite(event, 'dashboard')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item active">
           <i class="fas fa-table"></i>
         </a>
-        <a onclick="openSite(event, 'evolution')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+        <a onclick="openSite(event, 'evolution')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
           <i class="fas fa-chart-line"></i>
         </a>
-        <a onclick="openSite(event, 'comparison')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+        <a onclick="openSite(event, 'comparison')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
           <i class="fas fa-poll"></i>
         </a>
-        <a onclick="openSite(event, 'pies')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+        <a onclick="openSite(event, 'pies')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
           <i class="fas fa-chart-pie"></i>
         </a>
-        <a onclick="openSite(event, 'liquid')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+        <a onclick="openSite(event, 'liquid')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
           <i class="fas fa-tint"></i>
         </a>
-        <a onclick="openSite(event, 'investments')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+        <a onclick="openSite(event, 'investments')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
           <i class="fas fa-wallet"></i>
         </a>
-        <a onclick="openSite(event, 'fire')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+        <a onclick="openSite(event, 'fire')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
           <i class="fas fa-fire-alt"></i>
         </a>
-        <a onclick="openSite(event, 'sankey')" class="section_button w3-bar-item w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+        <a onclick="openSite(event, 'sankey')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
           <i class="fas fa-stream"></i>
         </a>
       </div>
