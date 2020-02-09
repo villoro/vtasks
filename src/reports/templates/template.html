@@ -168,6 +168,10 @@
   <div class="w3-card w3-round w3-center w3-white elem">
     <div id="FIRE_investment_ratios" class="plot" style="height: 400px"></div>
   </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="FIRE_bubbles" class="plot" style="height: 400px"></div>
+  </div>
 </div>
 
 <!-- SANKEY -->
@@ -950,6 +954,63 @@
         ]
       },
     ],
+  });
+  Highcharts.chart("FIRE_bubbles", {
+    credits: false,
+    legend: {enabled: false},
+    title: {text: "Assets in years vs Savings ratio"},
+    yAxis: {
+      title: {text: "Savings ratio"},
+      plotLines: [
+        {
+          label: {text: 'Max Savings Ratio', align: 'left'},
+          color: "{{ colors['Max_value'] }}",
+          value: 1,
+        },
+        {
+          label: {text: 'EBIT 0', align: 'right'},
+          color: "{{ colors['Recomended_value'] }}",
+          value: 0,
+        },
+      ],
+    },
+    tooltip: {
+      useHTML: true,
+      headerFormat: "<table>",
+      pointFormat:
+        "<tr><th>Assets:</th><td>{point.x} years</td></tr>" +
+        "<tr><th>Savings ratio:</th><td>{point.y}</td></tr>" +
+        "<tr><th>Expenses:</th><td>{point.z} €</td></tr>",
+      footerFormat: "</table>",
+      followPointer: false,
+    },
+    plotOptions: {
+      series: {
+        dataLabels: {
+          enabled: true,
+          format: "{point.name}"
+        },
+        stickyTracking: false,
+      }
+    },
+    series: [
+      {
+        marker: {enabled: false},
+        lineWidth: 0.5,
+        dashStyle: 'dot',
+        color: "#000000",
+        data: [{% for x in bubbles %}
+          { {{ x }} }, {% endfor %}
+        ]
+      },
+      {
+        type: "bubble",
+        color: "{{ colors['Liquid'] }}",
+        data: [{% for x in bubbles %}
+          { {{ x }} }, {% endfor %}
+        ]
+      },
+    ]
   });
 
   // SANKEY SECTION

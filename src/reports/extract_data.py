@@ -330,7 +330,7 @@ def get_bubbles(dfs, mdate):
 
     # Only show current year at desember
     if mdate.month < 12:
-        df[df.index < mdate.year]
+        df = df[df.index < mdate.year]
 
     df["Total_Worth"] = df["Worth"] + df["Liquid"]
 
