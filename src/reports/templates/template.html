@@ -186,29 +186,47 @@
 {% block plots %}
 <script>
 
-  // SHARED INFO
-  var axe_no_title = {title: {text: null}}
-  var options_maker_enabled = {
-    series: {
-      marker: {enabled: false},
-      stickyTracking: false
+  // PLOT SHARED CONFIGURATIONS
+  const plot_basic = {
+    credits: false,
+    yAxis: {
+      title: {text: null}
+    },
+    plotOptions: {
+      series: {
+        marker: {enabled: false},
+        stickyTracking: false
+      }
     }
   }
-  var options_maker_enabled_stacked = {
-    series: {
-      marker: {enabled: false},
-      stickyTracking: false,
-      stacking: 'normal',
+  const plot_datetime = {
+    ...plot_basic,
+    xAxis: {type: 'datetime'},
+    chart: {zoomType: "x"},
+  }
+  const plot_stacked = {
+    ...plot_basic,
+    plotOptions: {
+      series: {
+        marker: {enabled: false},
+        stickyTracking: false,
+        stacking: 'normal',
+      }
     }
+  }
+  const plot_datetime_stacked = {
+    ...plot_datetime, ...plot_stacked
+  }
+  const plot_stacked_no_title = {
+    ...plot_stacked,
+    title: {text: ""},
+    chart: {zoomType: "x", type: "bar"},
   }
 
   // DASHBOARD SECTION
   Highcharts.chart('DASH_basic_traces', {
-    title: {text: ""},
+    ...plot_stacked_no_title,
     xAxis: {categories: ["Incomes", "Expenses", "EBIT"]},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "x", type: "bar"},
     series: [
       {
         name: "Incomes",
@@ -249,11 +267,8 @@
     ],
   });
   Highcharts.chart('DASH_liquid', {
-    title: {text: ""},
+    ...plot_stacked_no_title,
     xAxis: {categories: ["Liquid"]},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "x", type: "bar"},
     series: [
       {
         name: "Liquid",
@@ -270,11 +285,8 @@
     ],
   });
   Highcharts.chart('DASH_investments', {
-    title: {text: ""},
+    ...plot_stacked_no_title,
     xAxis: {categories: ["Total Worth", "Total Invested"]},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "x", type: "bar"},
     series: [
       {
         name: "Worth",
@@ -305,13 +317,9 @@
   
   // EVOLUTION SECTION
   Highcharts.chart('EVO_evolution_month', {
-    title: {
-      text: 'Month evolution'
-    },
+    ...plot_datetime,
+    title: {text: 'Month evolution'},
     xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled,
-    chart: {zoomType: "x"},
     series: [
       {% for name in ["EBIT", "Incomes", "Expenses"] %}{
         name: "{{ name }}",
@@ -323,13 +331,8 @@
     ],
   });
   Highcharts.chart('EVO_evolution_month_12m', {
-    title: {
-      text: 'Month evolution (12 months MA)'
-    },
-    xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled,
-    chart: {zoomType: "x"},
+    ...plot_datetime,
+    title: {text: 'Month evolution (12 months MA)'},
     series: [
       {% for name in ["EBIT", "Incomes", "Expenses"] %}
       {
@@ -342,12 +345,8 @@
     ],
   });
   Highcharts.chart('EVO_evolution_year', {
-    title: {
-      text: 'Year evolution'
-    },
-    xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled,
+    ...plot_datetime,
+    title: {text: 'Year evolution'},
     series: [
       {% for name in ["Incomes", "Expenses", "EBIT"] %}{
         name: "{{ name }}",
@@ -360,13 +359,8 @@
     ],
   });
   Highcharts.chart('EVO_expenses_by_categ_month', {
-    title: {
-      text: 'Expenses evolution by category and month'
-    },
-    xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "x"},
+    ...plot_datetime_stacked,
+    title: {text: 'Expenses evolution by category and month'},
     series: [
       {
         name: "Total",
@@ -385,13 +379,8 @@
     ],
   });
   Highcharts.chart('EVO_incomes_by_categ_month', {
-    title: {
-      text: 'Incomes evolution by category and month'
-    },
-    xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "x"},
+    ...plot_datetime_stacked,
+    title: {text: 'Incomes evolution by category and month'},
     series: [
       {
         name: "Total",
@@ -410,13 +399,8 @@
     ],
   });
   Highcharts.chart('EVO_expenses_by_categ_year', {
-    title: {
-      text: 'Expenses evolution by category and year'
-    },
-    xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "x"},
+    ...plot_datetime_stacked,
+    title: {text: 'Expenses evolution by category and year'},
     series: [
       {
         name: "Total",
@@ -435,13 +419,8 @@
     ],
   });
   Highcharts.chart('EVO_incomes_by_categ_year', {
-    title: {
-      text: 'Incomes evolution by category and year'
-    },
-    xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "x"},
+    ...plot_datetime_stacked,
+    title: {text: 'Incomes evolution by category and year'},
     series: [
       {
         name: "Total",
@@ -461,15 +440,17 @@
   });
 
   // COMPARISON SECTION
-  Highcharts.chart('COMP_incomes', {
-    title: {text: 'Incomes comparison (12 months MA)'},
+  const plot_comparison = {
+    ...plot_basic,
     xAxis: {
       title: {text: "Months"},
       type: 'category'
     },
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled,
     chart: {zoomType: "y"},
+  }
+  Highcharts.chart('COMP_incomes', {
+    ...plot_comparison,
+    title: {text: 'Incomes comparison (12 months MA)'},
     series: [
       {% for y, data in comp["Incomes"].items() %}{
         name: "{{ y }}",
@@ -482,14 +463,8 @@
     ],
   });
   Highcharts.chart('COMP_expenses', {
+    ...plot_comparison,
     title: {text: 'Expenses comparison (12 months MA)'},
-    xAxis: {
-      title: {text: "Months"},
-      type: 'category'
-    },
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled,
-    chart: {zoomType: "y"},
     series: [
       {% for y, data in comp["Expenses"].items() %}{
         name: "{{ y }}",
@@ -502,14 +477,8 @@
     ],
   });
   Highcharts.chart('COMP_EBIT', {
+    ...plot_comparison,
     title: {text: 'EBIT comparison (12 months MA)'},
-    xAxis: {
-      title: {text: "Months"},
-      type: 'category'
-    },
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled,
-    chart: {zoomType: "y"},
     series: [
       {% for y, data in comp["EBIT"].items() %}{
         name: "{{ y }}",
@@ -522,14 +491,8 @@
     ],
   });
   Highcharts.chart('COMP_liquid', {
+    ...plot_comparison,
     title: {text: 'Liquid comparison (3 months EWM)'},
-    xAxis: {
-      title: {text: "Months"},
-      type: 'category'
-    },
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled,
-    chart: {zoomType: "y"},
     series: [
       {% for y, data in comp["Liquid"].items() %}{
         name: "{{ y }}",
@@ -543,18 +506,21 @@
   });
 
   // PIES SECTION
-  pie_tooltip = {
-    formatter: function () {
-      return "<b>" + this.series.name + ":</b> " + this.percentage.toFixed(2) + "% (" + this.y + " €)";
-    }
+  const plot_pie = {
+    ...plot_stacked_no_title,
+    tooltip: {
+      formatter: function () {
+        return "<b>" + this.series.name + ":</b> " + this.percentage.toFixed(2) + "% (" + this.y + " €)";
+      }
+    },
+  }
+  const plot_pie_no_legend = {
+    ...plot_pie,
+    legend: {enabled: false},
   }
   Highcharts.chart('PIE_expenses_last_1m', {
-    title: {text: ""},
+    ...plot_pie,
     xAxis: {categories: ["Last month"]},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "x", type: "bar"},
-    tooltip: pie_tooltip,
     series: [
       {% for name, value in pies["Expenses"]["last_1m"].items() %}{
         name: "{{ name }}",
@@ -564,13 +530,8 @@
     ],
   });
   Highcharts.chart('PIE_expenses_last_12m', {
-    title: {text: ""},
+    ...plot_pie_no_legend,
     xAxis: {categories: ["Last year"]},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "x", type: "bar"},
-    tooltip: pie_tooltip,
-    legend: {enabled: false},
     series: [
       {% for name, value in pies["Expenses"]["last_12m"].items() %}{
         name: "{{ name }}",
@@ -580,13 +541,8 @@
     ],
   });
   Highcharts.chart('PIE_expenses_all', {
-    title: {text: ""},
+    ...plot_pie_no_legend,
     xAxis: {categories: ["All time"]},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "x", type: "bar"},
-    tooltip: pie_tooltip,
-    legend: {enabled: false},
     series: [
       {% for name, value in pies["Expenses"]["all"].items() %}{
         name: "{{ name }}",
@@ -596,12 +552,8 @@
     ],
   });
   Highcharts.chart('PIE_incomes_last_1m', {
-    title: {text: ""},
+    ...plot_pie,
     xAxis: {categories: ["Last month"]},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "x", type: "bar"},
-    tooltip: pie_tooltip,
     series: [
       {% for name, value in pies["Incomes"]["last_1m"].items() %}{
         name: "{{ name }}",
@@ -611,13 +563,8 @@
     ],
   });
   Highcharts.chart('PIE_incomes_last_12m', {
-    title: {text: ""},
+    ...plot_pie_no_legend,
     xAxis: {categories: ["Last year"]},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "x", type: "bar"},
-    tooltip: pie_tooltip,
-    legend: {enabled: false},
     series: [
       {% for name, value in pies["Incomes"]["last_12m"].items() %}{
         name: "{{ name }}",
@@ -627,13 +574,8 @@
     ],
   });
   Highcharts.chart('PIE_incomes_all', {
-    title: {text: ""},
+    ...plot_pie_no_legend,
     xAxis: {categories: ["All time"]},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "x", type: "bar"},
-    tooltip: pie_tooltip,
-    legend: {enabled: false},
     series: [
       {% for name, value in pies["Incomes"]["all"].items() %}{
         name: "{{ name }}",
@@ -645,13 +587,8 @@
 
   // LIQUID SECTION
   Highcharts.chart('LIQ_evolution', {
-    title: {
-      text: 'Liquid evolution'
-    },
-    xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "x"},
+    ...plot_datetime_stacked,
+    title: {text: 'Liquid evolution'},
     series: [
       {
         name: "Total",
@@ -670,13 +607,7 @@
     ],
   });
   Highcharts.chart('LIQ_vs_expenses', {
-    title: {
-      text: 'Liquid vs Expenses'
-    },
-    xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled,
-    chart: {zoomType: "x"},
+    ...plot_datetime,
     series: [
       {
         name: "Expenses 12m MA",
@@ -718,51 +649,35 @@
     ],
   });
   Highcharts.chart('LIQ_survival_ratio', {
-    title: {
-      text: 'Survival months (Liquid / Expenses)'
-    },
-    xAxis: {type: 'datetime'},
+    ...plot_datetime,
+    title: {text: 'Survival months (Liquid / Expenses)'},
     yAxis: {
       title: {text: null},
       plotLines: [
         {
+          label: {text: '2 years', align: 'left'},
           color: "{{ colors['Expenses'] }}",
-          dashStyle: 'shortdot',
           value: 24,
-          label: {
-              align: 'left',
-              text: '2 years',
-          },
+          dashStyle: 'shortdot',
         },
         {
           color: "{{ colors['Max_value'] }}",
+          label: {text: '1 year', align: 'left'},
           dashStyle: 'shortdashdot',
           value: 12,
-          label: {
-              align: 'left',
-              text: '1 year',
-          },
         },
         {
+          label: {text: 'Liquid recomended (6 months)', align: 'left'},
           color: "{{ colors['Recomended_value'] }}",
           value: 6,
-          label: {
-              align: 'left',
-              text: 'Liquid recomended (6 months)',
-          },
         },
         {
+          label: {text: 'Minimum liquid recomended (3 months)', align: 'left'},
           color: "{{ colors['Min_value'] }}",
           value: 3,
-          label: {
-              align: 'left',
-              text: 'Minimum liquid recomended (3 months)',
-          },
         }
       ],
     },
-    plotOptions: options_maker_enabled,
-    chart: {zoomType: "x"},
     series: [
       {
         name: "Months",
@@ -785,11 +700,8 @@
 
   // INVESTMENTS SECTION
   Highcharts.chart('INV_worth_vs_invest', {
+    ...plot_datetime,
     title: {text: 'Worth vs Invested'},
-    xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled,
-    chart: {zoomType: "x"},
     series: [
       {
         name: "Total Invested",
@@ -809,11 +721,8 @@
     ],
   });
   Highcharts.chart('INV_worth_evolution', {
+    ...plot_datetime_stacked,
     title: {text: 'Worth evolution'},
-    xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -841,11 +750,8 @@
     ],
   });
   Highcharts.chart('INV_invest_evolution', {
+    ...plot_datetime_stacked,
     title: {text: 'Invested evolution'},
-    xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -873,11 +779,8 @@
     ],
   });
   Highcharts.chart('INV_worth_by_type', {
+    ...plot_datetime_stacked,
     title: {text: 'Worth by type'},
-    xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled_stacked,
-    chart: {zoomType: "x"},
     series: [
       {
         name: "Total",
@@ -898,23 +801,18 @@
 
   // FIRE SECTION
   Highcharts.chart('FIRE_savings_ratio_month', {
+    ...plot_datetime,
     title: {text: 'Savings ratio by month'},
-    xAxis: {type: 'datetime'},
     yAxis: {
       title: {text: null},
       plotLines: [
         {
+          label: {text: 'Max Savings Ratio', align: 'left'},
           color: "{{ colors['Recomended_value'] }}",
           value: 1,
-          label: {
-              align: 'left',
-              text: 'Max Savings Ratio',
-          },
         },
       ],
     },
-    plotOptions: options_maker_enabled,
-    chart: {zoomType: "x"},
     series: [
       {
         name: "Savings ratio",
@@ -934,22 +832,18 @@
     ],
   });
   Highcharts.chart('FIRE_savings_ratio_year', {
+    ...plot_datetime,
     title: {text: 'Savings ratio by year'},
-    xAxis: {type: 'datetime'},
     yAxis: {
       title: {text: null},
       plotLines: [
         {
+          label: {text: 'Max Savings Ratio', align: 'left'},
           color: "{{ colors['Recomended_value'] }}",
           value: 1,
-          label: {
-              align: 'left',
-              text: 'Max Savings Ratio',
-          },
         },
       ],
     },
-    plotOptions: options_maker_enabled,
     series: [
       {
         name: "Savings ratio",
@@ -962,11 +856,8 @@
     ],
   });
   Highcharts.chart('FIRE_passive_income_vs_expenses', {
+    ...plot_datetime,
     title: {text: 'Passive income vs Expenses'},
-    xAxis: {type: 'datetime'},
-    yAxis: axe_no_title,
-    plotOptions: options_maker_enabled,
-    chart: {zoomType: "x"},
     series: [
       {
         name: "Passive Income",
@@ -994,31 +885,23 @@
     ],
   });
   Highcharts.chart('FIRE_total_years_survival', {
+    ...plot_datetime,
     title: {text: 'Doomsday years (Assets / Expenses)'},
-    xAxis: {type: 'datetime'},
     yAxis: {
       title: {text: null},
       plotLines: [
         {
+          label: {text: 'FIRE 3%', align: 'left'},
           color: "{{ colors['Recomended_value'] }}",
           value: 30,
-          label: {
-              align: 'left',
-              text: 'FIRE 3%',
-          },
         },
         {
+          label: {text: 'FIRE 4%', align: 'left'},
           color: "{{ colors['Min_value'] }}",
           value: 25,
-          label: {
-              align: 'left',
-              text: 'FIRE 4%',
-          },
         }
       ],
     },
-    plotOptions: options_maker_enabled,
-    chart: {zoomType: "x"},
     series: [
       {
         name: "Years",
@@ -1038,23 +921,18 @@
     ],
   });
   Highcharts.chart('FIRE_investment_ratios', {
+    ...plot_datetime,
     title: {text: 'Total Assets / Total income'},
-    xAxis: {type: 'datetime'},
     yAxis: {
       title: {text: null},
       plotLines: [
         {
+          label: {text: 'All earned saved breakpoint', align: 'left'},
           color: "{{ colors['Recomended_value'] }}",
           value: 1,
-          label: {
-              align: 'left',
-              text: 'All earned saved breakpoint',
-          },
         },
       ],
     },
-    plotOptions: options_maker_enabled,
-    chart: {zoomType: "x"},
     series: [
       {
         name: "Total Invest / Total income",
@@ -1076,6 +954,7 @@
 
   // SANKEY SECTION
   Highcharts.chart('SAN_month', {
+    credits: false,
     title: {text: 'Sankey month'},
     series: [{
       type: 'sankey',
@@ -1096,6 +975,7 @@
     }],
   });
   Highcharts.chart('SAN_year', {
+    credits: false,
     title: {text: 'Sankey year'},
     series: [{
       type: 'sankey',
