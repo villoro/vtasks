@@ -307,6 +307,45 @@ def get_ratios(out):
     return out
 
 
+def get_bubbles(dfs, mdate):
+    """ Get info for bubbles plot """
+
+    aux = {
+        name: df.groupby(c.COL_YEAR)["Amount"].sum()
+        for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE)
+    }
+
+    def get_year(dfi):
+        """ Get year data """
+        df = dfi.copy()
+        df["Year"] = df.index.year
+        return df.drop_duplicates("Year", keep="last").set_index("Year")["Total"]
+
+    aux["Liquid"] = get_year(dfs[c.DF_LIQUID])
+    aux["Worth"] = get_year(dfs[c.DF_WORTH])
+
+    # Create dataframe
+    df = pd.DataFrame(aux).fillna(0)
+    df = df[df.index > 2011]
+
+    # Only show current year at desember
+    if mdate.month < 12:
+        df[df.index < mdate.year]
+
+    df["Total_Worth"] = df["Worth"] + df["Liquid"]
+
+    df["doomsday"] = df["Total_Worth"] / df["Expenses"]
+    df["savings"] = (df["Incomes"] - df["Expenses"]) / df["Incomes"]
+
+    df = df.apply(lambda x: round(x, 2))
+
+    out = []
+    for i, row in df.iterrows():
+        out.append(f'x: {row["doomsday"]}, y: {row["savings"]}, z: {row["Expenses"]}, name: {i}')
+
+    return out
+
+
 def extract_sankey(data):
     """ Calculate Sankey flows """
 
@@ -458,6 +497,7 @@ def main(mdate=datetime.now()):
     out["pies"] = get_pie_traces(dfs)
     out["dash"] = get_dashboard(out, mdate)
     out["ratios"] = get_ratios(out)
+    out["bubbles"] = get_bubbles(dfs, mdate)
     out["sankey"] = extract_sankey(out)
 
     out["colors"] = get_colors(dfs, yml)
