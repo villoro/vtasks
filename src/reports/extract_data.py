@@ -341,7 +341,10 @@ def get_bubbles(dfs, mdate):
 
     out = []
     for i, row in df.iterrows():
-        out.append(f'x: {row["doomsday"]}, y: {row["savings"]}, z: {row["Expenses"]}, name: {i}')
+        out.append(
+            f'x: {row["doomsday"]}, y: {row["savings"]}, z: {row["Expenses"]}, name: {i}, '
+            f'incomes: {row["Incomes"]}, total_worth: {row["Total_Worth"]}'
+        )
 
     return out
 

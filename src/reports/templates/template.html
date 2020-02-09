@@ -959,6 +959,21 @@
     credits: false,
     legend: {enabled: false},
     title: {text: "Assets in years vs Savings ratio"},
+    xAxis: {
+      title: {text: "Total Worth / Yearly Expenses"},
+      plotLines: [
+        {
+          label: {text: '30 years', align: 'bottom'},
+          color: "{{ colors['Max_value'] }}",
+          value: 30,
+        },
+        {
+          label: {text: '25 years (4%)', align: 'bottom'},
+          color: "{{ colors['Min_value'] }}",
+          value: 25,
+        },
+      ],
+    },
     yAxis: {
       title: {text: "Savings ratio"},
       plotLines: [
@@ -969,7 +984,7 @@
         },
         {
           label: {text: 'EBIT 0', align: 'right'},
-          color: "{{ colors['Recomended_value'] }}",
+          color: "{{ colors['Min_value'] }}",
           value: 0,
         },
       ],
@@ -978,9 +993,11 @@
       useHTML: true,
       headerFormat: "<table>",
       pointFormat:
+        "<tr><th>Total Worth:</th><td>{point.total_worth} €</td></tr>" +
+        "<tr><th>Incomes:</th><td>{point.incomes} €</td></tr>" +
+        "<tr><th>Expenses:</th><td>{point.z} €</td></tr>" +
         "<tr><th>Assets:</th><td>{point.x} years</td></tr>" +
-        "<tr><th>Savings ratio:</th><td>{point.y}</td></tr>" +
-        "<tr><th>Expenses:</th><td>{point.z} €</td></tr>",
+        "<tr><th>Savings ratio:</th><td>{point.y}</td></tr>",
       footerFormat: "</table>",
       followPointer: false,
     },
