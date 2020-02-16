@@ -612,6 +612,7 @@
   });
   Highcharts.chart('LIQ_vs_expenses', {
     ...plot_datetime,
+    title: {text: 'Liquid vs Expenses'},
     series: [
       {
         name: "Expenses 12m MA",
@@ -927,8 +928,14 @@
   Highcharts.chart('FIRE_investment_ratios', {
     ...plot_datetime,
     title: {text: 'Total Assets / Total income'},
+    tooltip: {
+      valueSuffix: " %",
+    },
     yAxis: {
       title: {text: null},
+      labels: {
+        formatter: function() {return this.value + " %";}
+      },
       plotLines: [
         {
           label: {text: 'All earned saved breakpoint', align: 'left'},
