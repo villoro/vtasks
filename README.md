@@ -44,7 +44,7 @@ With this approach is easy to modify the data or the template without needing to
 
 So the pipeline is as follows:
 
-![home](images/luigi_reports.png)
+![reports_pipeline](images/luigi_reports.png)
 
 As you can see I use **dropbox** for storing all data this way is easy for me to access or modify it.
 
@@ -52,19 +52,19 @@ The report itself uses [W3css](https://www.w3schools.com/w3css/) for the layout 
 
 Here you can see some of the pages the report have:
 
-![home](images/report_1_dashboard.png)
-![home](images/report_2_evolution.png)
-![home](images/report_3_comparison.png)
-![home](images/report_4_pies.png)
-![home](images/report_5_liquid.png)
-![home](images/report_8_sankey.png)
+![report_dashboard](images/report_1_dashboard.png)
+![report_evolution](images/report_2_evolution.png)
+![report_comparison](images/report_3_comparison.png)
+![report_pies](images/report_4_pies.png)
+![report_liquid](images/report_5_liquid.png)
+![report_sankey](images/report_8_sankey.png)
 
 And of course the report is **responsive**:
 
-![home](images/report_nexus_5X.png)
+![report_nexus_5X](images/report_nexus_5X.png)
 
 
-### Flights
+### Flights tracker
 
 I regularly travel to Italy and I want to do it as cheap as possible.
 So I thought the best way to do it was to let the assistant track all the prices between the airports I wanted and store that data.
@@ -74,13 +74,28 @@ To do so I used the **Rapid API** [Flight Search](https://rapidapi.com/skyscanne
 This API allowed me to query some pairs of airports daily for free.
 So right now the assistant is storing a year of data each day so that I can see prices changes and which company offers cheaper flights each day.
 
-![about](images/luigi_flights.png)
+![flights_pipeline](images/luigi_flights.png)
 
 As you can see **Rapid API** is getting their data from **Skyscanner**.
 
 A sample of the data:
 
-![about](images/flights_data.jpg)
+![flights_data](images/flights_data.jpg)
+
+## Getting info
+
+The assistant is connected to **slack** so that is able to send messages of each task it completes.
+It will also give information about any task failure that might happen.
+
+## Nexts steps
+
+The idea is to extend the **slack** integration by creating a chatbot.
+
+This chatbot would allow me to:
+
+* ask about the current state of the tasks
+* make the assistant do a task instantaneously
+* get feedback of anything I ask
 
 ## Luigi working
 
