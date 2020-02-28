@@ -38,7 +38,7 @@ def get_basic_traces(dfs, col_period, mdate):
     series[c.EBIT] = series[c.INCOMES] - series[c.EXPENSES]
 
     # Add savings ratio
-    series[c.SAVINGS] = (series[c.EBIT] / series[c.INCOMES]).apply(lambda x: max(0, x))
+    series[c.SAVINGS] = (100 * series[c.EBIT] / series[c.INCOMES]).apply(lambda x: max(0, x))
 
     out = u.series_to_dicts(series)
 
@@ -335,7 +335,7 @@ def get_bubbles(dfs, mdate):
     df["Total_Worth"] = df["Worth"] + df["Liquid"]
 
     df["doomsday"] = df["Total_Worth"] / df["Expenses"]
-    df["savings"] = (df["Incomes"] - df["Expenses"]) / df["Incomes"]
+    df["savings"] = 100 * (df["Incomes"] - df["Expenses"]) / df["Incomes"]
 
     df = df.apply(lambda x: round(x, 2))
 

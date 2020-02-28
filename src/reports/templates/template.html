@@ -226,6 +226,17 @@
     title: {text: ""},
     chart: {zoomType: "x", type: "bar"},
   }
+  const tooltip_percent = {
+    tooltip: {
+      valueSuffix: " %",
+    },
+  }
+  const labels_percent = {
+    title: {text: null},
+    labels: {
+      formatter: function() {return this.value + " %";}
+    },
+  }
 
   // DASHBOARD SECTION
   Highcharts.chart('DASH_basic_traces', {
@@ -807,14 +818,15 @@
   // FIRE SECTION
   Highcharts.chart('FIRE_savings_ratio_month', {
     ...plot_datetime,
+    ...tooltip_percent,
     title: {text: 'Savings ratio by month'},
     yAxis: {
-      title: {text: null},
+      ...labels_percent,
       plotLines: [
         {
           label: {text: 'Max Savings Ratio', align: 'left'},
           color: "{{ colors['Recomended_value'] }}",
-          value: 1,
+          value: 100,
         },
       ],
     },
@@ -838,14 +850,15 @@
   });
   Highcharts.chart('FIRE_savings_ratio_year', {
     ...plot_datetime,
+    ...tooltip_percent,
     title: {text: 'Savings ratio by year'},
     yAxis: {
-      title: {text: null},
+      ...labels_percent,
       plotLines: [
         {
           label: {text: 'Max Savings Ratio', align: 'left'},
           color: "{{ colors['Recomended_value'] }}",
-          value: 1,
+          value: 100,
         },
       ],
     },
@@ -927,20 +940,15 @@
   });
   Highcharts.chart('FIRE_investment_ratios', {
     ...plot_datetime,
+    ...tooltip_percent,
     title: {text: 'Total Assets / Total income'},
-    tooltip: {
-      valueSuffix: " %",
-    },
     yAxis: {
-      title: {text: null},
-      labels: {
-        formatter: function() {return this.value + " %";}
-      },
+      ...labels_percent,
       plotLines: [
         {
           label: {text: 'All earned saved breakpoint', align: 'left'},
           color: "{{ colors['Recomended_value'] }}",
-          value: 1,
+          value: 100,
         },
       ],
     },
@@ -982,12 +990,13 @@
       ],
     },
     yAxis: {
+      ...labels_percent,
       title: {text: "Savings ratio"},
       plotLines: [
         {
           label: {text: 'Max Savings Ratio', align: 'left'},
           color: "{{ colors['Max_value'] }}",
-          value: 1,
+          value: 100,
         },
         {
           label: {text: 'EBIT 0', align: 'right'},
@@ -1004,7 +1013,7 @@
         "<tr><th>Incomes:</th><td>{point.incomes} €</td></tr>" +
         "<tr><th>Expenses:</th><td>{point.z} €</td></tr>" +
         "<tr><th>Assets:</th><td>{point.x} years</td></tr>" +
-        "<tr><th>Savings ratio:</th><td>{point.y}</td></tr>",
+        "<tr><th>Savings ratio:</th><td>{point.y} %</td></tr>",
       footerFormat: "</table>",
       followPointer: false,
     },
