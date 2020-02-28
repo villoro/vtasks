@@ -82,6 +82,15 @@ A sample of the data:
 
 ![about](images/flights_data.jpg)
 
+## Luigi working
+
+I feel really proud every time I see **Luigi** working with all those nice `logs`.
+You view the same here:
+
+![home](images/luigi.gif)
+
+> **Disclaimer:** It is not real time
+
 ## Authors
 * [Arnau Villoro](villoro.com)
 
