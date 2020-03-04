@@ -302,6 +302,12 @@ def get_ratios(data):
         serie = serie.replace([np.inf, -np.inf], np.nan)
         out[name] = u.serie_to_dict(serie.dropna())
 
+    out["Worth_by_groups"] = {}
+    for name, values in data["month"]["Worth_by_groups"].items():
+        out["Worth_by_groups"][name] = u.serie_to_dict(
+            100 * pd.Series(values) / pd.Series(data["month"]["Worth"])
+        )
+
     log.debug("Ratios info added")
 
     return out

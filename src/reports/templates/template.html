@@ -139,6 +139,7 @@
 
   <div class="w3-card w3-round w3-center w3-white elem">
     <div id="INV_worth_by_type" class="plot" style="height: 450px"></div>
+    <div id="INV_worth_by_type_percent" class="plot" style="height: 450px"></div>
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
@@ -807,7 +808,25 @@
       }, {% for name, data in month["Worth_by_groups"].items() %}{
         name: "{{ name }}",
         color: "{{ colors['Investment_categ'][name] }}",
-        type: 'column',
+        type: 'area',
+        data: [{% for mdate, value in data.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('INV_worth_by_type_percent', {
+    ...plot_datetime_stacked,
+    ...tooltip_percent,
+    title: {text: 'Worth by type (%)'},
+    yAxis : {
+      ...labels_percent,
+      max: 100,
+    },
+    series: [{% for name, data in ratios["Worth_by_groups"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors['Investment_categ'][name] }}",
+        type: 'area',
         data: [{% for mdate, value in data.items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
