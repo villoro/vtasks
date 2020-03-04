@@ -269,7 +269,7 @@ def get_dashboard(data, mdate):
     return out
 
 
-def get_ratios(out):
+def get_ratios(data):
     """ Calculate ratios """
 
     aux = {}
@@ -284,8 +284,8 @@ def get_ratios(out):
         f"{c.LIQUID}_6m_e",
     ]
     for name in names:
-        aux[name] = pd.Series(out["month"][name])
-    liquid = pd.Series(out["month"][c.LIQUID])
+        aux[name] = pd.Series(data["month"][name])
+    liquid = pd.Series(data["month"][c.LIQUID])
 
     out = {
         f"{c.LIQUID}/{c.EXPENSES}": aux[c.LIQUID] / aux[c.EXPENSES],
@@ -301,6 +301,12 @@ def get_ratios(out):
     for name, serie in out.items():
         serie = serie.replace([np.inf, -np.inf], np.nan)
         out[name] = u.serie_to_dict(serie.dropna())
+
+    out["Worth_by_groups"] = {}
+    for name, values in data["month"]["Worth_by_groups"].items():
+        out["Worth_by_groups"][name] = u.serie_to_dict(
+            100 * pd.Series(values) / pd.Series(data["month"]["Worth"])
+        )
 
     log.debug("Ratios info added")
 
