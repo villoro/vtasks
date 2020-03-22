@@ -165,8 +165,6 @@ def query_pair(origin, destination, n_days=366):
     # Start at day 1 since it will only query when day==1
     start_day = date.today()
 
-    log.info(f"Quering flights from '{origin}' to '{destination}'")
-
     dfs = []
     for x in range(n_days):
         query_day = start_day + timedelta(x)
