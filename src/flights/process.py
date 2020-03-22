@@ -27,8 +27,12 @@ def retrive_all_flights():
     """ Get a dataframe with all flights """
 
     dfs = []
-    for origin, dest in get_airports_pairs():
+    airports_pairs = get_airports_pairs()
+    total_pairs = len(airports_pairs)
 
+    for i, (origin, dest) in enumerate(airports_pairs):
+
+        log.info(f"Quering flights from '{origin}' to '{dest}' ({i + 1}/{total_pairs})")
         df = query_pair(origin, dest)
 
         if df is not None:
