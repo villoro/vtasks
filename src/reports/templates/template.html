@@ -78,6 +78,10 @@
   <div class="w3-card w3-round w3-center w3-white elem">
     <div id="EVO_incomes_by_categ_year" class="plot" style="height: 450px"></div>
   </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_salaries" class="plot" style="height: 450px"></div>
+  </div>
 </div>
 
 <!-- COMP -->
@@ -452,6 +456,34 @@
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('EVO_salaries', {
+    ...plot_datetime,
+    title: {text: 'Gross salary evolution'},
+    series: [
+      {
+        name: "Fixed",
+        visible: false,
+        color: "{{ colors['Incomes_dim'] }}",
+        data: [{% for mdate, value in month["salary"]["fixed"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Equivalent full time",
+        color: "#000000",
+        data: [{% for mdate, value in month["salary"]["full_time"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Salary",
+        color: "{{ colors['Incomes'] }}",
+        data: [{% for mdate, value in month["salary"]["real"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
     ],
   });
 
