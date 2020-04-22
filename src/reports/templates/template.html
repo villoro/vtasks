@@ -463,16 +463,24 @@
     title: {text: 'Gross salary evolution'},
     series: [
       {
-        name: "Equivalent full time",
+        name: "Fixed",
+        visible: false,
         color: "{{ colors['Incomes_dim'] }}",
-        data: [{% for mdate, value in month["salary_full_time"].items() %}
+        data: [{% for mdate, value in month["salary"]["fixed"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Equivalent full time",
+        color: "#000000",
+        data: [{% for mdate, value in month["salary"]["full_time"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
       {
         name: "Salary",
         color: "{{ colors['Incomes'] }}",
-        data: [{% for mdate, value in month["salaray"].items() %}
+        data: [{% for mdate, value in month["salary"]["real"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },

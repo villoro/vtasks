@@ -132,8 +132,11 @@ def get_salaries(dfs, mdate):
     df = df.fillna(method="ffill").fillna(0)
 
     return {
-        "salaray": u.serie_to_dict(df["Total"]),
-        "salary_full_time": u.serie_to_dict(df["EAGI"]),
+        "salary": {
+            "real": u.serie_to_dict(df["Total"]),
+            "full_time": u.serie_to_dict(df["EAGI"]),
+            "fixed": u.serie_to_dict(df["Fixed"]),
+        }
     }
 
 
