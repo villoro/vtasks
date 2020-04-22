@@ -117,6 +117,29 @@ def get_total_investments(data):
     }
 
 
+def get_salaries(dfs, mdate):
+    """
+        Extract salaries
+
+        Args:
+            data:   dict with data
+    """
+
+    df = dfs[c.DF_SALARY].set_index(c.COL_DATE).copy()
+
+    # First complete data from previous months then with 0
+    df = u.add_missing_months(df, mdate)
+    df = df.fillna(method="ffill").fillna(0)
+
+    return {
+        "salary": {
+            "real": u.serie_to_dict(df["Total"]),
+            "full_time": u.serie_to_dict(df["EAGI"]),
+            "fixed": u.serie_to_dict(df["Fixed"]),
+        }
+    }
+
+
 def get_comparison_traces(dfs):
     """
         Add traces for comparison plots
@@ -501,6 +524,7 @@ def main(mdate=datetime.now()):
         out["month"].update(get_investment_or_liquid(dfs, yml[yml_name], name))
 
     out["month"].update(get_total_investments(out))
+    out["month"].update(get_salaries(dfs, mdate))
 
     out["comp"] = get_comparison_traces(dfs)
     out["pies"] = get_pie_traces(dfs)
