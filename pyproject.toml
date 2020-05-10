@@ -1,2 +1,35 @@
 [tool.black]
 line-length = 100
+
+[tool.poetry]
+name = "vtasks"
+version = "1.0.0"
+description = "Personal tasks scheduled with Luigi"
+authors = ["Arnau Villoro <arnau@villoro.com>"]
+maintainers = ["Arnau Villoro <arnau@villoro.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/villoro/vtasks"
+
+[tool.poetry.dependencies]
+python = "~3.6.1"
+dropbox = "^10.1.2"
+jinja2 = "^2.11.2"
+loguru = "^0.4.1"
+luigi = "^2.8.13"
+oyaml = "^0.9"
+pandas = "^1.0.3"
+numpy = "^1.18.4"
+slackclient = "^2.5.0"
+vcrypto = "^2.0.0"
+vpalette = "^2.0.0"
+vtime = "^2.0.0"
+xlrd = "^1.2.0"
+openpyxl = "^3.0.3"
+
+[tool.poetry.dev-dependencies]
+black = "^19.10b0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
