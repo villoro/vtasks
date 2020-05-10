@@ -2,7 +2,7 @@
     Global utilities
 """
 
-from v_crypt import Cipher
+from vcrypto import Cipher
 
 from config import PATH_ROOT
 

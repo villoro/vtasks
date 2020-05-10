@@ -7,7 +7,7 @@ from collections import OrderedDict
 import numpy as np
 import pandas as pd
 
-from v_palette import get_colors
+from vpalette import get_colors
 
 from . import constants as c
 
