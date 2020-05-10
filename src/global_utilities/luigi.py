@@ -4,7 +4,7 @@ from datetime import datetime
 
 import luigi
 import oyaml as yaml
-from v_time import time_human
+from vtime import time_human
 
 from config import PATH_ROOT
 from slackbot import send_message
