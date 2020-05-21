@@ -11,7 +11,7 @@ from . import extract_data
 from . import create_report
 
 MIN_DATE = "2015-12-01"
-NUM_OF_JOBS_DEFAULT = 5  # If 1 or lower no multiprocessing
+NUM_OF_JOBS_DEFAULT = 10  # If 1 or lower no multiprocessing
 
 
 def create_one_report(mdate):

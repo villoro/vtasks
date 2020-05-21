@@ -211,8 +211,8 @@ def get_pie_traces(dfs):
             return u.serie_to_dict(serie[indexs][::-1])
 
         out[name] = {
-            "last_1m": export_trace(df.iloc[-1, :]),
-            "last_12m": export_trace(df.iloc[-12:, :].sum()),
+            "month": export_trace(df.iloc[-1, :]),
+            "year": export_trace(df[df.index.year == df.index.year[-1]].sum()),
             "all": export_trace(df.sum()),
         }
 
