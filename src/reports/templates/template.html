@@ -107,15 +107,15 @@
 <div id="pies" class="section" style="display:none;">
   <div class="w3-card w3-round w3-center w3-white elem">
     <h3>Expenses</h3>
-    <div id="PIE_expenses_last_1m" class="plot" style="height: 180px"></div>
-    <div id="PIE_expenses_last_12m" class="plot" style="height: 100px"></div>
+    <div id="PIE_expenses_month" class="plot" style="height: 180px"></div>
+    <div id="PIE_expenses_year" class="plot" style="height: 100px"></div>
     <div id="PIE_expenses_all" class="plot" style="height: 100px"></div>
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
     <h3>Incomes</h3>
-    <div id="PIE_incomes_last_1m" class="plot" style="height: 180px"></div>
-    <div id="PIE_incomes_last_12m" class="plot" style="height: 100px"></div>
+    <div id="PIE_incomes_month" class="plot" style="height: 180px"></div>
+    <div id="PIE_incomes_year" class="plot" style="height: 100px"></div>
     <div id="PIE_incomes_all" class="plot" style="height: 100px"></div>
   </div>
 </div>
@@ -566,22 +566,22 @@
     ...plot_pie,
     legend: {enabled: false},
   }
-  Highcharts.chart('PIE_expenses_last_1m', {
+  Highcharts.chart('PIE_expenses_month', {
     ...plot_pie,
-    xAxis: {categories: ["Last month"]},
+    xAxis: {categories: ["Month"]},
     series: [
-      {% for name, value in pies["Expenses"]["last_1m"].items() %}{
+      {% for name, value in pies["Expenses"]["month"].items() %}{
         name: "{{ name }}",
         color: "{{ colors['Expenses_categ'][name] }}",
         data: [{{ value }}],
       }, {% endfor %}
     ],
   });
-  Highcharts.chart('PIE_expenses_last_12m', {
+  Highcharts.chart('PIE_expenses_year', {
     ...plot_pie_no_legend,
-    xAxis: {categories: ["Last year"]},
+    xAxis: {categories: ["Year"]},
     series: [
-      {% for name, value in pies["Expenses"]["last_12m"].items() %}{
+      {% for name, value in pies["Expenses"]["year"].items() %}{
         name: "{{ name }}",
         color: "{{ colors['Expenses_categ'][name] }}",
         data: [{{ value }}],
@@ -599,22 +599,22 @@
       }, {% endfor %}
     ],
   });
-  Highcharts.chart('PIE_incomes_last_1m', {
+  Highcharts.chart('PIE_incomes_month', {
     ...plot_pie,
-    xAxis: {categories: ["Last month"]},
+    xAxis: {categories: ["Month"]},
     series: [
-      {% for name, value in pies["Incomes"]["last_1m"].items() %}{
+      {% for name, value in pies["Incomes"]["month"].items() %}{
         name: "{{ name }}",
         color: "{{ colors['Incomes_categ'][name] }}",
         data: [{{ value }}],
       }, {% endfor %}
     ],
   });
-  Highcharts.chart('PIE_incomes_last_12m', {
+  Highcharts.chart('PIE_incomes_year', {
     ...plot_pie_no_legend,
-    xAxis: {categories: ["Last year"]},
+    xAxis: {categories: ["Year"]},
     series: [
-      {% for name, value in pies["Incomes"]["last_12m"].items() %}{
+      {% for name, value in pies["Incomes"]["year"].items() %}{
         name: "{{ name }}",
         color: "{{ colors['Incomes_categ'][name] }}",
         data: [{{ value }}],
