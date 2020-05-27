@@ -46,7 +46,7 @@ def query_flights(
 
     for attemp_num in range(max_attempts):
 
-        log.debug(f"Quering {origin}-{destination} for date '{day}' (attempt {attemp_num})")
+        log.debug(f"Quering {origin}-{destination} for date '{day}' (attempt {attemp_num + 1})")
 
         response = requests.get(url, headers=HEADERS)
 
