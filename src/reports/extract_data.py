@@ -336,7 +336,7 @@ def get_ratios(data):
     return out
 
 
-def get_bubbles(dfs, mdate):
+def get_bubbles(dfs, mdate, min_year=2011):
     """ Get info for bubbles plot """
 
     aux = {
@@ -355,16 +355,19 @@ def get_bubbles(dfs, mdate):
 
     # Create dataframe
     df = pd.DataFrame(aux).fillna(0)
-    df = df[df.index > 2011]
-
-    # Only show current year at desember
-    if mdate.month < 12:
-        df = df[df.index < mdate.year]
 
     df["Total_Worth"] = df["Worth"] + df["Liquid"]
-
-    df["doomsday"] = df["Total_Worth"] / df["Expenses"]
     df["savings"] = 100 * (df["Incomes"] - df["Expenses"]) / df["Incomes"]
+
+    # Extract number of months
+    dfe = dfs[c.DF_TRANS][dfs[c.DF_TRANS][c.COL_TYPE] == c.EXPENSES].copy()
+    months_expenses = dfe.groupby(c.COL_YEAR).agg({"Month": "nunique"})["Month"]
+
+    # Extrapolate anual expenses for incomplete years
+    df["doomsday"] = df["Total_Worth"] / (df["Expenses"] * 12 / months_expenses)
+
+    # First year has strange values
+    df = df[df.index > min_year]
 
     df = df.apply(lambda x: round(x, 2))
 
