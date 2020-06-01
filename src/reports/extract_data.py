@@ -339,10 +339,11 @@ def get_ratios(data):
 def get_bubbles(dfs, mdate, min_year=2011):
     """ Get info for bubbles plot """
 
-    aux = {
-        name: df.groupby(c.COL_YEAR)["Amount"].sum()
-        for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE)
-    }
+    # Get expenses/incomes and extrapolate for last year if necessary
+    aux = {}
+    for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
+        dfa = df.groupby(c.COL_YEAR).agg({c.COL_AMOUNT: "sum", c.COL_MONTH: "nunique"})
+        aux[name] = dfa[c.COL_AMOUNT] * 12 / dfa[c.COL_MONTH]
 
     def get_year(dfi):
         """ Get year data """
@@ -358,13 +359,7 @@ def get_bubbles(dfs, mdate, min_year=2011):
 
     df["Total_Worth"] = df["Worth"] + df["Liquid"]
     df["savings"] = 100 * (df["Incomes"] - df["Expenses"]) / df["Incomes"]
-
-    # Extract number of months
-    dfe = dfs[c.DF_TRANS][dfs[c.DF_TRANS][c.COL_TYPE] == c.EXPENSES].copy()
-    months_expenses = dfe.groupby(c.COL_YEAR).agg({"Month": "nunique"})["Month"]
-
-    # Extrapolate anual expenses for incomplete years
-    df["doomsday"] = df["Total_Worth"] / (df["Expenses"] * 12 / months_expenses)
+    df["doomsday"] = df["Total_Worth"] / df["Expenses"]
 
     # First year has strange values
     df = df[df.index > min_year]
