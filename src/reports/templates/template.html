@@ -558,7 +558,7 @@
     ...plot_stacked_no_title,
     tooltip: {
       formatter: function () {
-        return "<b>" + this.series.name + ":</b> " + this.percentage.toFixed(2) + "% (" + this.y + " €)";
+        return "<b>" + this.series.name + ":</b> " + this.y + " € (" + this.percentage.toFixed(2) + " %)";
       }
     },
   }
