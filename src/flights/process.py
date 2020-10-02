@@ -1,6 +1,9 @@
 import pandas as pd
 
+from prefect import task
+
 import global_utilities as gu
+
 from global_utilities import log
 
 from . import constants as c
@@ -44,7 +47,8 @@ def retrive_all_flights():
         log.error(f"There are no flights")
 
 
-def main(mdate):
+@task
+def flights(mdate):
 
     # Get history
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
