@@ -4,6 +4,8 @@
 
 import pandas as pd
 
+from prefect import task
+
 import global_utilities as gu
 from global_utilities import log
 from . import constants as c
@@ -28,7 +30,8 @@ def get_money_lover_filename(dbx):
     return c.PATH_MONEY_LOVER + max(names)
 
 
-def main(mdate):
+@task
+def money_lover(mdate):
     """ Retrives all dataframes and update DFS global var """
 
     # Get data
