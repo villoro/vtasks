@@ -1,7 +1,30 @@
-# Personal Assistant with Prefect
+# Personal Assistant with Luigi
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
-This repository contains different **Prefect** tasks that allows me to automate repetitive tasks.
+This repository contains different **Luigi** DAGs that allows me to automate repetitive tasks.
+
+I have created a `StandardTask` that extends the **Luigi** original task so that it is really easy to add new tasks.
+
+What you basically need to do is to create a new task with the following code:
+
+```python
+class ReportsTask(StandardTask):
+    module = "reports"
+    priority = 80
+
+    def requires(self):
+        yield MoneyLoverTask(self.mdate)
+```
+
+And you need a `script` or `package` inside the `src` folder that has a function called `main`.
+Essentially what **Luigi** will do is:
+
+```python
+module = __import__(self.module)
+module.main(self.mdate)
+```
+
+You can read more about it [here](https://villoro.com/post/luigi).
 
 ## Tasks
 
@@ -52,7 +75,7 @@ To do so I used the **Rapid API** [Flight Search](https://rapidapi.com/skyscanne
 This API allowed me to query some pairs of airports daily for free.
 So right now the assistant is storing a year of data each day so that I can see prices changes and which company offers cheaper flights each day.
 
-![flights_pipeline](images/flights_task.png)
+![flights_pipeline](images/luigi_flights.png)
 
 As you can see **Rapid API** is getting their data from **Skyscanner**.
 
@@ -74,6 +97,15 @@ This chatbot would allow me to:
 * ask about the current state of the tasks
 * make the assistant do a task instantaneously
 * get feedback of anything I ask
+
+## Luigi working
+
+I feel really proud every time I see **Luigi** working with all those nice `logs`.
+You view the same here:
+
+![home](images/luigi.gif)
+
+> **Disclaimer:** It is not real time
 
 ## Authors
 * [Arnau Villoro](villoro.com)

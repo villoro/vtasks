@@ -6,7 +6,7 @@ VAR_DROPBOX_TOKEN = "DROPBOX_TOKEN_FLIGHTS"
 
 FILE_AIRPORTS = "/airports.xlsx"
 FILE_FLIGHTS = "/data.xlsx"
-FILE_FLIGHTS_DAY = "/history/{date:%Y_%m}/{date:%Y_%m_%d}.parquet"
+FILE_FLIGHTS_DAY = "/history/{:%Y_%m_%d}.xlsx"
 
 COL_PRICE = "Price"
 COL_DIRECT = "Direct"

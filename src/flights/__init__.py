@@ -2,4 +2,5 @@ from . import rapidapi
 from . import constants
 from . import process
 
-from .process import flights
+# For luigi import main
+from .process import main
