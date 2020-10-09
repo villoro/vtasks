@@ -6,4 +6,5 @@ from . import extract_data
 from . import create_report
 from . import process
 
-from .process import reports
+# For luigi import main
+from .process import main

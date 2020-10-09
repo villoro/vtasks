@@ -5,11 +5,11 @@
 import io
 
 import dropbox
-import oyaml as yaml
 import pandas as pd
+import oyaml as yaml
 
-from .log import log
 from .secrets import get_secret
+from .log import log
 
 
 def get_dbx_connector(key):
@@ -50,45 +50,13 @@ def write_yaml(dbx, data, filename):
             filename:   name of the yaml file
     """
 
-    with io.StringIO() as stream:
-        yaml.dump(data, stream, default_flow_style=False, indent=4)
-        stream.seek(0)
+    with io.StringIO() as file:
+        yaml.dump(data, file, default_flow_style=False, indent=4)
+        file.seek(0)
 
-        dbx.files_upload(stream.read().encode(), filename, mode=dropbox.files.WriteMode.overwrite)
+        dbx.files_upload(file.read().encode(), filename, mode=dropbox.files.WriteMode.overwrite)
 
     log.info(f"File '{filename}' exported to dropbox")
-
-
-def read_parquet(dbx, filename):
-    """
-        Read a parquet from dropbox as a pandas dataframe
-
-        Args:
-            dbx:        dropbox connector
-            filename:   name of the parquet file
-    """
-
-    _, res = dbx.files_download(filename)
-
-    with io.BytesIO(res.content) as stream:
-        return pd.read_parquet(stream)
-
-
-def write_parquet(dbx, df, filename):
-    """
-        Write a parquet to dropbox from a pandas dataframe.
-
-        Args:
-            dbx:        dropbox connector
-            df:         pandas dataframe
-            filename:   name of the yaml file
-    """
-
-    with io.BytesIO() as stream:
-        df.to_parquet(stream)
-        stream.seek(0)
-
-        dbx.files_upload(stream.getvalue(), filename, mode=dropbox.files.WriteMode.overwrite)
 
 
 def write_textfile(dbx, text, filename):
@@ -130,9 +98,9 @@ def read_excel(dbx, filename, sheet_names=None, **kwa):
         with io.BytesIO(res.content) as stream:
             return pd.read_excel(stream, **kwa)
 
+    # TODO: use with clause (not working with pandas 1.0.0)
     # Read multiple dataframes
-    with io.BytesIO(res.content) as stream:
-        return {x: pd.read_excel(stream, sheet_name=x, **kwa) for x in sheet_names}
+    return {x: pd.read_excel(io.BytesIO(res.content), sheet_name=x, **kwa) for x in sheet_names}
 
 
 def write_excel(dbx, df, filename, **kwa):

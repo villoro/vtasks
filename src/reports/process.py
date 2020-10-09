@@ -8,7 +8,6 @@ import pandas as pd
 
 from global_utilities import log
 from . import extract_data
-from prefect import task
 from . import create_report
 
 MIN_DATE = "2015-12-01"
@@ -24,8 +23,7 @@ def create_one_report(mdate):
     log.success(f"Report {mdate:%Y-%m} created")
 
 
-@task
-def reports(mdate, dummy=None, n_jobs=NUM_OF_JOBS_DEFAULT):
+def main(mdate, n_jobs=NUM_OF_JOBS_DEFAULT):
 
     mdate = pd.to_datetime(mdate)
     all_dates = pd.date_range(start=MIN_DATE, end=mdate, freq="MS")

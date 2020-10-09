@@ -1,26 +1,40 @@
-from datetime import date
-from prefect import Flow
-from prefect import Parameter
+from datetime import datetime
 
+import luigi
+
+from global_utilities.luigi import StandardTask
 from global_utilities.log import log
 
-from flights import flights
-from money_lover import money_lover
-from reports import reports
+
+class MoneyLoverTask(StandardTask):
+    module = "money_lover"
+    priority = 100
 
 
-with Flow("do_all") as flow:
-    mdate = Parameter("mdate")
+class FlightsTask(StandardTask):
+    module = "flights"
+    priority = 50
 
-    # Add a dummy to force the order
-    out = money_lover(mdate)
-    reports(mdate, dummy=out)
-    flights(mdate)
+
+class ReportsTask(StandardTask):
+    module = "reports"
+    priority = 80
+
+    def requires(self):
+        yield MoneyLoverTask(self.mdate)
+
+
+class DoAllTask(luigi.WrapperTask):
+    mdate = luigi.DateParameter(default=datetime.now())
+
+    def requires(self):
+        yield ReportsTask(self.mdate)
+        yield FlightsTask(self.mdate)
 
 
 if __name__ == "__main__":
 
     log.info("Starting vtasks")
-    flow.run(mdate=date.today())
+    luigi.build([DoAllTask()])
 
     log.info("End of vtasks")
