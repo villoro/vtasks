@@ -1,6 +1,9 @@
 import pandas as pd
 
+from prefect import task
+
 import global_utilities as gu
+
 from global_utilities import log
 
 from . import constants as c
@@ -39,26 +42,20 @@ def retrive_all_flights():
             dfs.append(df)
 
     if dfs:
-        return pd.concat(dfs).reset_index(drop=True)
+        # drop_duplicates to make the concat easier
+        return pd.concat(dfs).reset_index(drop=True).drop_duplicates(c.COLS_INDEX)
     else:
         log.error(f"There are no flights")
 
 
-def main(mdate):
+@task
+def flights(mdate):
 
     # Get history
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
-    df_history = gu.dropbox.read_excel(dbx, c.FILE_FLIGHTS)
 
-    # Get new data + drop_duplicates to make the concat easier
-    df_new = retrive_all_flights().drop_duplicates(c.COLS_INDEX)
+    # Get new data
+    df = retrive_all_flights()
 
     # Store data from today
-    gu.dropbox.write_excel(dbx, df_new, c.FILE_FLIGHTS_DAY.format(mdate), index=False)
-
-    # Merge data
-    log.info("Merging flights history")
-    df_out = pd.concat([df_history, df_new]).drop_duplicates(c.COLS_INDEX)
-
-    # Store merged data
-    gu.dropbox.write_excel(dbx, df_out, c.FILE_FLIGHTS, index=False)
+    gu.dropbox.write_parquet(dbx, df, c.FILE_FLIGHTS_DAY.format(date=mdate))
