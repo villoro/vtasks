@@ -4,13 +4,15 @@
 
 import numpy as np
 import pandas as pd
-from datetime import datetime
+
 from collections import OrderedDict
+from datetime import datetime
 
 import global_utilities as gu
-from global_utilities import log
+
 from . import constants as c
 from . import utilities as u
+from global_utilities import log
 
 
 def get_basic_traces(dfs, col_period, mdate):
@@ -491,7 +493,7 @@ def get_colors(dfs, yml):
     return out
 
 
-def main(mdate=datetime.now()):
+def main(mdate=datetime.now(), export_data=False):
     """ Create the report """
 
     mdate = mdate.replace(day=1)
@@ -533,4 +535,7 @@ def main(mdate=datetime.now()):
 
     out["colors"] = get_colors(dfs, yml)
 
-    gu.dropbox.write_yaml(dbx, out, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
+    if export_data:
+        gu.dropbox.write_yaml(dbx, out, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
+
+    return out
