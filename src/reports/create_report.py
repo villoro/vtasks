@@ -4,17 +4,18 @@
 
 from datetime import datetime
 
-import oyaml as yaml
 import jinja2
+import oyaml as yaml
 
 from config import PATH_ROOT
 
 import global_utilities as gu
-from global_utilities import log
+
 from . import constants as c
+from global_utilities import log
 
 
-def main(mdate=datetime.now()):
+def main(mdate=datetime.now(), data=None):
     """ Creates the report """
 
     mdate = mdate.replace(day=1)
@@ -22,8 +23,9 @@ def main(mdate=datetime.now()):
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
 
     # Read data
-    log.debug("Reading report_data from dropbox")
-    data = gu.dropbox.read_yaml(dbx, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
+    if data is None:
+        log.debug("Reading report_data from dropbox")
+        data = gu.dropbox.read_yaml(dbx, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
 
     # Add title
     data["mdate"] = f"{mdate:%Y_%m}"

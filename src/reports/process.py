@@ -6,10 +6,10 @@ from multiprocessing import Pool
 
 import pandas as pd
 
-from global_utilities import log
-from . import extract_data
-from prefect import task
 from . import create_report
+from . import extract_data
+from global_utilities import log
+from prefect import task
 
 MIN_DATE = "2015-12-01"
 NUM_OF_JOBS_DEFAULT = 10  # If 1 or lower no multiprocessing
@@ -18,8 +18,8 @@ NUM_OF_JOBS_DEFAULT = 10  # If 1 or lower no multiprocessing
 def create_one_report(mdate):
     """ Creates a report for one month """
 
-    extract_data.main(mdate)
-    create_report.main(mdate)
+    data = extract_data.main(mdate, export_data=False)
+    create_report.main(mdate, data=data)
 
     log.success(f"Report {mdate:%Y-%m} created")
 
@@ -34,7 +34,7 @@ def reports(mdate, dummy=None, n_jobs=NUM_OF_JOBS_DEFAULT):
     if n_jobs > 1:
         log.info(f"Doing reports in parallel with {n_jobs} jobs")
 
-        with Pool(5) as p:
+        with Pool(n_jobs) as p:
             p.map(create_one_report, all_dates)
 
     # No parallelization
