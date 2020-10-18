@@ -7,9 +7,10 @@ import pandas as pd
 from prefect import task
 
 import global_utilities as gu
-from global_utilities import log
+
 from . import constants as c
 from . import utilities as u
+from global_utilities import log
 
 
 def get_money_lover_filename(dbx):
@@ -18,11 +19,11 @@ def get_money_lover_filename(dbx):
     names = []
 
     # Explore all files and save all that are valid
-    for x in dbx.files_list_folder(c.PATH_MONEY_LOVER).entries:
+    for name in gu.dropbox.ls(dbx, c.PATH_MONEY_LOVER):
         try:
-            # Try to parse date, if possible if a money lover file
-            pd.to_datetime(x.name.split(".")[0])
-            names.append(x.name)
+            # Try to parse date, if possible is a money lover file
+            pd.to_datetime(name.split(".")[0])
+            names.append(name)
 
         except (TypeError, ValueError):
             pass

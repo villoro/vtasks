@@ -1,13 +1,14 @@
+import regex as re
+
 import pandas as pd
 
 from prefect import task
 
 import global_utilities as gu
 
-from global_utilities import log
-
 from . import constants as c
 from .rapidapi import query_pair
+from global_utilities import log
 
 
 def get_airports_pairs():
@@ -51,11 +52,43 @@ def retrive_all_flights():
 @task
 def flights(mdate):
 
-    # Get history
+    filename = c.FILE_FLIGHTS_DAY.format(date=mdate)
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
 
-    # Get new data
-    df = retrive_all_flights()
+    if gu.dropbox.file_exists(dbx, filename):
+        log.warning(f"File '{filename}' already exists, skipping flights task")
 
-    # Store data from today
-    gu.dropbox.write_parquet(dbx, df, c.FILE_FLIGHTS_DAY.format(date=mdate))
+    # Only query if the file does not exist
+    else:
+        df = retrive_all_flights()
+        gu.dropbox.write_parquet(dbx, df, filename)
+
+
+@task
+def merge_flights_history(mdate):
+
+    dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
+
+    # Check for monthly folders and get all parquets inside
+    for folder in sorted(gu.dropbox.ls(dbx, c.PATH_HISTORY)):
+
+        is_date_folder = re.search(r"\d{4}_\d{2}", folder)
+        if is_date_folder and ("." not in folder) and (folder < f"{mdate:%Y_%m}"):
+
+            log.info(f"Merging '{folder}' vflights history")
+
+            sub_folder = f"{c.PATH_HISTORY}/{folder}"
+
+            # Read all daily parquets
+            dfs = []
+            for file in gu.dropbox.ls(dbx, sub_folder):
+                if file.endswith(".parquet"):
+                    dfs.append(gu.dropbox.read_parquet(dbx, f"{sub_folder}/{file}"))
+
+            # Export it as only one parquet file
+            df = pd.concat(dfs)
+            gu.dropbox.write_parquet(dbx, df, f"{sub_folder}.parquet")
+            log.success(f"Successfuly merged '{folder}' vflights history")
+
+            # Delete original folder
+            gu.dropbox.delete(dbx, sub_folder)

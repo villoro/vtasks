@@ -23,6 +23,61 @@ def get_dbx_connector(key):
     return dropbox.Dropbox(get_secret(key))
 
 
+def file_exists(dbx, uri):
+    """
+        Check if a file exists in dropbox
+
+        Args:
+            dbx:    dropbox connector
+            uri:    file uri
+    """
+
+    if "/" not in uri:
+        path = ""
+        filename = uri
+    else:
+        aux = uri.split("/")
+        path = "/".join(aux[:-1])
+        filename = aux[-1]
+
+        if not path.startswith("/"):
+            path = "/" + path
+
+    data = dbx.files_search(path, filename)
+    files = [x.metadata.name for x in data.matches]
+
+    return bool(files)
+
+
+def ls(dbx, folder):
+    """ List entries in a folder """
+
+    if not folder.startswith("/"):
+        folder = "/" + folder
+
+    return [x.name for x in dbx.files_list_folder(folder).entries]
+
+
+def delete(dbx, uri):
+    """ Delete a file/folder from dropbox """
+
+    if not uri.startswith("/"):
+        uri = "/" + uri
+
+    dbx.files_delete(uri)
+
+
+def _raw_read(dbx, filename):
+    """ Auxiliar function for reading from dropbox """
+
+    if not filename.startswith("/"):
+        filename = "/" + filename
+
+    _, res = dbx.files_download(filename)
+    res.raise_for_status()
+    return res.content
+
+
 def read_yaml(dbx, filename):
     """
         Read a yaml from dropbox as an ordered dict
@@ -32,11 +87,9 @@ def read_yaml(dbx, filename):
             filename:   name of the yaml file
     """
 
-    _, res = dbx.files_download(filename)
+    content = _raw_read(dbx, filename)
 
-    res.raise_for_status()
-
-    with io.BytesIO(res.content) as stream:
+    with io.BytesIO(content) as stream:
         return yaml.safe_load(stream)
 
 
@@ -68,9 +121,9 @@ def read_parquet(dbx, filename):
             filename:   name of the parquet file
     """
 
-    _, res = dbx.files_download(filename)
+    content = _raw_read(dbx, filename)
 
-    with io.BytesIO(res.content) as stream:
+    with io.BytesIO(content) as stream:
         return pd.read_parquet(stream)
 
 
@@ -121,17 +174,15 @@ def read_excel(dbx, filename, sheet_names=None, **kwa):
             **kwa:          keyworded arguments for the pd.read_excel inner function
     """
 
-    _, res = dbx.files_download(filename)
-
-    res.raise_for_status()
+    content = _raw_read(dbx, filename)
 
     # Read one dataframe
     if sheet_names is None:
-        with io.BytesIO(res.content) as stream:
+        with io.BytesIO(content) as stream:
             return pd.read_excel(stream, **kwa)
 
     # Read multiple dataframes
-    with io.BytesIO(res.content) as stream:
+    with io.BytesIO(content) as stream:
         return {x: pd.read_excel(stream, sheet_name=x, **kwa) for x in sheet_names}
 
 
