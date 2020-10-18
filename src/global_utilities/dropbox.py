@@ -23,6 +23,32 @@ def get_dbx_connector(key):
     return dropbox.Dropbox(get_secret(key))
 
 
+def file_exists(dbx, uri):
+    """
+        Check if a file exists in dropbox
+
+        Args:
+            dbx:    dropbox connector
+            uri:    file uri
+    """
+
+    if "/" not in uri:
+        path = ""
+        filename = uri
+    else:
+        aux = uri.split("/")
+        path = "/".join(aux[:-1])
+        filename = aux[-1]
+
+        if not path.startswith("/"):
+            path = "/" + path
+
+    data = dbx.files_search(path, filename)
+    files = [x.metadata.name for x in data.matches]
+
+    return bool(files)
+
+
 def read_yaml(dbx, filename):
     """
         Read a yaml from dropbox as an ordered dict

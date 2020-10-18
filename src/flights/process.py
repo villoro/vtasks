@@ -51,11 +51,13 @@ def retrive_all_flights():
 @task
 def flights(mdate):
 
-    # Get history
+    filename = c.FILE_FLIGHTS_DAY.format(date=mdate)
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
 
-    # Get new data
-    df = retrive_all_flights()
+    if gu.dropbox.file_exists(dbx, filename):
+        log.warning(f"File '{filename}' already exists, skipping flights task")
 
-    # Store data from today
-    gu.dropbox.write_parquet(dbx, df, c.FILE_FLIGHTS_DAY.format(date=mdate))
+    # Only query if the file does not exist
+    else:
+        df = retrive_all_flights()
+        gu.dropbox.write_parquet(dbx, df, filename)
