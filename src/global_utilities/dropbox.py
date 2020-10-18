@@ -58,6 +58,15 @@ def ls(dbx, folder):
     return [x.name for x in dbx.files_list_folder(folder).entries]
 
 
+def delete(dbx, uri):
+    """ Delete a file/folder from dropbox """
+
+    if not uri.startswith("/"):
+        uri = "/" + uri
+
+    dbx.files_delete(uri)
+
+
 def _raw_read(dbx, filename):
     """ Auxiliar function for reading from dropbox """
 

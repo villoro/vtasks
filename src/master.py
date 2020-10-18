@@ -5,6 +5,7 @@ from prefect import Parameter
 from global_utilities.log import log
 
 from flights import flights
+from flights import merge_flights_history
 from money_lover import money_lover
 from reports import reports
 
@@ -16,6 +17,7 @@ with Flow("do_all") as flow:
     out = money_lover(mdate)
     reports(mdate, dummy=out)
     flights(mdate)
+    merge_flights_history(mdate)
 
 
 if __name__ == "__main__":
