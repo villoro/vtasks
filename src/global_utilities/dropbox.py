@@ -55,7 +55,7 @@ def ls(dbx, folder):
     if not folder.startswith("/"):
         folder = "/" + folder
 
-    return [x.name for x in dbx.files_list_folder(folder).entries]
+    return sorted([x.name for x in dbx.files_list_folder(folder).entries])
 
 
 def delete(dbx, uri):
