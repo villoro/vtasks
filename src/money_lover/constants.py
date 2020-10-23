@@ -4,7 +4,7 @@
 
 VAR_DROPBOX_TOKEN = "DROPBOX_TOKEN_EXPENSOR"
 
-PATH_MONEY_LOVER = "/Money Lover/"
+PATH_MONEY_LOVER = "/Money Lover"
 FILE_TRANSACTIONS = "/transactions.xlsx"
 
 # fmt: off
