@@ -71,7 +71,7 @@ def transform_transactions(df_in):
 
 
 @task
-def money_lover(mdate):
+def money_lover(mdate, export_data=True):
     """ Retrives all dataframes and update DFS global var """
 
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
@@ -83,4 +83,7 @@ def money_lover(mdate):
     df = transform_transactions(df)
 
     # Export
-    gu.dropbox.write_excel(dbx, df, c.FILE_TRANSACTIONS)
+    if export_data:
+        gu.dropbox.write_excel(dbx, df, c.FILE_TRANSACTIONS)
+
+    return df
