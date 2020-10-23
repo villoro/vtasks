@@ -3,6 +3,7 @@
 """
 
 import pandas as pd
+import re
 
 from prefect import task
 
@@ -11,26 +12,38 @@ import global_utilities as gu
 from . import constants as c
 from global_utilities import log
 
+MONEY_LOVER_REGEX = r"\d{4}-\d{2}-\d{2}(.xls)"
 
-def get_money_lover_filename(dbx):
+
+def get_money_lover_df(dbx):
     """ gets the name of the money lover excel file """
 
-    names = []
+    # Get all money_lover files in a list
+    files = []
+    for file in gu.dropbox.ls(dbx, c.PATH_MONEY_LOVER):
+        if re.search(MONEY_LOVER_REGEX, file):
+            files.append(file)
 
-    # Explore all files and save all that are valid
-    for name in gu.dropbox.ls(dbx, c.PATH_MONEY_LOVER):
-        try:
-            # Try to parse date, if possible is a money lover file
-            pd.to_datetime(name.split(".")[0])
-            names.append(name)
+    # Iterate all files and transform all to parquet except the last one
+    for file in files:
+        name, extension = file.split(".")
 
-        except (TypeError, ValueError):
-            pass
+        uri_in = f"{c.PATH_MONEY_LOVER}/{file}"
+        uri_out = f"{c.PATH_MONEY_LOVER}/{name[:4]}/{name}.parquet"
 
-    return c.PATH_MONEY_LOVER + max(names)
+        log.info(f"Reading '{uri_in}' from dropbox")
+        df = gu.dropbox.read_excel(dbx, uri_in, index_col=0)
+
+        # Return the list file
+        if file == files[-1]:
+            return df
+
+        log.info(f"Exporting '{uri_out}' to dropbox")
+        gu.dropbox.write_parquet(dbx, df, uri_out)
+        gu.dropbox.delete(dbx, uri_in)
 
 
-def fix_df_trans(df_in):
+def transform_transactions(df_in):
     """
         It does all required transformations in order to use the transaction dataframe
 
@@ -61,14 +74,13 @@ def fix_df_trans(df_in):
 def money_lover(mdate):
     """ Retrives all dataframes and update DFS global var """
 
-    # Get data
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
-    filename = get_money_lover_filename(dbx)
-    df = gu.dropbox.read_excel(dbx, filename, index_col=0)
-    log.info(f"File '{filename}' read from dropbox")
 
-    # Process dataframe
-    df = fix_df_trans(df)
+    # Read
+    df = get_money_lover_df(dbx)
 
-    # Store data
+    # Transform
+    df = transform_transactions(df)
+
+    # Export
     gu.dropbox.write_excel(dbx, df, c.FILE_TRANSACTIONS)
