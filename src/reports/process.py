@@ -25,7 +25,9 @@ def create_one_report(mdate):
 
 
 @task
-def reports(mdate, dummy=None, n_jobs=NUM_OF_JOBS_DEFAULT):
+def reports(mdate, df_trans, n_jobs=NUM_OF_JOBS_DEFAULT):
+
+    # TODO: use df_trans input argument instead of reading it from dropbox
 
     mdate = pd.to_datetime(mdate)
     all_dates = pd.date_range(start=MIN_DATE, end=mdate, freq="MS")

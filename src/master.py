@@ -16,9 +16,11 @@ logging.get_logger = lambda x: log
 with Flow("do_all") as flow:
     mdate = Parameter("mdate")
 
-    # Add a dummy to force the order
-    out = money_lover(mdate)
-    reports(mdate, dummy=out)
+    # Reports part
+    df_trans = money_lover(mdate, export_data=True)
+    reports(mdate, df_trans=df_trans)
+
+    # Flights part
     flights(mdate)
     merge_flights_history(mdate)
 

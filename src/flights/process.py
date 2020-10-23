@@ -70,7 +70,7 @@ def merge_flights_history(mdate):
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
 
     # Check for monthly folders and get all parquets inside
-    for folder in sorted(gu.dropbox.ls(dbx, c.PATH_HISTORY)):
+    for folder in gu.dropbox.ls(dbx, c.PATH_HISTORY):
 
         is_date_folder = re.search(r"\d{4}_\d{2}", folder)
         if is_date_folder and ("." not in folder) and (folder < f"{mdate:%Y_%m}"):
