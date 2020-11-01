@@ -55,7 +55,9 @@ def flights(mdate):
     filename = c.FILE_FLIGHTS_DAY.format(date=mdate)
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
 
-    if gu.dropbox.file_exists(dbx, filename):
+    if gu.dropbox.file_exists(dbx, f"{c.PATH_HISTORY}/{mdate:%Y_%m}") and gu.dropbox.file_exists(
+        dbx, filename
+    ):
         log.warning(f"File '{filename}' already exists, skipping flights task")
 
     # Only query if the file does not exist
