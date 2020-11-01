@@ -23,6 +23,23 @@ def get_dbx_connector(key):
     return dropbox.Dropbox(get_secret(key))
 
 
+def _check_one_file(dbx, path, filename):
+    """
+        Internal function to check if a file exists in dropbox
+
+        Args:
+            dbx:        dropbox connector
+            path:       folder of the file
+            filename:   name of the file
+    """
+
+    for match in dbx.files_search(path, filename).matches:
+        if filename == match.metadata.name:
+            return True
+
+    return False
+
+
 def file_exists(dbx, uri):
     """
         Check if a file exists in dropbox
@@ -32,21 +49,25 @@ def file_exists(dbx, uri):
             uri:    file uri
     """
 
-    if "/" not in uri:
-        path = ""
-        filename = uri
-    else:
-        aux = uri.split("/")
-        path = "/".join(aux[:-1])
-        filename = aux[-1]
+    # Check all folders before the actual file
+    data = uri.split("/")
+    for i, filename in enumerate(data):
+        path = "/".join(data[:i])
 
-        if not path.startswith("/"):
+        # Skip if filename is empty (happens when uri starts with '/')
+        if not filename:
+            continue
+
+        # All non empty path must start with '/'
+        if path and not path.startswith("/"):
             path = "/" + path
 
-    data = dbx.files_search(path, filename)
-    files = [x.metadata.name for x in data.matches]
+        # If one file or folder don't exist return False
+        if not _check_one_file(dbx, path, filename):
+            return False
 
-    return bool(files)
+    # If all exists return true
+    return True
 
 
 def ls(dbx, folder):
