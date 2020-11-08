@@ -7,8 +7,6 @@ from datetime import datetime
 import jinja2
 import oyaml as yaml
 
-from config import PATH_ROOT
-
 import global_utilities as gu
 
 from . import constants as c
@@ -33,7 +31,7 @@ def main(mdate=datetime.now(), data=None):
 
     # Set up jinja to render parent templates and retrive template
     template = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(f"{PATH_ROOT}src/reports/templates")
+        loader=jinja2.FileSystemLoader(gu.get_path("src/reports/templates"))
     ).get_template("template.html")
 
     # Create report

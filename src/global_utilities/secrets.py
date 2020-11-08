@@ -4,10 +4,10 @@
 
 from vcrypto import Cipher
 
-from config import PATH_ROOT
+from .uos import get_path
 
-FILE_SECRETS = f"{PATH_ROOT}secrets.yaml"
-FILE_MASTER_PASSWORD = f"{PATH_ROOT}master.password"
+FILE_SECRETS = get_path("secrets.yaml")
+FILE_MASTER_PASSWORD = get_path("master.password")
 
 
 cipher = Cipher(secrets_file=FILE_SECRETS, filename_master_password=FILE_MASTER_PASSWORD)
