@@ -6,11 +6,7 @@ from vcrypto import Cipher
 
 from .uos import get_path
 
-FILE_SECRETS = get_path("secrets.yaml")
-FILE_MASTER_PASSWORD = get_path("master.password")
-
-
-cipher = Cipher(secrets_file=FILE_SECRETS, filename_master_password=FILE_MASTER_PASSWORD)
+cipher = Cipher(secrets_file=get_path("secrets.yaml"), environ_var_name="VTASKS_TOKEN")
 
 
 def get_secret(key):
