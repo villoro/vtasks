@@ -1,20 +1,22 @@
 from datetime import date
 
 from apscheduler.schedulers.blocking import BlockingScheduler
+
+from global_utilities.log import log
 from master import flow
-
-
-def schedule_flow():
-    """ Schedule flow """
-    flow.run(mdate=date.today())
 
 
 schedule = BlockingScheduler()
 
 
-@schedule.scheduled_job("interval", minutes=5)
-def timed_job():
-    print("This job is run every three minutes.")
+@schedule.scheduled_job("interval", minutes=1)
+def schedule_flow():
+    """ Schedule flow """
+
+    log.info("Starting vtasks")
+    flow.run(mdate=date.today())
+
+    log.info("End of vtasks")
 
 
 if __name__ == "__main__":
