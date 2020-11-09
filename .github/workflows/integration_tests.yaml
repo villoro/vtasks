@@ -1,4 +1,6 @@
 name: Integration tests
+env:
+  VTASKS_TOKEN: ${{ secrets.VTASKS_TOKEN }}
 
 on:
   pull_request:
@@ -10,7 +12,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    
+
     - name: Set up Python 3.7
       uses: actions/setup-python@v2
       with:
