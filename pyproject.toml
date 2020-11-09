@@ -27,6 +27,7 @@ vpalette = "^2.0.0"
 vtime = "^2.0.0"
 xlrd = "^1.2.0"
 regex = "^2020.10.28"
+APScheduler = "^3.6.3"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
