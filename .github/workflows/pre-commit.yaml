@@ -3,6 +3,10 @@ name: Pre-commit
 on:
   pull_request:
   push:
+    paths:
+    - '**.py'
+    - '**.yaml'
+    - '**.yml'
     branches: [master, develop]
 
 jobs:
