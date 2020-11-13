@@ -25,9 +25,13 @@ with Flow("do_all") as flow:
     merge_flights_history(mdate)
 
 
-if __name__ == "__main__":
+def run_etl():
+    """ Run the ETL for today """
 
     log.info("Starting vtasks")
     flow.run(mdate=date.today())
-
     log.info("End of vtasks")
+
+
+if __name__ == "__main__":
+    run_etl()
