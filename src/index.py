@@ -14,8 +14,10 @@ WORKING = False
 def index():
     if request.headers.get("token") == get_secret("FLASK_PASSWORD"):
 
+        global WORKING
+
         if WORKING:
-            return "already working"
+            return "Already working"
 
         WORKING = True
         run_etl()
