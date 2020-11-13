@@ -12,7 +12,7 @@ from global_utilities import log
 from prefect import task
 
 MIN_DATE = "2015-12-01"
-NUM_OF_JOBS_DEFAULT = 10  # If 1 or lower no multiprocessing
+NUM_OF_JOBS_DEFAULT = 1  # If 1 or lower no multiprocessing
 
 
 def create_one_report(mdate):
