@@ -1,1 +1,1 @@
-clock: poetry run python src/heroku.py
+web: gunicorn --pythonpath src index:app
