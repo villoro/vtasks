@@ -25,23 +25,28 @@ def create_one_report(mdate):
 
 
 @task
-def reports(mdate, df_trans, n_jobs=NUM_OF_JOBS_DEFAULT):
+def reports(mdate, df_trans, pro, n_jobs=NUM_OF_JOBS_DEFAULT):
 
     # TODO: use df_trans input argument instead of reading it from dropbox
 
     mdate = pd.to_datetime(mdate)
     all_dates = pd.date_range(start=MIN_DATE, end=mdate, freq="MS")
 
-    # Do n_jobs in parallel
-    if n_jobs > 1:
-        log.info(f"Doing reports in parallel with {n_jobs} jobs")
-
-        with Pool(n_jobs) as p:
-            p.map(create_one_report, all_dates)
-
-    # No parallelization
-    else:
-        log.info(f"Doing reports without parallelization")
-
-        for x in all_dates.tolist():
+    if pro:
+        log.info(f"Doing reports without parallelization for last 2 months (PRO)")
+        for x in all_dates.tolist()[-2:]:
             create_one_report(x)
+
+    else:
+        # Do n_jobs in parallel (PRO is not powerful enough)
+        if n_jobs > 1:
+            log.info(f"Doing reports in parallel with {n_jobs} jobs")
+
+            with Pool(n_jobs) as p:
+                p.map(create_one_report, all_dates)
+
+        # No parallelization
+        else:
+            log.info(f"Doing reports without parallelization")
+            for x in all_dates.tolist():
+                create_one_report(x)
