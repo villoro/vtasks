@@ -12,7 +12,7 @@ readme = "README.md"
 repository = "https://github.com/villoro/vtasks"
 
 [tool.poetry.dependencies]
-python = "^3.6.1"
+python = "3.7.9"
 dropbox = "^10.1.2"
 jinja2 = "^2.11.2"
 loguru = "^0.4.1"
@@ -26,6 +26,7 @@ vcrypto = "^2.0.0"
 vpalette = "^2.0.0"
 vtime = "^2.0.0"
 xlrd = "^1.2.0"
+regex = "^2020.10.28"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
