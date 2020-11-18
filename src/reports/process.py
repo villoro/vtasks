@@ -9,6 +9,7 @@ import pandas as pd
 from . import create_report
 from . import extract_data
 from global_utilities import log
+from global_utilities import timeit
 from prefect import task
 
 MIN_DATE = "2015-12-01"
@@ -25,6 +26,7 @@ def create_one_report(mdate):
 
 
 @task
+@timeit
 def reports(mdate, df_trans, pro, n_jobs=NUM_OF_JOBS_DEFAULT):
 
     # TODO: use df_trans input argument instead of reading it from dropbox
