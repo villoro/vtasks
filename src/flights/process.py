@@ -9,6 +9,7 @@ import global_utilities as gu
 from . import constants as c
 from .rapidapi import query_pair
 from global_utilities import log
+from global_utilities import timeit
 
 
 def get_airports_pairs():
@@ -50,6 +51,7 @@ def retrive_all_flights():
 
 
 @task
+@timeit
 def flights(mdate):
 
     filename = c.FILE_FLIGHTS_DAY.format(date=mdate)
@@ -65,6 +67,7 @@ def flights(mdate):
 
 
 @task
+@timeit
 def merge_flights_history(mdate):
 
     dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)

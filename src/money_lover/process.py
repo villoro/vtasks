@@ -11,6 +11,7 @@ import global_utilities as gu
 
 from . import constants as c
 from global_utilities import log
+from global_utilities import timeit
 
 MONEY_LOVER_REGEX = r"\d{4}-\d{2}-\d{2}(.xls)"
 
@@ -71,6 +72,7 @@ def transform_transactions(df_in):
 
 
 @task
+@timeit
 def money_lover(mdate, export_data=True):
     """ Retrives all dataframes and update DFS global var """
 
