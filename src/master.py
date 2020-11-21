@@ -87,7 +87,7 @@ def run_etl():
         log.info("Working on DEV")
 
     log.info("Starting vtasks")
-    flow.run(mdate=date.today(), pro=pro)
+    gu.timeit(flow.run)(mdate=date.today(), pro=pro)
     log.info("End of vtasks")
 
     if pro:
