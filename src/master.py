@@ -42,12 +42,28 @@ def detect_env():
     return args.pro
 
 
-def copy_log():
+def download_log(dbx):
+    """ Get log info from dropbox before running the script """
+
+    if gu.dropbox.file_exists(dbx, gu.log_path):
+        data = gu.dropbox.read_textfile(dbx, gu.log_path)
+
+        # Add a new line between runs
+        data += "\n"
+
+        with open(gu.uos.get_path(gu.log_path), "w") as file:
+            file.write(data)
+
+        log.info("Log retrived from dropbox")
+
+    else:
+        log.info("Log not downloaded (first run of the day)")
+
+
+def copy_log(dbx):
     """ Copy log to dropbox """
 
     log.info(f"Copying '{gu.log_path}' to dropbox")
-
-    dbx = gu.dropbox.get_dbx_connector(VAR_DROPBOX_TOKEN)
 
     with open(gu.uos.get_path(gu.log_path)) as file:
         data = file.read()
@@ -57,6 +73,11 @@ def copy_log():
 
 def run_etl():
     """ Run the ETL for today """
+
+    # Get dropbox connector
+    dbx = gu.dropbox.get_dbx_connector(VAR_DROPBOX_TOKEN)
+
+    download_log(dbx)
 
     pro = detect_env()
 
@@ -70,7 +91,7 @@ def run_etl():
     log.info("End of vtasks")
 
     if pro:
-        copy_log()
+        copy_log(dbx)
 
 
 if __name__ == "__main__":

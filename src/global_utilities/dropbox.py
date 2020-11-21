@@ -164,6 +164,23 @@ def write_parquet(dbx, df, filename):
 
         dbx.files_upload(stream.getvalue(), filename, mode=dropbox.files.WriteMode.overwrite)
 
+    log.info(f"File '{filename}' exported to dropbox")
+
+
+def read_textfile(dbx, filename):
+    """
+        Read a text file from dropbox
+
+        Args:
+            dbx:        dropbox connector
+            filename:   name of the text file
+    """
+
+    content = _raw_read(dbx, filename)
+
+    with io.BytesIO(content) as stream:
+        return stream.read().decode()
+
 
 def write_textfile(dbx, text, filename):
     """
