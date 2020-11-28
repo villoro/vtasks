@@ -7,6 +7,7 @@ import pandas as pd
 
 from collections import OrderedDict
 from datetime import datetime
+from vpalette import get_colors
 
 import global_utilities as gu
 
@@ -454,7 +455,7 @@ def get_colors_comparisons(dfs):
             color_index = max(100, 900 - 200 * (max(years) - year))
             size = max(6 - (max(years) - year), 1)
 
-            out[year] = {"color": u.get_colors((color_name, color_index)), "size": size}
+            out[year] = {"color": get_colors((color_name, color_index)), "size": size}
 
         return out
 
@@ -470,24 +471,25 @@ def get_colors_comparisons(dfs):
     return out
 
 
-def get_colors(dfs, yml):
-    """ Get colors from config file """
+def add_colors(dfs, yml):
+    """
+        Get colors from config file.
+        It can't be named get_colors since that function already exists
+    """
 
-    out = {name: u.get_colors(data) for name, data in c.DEFAULT_COLORS.items()}
+    out = {name: get_colors(data) for name, data in c.DEFAULT_COLORS.items()}
 
     # Liquid and investments colors
     for entity in [c.LIQUID, c.INVEST]:
         out[f"{entity}_categ"] = OrderedDict()
         for name, config in yml[entity].items():
-            out[f"{entity}_categ"][name] = u.get_colors(
-                (config[c.COLOR_NAME], config[c.COLOR_INDEX])
-            )
+            out[f"{entity}_categ"][name] = get_colors((config[c.COLOR_NAME], config[c.COLOR_INDEX]))
 
     # Expenses and incomes colors
     for entity, df in dfs["trans_categ"].set_index("Name").groupby("Type"):
         out[f"{entity}_categ"] = OrderedDict()
         for name, row in df.iterrows():
-            out[f"{entity}_categ"][name] = u.get_colors((row["Color Name"], row["Color Index"]))
+            out[f"{entity}_categ"][name] = get_colors((row["Color Name"], row["Color Index"]))
 
     # Colors comparison plot
     out["comp"] = get_colors_comparisons(dfs)
@@ -537,7 +539,7 @@ def main(mdate=datetime.now(), export_data=False):
     out["bubbles"] = get_bubbles(dfs, mdate)
     out["sankey"] = extract_sankey(out)
 
-    out["colors"] = get_colors(dfs, yml)
+    out["colors"] = add_colors(dfs, yml)
 
     if export_data:
         gu.dropbox.write_yaml(dbx, out, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
