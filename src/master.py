@@ -5,7 +5,6 @@ from datetime import date
 from prefect import Flow
 from prefect import Parameter
 from prefect.utilities import logging
-from vdropbox import Vdropbox
 
 import utils as u
 
@@ -76,7 +75,7 @@ def run_etl():
     """ Run the ETL for today """
 
     # Get dropbox connector
-    vdp = Vdropbox(u.get_secret(VAR_DROPBOX_TOKEN))
+    vdp = u.get_vdropbox(VAR_DROPBOX_TOKEN)
 
     download_log(vdp)
 

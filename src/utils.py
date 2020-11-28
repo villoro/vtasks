@@ -7,6 +7,7 @@ from time import time
 
 from loguru import logger as log
 from vcrypto import Cipher
+from vdropbox import Vdropbox
 
 
 # Base path of the repo.
@@ -40,6 +41,12 @@ cipher = Cipher(secrets_file=get_path("secrets.yaml"), environ_var_name="VTASKS_
 def get_secret(key):
     """ Retrives one encrypted secret """
     return cipher.get_secret(key)
+
+
+def get_vdropbox(secret_name):
+    """ Creates a vdropbox instance """
+
+    return Vdropbox(get_secret(secret_name), log=log)
 
 
 def timeit(func):

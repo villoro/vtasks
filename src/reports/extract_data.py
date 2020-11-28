@@ -7,7 +7,6 @@ import pandas as pd
 
 from collections import OrderedDict
 from datetime import datetime
-from vdropbox import Vdropbox
 from vpalette import get_colors
 
 from . import constants as c
@@ -17,6 +16,7 @@ from .functions import serie_to_dict
 from .functions import series_to_dicts
 from .functions import time_average
 from utils import get_secret
+from utils import get_vdropbox
 from utils import log
 
 
@@ -504,7 +504,7 @@ def main(mdate=datetime.now(), export_data=False):
 
     mdate = mdate.replace(day=1)
 
-    vdp = Vdropbox(get_secret(c.VAR_DROPBOX_TOKEN))
+    vdp = get_vdropbox(c.VAR_DROPBOX_TOKEN)
 
     # Get dfs
     log.debug("Reading excels from dropbox")

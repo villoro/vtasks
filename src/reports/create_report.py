@@ -7,12 +7,11 @@ from datetime import datetime
 import jinja2
 import oyaml as yaml
 
-from vdropbox import Vdropbox
-
 from utils import get_path
 from utils import get_secret
 
 from . import constants as c
+from utils import get_vdropbox
 from utils import log
 
 
@@ -21,7 +20,7 @@ def main(mdate=datetime.now(), data=None):
 
     mdate = mdate.replace(day=1)
 
-    vdp = Vdropbox(get_secret(c.VAR_DROPBOX_TOKEN))
+    vdp = get_vdropbox(c.VAR_DROPBOX_TOKEN)
 
     # Read data
     if data is None:
