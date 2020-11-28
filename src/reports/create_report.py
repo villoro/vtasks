@@ -7,10 +7,10 @@ from datetime import datetime
 import jinja2
 import oyaml as yaml
 
-import global_utilities as gu
+import utils as u
 
 from . import constants as c
-from global_utilities import log
+from utils import log
 
 
 def main(mdate=datetime.now(), data=None):
@@ -18,12 +18,12 @@ def main(mdate=datetime.now(), data=None):
 
     mdate = mdate.replace(day=1)
 
-    dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
+    dbx = u.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
 
     # Read data
     if data is None:
         log.debug("Reading report_data from dropbox")
-        data = gu.dropbox.read_yaml(dbx, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
+        data = u.dropbox.read_yaml(dbx, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
 
     # Add title
     data["mdate"] = f"{mdate:%Y_%m}"
@@ -31,9 +31,9 @@ def main(mdate=datetime.now(), data=None):
 
     # Set up jinja to render parent templates and retrive template
     template = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(gu.get_path("src/reports/templates"))
+        loader=jinja2.FileSystemLoader(u.get_path("src/reports/templates"))
     ).get_template("template.html")
 
     # Create report
     report = template.render(**data)
-    gu.dropbox.write_textfile(dbx, report, f"/reports/{mdate.year}/{mdate:%Y_%m}.html")
+    u.dropbox.write_textfile(dbx, report, f"/reports/{mdate.year}/{mdate:%Y_%m}.html")

@@ -8,9 +8,9 @@ import pandas as pd
 
 from . import create_report
 from . import extract_data
-from global_utilities import log
-from global_utilities import timeit
 from prefect import task
+from utils import log
+from utils import timeit
 
 MIN_DATE = "2015-12-01"
 NUM_OF_JOBS_DEFAULT = 10  # If 1 or lower no multiprocessing

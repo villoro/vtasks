@@ -7,11 +7,11 @@ import re
 
 from prefect import task
 
-import global_utilities as gu
+import utils as u
 
 from . import constants as c
-from global_utilities import log
-from global_utilities import timeit
+from utils import log
+from utils import timeit
 
 MONEY_LOVER_REGEX = r"\d{4}-\d{2}-\d{2}(.xls)"
 
@@ -21,7 +21,7 @@ def get_money_lover_df(dbx):
 
     # Get all money_lover files in a list
     files = []
-    for file in gu.dropbox.ls(dbx, c.PATH_MONEY_LOVER):
+    for file in u.dropbox.ls(dbx, c.PATH_MONEY_LOVER):
         if re.search(MONEY_LOVER_REGEX, file):
             files.append(file)
 
@@ -33,15 +33,15 @@ def get_money_lover_df(dbx):
         uri_out = f"{c.PATH_MONEY_LOVER}/{name[:4]}/{name}.parquet"
 
         log.info(f"Reading '{uri_in}' from dropbox")
-        df = gu.dropbox.read_excel(dbx, uri_in, index_col=0)
+        df = u.dropbox.read_excel(dbx, uri_in, index_col=0)
 
         # Return the list file
         if file == files[-1]:
             return df
 
         log.info(f"Exporting '{uri_out}' to dropbox")
-        gu.dropbox.write_parquet(dbx, df, uri_out)
-        gu.dropbox.delete(dbx, uri_in)
+        u.dropbox.write_parquet(dbx, df, uri_out)
+        u.dropbox.delete(dbx, uri_in)
 
 
 def transform_transactions(df_in):
@@ -76,7 +76,7 @@ def transform_transactions(df_in):
 def money_lover(mdate, export_data=True):
     """ Retrives all dataframes and update DFS global var """
 
-    dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
+    dbx = u.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
 
     # Read
     df = get_money_lover_df(dbx)
@@ -86,6 +86,6 @@ def money_lover(mdate, export_data=True):
 
     # Export
     if export_data:
-        gu.dropbox.write_excel(dbx, df, c.FILE_TRANSACTIONS)
+        u.dropbox.write_excel(dbx, df, c.FILE_TRANSACTIONS)
 
     return df

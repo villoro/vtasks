@@ -2,7 +2,7 @@ from pathlib import Path
 
 # Base path of the repo.
 # It need to go 3 times up since this file has the following relative path:
-# 	/src/global_utilities/uos.py
+# 	/src/utils/uos.py
 PATH_ROOT = Path(__file__).parent.parent.parent
 
 

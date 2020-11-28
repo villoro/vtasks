@@ -9,7 +9,7 @@ from collections import OrderedDict
 from datetime import datetime
 from vpalette import get_colors
 
-import global_utilities as gu
+import utils as u
 
 from . import constants as c
 from .functions import add_missing_months
@@ -17,7 +17,7 @@ from .functions import filter_by_date
 from .functions import serie_to_dict
 from .functions import series_to_dicts
 from .functions import time_average
-from global_utilities import log
+from utils import log
 
 
 def get_basic_traces(dfs, col_period, mdate):
@@ -504,17 +504,17 @@ def main(mdate=datetime.now(), export_data=False):
 
     mdate = mdate.replace(day=1)
 
-    dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
+    dbx = u.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
 
     # Get dfs
     log.debug("Reading excels from dropbox")
-    dfs = gu.dropbox.read_excel(dbx, c.FILE_DATA, c.DFS_ALL_FROM_DATA)
-    dfs[c.DF_TRANS] = gu.dropbox.read_excel(dbx, c.FILE_TRANSACTIONS)
+    dfs = u.dropbox.read_excel(dbx, c.FILE_DATA, c.DFS_ALL_FROM_DATA)
+    dfs[c.DF_TRANS] = u.dropbox.read_excel(dbx, c.FILE_TRANSACTIONS)
 
     # Filter dates
     dfs = filter_by_date(dfs, mdate)
 
-    yml = gu.dropbox.read_yaml(dbx, c.FILE_CONFIG)
+    yml = u.dropbox.read_yaml(dbx, c.FILE_CONFIG)
 
     out = {}
 
@@ -542,6 +542,6 @@ def main(mdate=datetime.now(), export_data=False):
     out["colors"] = add_colors(dfs, yml)
 
     if export_data:
-        gu.dropbox.write_yaml(dbx, out, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
+        u.dropbox.write_yaml(dbx, out, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
 
     return out

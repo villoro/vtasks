@@ -1,12 +1,14 @@
 import requests
+
+from datetime import date
+from datetime import timedelta
 from time import sleep
-from datetime import date, timedelta
 
 import pandas as pd
 
-from global_utilities import get_secret
-from global_utilities import log
 from . import constants as c
+from utils import get_secret
+from utils import log
 
 BASE_URL = (
     "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browseroutes/v1.0/"
