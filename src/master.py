@@ -45,13 +45,13 @@ def detect_env():
 def download_log(vdp):
     """ Get log info from dropbox before running the script """
 
-    if vdp.file_exists(u.log_path):
-        data = vdp.read_file(u.log_path)
+    if vdp.file_exists(u.LOG_PATH):
+        data = vdp.read_file(u.LOG_PATH)
 
         # Add a new line between runs
         data += "\n"
 
-        with open(u.get_path(u.log_path), "w") as file:
+        with open(u.get_path(u.LOG_PATH), "w") as file:
             file.write(data)
 
         log.info("Log retrived from dropbox")
@@ -63,12 +63,12 @@ def download_log(vdp):
 def copy_log(vdp):
     """ Copy log to dropbox """
 
-    log.info(f"Copying '{u.log_path}' to dropbox")
+    log.info(f"Copying '{u.LOG_PATH}' to dropbox")
 
-    with open(u.get_path(u.log_path)) as file:
+    with open(u.get_path(u.LOG_PATH)) as file:
         data = file.read()
 
-    vdp.write_file(data, f"/{u.log_path}")
+    vdp.write_file(data, f"/{u.LOG_PATH}")
 
 
 def run_etl():

@@ -12,8 +12,12 @@ from vdropbox import Vdropbox
 
 # Base path of the repo.
 # It need to go 2 times up since this file has the following relative path:
-# 	/src/utils.py
+#   /src/utils.py
 PATH_ROOT = Path(__file__).parent.parent
+
+LOG_PATH = f"logs/{date.today():%Y_%m}/{date.today():%Y_%m_%d}.log"
+
+CIPHER = None
 
 
 def get_path(path_relative):
@@ -22,12 +26,10 @@ def get_path(path_relative):
     return str(PATH_ROOT / path_relative)
 
 
-log_path = f"logs/{date.today():%Y_%m}/{date.today():%Y_%m_%d}.log"
-
 CONFIG = {
     "handlers": [
         {"sink": sys.stdout, "level": "INFO"},
-        {"sink": get_path(log_path), "level": "INFO",},
+        {"sink": get_path(LOG_PATH), "level": "INFO",},
     ]
 }
 
@@ -35,12 +37,15 @@ CONFIG = {
 log.configure(**CONFIG)
 log.enable("vtasks")
 
-cipher = Cipher(secrets_file=get_path("secrets.yaml"), environ_var_name="VTASKS_TOKEN")
-
 
 def get_secret(key):
     """ Retrives one encrypted secret """
-    return cipher.get_secret(key)
+
+    global CIPHER
+    if CIPHER is None:
+        CIPHER = Cipher(secrets_file=get_path("secrets.yaml"), environ_var_name="VTASKS_TOKEN")
+
+    return CIPHER.get_secret(key)
 
 
 def get_vdropbox(secret_name):
