@@ -14,7 +14,7 @@ from flights import merge_flights_history
 from money_lover import money_lover
 from reports import reports
 from reports.constants import VAR_DROPBOX_TOKEN
-from utils.log import log
+from utils import log
 
 # Replace loguru log
 logging.get_logger = lambda x: log
@@ -52,7 +52,7 @@ def download_log(vdp):
         # Add a new line between runs
         data += "\n"
 
-        with open(u.uos.get_path(u.log_path), "w") as file:
+        with open(u.get_path(u.log_path), "w") as file:
             file.write(data)
 
         log.info("Log retrived from dropbox")
@@ -66,7 +66,7 @@ def copy_log(vdp):
 
     log.info(f"Copying '{u.log_path}' to dropbox")
 
-    with open(u.uos.get_path(u.log_path)) as file:
+    with open(u.get_path(u.log_path)) as file:
         data = file.read()
 
     vdp.write_file(data, f"/{u.log_path}")

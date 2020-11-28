@@ -5,7 +5,7 @@ import pandas as pd
 from prefect import task
 from vdropbox import Vdropbox
 
-import utils as u
+from utils import get_secret
 
 from . import constants as c
 from .rapidapi import query_pair
@@ -16,7 +16,7 @@ from utils import timeit
 def get_airports_pairs():
     """ Get a set of all airports combinations """
 
-    vdp = Vdropbox(u.get_secret(c.VAR_DROPBOX_TOKEN))
+    vdp = Vdropbox(get_secret(c.VAR_DROPBOX_TOKEN))
     df_airports = vdp.read_excel(c.FILE_AIRPORTS)
 
     out = set()
@@ -57,7 +57,7 @@ def flights(mdate):
 
     filename = c.FILE_FLIGHTS_DAY.format(date=mdate)
 
-    vdp = Vdropbox(u.get_secret(c.VAR_DROPBOX_TOKEN))
+    vdp = Vdropbox(get_secret(c.VAR_DROPBOX_TOKEN))
 
     if vdp.file_exists(filename):
         log.warning(f"File '{filename}' already exists, skipping flights task")
@@ -72,7 +72,7 @@ def flights(mdate):
 @timeit
 def merge_flights_history(mdate):
 
-    vdp = Vdropbox(u.get_secret(c.VAR_DROPBOX_TOKEN))
+    vdp = Vdropbox(get_secret(c.VAR_DROPBOX_TOKEN))
 
     # Check for monthly folders and get all parquets inside
     for folder in vdp.ls(c.PATH_HISTORY):

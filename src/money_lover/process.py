@@ -8,7 +8,7 @@ import re
 from prefect import task
 from vdropbox import Vdropbox
 
-import utils as u
+from utils import get_secret
 
 from . import constants as c
 from utils import log
@@ -77,7 +77,7 @@ def transform_transactions(df_in):
 def money_lover(mdate, export_data=True):
     """ Retrives all dataframes and update DFS global var """
 
-    vdp = Vdropbox(u.get_secret(c.VAR_DROPBOX_TOKEN))
+    vdp = Vdropbox(get_secret(c.VAR_DROPBOX_TOKEN))
 
     # Read
     df = get_money_lover_df(vdp)

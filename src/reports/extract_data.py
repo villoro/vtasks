@@ -10,14 +10,13 @@ from datetime import datetime
 from vdropbox import Vdropbox
 from vpalette import get_colors
 
-import utils as u
-
 from . import constants as c
 from .functions import add_missing_months
 from .functions import filter_by_date
 from .functions import serie_to_dict
 from .functions import series_to_dicts
 from .functions import time_average
+from utils import get_secret
 from utils import log
 
 
@@ -505,7 +504,7 @@ def main(mdate=datetime.now(), export_data=False):
 
     mdate = mdate.replace(day=1)
 
-    vdp = Vdropbox(u.get_secret(c.VAR_DROPBOX_TOKEN))
+    vdp = Vdropbox(get_secret(c.VAR_DROPBOX_TOKEN))
 
     # Get dfs
     log.debug("Reading excels from dropbox")

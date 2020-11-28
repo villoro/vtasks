@@ -9,7 +9,8 @@ import oyaml as yaml
 
 from vdropbox import Vdropbox
 
-import utils as u
+from utils import get_path
+from utils import get_secret
 
 from . import constants as c
 from utils import log
@@ -20,7 +21,7 @@ def main(mdate=datetime.now(), data=None):
 
     mdate = mdate.replace(day=1)
 
-    vdp = Vdropbox(u.get_secret(c.VAR_DROPBOX_TOKEN))
+    vdp = Vdropbox(get_secret(c.VAR_DROPBOX_TOKEN))
 
     # Read data
     if data is None:
@@ -33,7 +34,7 @@ def main(mdate=datetime.now(), data=None):
 
     # Set up jinja to render parent templates and retrive template
     template = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(u.get_path("src/reports/templates"))
+        loader=jinja2.FileSystemLoader(get_path("src/reports/templates"))
     ).get_template("template.html")
 
     # Create report
