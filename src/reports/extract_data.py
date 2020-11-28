@@ -7,12 +7,17 @@ import pandas as pd
 
 from collections import OrderedDict
 from datetime import datetime
+from vpalette import get_colors
 
-import global_utilities as gu
+import utils as u
 
 from . import constants as c
-from . import utilities as u
-from global_utilities import log
+from .functions import add_missing_months
+from .functions import filter_by_date
+from .functions import serie_to_dict
+from .functions import series_to_dicts
+from .functions import time_average
+from utils import log
 
 
 def get_basic_traces(dfs, col_period, mdate):
@@ -32,7 +37,7 @@ def get_basic_traces(dfs, col_period, mdate):
 
         # Add missing months for month grouping
         if col_period == c.COL_MONTH_DATE:
-            aux = u.add_missing_months(aux, mdate).fillna(0)
+            aux = add_missing_months(aux, mdate).fillna(0)
 
         series[name] = aux
 
@@ -42,13 +47,13 @@ def get_basic_traces(dfs, col_period, mdate):
     # Add savings ratio
     series[c.SAVINGS] = (100 * series[c.EBIT] / series[c.INCOMES]).apply(lambda x: max(0, x))
 
-    out = u.series_to_dicts(series)
+    out = series_to_dicts(series)
 
     # Append time averaged data
     if col_period == c.COL_MONTH_DATE:
         for name, serie in series.items():
-            out[f"{name}_12m"] = u.serie_to_dict(u.time_average(serie, months=12))
-            out[f"{name}_6m_e"] = u.serie_to_dict(u.time_average(serie, months=6, exponential=True))
+            out[f"{name}_12m"] = serie_to_dict(time_average(serie, months=12))
+            out[f"{name}_6m_e"] = serie_to_dict(time_average(serie, months=6, exponential=True))
 
     # Get by groups
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
@@ -63,7 +68,7 @@ def get_basic_traces(dfs, col_period, mdate):
             if x in df.columns:
                 aux[x] = df[x]
 
-        out[f"{name}_by_groups"] = u.series_to_dicts(aux)
+        out[f"{name}_by_groups"] = series_to_dicts(aux)
 
     return out
 
@@ -83,9 +88,9 @@ def get_investment_or_liquid(dfs, yml, entity):
     entity = entity.split("_")[0].title()
 
     out = {
-        entity: u.serie_to_dict(dfg["Total"]),
-        f"{entity}_12m": u.serie_to_dict(u.time_average(dfg, months=12)["Total"]),
-        f"{entity}_6m_e": u.serie_to_dict(u.time_average(dfg, months=6, exponential=True)["Total"]),
+        entity: serie_to_dict(dfg["Total"]),
+        f"{entity}_12m": serie_to_dict(time_average(dfg, months=12)["Total"]),
+        f"{entity}_6m_e": serie_to_dict(time_average(dfg, months=6, exponential=True)["Total"]),
     }
 
     aux = OrderedDict()
@@ -96,7 +101,7 @@ def get_investment_or_liquid(dfs, yml, entity):
 
         aux[name] = dfg[mlist].sum(axis=1)
 
-    out[f"{entity}_by_groups"] = u.series_to_dicts(aux)
+    out[f"{entity}_by_groups"] = series_to_dicts(aux)
 
     return out
 
@@ -114,8 +119,8 @@ def get_total_investments(data):
     invest = pd.Series(data["month"]["Invest"])
 
     return {
-        "Total_Worth": u.serie_to_dict((liquid + worth).dropna()),
-        "Total_Invest": u.serie_to_dict((liquid + invest).dropna()),
+        "Total_Worth": serie_to_dict((liquid + worth).dropna()),
+        "Total_Invest": serie_to_dict((liquid + invest).dropna()),
     }
 
 
@@ -130,14 +135,14 @@ def get_salaries(dfs, mdate):
     df = dfs[c.DF_SALARY].set_index(c.COL_DATE).copy()
 
     # First complete data from previous months then with 0
-    df = u.add_missing_months(df, mdate)
+    df = add_missing_months(df, mdate)
     df = df.fillna(method="ffill").fillna(0)
 
     return {
         "salary": {
-            "real": u.serie_to_dict(df["Total"]),
-            "full_time": u.serie_to_dict(df["EAGI"]),
-            "fixed": u.serie_to_dict(df["Fixed"]),
+            "real": serie_to_dict(df["Total"]),
+            "full_time": serie_to_dict(df["EAGI"]),
+            "fixed": serie_to_dict(df["Fixed"]),
         }
     }
 
@@ -163,7 +168,7 @@ def get_comparison_traces(dfs):
     # Expenses and incomes
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
         df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
-        out[name] = get_traces(u.time_average(df))
+        out[name] = get_traces(time_average(df))
 
     # Prepare transactions for EBIT
     dfg = dfs[c.DF_TRANS].copy()
@@ -172,7 +177,7 @@ def get_comparison_traces(dfs):
 
     # Add EBIT
     df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
-    out[c.EBIT] = get_traces(u.time_average(df))
+    out[c.EBIT] = get_traces(time_average(df))
 
     # Add liquid
     dfg = dfs[c.DF_LIQUID].reset_index().copy()
@@ -180,7 +185,7 @@ def get_comparison_traces(dfs):
     dfg[c.COL_YEAR] = pd.to_datetime(dfg[c.COL_DATE]).dt.year
     dfg[c.COL_AMOUNT] = dfg["Total"]
     df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
-    out[c.LIQUID] = get_traces(u.time_average(df, months=3, exponential=True))
+    out[c.LIQUID] = get_traces(time_average(df, months=3, exponential=True))
 
     log.debug("Comparison traces added")
 
@@ -210,7 +215,7 @@ def get_pie_traces(dfs):
             indexs = [x for x in categories if x in serie.index]
 
             # Reverse categories order
-            return u.serie_to_dict(serie[indexs][::-1])
+            return serie_to_dict(serie[indexs][::-1])
 
         out[name] = {
             "month": export_trace(df.iloc[-1, :]),
@@ -325,11 +330,11 @@ def get_ratios(data):
     # Drop nans and round values
     for name, serie in out.items():
         serie = serie.replace([np.inf, -np.inf], np.nan)
-        out[name] = u.serie_to_dict(serie.dropna())
+        out[name] = serie_to_dict(serie.dropna())
 
     out["Worth_by_groups"] = {}
     for name, values in data["month"]["Worth_by_groups"].items():
-        out["Worth_by_groups"][name] = u.serie_to_dict(
+        out["Worth_by_groups"][name] = serie_to_dict(
             100 * pd.Series(values) / pd.Series(data["month"]["Worth"])
         )
 
@@ -450,7 +455,7 @@ def get_colors_comparisons(dfs):
             color_index = max(100, 900 - 200 * (max(years) - year))
             size = max(6 - (max(years) - year), 1)
 
-            out[year] = {"color": u.get_colors((color_name, color_index)), "size": size}
+            out[year] = {"color": get_colors((color_name, color_index)), "size": size}
 
         return out
 
@@ -466,24 +471,25 @@ def get_colors_comparisons(dfs):
     return out
 
 
-def get_colors(dfs, yml):
-    """ Get colors from config file """
+def add_colors(dfs, yml):
+    """
+        Get colors from config file.
+        It can't be named get_colors since that function already exists
+    """
 
-    out = {name: u.get_colors(data) for name, data in c.DEFAULT_COLORS.items()}
+    out = {name: get_colors(data) for name, data in c.DEFAULT_COLORS.items()}
 
     # Liquid and investments colors
     for entity in [c.LIQUID, c.INVEST]:
         out[f"{entity}_categ"] = OrderedDict()
         for name, config in yml[entity].items():
-            out[f"{entity}_categ"][name] = u.get_colors(
-                (config[c.COLOR_NAME], config[c.COLOR_INDEX])
-            )
+            out[f"{entity}_categ"][name] = get_colors((config[c.COLOR_NAME], config[c.COLOR_INDEX]))
 
     # Expenses and incomes colors
     for entity, df in dfs["trans_categ"].set_index("Name").groupby("Type"):
         out[f"{entity}_categ"] = OrderedDict()
         for name, row in df.iterrows():
-            out[f"{entity}_categ"][name] = u.get_colors((row["Color Name"], row["Color Index"]))
+            out[f"{entity}_categ"][name] = get_colors((row["Color Name"], row["Color Index"]))
 
     # Colors comparison plot
     out["comp"] = get_colors_comparisons(dfs)
@@ -498,17 +504,17 @@ def main(mdate=datetime.now(), export_data=False):
 
     mdate = mdate.replace(day=1)
 
-    dbx = gu.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
+    dbx = u.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
 
     # Get dfs
     log.debug("Reading excels from dropbox")
-    dfs = gu.dropbox.read_excel(dbx, c.FILE_DATA, c.DFS_ALL_FROM_DATA)
-    dfs[c.DF_TRANS] = gu.dropbox.read_excel(dbx, c.FILE_TRANSACTIONS)
+    dfs = u.dropbox.read_excel(dbx, c.FILE_DATA, c.DFS_ALL_FROM_DATA)
+    dfs[c.DF_TRANS] = u.dropbox.read_excel(dbx, c.FILE_TRANSACTIONS)
 
     # Filter dates
-    dfs = u.filter_by_date(dfs, mdate)
+    dfs = filter_by_date(dfs, mdate)
 
-    yml = gu.dropbox.read_yaml(dbx, c.FILE_CONFIG)
+    yml = u.dropbox.read_yaml(dbx, c.FILE_CONFIG)
 
     out = {}
 
@@ -533,9 +539,9 @@ def main(mdate=datetime.now(), export_data=False):
     out["bubbles"] = get_bubbles(dfs, mdate)
     out["sankey"] = extract_sankey(out)
 
-    out["colors"] = get_colors(dfs, yml)
+    out["colors"] = add_colors(dfs, yml)
 
     if export_data:
-        gu.dropbox.write_yaml(dbx, out, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
+        u.dropbox.write_yaml(dbx, out, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
 
     return out

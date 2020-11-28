@@ -7,8 +7,6 @@ from collections import OrderedDict
 import numpy as np
 import pandas as pd
 
-from vpalette import get_colors
-
 from . import constants as c
 
 
@@ -60,7 +58,7 @@ def time_average(dfi, months=12, exponential=False):
     return df.mean().apply(lambda x: round(x, 2))
 
 
-def get_min_month_start(dfi):
+def _get_min_month_start(dfi):
     """ Extracts the min month_start of a dataframe """
 
     df = dfi.copy()
@@ -80,7 +78,7 @@ def add_missing_months(df, mdate):
             mdate:  date for the max month
     """
 
-    min_date = get_min_month_start(df)
+    min_date = _get_min_month_start(df)
     max_date = mdate.replace(day=1)
 
     return df.reindex(pd.date_range(min_date, max_date, freq="MS"))

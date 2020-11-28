@@ -5,9 +5,9 @@ from prefect import Flow
 from prefect import Parameter
 from prefect.utilities import logging
 
-import global_utilities as gu
+import utils as u
 
-from global_utilities.log import log
+from utils.log import log
 
 from flights import flights
 from flights import merge_flights_history
@@ -45,13 +45,13 @@ def detect_env():
 def download_log(dbx):
     """ Get log info from dropbox before running the script """
 
-    if gu.dropbox.file_exists(dbx, gu.log_path):
-        data = gu.dropbox.read_textfile(dbx, gu.log_path)
+    if u.dropbox.file_exists(dbx, u.log_path):
+        data = u.dropbox.read_textfile(dbx, u.log_path)
 
         # Add a new line between runs
         data += "\n"
 
-        with open(gu.uos.get_path(gu.log_path), "w") as file:
+        with open(u.uos.get_path(u.log_path), "w") as file:
             file.write(data)
 
         log.info("Log retrived from dropbox")
@@ -63,19 +63,19 @@ def download_log(dbx):
 def copy_log(dbx):
     """ Copy log to dropbox """
 
-    log.info(f"Copying '{gu.log_path}' to dropbox")
+    log.info(f"Copying '{u.log_path}' to dropbox")
 
-    with open(gu.uos.get_path(gu.log_path)) as file:
+    with open(u.uos.get_path(u.log_path)) as file:
         data = file.read()
 
-    gu.dropbox.write_textfile(dbx, data, f"/{gu.log_path}")
+    u.dropbox.write_textfile(dbx, data, f"/{u.log_path}")
 
 
 def run_etl():
     """ Run the ETL for today """
 
     # Get dropbox connector
-    dbx = gu.dropbox.get_dbx_connector(VAR_DROPBOX_TOKEN)
+    dbx = u.dropbox.get_dbx_connector(VAR_DROPBOX_TOKEN)
 
     download_log(dbx)
 
@@ -87,7 +87,7 @@ def run_etl():
         log.info("Working on DEV")
 
     log.info("Starting vtasks")
-    gu.timeit(flow.run)(mdate=date.today(), pro=pro)
+    u.timeit(flow.run)(mdate=date.today(), pro=pro)
     log.info("End of vtasks")
 
     if pro:

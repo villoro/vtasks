@@ -4,7 +4,7 @@
 
 
 FILE_TRANSACTIONS = "/transactions.xlsx"
-FILE_DATA = "/data.xlsx"
+FILE_DATA = "/expensor_data.xlsx"
 FILE_CONFIG = "/config.yml"
 
 VAR_DROPBOX_TOKEN = "DROPBOX_TOKEN_EXPENSOR"
