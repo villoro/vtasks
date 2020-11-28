@@ -4,10 +4,9 @@ import pandas as pd
 
 from prefect import task
 
-import utils as u
-
 from . import constants as c
 from .rapidapi import query_pair
+from utils import get_vdropbox
 from utils import log
 from utils import timeit
 
@@ -15,8 +14,8 @@ from utils import timeit
 def get_airports_pairs():
     """ Get a set of all airports combinations """
 
-    dbx = u.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
-    df_airports = u.dropbox.read_excel(dbx, c.FILE_AIRPORTS)
+    vdp = get_vdropbox(c.VAR_DROPBOX_TOKEN)
+    df_airports = vdp.read_excel(c.FILE_AIRPORTS)
 
     out = set()
     for _, row in df_airports.iterrows():
@@ -55,25 +54,26 @@ def retrive_all_flights():
 def flights(mdate):
 
     filename = c.FILE_FLIGHTS_DAY.format(date=mdate)
-    dbx = u.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
 
-    if u.dropbox.file_exists(dbx, filename):
+    vdp = get_vdropbox(c.VAR_DROPBOX_TOKEN)
+
+    if vdp.file_exists(filename):
         log.warning(f"File '{filename}' already exists, skipping flights task")
 
     # Only query if the file does not exist
     else:
         df = retrive_all_flights()
-        u.dropbox.write_parquet(dbx, df, filename)
+        vdp.write_parquet(df, filename)
 
 
 @task
 @timeit
 def merge_flights_history(mdate):
 
-    dbx = u.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
+    vdp = get_vdropbox(c.VAR_DROPBOX_TOKEN)
 
     # Check for monthly folders and get all parquets inside
-    for folder in u.dropbox.ls(dbx, c.PATH_HISTORY):
+    for folder in vdp.ls(c.PATH_HISTORY):
 
         is_date_folder = re.search(r"\d{4}_\d{2}", folder)
         if is_date_folder and ("." not in folder) and (folder < f"{mdate:%Y_%m}"):
@@ -84,14 +84,14 @@ def merge_flights_history(mdate):
 
             # Read all daily parquets
             dfs = []
-            for file in u.dropbox.ls(dbx, sub_folder):
+            for file in vdp.ls(sub_folder):
                 if file.endswith(".parquet"):
-                    dfs.append(u.dropbox.read_parquet(dbx, f"{sub_folder}/{file}"))
+                    dfs.append(vdp.read_parquet(f"{sub_folder}/{file}"))
 
             # Export it as only one parquet file
             df = pd.concat(dfs)
-            u.dropbox.write_parquet(dbx, df, f"{sub_folder}.parquet")
+            vdp.write_parquet(df, f"{sub_folder}.parquet")
             log.success(f"Successfuly merged '{folder}' vflights history")
 
             # Delete original folder
-            u.dropbox.delete(dbx, sub_folder)
+            vdp.delete(sub_folder)

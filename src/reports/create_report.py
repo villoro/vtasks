@@ -7,9 +7,11 @@ from datetime import datetime
 import jinja2
 import oyaml as yaml
 
-import utils as u
+from utils import get_path
+from utils import get_secret
 
 from . import constants as c
+from utils import get_vdropbox
 from utils import log
 
 
@@ -18,12 +20,12 @@ def main(mdate=datetime.now(), data=None):
 
     mdate = mdate.replace(day=1)
 
-    dbx = u.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
+    vdp = get_vdropbox(c.VAR_DROPBOX_TOKEN)
 
     # Read data
     if data is None:
         log.debug("Reading report_data from dropbox")
-        data = u.dropbox.read_yaml(dbx, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
+        data = vdp.read_yaml(f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
 
     # Add title
     data["mdate"] = f"{mdate:%Y_%m}"
@@ -31,9 +33,9 @@ def main(mdate=datetime.now(), data=None):
 
     # Set up jinja to render parent templates and retrive template
     template = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(u.get_path("src/reports/templates"))
+        loader=jinja2.FileSystemLoader(get_path("src/reports/templates"))
     ).get_template("template.html")
 
     # Create report
     report = template.render(**data)
-    u.dropbox.write_textfile(dbx, report, f"/reports/{mdate.year}/{mdate:%Y_%m}.html")
+    vdp.write_file(report, f"/reports/{mdate.year}/{mdate:%Y_%m}.html")
