@@ -6,6 +6,7 @@ import pandas as pd
 import re
 
 from prefect import task
+from vdropbox import Vdropbox
 
 import utils as u
 
@@ -16,12 +17,12 @@ from utils import timeit
 MONEY_LOVER_REGEX = r"\d{4}-\d{2}-\d{2}(.xls)"
 
 
-def get_money_lover_df(dbx):
+def get_money_lover_df(vdp):
     """ gets the name of the money lover excel file """
 
     # Get all money_lover files in a list
     files = []
-    for file in u.dropbox.ls(dbx, c.PATH_MONEY_LOVER):
+    for file in vdp.ls(c.PATH_MONEY_LOVER):
         if re.search(MONEY_LOVER_REGEX, file):
             files.append(file)
 
@@ -33,15 +34,15 @@ def get_money_lover_df(dbx):
         uri_out = f"{c.PATH_MONEY_LOVER}/{name[:4]}/{name}.parquet"
 
         log.info(f"Reading '{uri_in}' from dropbox")
-        df = u.dropbox.read_excel(dbx, uri_in, index_col=0)
+        df = vdp.read_excel(uri_in, index_col=0)
 
         # Return the list file
         if file == files[-1]:
             return df
 
         log.info(f"Exporting '{uri_out}' to dropbox")
-        u.dropbox.write_parquet(dbx, df, uri_out)
-        u.dropbox.delete(dbx, uri_in)
+        vdp.write_parquet(df, uri_out)
+        vdp.delete(uri_in)
 
 
 def transform_transactions(df_in):
@@ -76,16 +77,16 @@ def transform_transactions(df_in):
 def money_lover(mdate, export_data=True):
     """ Retrives all dataframes and update DFS global var """
 
-    dbx = u.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
+    vdp = Vdropbox(u.get_secret(c.VAR_DROPBOX_TOKEN))
 
     # Read
-    df = get_money_lover_df(dbx)
+    df = get_money_lover_df(vdp)
 
     # Transform
     df = transform_transactions(df)
 
     # Export
     if export_data:
-        u.dropbox.write_excel(dbx, df, c.FILE_TRANSACTIONS)
+        vdp.write_excel(df, c.FILE_TRANSACTIONS)
 
     return df

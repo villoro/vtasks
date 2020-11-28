@@ -7,6 +7,7 @@ import pandas as pd
 
 from collections import OrderedDict
 from datetime import datetime
+from vdropbox import Vdropbox
 from vpalette import get_colors
 
 import utils as u
@@ -504,17 +505,17 @@ def main(mdate=datetime.now(), export_data=False):
 
     mdate = mdate.replace(day=1)
 
-    dbx = u.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
+    vdp = Vdropbox(u.get_secret(c.VAR_DROPBOX_TOKEN))
 
     # Get dfs
     log.debug("Reading excels from dropbox")
-    dfs = u.dropbox.read_excel(dbx, c.FILE_DATA, c.DFS_ALL_FROM_DATA)
-    dfs[c.DF_TRANS] = u.dropbox.read_excel(dbx, c.FILE_TRANSACTIONS)
+    dfs = vdp.read_excel(c.FILE_DATA, c.DFS_ALL_FROM_DATA)
+    dfs[c.DF_TRANS] = vdp.read_excel(c.FILE_TRANSACTIONS)
 
     # Filter dates
     dfs = filter_by_date(dfs, mdate)
 
-    yml = u.dropbox.read_yaml(dbx, c.FILE_CONFIG)
+    yml = vdp.read_yaml(c.FILE_CONFIG)
 
     out = {}
 
@@ -542,6 +543,6 @@ def main(mdate=datetime.now(), export_data=False):
     out["colors"] = add_colors(dfs, yml)
 
     if export_data:
-        u.dropbox.write_yaml(dbx, out, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
+        vdp.write_yaml(out, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
 
     return out

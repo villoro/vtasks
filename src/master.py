@@ -1,19 +1,20 @@
 from argparse import ArgumentParser
 from datetime import date
 
+
 from prefect import Flow
 from prefect import Parameter
 from prefect.utilities import logging
+from vdropbox import Vdropbox
 
 import utils as u
-
-from utils.log import log
 
 from flights import flights
 from flights import merge_flights_history
 from money_lover import money_lover
 from reports import reports
 from reports.constants import VAR_DROPBOX_TOKEN
+from utils.log import log
 
 # Replace loguru log
 logging.get_logger = lambda x: log
@@ -42,11 +43,11 @@ def detect_env():
     return args.pro
 
 
-def download_log(dbx):
+def download_log(vdp):
     """ Get log info from dropbox before running the script """
 
-    if u.dropbox.file_exists(dbx, u.log_path):
-        data = u.dropbox.read_textfile(dbx, u.log_path)
+    if vdp.file_exists(u.log_path):
+        data = vdp.read_file(u.log_path)
 
         # Add a new line between runs
         data += "\n"
@@ -60,7 +61,7 @@ def download_log(dbx):
         log.info("Log not downloaded (first run of the day)")
 
 
-def copy_log(dbx):
+def copy_log(vdp):
     """ Copy log to dropbox """
 
     log.info(f"Copying '{u.log_path}' to dropbox")
@@ -68,16 +69,16 @@ def copy_log(dbx):
     with open(u.uos.get_path(u.log_path)) as file:
         data = file.read()
 
-    u.dropbox.write_textfile(dbx, data, f"/{u.log_path}")
+    vdp.write_file(data, f"/{u.log_path}")
 
 
 def run_etl():
     """ Run the ETL for today """
 
     # Get dropbox connector
-    dbx = u.dropbox.get_dbx_connector(VAR_DROPBOX_TOKEN)
+    vdp = Vdropbox(u.get_secret(VAR_DROPBOX_TOKEN))
 
-    download_log(dbx)
+    download_log(vdp)
 
     pro = detect_env()
 
@@ -91,7 +92,7 @@ def run_etl():
     log.info("End of vtasks")
 
     if pro:
-        copy_log(dbx)
+        copy_log(vdp)
 
 
 if __name__ == "__main__":

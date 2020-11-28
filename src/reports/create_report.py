@@ -7,6 +7,8 @@ from datetime import datetime
 import jinja2
 import oyaml as yaml
 
+from vdropbox import Vdropbox
+
 import utils as u
 
 from . import constants as c
@@ -18,12 +20,12 @@ def main(mdate=datetime.now(), data=None):
 
     mdate = mdate.replace(day=1)
 
-    dbx = u.dropbox.get_dbx_connector(c.VAR_DROPBOX_TOKEN)
+    vdp = Vdropbox(u.get_secret(c.VAR_DROPBOX_TOKEN))
 
     # Read data
     if data is None:
         log.debug("Reading report_data from dropbox")
-        data = u.dropbox.read_yaml(dbx, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
+        data = vdp.read_yaml(f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
 
     # Add title
     data["mdate"] = f"{mdate:%Y_%m}"
@@ -36,4 +38,4 @@ def main(mdate=datetime.now(), data=None):
 
     # Create report
     report = template.render(**data)
-    u.dropbox.write_textfile(dbx, report, f"/reports/{mdate.year}/{mdate:%Y_%m}.html")
+    vdp.write_file(report, f"/reports/{mdate.year}/{mdate:%Y_%m}.html")
