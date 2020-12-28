@@ -40,10 +40,10 @@ DF_WORTH = "worth_m"
 DF_SALARY = "salary"
 
 DFS_ALL_FROM_DATA = {
-    DF_LIQUID: None,
-    DF_CATEG: [],
-    DF_INVEST: None,
-    DF_WORTH: None,
+    DF_LIQUID: "all",
+    DF_CATEG: None,
+    DF_INVEST: "all",
+    DF_WORTH: "all",
     DF_SALARY: ["Fixed", "Bonus", "EAGI", "Total"],
 }
 DFS_ALL = [DF_TRANS] + [*DFS_ALL_FROM_DATA.keys()]

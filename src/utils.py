@@ -101,7 +101,7 @@ def init_gdrive():
         GDRIVE = gspread.service_account(filename=PATH_GDRIVE_KEY)
 
 
-def read_df_gdrive(spreadsheet_name, sheet_name, cols_to_numeric=None):
+def read_df_gdrive(spreadsheet_name, sheet_name, cols_to_numeric=[]):
     """
         Reads a google spreadsheet
 
@@ -133,6 +133,9 @@ def read_df_gdrive(spreadsheet_name, sheet_name, cols_to_numeric=None):
     df = df.set_index(index_col)
 
     if cols_to_numeric is None:
+        return df
+
+    if cols_to_numeric == "all":
         cols_to_numeric = df.columns
 
     # Cast cols to numeric
