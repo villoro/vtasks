@@ -17,7 +17,6 @@ from .functions import series_to_dicts
 from .functions import time_average
 from utils import get_vdropbox
 from utils import log
-from utils import read_df_gdrive
 
 
 def get_basic_traces(dfs, col_period, mdate):
@@ -499,23 +498,16 @@ def add_colors(dfs, yml):
     return out
 
 
-def main(mdate=datetime.now(), export_data=False):
+def main(dfs, mdate=datetime.now(), export_data=False):
     """ Create the report """
 
     mdate = mdate.replace(day=1)
 
-    # Get dfs
-    log.debug("Reading excels from gdrive")
-    dfs = {x: read_df_gdrive(c.FILE_DATA, x, cols) for x, cols in c.DFS_ALL_FROM_DATA.items()}
-
-    # Add transactions
-    log.debug("Reading data from dropbox")
-    vdp = get_vdropbox(c.VAR_DROPBOX_TOKEN)
-    dfs[c.DF_TRANS] = vdp.read_excel(c.FILE_TRANSACTIONS)
-
     # Filter dates
     dfs = filter_by_date(dfs, mdate)
 
+    # Get config info
+    vdp = get_vdropbox(c.VAR_DROPBOX_TOKEN)
     yml = vdp.read_yaml(c.FILE_CONFIG)
 
     out = {}

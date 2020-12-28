@@ -97,8 +97,9 @@ def filter_by_date(dfs, mdate):
     mdate = pd.to_datetime(mdate) + pd.tseries.offsets.MonthEnd(1)
 
     # Liquid, worth and invest dataframes
+    dfs_out = {}
     for name in [c.DF_LIQUID, c.DF_WORTH, c.DF_INVEST]:
-        df = dfs[name]
+        df = dfs[name].copy()
 
         # No future data
         df = df[df.index <= mdate]
@@ -107,10 +108,14 @@ def filter_by_date(dfs, mdate):
         df = add_missing_months(df, mdate)
         df.index.name = c.COL_DATE
 
-        dfs[name] = df
+        dfs_out[name] = df
 
     # Transactions df
-    df = dfs[c.DF_TRANS]
-    dfs[c.DF_TRANS] = df[df[c.COL_DATE] <= mdate]
+    df = dfs[c.DF_TRANS].copy()
+    dfs_out[c.DF_TRANS] = df[df[c.COL_DATE] <= mdate]
 
-    return dfs
+    # Copy missing dataframes
+    for name in set(c.DFS_ALL) - set(dfs_out.keys()):
+        dfs_out[name] = dfs[name].copy()
+
+    return dfs_out
