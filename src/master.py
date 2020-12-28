@@ -31,7 +31,7 @@ with Flow("do_all") as flow:
     merge_flights_history(mdate)
 
     # Vbooks
-    vbooks()
+    # vbooks()
 
 
 def detect_env():
