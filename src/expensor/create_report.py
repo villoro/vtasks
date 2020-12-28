@@ -33,8 +33,8 @@ def main(mdate=datetime.now(), data=None):
 
     # Set up jinja to render parent templates and retrive template
     template = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(get_path("src/expensor/templates"))
-    ).get_template("template.html")
+        loader=jinja2.FileSystemLoader(get_path("templates"))
+    ).get_template("expensor.html")
 
     # Create report
     report = template.render(**data)

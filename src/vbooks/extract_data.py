@@ -18,7 +18,7 @@ def get_books():
 def get_dashboard(dfi):
 
     return {
-        "Total": dfi["Pages"].sum(),
+        "Total": int(dfi["Pages"].sum()),
         "Languages": serie_to_dict(dfi.groupby("Language")["Pages"].sum()),
     }
 
@@ -59,3 +59,5 @@ def main(export=False):
 
     if export:
         u.get_vdropbox().write_yaml(out, f"{c.PATH_VBOOKS}/report_data.yaml")
+
+    return out
