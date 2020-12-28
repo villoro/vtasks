@@ -2,8 +2,12 @@ import functools
 import sys
 
 from datetime import date
+from os import path
 from pathlib import Path
 from time import time
+
+import gspread
+import pandas as pd
 
 from loguru import logger as log
 from vcrypto import Cipher
@@ -73,3 +77,68 @@ def timeit(func):
         return result
 
     return timed_execution
+
+
+PATH_GDRIVE_KEY = f"{PATH_ROOT}/gdrive.json"
+
+
+def export_gdrive_auth():
+    """ Export gdrive json auth """
+
+    log.info(f"Exporting '{PATH_GDRIVE_KEY}'")
+
+    with open(PATH_GDRIVE_KEY, "w") as file:
+        file.write(get_secret("GDRIVE"))
+
+
+GDRIVE = None
+
+
+def read_df_gdrive(spreadsheet_name, sheet_name, cols_to_numeric=None):
+    """
+        Reads a google spreadsheet
+
+        Args:
+            spreadsheet_name:   name of the document
+            sheet_name:         name of the sheet inside the document
+            index_as_datetime:  wether to cast the index as datetime or not
+            cols_to_numeric:    columns that must be transformed to numeric.
+                                    if None all will be transformed
+            fillna:             wether to fill NA with 0 or not
+    """
+
+    # Init GDRIVE if it has not been init
+    global GDRIVE
+    if GDRIVE is None:
+
+        if not path.exists(PATH_GDRIVE_KEY):
+            export_gdrive_auth()
+
+        GDRIVE = gspread.service_account(filename=PATH_GDRIVE_KEY)
+
+    # Open sheet
+    spreadsheet = GDRIVE.open(spreadsheet_name)
+    sheet = spreadsheet.worksheet(sheet_name)
+
+    # Create dataframe
+    data = sheet.get_all_records()
+    df = pd.DataFrame(data)
+
+    index_col = df.columns[0]
+
+    if index_col == "Date":
+        df[index_col] = pd.to_datetime(df[index_col])
+
+    # Set first column as index
+    df = df.set_index(index_col)
+
+    if cols_to_numeric is None:
+        cols_to_numeric = df.columns
+
+    # Cast cols to numeric
+    for col in cols_to_numeric:
+        df[col] = pd.to_numeric(
+            df[col].str.replace(".", "").str.replace(",", ".").str.replace(" €", "")
+        )
+
+    return df
