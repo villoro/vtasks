@@ -2,15 +2,13 @@
     Constants and config vars
 """
 
-
 FILE_DATA = "expensor_data"
-FILE_TRANSACTIONS = "/transactions.xlsx"
-FILE_CONFIG = "/config.yml"
 
-VAR_DROPBOX_TOKEN = "DROPBOX_TOKEN_EXPENSOR"
+PATH_EXPENSOR = "/Aplicaciones/expensor"
+PATH_MONEY_LOVER = f"{PATH_EXPENSOR}/Money Lover"
 
-PATH_MONEY_LOVER = "/Money Lover/"
-FILE_TRANSACTIONS = "/transactions.xlsx"
+FILE_TRANSACTIONS = f"{PATH_EXPENSOR}/transactions.xlsx"
+FILE_CONFIG = f"{PATH_EXPENSOR}/config.yml"
 
 COL_DATE = "Date"
 COL_MONTH_DATE = "Month_date"
@@ -40,10 +38,10 @@ DF_WORTH = "worth_m"
 DF_SALARY = "salary"
 
 DFS_ALL_FROM_DATA = {
-    DF_LIQUID: None,
-    DF_CATEG: [],
-    DF_INVEST: None,
-    DF_WORTH: None,
+    DF_LIQUID: "all",
+    DF_CATEG: None,
+    DF_INVEST: "all",
+    DF_WORTH: "all",
     DF_SALARY: ["Fixed", "Bonus", "EAGI", "Total"],
 }
 DFS_ALL = [DF_TRANS] + [*DFS_ALL_FROM_DATA.keys()]

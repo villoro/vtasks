@@ -20,7 +20,7 @@ def main(mdate=datetime.now(), data=None):
 
     mdate = mdate.replace(day=1)
 
-    vdp = get_vdropbox(c.VAR_DROPBOX_TOKEN)
+    vdp = get_vdropbox()
 
     # Read data
     if data is None:

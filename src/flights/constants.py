@@ -2,12 +2,11 @@
     Constants and config vars
 """
 
-VAR_DROPBOX_TOKEN = "DROPBOX_TOKEN_FLIGHTS"
+PATH_VFLIGHTS = "/Aplicaciones/vflights"
+PATH_HISTORY = f"{PATH_VFLIGHTS}/history"
 
-PATH_HISTORY = "/history"
-
-FILE_AIRPORTS = "/airports.xlsx"
-FILE_FLIGHTS = "/data.xlsx"
+FILE_AIRPORTS = f"{PATH_VFLIGHTS}/airports.xlsx"
+FILE_FLIGHTS = f"{PATH_VFLIGHTS}/data.xlsx"
 FILE_FLIGHTS_DAY = PATH_HISTORY + "/{date:%Y_%m}/{date:%Y_%m_%d}.parquet"
 
 COL_PRICE = "Price"

@@ -2,10 +2,10 @@
     Constants and config vars
 """
 
-VAR_DROPBOX_TOKEN = "DROPBOX_TOKEN_EXPENSOR"
+PATH_EXPENSOR = "/Aplicaciones/expensor"
 
-PATH_MONEY_LOVER = "/Money Lover"
-FILE_TRANSACTIONS = "/transactions.xlsx"
+PATH_MONEY_LOVER = f"{PATH_EXPENSOR}/Money Lover"
+FILE_TRANSACTIONS = f"{PATH_EXPENSOR}/transactions.xlsx"
 
 # fmt: off
 FORBIDDEN_CATEGORIES = [

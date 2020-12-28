@@ -9,7 +9,6 @@ from prefect.utilities import logging
 import utils as u
 
 from expensor import reports
-from expensor.constants import VAR_DROPBOX_TOKEN
 from flights import flights
 from flights import merge_flights_history
 from money_lover import money_lover
@@ -45,16 +44,16 @@ def detect_env():
 def download_log(vdp):
     """ Get log info from dropbox before running the script """
 
-    if vdp.file_exists(u.LOG_PATH):
-        data = vdp.read_file(u.LOG_PATH)
+    if vdp.file_exists(u.LOG_PATH_DROPBOX):
+        log.info("Downloading log from dropbox")
+
+        data = vdp.read_file(u.LOG_PATH_DROPBOX)
 
         # Add a new line between runs
         data += "\n"
 
         with open(u.get_path(u.LOG_PATH), "w") as file:
             file.write(data)
-
-        log.info("Log retrived from dropbox")
 
     else:
         log.info("Log not downloaded (first run of the day)")
@@ -68,14 +67,14 @@ def copy_log(vdp):
     with open(u.get_path(u.LOG_PATH)) as file:
         data = file.read()
 
-    vdp.write_file(data, f"/{u.LOG_PATH}")
+    vdp.write_file(data, u.LOG_PATH_DROPBOX)
 
 
 def run_etl():
     """ Run the ETL for today """
 
     # Get dropbox connector
-    vdp = u.get_vdropbox(VAR_DROPBOX_TOKEN)
+    vdp = u.get_vdropbox()
 
     download_log(vdp)
 

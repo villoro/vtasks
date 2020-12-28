@@ -76,7 +76,7 @@ def transform_transactions(df_in):
 def money_lover(mdate, export_data=True):
     """ Retrives all dataframes and update DFS global var """
 
-    vdp = get_vdropbox(c.VAR_DROPBOX_TOKEN)
+    vdp = get_vdropbox()
 
     # Read
     df = get_money_lover_df(vdp)

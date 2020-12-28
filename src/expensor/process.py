@@ -28,7 +28,7 @@ def get_data():
 
     # Add transactions
     log.debug("Reading data from dropbox")
-    vdp = get_vdropbox(c.VAR_DROPBOX_TOKEN)
+    vdp = get_vdropbox()
     dfs[c.DF_TRANS] = vdp.read_excel(c.FILE_TRANSACTIONS)
 
     return dfs

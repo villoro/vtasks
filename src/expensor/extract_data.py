@@ -507,7 +507,7 @@ def main(dfs, mdate=datetime.now(), export_data=False):
     dfs = filter_by_date(dfs, mdate)
 
     # Get config info
-    vdp = get_vdropbox(c.VAR_DROPBOX_TOKEN)
+    vdp = get_vdropbox()
     yml = vdp.read_yaml(c.FILE_CONFIG)
 
     out = {}
