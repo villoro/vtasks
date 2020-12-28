@@ -8,11 +8,12 @@ from prefect.utilities import logging
 
 import utils as u
 
-from expensor import reports
+from expensor import expensor
 from flights import flights
 from flights import merge_flights_history
 from money_lover import money_lover
 from utils import log
+from vbooks import vbooks
 
 # Replace loguru log
 logging.get_logger = lambda x: log
@@ -21,13 +22,16 @@ with Flow("do_all") as flow:
     mdate = Parameter("mdate")
     pro = Parameter("pro")
 
-    # Reports part
+    # Expensor
     df_trans = money_lover(mdate, export_data=True)
-    reports(mdate, df_trans=df_trans, pro=pro)
+    expensor(mdate, df_trans=df_trans, pro=pro)
 
-    # Flights part
+    # Flights
     flights(mdate)
     merge_flights_history(mdate)
+
+    # Vbooks
+    # vbooks()
 
 
 def detect_env():

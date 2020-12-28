@@ -536,6 +536,6 @@ def main(dfs, mdate=datetime.now(), export_data=False):
     out["colors"] = add_colors(dfs, yml)
 
     if export_data:
-        vdp.write_yaml(out, f"/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
+        vdp.write_yaml(out, f"{c.PATH_EXPENSOR}/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
 
     return out

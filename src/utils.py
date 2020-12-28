@@ -7,6 +7,7 @@ from pathlib import Path
 from time import time
 
 import gspread
+import jinja2
 import pandas as pd
 
 from loguru import logger as log
@@ -153,3 +154,14 @@ def read_df_gdrive(spreadsheet_name, sheet_name, cols_to_numeric=[]):
         )
 
     return df
+
+
+def render_jinja_template(template_name, data):
+    """ Render a jinja2 template """
+
+    # Set up jinja to render parent templates and retrive template
+    loader = jinja2.FileSystemLoader(get_path("templates"))
+    template = jinja2.Environment(loader=loader).get_template(template_name)
+
+    # Render the template
+    return template.render(**data)

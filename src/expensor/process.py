@@ -45,7 +45,7 @@ def create_one_report(dfs, mdate):
 
 @task
 @timeit
-def reports(mdate, df_trans, pro, n_jobs=NUM_OF_JOBS_DEFAULT):
+def expensor(mdate, df_trans, pro, n_jobs=NUM_OF_JOBS_DEFAULT):
 
     # TODO: use df_trans input argument instead of reading it from dropbox
 
