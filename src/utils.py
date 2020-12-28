@@ -53,10 +53,17 @@ def get_secret(key):
     return CIPHER.get_secret(key)
 
 
-def get_vdropbox(secret_name):
+VDROPBOX = None
+
+
+def get_vdropbox():
     """ Creates a vdropbox instance """
 
-    return Vdropbox(get_secret(secret_name), log=log)
+    global VDROPBOX
+    if VDROPBOX is None:
+        VDROPBOX = Vdropbox(get_secret("DROPBOX_TOKEN"), log=log)
+
+    return VDROPBOX
 
 
 def timeit(func):

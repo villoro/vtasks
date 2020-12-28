@@ -2,9 +2,6 @@
     Constants and config vars
 """
 
-VAR_DROPBOX_TOKEN = "DROPBOX_TOKEN"
-
-
 PATH_EXPENSOR = "/Aplicaciones/expensor"
 
 PATH_MONEY_LOVER = f"{PATH_EXPENSOR}/Money Lover"

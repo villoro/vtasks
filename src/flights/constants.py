@@ -2,8 +2,6 @@
     Constants and config vars
 """
 
-VAR_DROPBOX_TOKEN = "DROPBOX_TOKEN"
-
 PATH_VFLIGHTS = "/Aplicaciones/vflights"
 PATH_HISTORY = f"{PATH_VFLIGHTS}/history"
 

@@ -14,7 +14,7 @@ from utils import timeit
 def get_airports_pairs():
     """ Get a set of all airports combinations """
 
-    vdp = get_vdropbox(c.VAR_DROPBOX_TOKEN)
+    vdp = get_vdropbox()
     df_airports = vdp.read_excel(c.FILE_AIRPORTS)
 
     out = set()
@@ -55,7 +55,7 @@ def flights(mdate):
 
     filename = c.FILE_FLIGHTS_DAY.format(date=mdate)
 
-    vdp = get_vdropbox(c.VAR_DROPBOX_TOKEN)
+    vdp = get_vdropbox()
 
     if vdp.file_exists(filename):
         log.warning(f"File '{filename}' already exists, skipping flights task")
@@ -70,7 +70,7 @@ def flights(mdate):
 @timeit
 def merge_flights_history(mdate):
 
-    vdp = get_vdropbox(c.VAR_DROPBOX_TOKEN)
+    vdp = get_vdropbox()
 
     # Check for monthly folders and get all parquets inside
     for folder in vdp.ls(c.PATH_HISTORY):

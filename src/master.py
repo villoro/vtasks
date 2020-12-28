@@ -74,7 +74,7 @@ def run_etl():
     """ Run the ETL for today """
 
     # Get dropbox connector
-    vdp = u.get_vdropbox("DROPBOX_TOKEN")
+    vdp = u.get_vdropbox()
 
     download_log(vdp)
 
