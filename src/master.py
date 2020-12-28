@@ -74,6 +74,8 @@ def copy_log(vdp):
 def run_etl():
     """ Run the ETL for today """
 
+    u.export_gdrive_auth()
+
     # Get dropbox connector
     vdp = u.get_vdropbox(VAR_DROPBOX_TOKEN)
 

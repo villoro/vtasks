@@ -2,8 +2,12 @@ import functools
 import sys
 
 from datetime import date
+from os import path
 from pathlib import Path
 from time import time
+
+import gspread
+import pandas as pd
 
 from loguru import logger as log
 from vcrypto import Cipher
@@ -85,3 +89,36 @@ def export_gdrive_auth():
 
     with open(PATH_GDRIVE_KEY, "w") as file:
         file.write(get_secret("GDRIVE"))
+
+
+GDRIVE = None
+
+
+def read_df_gdrive(spreadsheet_name, sheet_name):
+    """
+        Reads a google spreadsheet
+
+        Args:
+            spreadsheet_name:   name of the document
+            sheet_name:         name of the sheet inside the document
+    """
+
+    # Init GDRIVE if it has not been init
+    global GDRIVE
+    if GDRIVE is None:
+
+        if not path.exists(PATH_GDRIVE_KEY):
+            export_gdrive_auth()
+
+        GDRIVE = gspread.service_account(filename=PATH_GDRIVE_KEY)
+
+    # Open sheet
+    spreadsheet = GDRIVE.open(spreadsheet_name)
+    sheet = spreadsheet.worksheet(sheet_name)
+
+    # Create dataframe
+    data = sheet.get_all_records()
+    df = pd.DataFrame(data)
+
+    # Set first column as index
+    return df.set_index(df.columns[0])
