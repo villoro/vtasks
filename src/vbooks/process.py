@@ -2,6 +2,8 @@ import jinja2
 import oyaml as yaml
 import pandas as pd
 
+from vpalette import get_colors
+
 import utils as u
 
 from . import constants as c
@@ -18,10 +20,11 @@ def get_books():
 
 def get_dashboard(dfi):
 
-    return {
-        "Total": int(dfi["Pages"].sum()),
-        "Languages": serie_to_dict(dfi.groupby("Language")["Pages"].sum()),
-    }
+    out = serie_to_dict(dfi.groupby("Language")["Pages"].sum())
+    out["Total"] = int(dfi["Pages"].sum())
+    out["Years"] = int(dfi["Year"].nunique())
+
+    return out
 
 
 def get_year_data(dfi):
@@ -53,6 +56,7 @@ def extract_data(export=False):
         "dashboard": get_dashboard(df),
         "year_by_category": get_year_data(df),
         "month_by_category": get_month_data(df),
+        "colors": {name: get_colors(data) for name, data in c.COLORS.items()},
     }
 
     out["year"] = out["year_by_category"].pop("Total")
@@ -64,10 +68,8 @@ def extract_data(export=False):
     return out
 
 
-def main():
+def vbooks():
     """ Creates the report """
-
-    vdp = get_vdropbox()
 
     data = extract_data()
 
@@ -76,4 +78,4 @@ def main():
 
     # Create report
     report = u.render_jinja_template("vbooks.html", data)
-    vdp.write_file(report, f"{c.PATH_VBOOKS}/vbooks.html")
+    u.get_vdropbox().write_file(report, f"{c.PATH_VBOOKS}/vbooks.html")
