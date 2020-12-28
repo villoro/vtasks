@@ -15,6 +15,14 @@ def get_books():
     return df
 
 
+def get_dashboard(dfi):
+
+    return {
+        "Total": dfi["Pages"].sum(),
+        "Languages": serie_to_dict(dfi.groupby("Language")["Pages"].sum()),
+    }
+
+
 def get_year_data(dfi):
 
     df = dfi.pivot_table(values="Pages", index="Year", columns="Language", aggfunc="sum").fillna(0)
@@ -36,14 +44,18 @@ def get_month_data(dfi):
     return out
 
 
-def main():
+def main(export=False):
 
     df = get_books()
 
-    out = {}
+    out = {
+        "dashboard": get_dashboard(df),
+        "year_by_category": get_year_data(df),
+        "month_by_category": get_month_data(df),
+    }
 
-    out["year_by_category"] = get_year_data(df)
     out["year"] = out["year_by_category"].pop("Total")
-
-    out["month_by_category"] = get_month_data(df)
     out["month"] = out["month_by_category"].pop("Total")
+
+    if export:
+        u.get_vdropbox().write_yaml(out, f"{c.PATH_VBOOKS}/report_data.yaml")
