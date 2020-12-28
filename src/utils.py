@@ -73,3 +73,15 @@ def timeit(func):
         return result
 
     return timed_execution
+
+
+PATH_GDRIVE_KEY = f"{PATH_ROOT}/gdrive.json"
+
+
+def export_gdrive_auth():
+    """ Export gdrive json auth """
+
+    log.info(f"Exporting '{PATH_GDRIVE_KEY}'")
+
+    with open(PATH_GDRIVE_KEY, "w") as file:
+        file.write(get_secret("GDRIVE"))
