@@ -64,7 +64,7 @@ def get_basic_traces(dfs, col_period, mdate):
         df_categ = df_categ[df_categ[c.COL_TYPE] == name]
 
         aux = OrderedDict()
-        for x in reversed(df_categ[c.COL_NAME].to_list()):
+        for x in reversed(df_categ.index.to_list()):
             if x in df.columns:
                 aux[x] = df[x]
 
@@ -132,7 +132,7 @@ def get_salaries(dfs, mdate):
             data:   dict with data
     """
 
-    df = dfs[c.DF_SALARY].set_index(c.COL_DATE).copy()
+    df = dfs[c.DF_SALARY].copy()
 
     # First complete data from previous months then with 0
     df = add_missing_months(df, mdate)
@@ -204,7 +204,7 @@ def get_pie_traces(dfs):
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
 
         df_cat = dfs[c.DF_CATEG]
-        categories = df_cat[df_cat[c.COL_TYPE] == name][c.COL_NAME].tolist()
+        categories = df_cat[df_cat[c.COL_TYPE] == name].index.tolist()
 
         df = dfg.pivot_table(c.COL_AMOUNT, c.COL_MONTH_DATE, c.COL_CATEGORY, "sum").fillna(0)
 
@@ -486,7 +486,7 @@ def add_colors(dfs, yml):
             out[f"{entity}_categ"][name] = get_colors((config[c.COLOR_NAME], config[c.COLOR_INDEX]))
 
     # Expenses and incomes colors
-    for entity, df in dfs["trans_categ"].set_index("Name").groupby("Type"):
+    for entity, df in dfs[c.DF_CATEG].groupby("Type"):
         out[f"{entity}_categ"] = OrderedDict()
         for name, row in df.iterrows():
             out[f"{entity}_categ"][name] = get_colors((row["Color Name"], row["Color Index"]))

@@ -98,7 +98,7 @@ def filter_by_date(dfs, mdate):
 
     # Liquid, worth and invest dataframes
     for name in [c.DF_LIQUID, c.DF_WORTH, c.DF_INVEST]:
-        df = dfs[name].set_index(c.COL_DATE)
+        df = dfs[name]
 
         # No future data
         df = df[df.index <= mdate]

@@ -20,7 +20,6 @@ COL_NOTES = "Note"
 COL_AMOUNT = "Amount"
 COL_CATEGORY = "Category"
 COL_TYPE = "Type"
-COL_NAME = "Name"
 
 EXPENSES = "Expenses"
 INCOMES = "Incomes"
