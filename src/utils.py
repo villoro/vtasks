@@ -81,17 +81,24 @@ def timeit(func):
 
 PATH_GDRIVE_KEY = f"{PATH_ROOT}/gdrive.json"
 
+GDRIVE = None
 
-def export_gdrive_auth():
+
+def init_gdrive():
     """ Export gdrive json auth """
 
-    log.info(f"Exporting '{PATH_GDRIVE_KEY}'")
+    # Init GDRIVE if it has not been init
+    global GDRIVE
+    if GDRIVE is None:
 
-    with open(PATH_GDRIVE_KEY, "w") as file:
-        file.write(get_secret("GDRIVE"))
+        if not path.exists(PATH_GDRIVE_KEY):
 
+            log.info(f"Exporting '{PATH_GDRIVE_KEY}'")
 
-GDRIVE = None
+            with open(PATH_GDRIVE_KEY, "w") as file:
+                file.write(get_secret("GDRIVE"))
+
+        GDRIVE = gspread.service_account(filename=PATH_GDRIVE_KEY)
 
 
 def read_df_gdrive(spreadsheet_name, sheet_name, cols_to_numeric=None):
@@ -107,14 +114,7 @@ def read_df_gdrive(spreadsheet_name, sheet_name, cols_to_numeric=None):
             fillna:             wether to fill NA with 0 or not
     """
 
-    # Init GDRIVE if it has not been init
-    global GDRIVE
-    if GDRIVE is None:
-
-        if not path.exists(PATH_GDRIVE_KEY):
-            export_gdrive_auth()
-
-        GDRIVE = gspread.service_account(filename=PATH_GDRIVE_KEY)
+    init_gdrive()
 
     # Open sheet
     spreadsheet = GDRIVE.open(spreadsheet_name)
