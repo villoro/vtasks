@@ -8,11 +8,11 @@ from prefect.utilities import logging
 
 import utils as u
 
+from expensor import reports
+from expensor.constants import VAR_DROPBOX_TOKEN
 from flights import flights
 from flights import merge_flights_history
 from money_lover import money_lover
-from reports import reports
-from reports.constants import VAR_DROPBOX_TOKEN
 from utils import log
 
 # Replace loguru log
@@ -73,8 +73,6 @@ def copy_log(vdp):
 
 def run_etl():
     """ Run the ETL for today """
-
-    u.export_gdrive_auth()
 
     # Get dropbox connector
     vdp = u.get_vdropbox(VAR_DROPBOX_TOKEN)
