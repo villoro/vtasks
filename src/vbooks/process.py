@@ -1,10 +1,11 @@
+import jinja2
+import oyaml as yaml
 import pandas as pd
 
 import utils as u
 
 from . import constants as c
 from expensor.functions import serie_to_dict
-from expensor.functions import series_to_dicts
 
 
 def get_books():
@@ -44,7 +45,7 @@ def get_month_data(dfi):
     return out
 
 
-def main(export=False):
+def extract_data(export=False):
 
     df = get_books()
 
@@ -61,3 +62,18 @@ def main(export=False):
         u.get_vdropbox().write_yaml(out, f"{c.PATH_VBOOKS}/report_data.yaml")
 
     return out
+
+
+def main():
+    """ Creates the report """
+
+    vdp = get_vdropbox()
+
+    data = extract_data()
+
+    # Add title
+    data["title"] = "VBooks"
+
+    # Create report
+    report = u.render_jinja_template("vbooks.html", data)
+    vdp.write_file(report, f"{c.PATH_VBOOKS}/vbooks.html")
