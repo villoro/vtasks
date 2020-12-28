@@ -20,6 +20,7 @@ from vdropbox import Vdropbox
 PATH_ROOT = Path(__file__).parent.parent
 
 LOG_PATH = f"logs/{date.today():%Y_%m}/{date.today():%Y_%m_%d}.log"
+LOG_PATH_DROPBOX = f"/Aplicaciones/vtasks/{LOG_PATH}"
 
 CIPHER = None
 

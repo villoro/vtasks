@@ -2,15 +2,15 @@
     Constants and config vars
 """
 
-
 FILE_DATA = "expensor_data"
-FILE_TRANSACTIONS = "/transactions.xlsx"
-FILE_CONFIG = "/config.yml"
 
-VAR_DROPBOX_TOKEN = "DROPBOX_TOKEN_EXPENSOR"
+VAR_DROPBOX_TOKEN = "DROPBOX_TOKEN"
 
-PATH_MONEY_LOVER = "/Money Lover/"
-FILE_TRANSACTIONS = "/transactions.xlsx"
+PATH_EXPENSOR = "/Aplicaciones/expensor"
+PATH_MONEY_LOVER = f"{PATH_EXPENSOR}/Money Lover"
+
+FILE_TRANSACTIONS = f"{PATH_EXPENSOR}/transactions.xlsx"
+FILE_CONFIG = f"{PATH_EXPENSOR}/config.yml"
 
 COL_DATE = "Date"
 COL_MONTH_DATE = "Month_date"
