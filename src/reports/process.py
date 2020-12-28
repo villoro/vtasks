@@ -16,7 +16,7 @@ from utils import read_df_gdrive
 from utils import timeit
 
 MIN_DATE = "2015-12-01"
-NUM_OF_JOBS_DEFAULT = 1  # If 1 or lower no multiprocessing
+NUM_OF_JOBS_DEFAULT = 10  # If 1 or lower no multiprocessing
 
 
 def get_data():
@@ -58,8 +58,11 @@ def reports(mdate, df_trans, pro, n_jobs=NUM_OF_JOBS_DEFAULT):
     if n_jobs > 1:
         log.info(f"Doing reports in parallel with {n_jobs} jobs")
 
+        # Create tuples with arguments
+        args = [(dfs, x) for x in all_dates.tolist()]
+
         with Pool(n_jobs) as p:
-            p.map(create_one_report, all_dates)
+            p.starmap(create_one_report, args)
 
     # No parallelization
     else:
