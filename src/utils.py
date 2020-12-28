@@ -94,9 +94,7 @@ def export_gdrive_auth():
 GDRIVE = None
 
 
-def read_df_gdrive(
-    spreadsheet_name, sheet_name, index_as_datetime=True, cols_to_numeric=None, fillna=True
-):
+def read_df_gdrive(spreadsheet_name, sheet_name, cols_to_numeric=None):
     """
         Reads a google spreadsheet
 
@@ -128,7 +126,7 @@ def read_df_gdrive(
 
     index_col = df.columns[0]
 
-    if index_as_datetime:
+    if index_col == "Date":
         df[index_col] = pd.to_datetime(df[index_col])
 
     # Set first column as index
@@ -142,9 +140,5 @@ def read_df_gdrive(
         df[col] = pd.to_numeric(
             df[col].str.replace(".", "").str.replace(",", ".").str.replace(" €", "")
         )
-
-    # Fill NA with 0 for all numeric cols
-    if fillna:
-        df.loc[:, cols_to_numeric] = df.loc[:, cols_to_numeric].fillna(0)
 
     return df

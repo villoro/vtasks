@@ -3,8 +3,8 @@
 """
 
 
+FILE_DATA = "expensor_data"
 FILE_TRANSACTIONS = "/transactions.xlsx"
-FILE_DATA = "/expensor_data.xlsx"
 FILE_CONFIG = "/config.yml"
 
 VAR_DROPBOX_TOKEN = "DROPBOX_TOKEN_EXPENSOR"
@@ -40,8 +40,14 @@ DF_INVEST = "invest_m"
 DF_WORTH = "worth_m"
 DF_SALARY = "salary"
 
-DFS_ALL_FROM_DATA = [DF_CATEG, DF_LIQUID, DF_INVEST, DF_WORTH, DF_SALARY]
-DFS_ALL = [DF_TRANS] + DFS_ALL_FROM_DATA
+DFS_ALL_FROM_DATA = {
+    DF_LIQUID: None,
+    DF_CATEG: [],
+    DF_INVEST: None,
+    DF_WORTH: None,
+    DF_SALARY: ["Fixed", "Bonus", "EAGI", "Total"],
+}
+DFS_ALL = [DF_TRANS] + [*DFS_ALL_FROM_DATA.keys()]
 
 # fmt: off
 DEFAULT_COLORS = {
