@@ -4,55 +4,170 @@
   {{ title }}
 {% endblock %}
 
+{% set languages = ["Català", "Español", "English", "Italiano"] %}
+{% set cards = ["Total", "Català", "Español", "English", "Italiano", "Years"] %}
 {% block body %}
 <!-- DASH -->
 <div id="dashboard" class="section w3-center">
   <h1>Vbooks Report</h1>
   <div class="mgrid">
-    <div class="w3-card w3-round" style="background-color: {{ colors['Total'] }}; color:white;">
-      <h3 style="margin-bottom: -16px;">Total</h3>
-      <h2>{{ dashboard["Total"] }}</h2>
+    {% for name in cards %}<div class="w3-card w3-round" style="background-color: {{ colors[name] }}; color:white;">
+      <h3 style="margin-bottom: -16px;">{{ name }}</h3>
+      <h2>{{ dashboard[name] }}</h2>
     </div>
-    <div class="w3-card w3-round" style="background-color: {{ colors['Català'] }}; color:white;">
-      <h3 style="margin-bottom: -16px;">Expenses</h3>
-      <h2>{{ dashboard["Català"] }}</h2>
-    </div>
-    <div class="w3-card w3-round" style="background-color: {{ colors['Español'] }}; color:white;">
-      <h3 style="margin-bottom: -16px;">EBIT</h3>
-      <h2>{{ dashboard["Español"] }}</h2>
-    </div>
-    <div class="w3-card w3-round" style="background-color: {{ colors['English'] }}; color:white;">
-      <h3 style="margin-bottom: -16px;">Liquid</h3>
-      <h2>{{ dashboard["English"] }}</h2>
-    </div>
-    <div class="w3-card w3-round" style="background-color: {{ colors['Italiano'] }}; color:white;">
-      <h3 style="margin-bottom: -16px;">Worth</h3>
-      <h2>{{ dashboard["Italiano"] }}</h2>
-    </div>
-    <div class="w3-card w3-round" style="background-color: {{ colors['Total'] }}; color:white;">
-      <h3 style="margin-bottom: -16px;">Years</h3>
-      <h2>{{ dashboard["Years"] }}</h2>
-    </div>
+    {% endfor %}
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="DASH_basic_traces" class="plot" style="height: 350px"></div>
+    <div id="DASH_evolution" class="plot" style="height: 450px"></div>
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="DASH_liquid" class="plot" style="height: 180px"></div>
+    <div id="DASH_languages" class="plot" style="height: 250px"></div>
   </div>
-
-  <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="DASH_investments" class="plot" style="height: 250px"></div>
-  </div>
-
 </div>
 
+<!-- EVO -->
+<div id="evolution" class="section" style="display:none;">
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_evolution_year" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_evolution_month" class="plot" style="height: 450px"></div>
+  </div>
+</div>
 {% endblock %}
 
 
 {% block plots %}
 <script>
+
+  // PLOT SHARED CONFIGURATIONS
+  const plot_basic = {
+    credits: false,
+    yAxis: {
+      title: {text: null}
+    },
+    plotOptions: {
+      series: {
+        marker: {enabled: false},
+        stickyTracking: false
+      }
+    }
+  }
+  const plot_datetime = {
+    ...plot_basic,
+    xAxis: {type: 'datetime'},
+    chart: {zoomType: "x"},
+  }
+  const plot_stacked = {
+    ...plot_basic,
+    plotOptions: {
+      series: {
+        marker: {enabled: false},
+        stickyTracking: false,
+        stacking: 'normal',
+      }
+    }
+  }
+  const plot_stacked_no_title = {
+    ...plot_stacked,
+    title: {text: ""},
+    chart: {zoomType: "x", type: "bar"},
+  }
+  const plot_pie = {
+    ...plot_stacked_no_title,
+    tooltip: {
+      formatter: function () {
+        return "<b>" + this.series.name + ":</b> " + this.y + " (" + this.percentage.toFixed(2) + " %)";
+      }
+    },
+  }
+
+  // DASHBOARD SECTION
+  Highcharts.chart('DASH_evolution', {
+    ...plot_datetime,
+    title: {text: 'Year evolution'},
+    series: [
+      {% for name, values in year_by_category.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{% for mdate, value in values.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('DASH_languages', {
+    ...plot_pie,
+    series: [
+      {% for name in languages %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{{ dashboard[name] }}],
+      }, {% endfor %}
+    ],
+  });
+
+  // EVOLUTION SECTION
+  Highcharts.chart('EVO_evolution_year', {
+    ...plot_datetime,
+    ...plot_stacked,
+    title: {text: 'Year evolution'},
+    series: [
+      {
+        name: "Total",
+        color: "{{ colors['Total'] }}",
+        data: [{% for mdate, value in year.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {% for name, values in year_by_category.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        type: 'column',
+        data: [{% for mdate, value in values.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('EVO_evolution_month', {
+    ...plot_datetime,
+    title: {text: 'Month evolution'},
+    series: [
+      {
+        name: "Total",
+        color: "{{ colors['Total'] }}",
+        visible: false,
+        data: [{% for mdate, value in month.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Total 12m",
+        color: "{{ colors['Total_dim'] }}",
+        data: [{% for mdate, value in month_by_category["Total_12m"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {% for name in languages %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        visible: false,
+        data: [{% for mdate, value in month_by_category[name].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {
+        name: "{{ name + '_12m' }}",
+        color: "{{ colors[name + '_dim'] }}",
+        data: [{% for mdate, value in month_by_category[name + "_12m"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
 </script>
 {% endblock %}

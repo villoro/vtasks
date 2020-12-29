@@ -31,7 +31,7 @@ def series_to_dicts(series):
     return out
 
 
-def time_average(dfi, months=12, exponential=False):
+def time_average(dfi, months=12, exponential=False, center=False):
     """
         Do some time average
         
@@ -53,7 +53,7 @@ def time_average(dfi, months=12, exponential=False):
         # One month at least
         months = max(1, months)
 
-        df = dfi.rolling(months, min_periods=1)
+        df = dfi.rolling(months, min_periods=1, center=center)
 
     return df.mean().apply(lambda x: round(x, 2))
 

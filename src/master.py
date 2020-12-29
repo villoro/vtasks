@@ -31,7 +31,7 @@ with Flow("do_all") as flow:
     merge_flights_history(mdate)
 
     # Vbooks
-    # vbooks()
+    vbooks()
 
 
 def detect_env():
@@ -90,11 +90,15 @@ def run_etl():
         log.info("Working on DEV")
 
     log.info("Starting vtasks")
-    u.timeit(flow.run)(mdate=date.today(), pro=pro)
+    result = u.timeit(flow.run)(mdate=date.today(), pro=pro)
     log.info("End of vtasks")
 
     if pro:
         copy_log(vdp)
+
+    if not result.is_successful():
+        log.error("ETL has failed")
+        raise ValueError("ETL has failed")
 
 
 if __name__ == "__main__":

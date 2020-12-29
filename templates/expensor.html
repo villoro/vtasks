@@ -10,35 +10,17 @@
   {{ title }}
 {% endblock %}
 
+{% set cards = ["Incomes", "Expenses", "EBIT", "Liquid", "Worth", "Total_Worth"] %}
 {% block body %}
 <!-- DASH -->
 <div id="dashboard" class="section w3-center">
   <h1>{{ mdate }} Report</h1>
   <div class="mgrid">
-    <div class="w3-card w3-round" style="background-color: {{ colors['Incomes'] }}; color:white;">
-      <h3 style="margin-bottom: -16px;">Incomes</h3>
-      <h2>{{ dash["month"]["Incomes"] }} €</h2>
+    {% for name in cards %}<div class="w3-card w3-round" style="background-color: {{ colors[name] }}; color:white;">
+      <h3 style="margin-bottom: -16px;">{{ name }}</h3>
+      <h2>{{ dash["month"][name] }} €</h2>
     </div>
-    <div class="w3-card w3-round" style="background-color: {{ colors['Expenses'] }}; color:white;">
-      <h3 style="margin-bottom: -16px;">Expenses</h3>
-      <h2>{{ dash["month"]["Expenses"] }} €</h2>
-    </div>
-    <div class="w3-card w3-round" style="background-color: {{ colors['EBIT'] }}; color:white;">
-      <h3 style="margin-bottom: -16px;">EBIT</h3>
-      <h2>{{ dash["month"]["EBIT"] }} €</h2>
-    </div>
-    <div class="w3-card w3-round" style="background-color: {{ colors['Liquid'] }}; color:white;">
-      <h3 style="margin-bottom: -16px;">Liquid</h3>
-      <h2>{{ dash["month"]["Liquid"] }} €</h2>
-    </div>
-    <div class="w3-card w3-round" style="background-color: {{ colors['Worth'] }}; color:white;">
-      <h3 style="margin-bottom: -16px;">Worth</h3>
-      <h2>{{ dash["month"]["Worth"] }} €</h2>
-    </div>
-    <div class="w3-card w3-round" style="background-color: {{ colors['Survival'] }}; color:white;">
-      <h3 style="margin-bottom: -16px;">Total Worth</h3>
-      <h2>{{ dash["month"]["Total_Worth"] }} €</h2>
-    </div>
+    {% endfor %}
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
@@ -316,13 +298,13 @@
     series: [
       {
         name: "Worth",
-        color: "{{ colors['Total_worth'] }}",
+        color: "{{ colors['Total_Worth'] }}",
         data: [{{ dash["month"]["Total_Worth"] }}, 0],
         stack: "actual",
       },
       {
         name: "Worth last year",
-        color: "{{ colors['Total_worth_dim'] }}",
+        color: "{{ colors['Total_Worth_dim'] }}",
         data: [{{ dash["month"]["Total_Worth_1y"] }}, 0],
         stack: "last_year",
       },
@@ -1119,7 +1101,7 @@
         {id: "Incomes", color: "{{ colors["Incomes"] }}" },
         {id: "Expenses", color: "{{ colors["Expenses"] }}" },
         {id: "Savings", color: "{{ colors["Savings"] }}" },
-        {id: "Investments", color: "{{ colors["Total_worth"] }}" },
+        {id: "Investments", color: "{{ colors["Total_Worth"] }}" },
         {% for i, x in colors["Expenses_categ"].items() %}
         {id: "{{ i }}", color: "{{ x }}" }, {% endfor %}
       ],
@@ -1140,7 +1122,7 @@
         {id: "Incomes", color: "{{ colors["Incomes"] }}" },
         {id: "Expenses", color: "{{ colors["Expenses"] }}" },
         {id: "Savings", color: "{{ colors["Savings"] }}" },
-        {id: "Investments", color: "{{ colors["Total_worth"] }}" },
+        {id: "Investments", color: "{{ colors["Total_Worth"] }}" },
         {% for i, x in colors["Expenses_categ"].items() %}
         {id: "{{ i }}", color: "{{ x }}" }, {% endfor %}
       ],
