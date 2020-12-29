@@ -37,15 +37,6 @@
     <div id="EVO_evolution_month" class="plot" style="height: 450px"></div>
   </div>
 </div>
-
-<!-- PIE -->
-<div id="pies" class="section" style="display:none;">
-  <div class="w3-card w3-round w3-center w3-white elem">
-    <h3>Languages</h3>
-    <div id="PIE_lang" class="plot" style="height: 180px"></div>
-  </div>
-</div>
-
 {% endblock %}
 
 
@@ -175,19 +166,6 @@
         data: [{% for mdate, value in month_by_category[name + "_12m"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
-      }, {% endfor %}
-    ],
-  });
-
-  // PIES SECTION
-  Highcharts.chart('PIE_lang', {
-    ...plot_pie,
-    xAxis: {categories: ["All time"]},
-    series: [
-      {% for name in languages %}{
-        name: "{{ name }}",
-        color: "{{ colors[name] }}",
-        data: [{{ dashboard[name] }}],
       }, {% endfor %}
     ],
   });

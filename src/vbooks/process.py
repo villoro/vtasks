@@ -104,7 +104,6 @@ def vbooks():
     data["sections"] = {
         "evolution": "fa-chart-line",
         # "comparison": "fa-poll",
-        "pies": "fa-chart-pie",
     }
 
     # Create report
