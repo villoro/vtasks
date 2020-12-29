@@ -4,6 +4,7 @@
   {{ title }}
 {% endblock %}
 
+{% set languages = ["Català", "Español", "English", "Italiano"] %}
 {% set cards = ["Total", "Català", "Español", "English", "Italiano", "Years"] %}
 {% block body %}
 <!-- DASH -->
@@ -22,6 +23,10 @@
 <div id="evolution" class="section" style="display:none;">
   <div class="w3-card w3-round w3-center w3-white elem">
     <div id="EVO_evolution_year" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_evolution_month" class="plot" style="height: 450px"></div>
   </div>
 </div>
 
@@ -75,6 +80,7 @@
 
   // EVOLUTION SECTION
   Highcharts.chart('EVO_evolution_year', {
+    ...plot_datetime,
     ...plot_stacked,
     title: {text: 'Year evolution'},
     series: [
@@ -90,6 +96,42 @@
         color: "{{ colors[name] }}",
         type: 'column',
         data: [{% for mdate, value in values.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('EVO_evolution_month', {
+    ...plot_datetime,
+    title: {text: 'Month evolution'},
+    series: [
+      {
+        name: "Total",
+        color: "{{ colors['Total'] }}",
+        visible: false,
+        data: [{% for mdate, value in month.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Total 12m",
+        color: "{{ colors['Total_dim'] }}",
+        data: [{% for mdate, value in month_by_category["Total_12m"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {% for name in languages %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        visible: false,
+        data: [{% for mdate, value in month_by_category[name].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {
+        name: "{{ name + '_12m' }}",
+        color: "{{ colors[name + '_dim'] }}",
+        data: [{% for mdate, value in month_by_category[name + "_12m"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       }, {% endfor %}

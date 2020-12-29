@@ -8,6 +8,7 @@ import utils as u
 
 from . import constants as c
 from expensor.functions import serie_to_dict
+from expensor.functions import time_average
 
 
 def get_books():
@@ -45,6 +46,13 @@ def get_month_data(dfi):
     }
     out["Total"] = serie_to_dict(dfi.set_index(c.COL_DATE).resample("MS")["Pages"].sum())
 
+    for name, data in {**out}.items():  # The ** is to avoid problems while mutating the dict
+
+        # 2 time_average to smooth the output
+        serie = time_average(pd.Series(data), center=True)
+        serie = time_average(serie, months=6, center=True)
+        out[f"{name}_12m"] = serie_to_dict(serie[6:])
+
     return out
 
 
@@ -71,7 +79,7 @@ def extract_data(export=False):
 def vbooks():
     """ Creates the report """
 
-    data = extract_data()
+    data = extract_data(True)
 
     # Add title
     data["title"] = "VBooks"
