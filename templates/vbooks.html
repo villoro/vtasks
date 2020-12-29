@@ -16,19 +16,21 @@
     </div>
     {% endfor %}
   </div>
+</div>
 
+<!-- EVO -->
+<div id="evolution" class="section" style="display:none;">
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="DASH_basic_traces" class="plot" style="height: 350px"></div>
+    <div id="EVO_evolution_year" class="plot" style="height: 450px"></div>
   </div>
+</div>
 
+<!-- PIE -->
+<div id="pies" class="section" style="display:none;">
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="DASH_liquid" class="plot" style="height: 180px"></div>
+    <h3>Languages</h3>
+    <div id="PIE_lang" class="plot" style="height: 180px"></div>
   </div>
-
-  <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="DASH_investments" class="plot" style="height: 250px"></div>
-  </div>
-
 </div>
 
 {% endblock %}
@@ -36,5 +38,83 @@
 
 {% block plots %}
 <script>
+
+  // PLOT SHARED CONFIGURATIONS
+  const plot_basic = {
+    credits: false,
+    yAxis: {
+      title: {text: null}
+    },
+    plotOptions: {
+      series: {
+        marker: {enabled: false},
+        stickyTracking: false
+      }
+    }
+  }
+  const plot_datetime = {
+    ...plot_basic,
+    xAxis: {type: 'datetime'},
+    chart: {zoomType: "x"},
+  }
+  const plot_stacked = {
+    ...plot_basic,
+    plotOptions: {
+      series: {
+        marker: {enabled: false},
+        stickyTracking: false,
+        stacking: 'normal',
+      }
+    }
+  }
+  const plot_stacked_no_title = {
+    ...plot_stacked,
+    title: {text: ""},
+    chart: {zoomType: "x", type: "bar"},
+  }
+
+  // EVOLUTION SECTION
+  Highcharts.chart('EVO_evolution_year', {
+    ...plot_stacked,
+    title: {text: 'Year evolution'},
+    series: [
+      {
+        name: "Total",
+        color: "{{ colors['Total'] }}",
+        data: [{% for mdate, value in year.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {% for name, values in year_by_category.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        type: 'column',
+        data: [{% for mdate, value in values.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+
+  // PIES SECTION
+  const plot_pie = {
+    ...plot_stacked_no_title,
+    tooltip: {
+      formatter: function () {
+        return "<b>" + this.series.name + ":</b> " + this.y + " (" + this.percentage.toFixed(2) + " %)";
+      }
+    },
+  }
+  Highcharts.chart('PIE_lang', {
+    ...plot_pie,
+    xAxis: {categories: ["All time"]},
+    series: [
+      {% for name in year_by_category %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{{ dashboard[name] }}],
+      }, {% endfor %}
+    ],
+  });
 </script>
 {% endblock %}
