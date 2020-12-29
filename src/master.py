@@ -56,7 +56,7 @@ def download_log(vdp):
         # Add a new line between runs
         data += "\n"
 
-        with open(u.get_path(u.LOG_PATH), "w") as file:
+        with open(u.get_path(u.LOG_PATH), "w", encoding="utf8") as file:
             file.write(data)
 
     else:

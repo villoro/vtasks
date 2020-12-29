@@ -16,9 +16,7 @@
   <!-- Highcharts js -->
   <script src="https://code.highcharts.com/highcharts.src.js"></script>
   <script src="https://code.highcharts.com/highcharts-more.js"></script>
-  <script src="https://code.highcharts.com/modules/sankey.js"></script>
-  <script src="https://code.highcharts.com/modules/exporting.js"></script>
-  <script src="https://code.highcharts.com/modules/export-data.js"></script>
+  {% block extra_scripts%}{% endblock %}
 
   <style>
     /* Set the width of the sidebar to 52px */
@@ -79,27 +77,10 @@
       <a onclick="openSite(event, 'dashboard')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item active">
         <i class="fas fa-table"></i>
       </a>
-      <a onclick="openSite(event, 'evolution')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
-        <i class="fas fa-chart-line"></i>
+      {% for name, icon in sections.items() %}<a onclick="openSite(event, '{{ name }}')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+        <i class="fas {{ icon }}"></i>
       </a>
-      <a onclick="openSite(event, 'comparison')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
-        <i class="fas fa-poll"></i>
-      </a>
-      <a onclick="openSite(event, 'pies')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
-        <i class="fas fa-chart-pie"></i>
-      </a>
-      <a onclick="openSite(event, 'liquid')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
-        <i class="fas fa-tint"></i>
-      </a>
-      <a onclick="openSite(event, 'investments')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
-        <i class="fas fa-wallet"></i>
-      </a>
-      <a onclick="openSite(event, 'fire')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
-        <i class="fas fa-fire-alt"></i>
-      </a>
-      <a onclick="openSite(event, 'sankey')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
-        <i class="fas fa-stream"></i>
-      </a>
+      {% endfor %}
     </div>
 
     <!-- Navbar on small screens (Hidden on medium and large screens) -->
@@ -108,27 +89,10 @@
         <a onclick="openSite(event, 'dashboard')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item active">
           <i class="fas fa-table"></i>
         </a>
-        <a onclick="openSite(event, 'evolution')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
-          <i class="fas fa-chart-line"></i>
+        {% for name, icon in sections.items() %}<a onclick="openSite(event, '{{ name }}')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
+          <i class="fas {{ icon }}"></i>
         </a>
-        <a onclick="openSite(event, 'comparison')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
-          <i class="fas fa-poll"></i>
-        </a>
-        <a onclick="openSite(event, 'pies')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
-          <i class="fas fa-chart-pie"></i>
-        </a>
-        <a onclick="openSite(event, 'liquid')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
-          <i class="fas fa-tint"></i>
-        </a>
-        <a onclick="openSite(event, 'investments')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
-          <i class="fas fa-wallet"></i>
-        </a>
-        <a onclick="openSite(event, 'fire')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
-          <i class="fas fa-fire-alt"></i>
-        </a>
-        <a onclick="openSite(event, 'sankey')" class="section_button w3-button w3-hover-blue w3-hover-text-orange w3-sidebar-item">
-          <i class="fas fa-stream"></i>
-        </a>
+        {% endfor %}
       </div>
     </div>
 
