@@ -75,6 +75,11 @@ def vbooks():
 
     # Add title
     data["title"] = "VBooks"
+    data["sections"] = {
+        "evolution": "fa-chart-line",
+        "comparison": "fa-poll",
+        "pies": "fa-chart-pie",
+    }
 
     # Create report
     report = u.render_jinja_template("vbooks.html", data)
