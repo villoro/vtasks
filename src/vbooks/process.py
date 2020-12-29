@@ -2,6 +2,7 @@ import jinja2
 import oyaml as yaml
 import pandas as pd
 
+from prefect import task
 from vpalette import get_colors
 
 import utils as u
@@ -9,6 +10,7 @@ import utils as u
 from . import constants as c
 from expensor.functions import serie_to_dict
 from expensor.functions import time_average
+from utils import timeit
 
 
 def get_books():
@@ -94,6 +96,8 @@ def extract_data(export=False):
     return out
 
 
+@task
+@timeit
 def vbooks():
     """ Creates the report """
 
