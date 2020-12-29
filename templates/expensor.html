@@ -133,11 +133,6 @@
     <div id="INV_worth_by_type" class="plot" style="height: 450px"></div>
     <div id="INV_worth_by_type_percent" class="plot" style="height: 450px"></div>
   </div>
-
-  <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="INV_worth_evolution" class="plot" style="height: 450px"></div>
-    <div id="INV_invest_evolution" class="plot" style="height: 450px"></div>
-  </div>
 </div>
 
 <!-- FIRE -->
@@ -752,64 +747,6 @@
         name: "Total Worth",
         color: "{{ colors['Worth'] }}",
         data: [{% for mdate, value in month["Total_Worth"].items() %}
-          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
-        ]
-      },
-    ],
-  });
-  Highcharts.chart('INV_worth_evolution', {
-    ...plot_datetime_stacked,
-    title: {text: 'Worth evolution'},
-    series: [
-      {
-        name: "Total",
-        color: "#000000",
-        data: [{% for mdate, value in month["Total_Worth"].items() %}
-          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
-        ]
-      },
-      {
-        name: "Worth",
-        color: "{{ colors['Worth'] }}",
-        type: 'area',
-        data: [{% for mdate, value in month['Worth'].items() %}
-          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
-        ]
-      },
-      {
-        name: "Liquid",
-        color: "{{ colors['Liquid'] }}",
-        type: 'area',
-        data: [{% for mdate, value in month["Liquid"].items() %}
-          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
-        ]
-      },
-    ],
-  });
-  Highcharts.chart('INV_invest_evolution', {
-    ...plot_datetime_stacked,
-    title: {text: 'Invested evolution'},
-    series: [
-      {
-        name: "Total",
-        color: "#000000",
-        data: [{% for mdate, value in month["Total_Invest"].items() %}
-          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
-        ]
-      },
-      {
-        name: "Invested",
-        type: 'area',
-        color: "{{ colors['Invest'] }}",
-        data: [{% for mdate, value in month['Invest'].items() %}
-          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
-        ]
-      },
-       {
-        name: "Liquid",
-        color: "{{ colors['Liquid'] }}",
-        type: 'area',
-        data: [{% for mdate, value in month["Liquid"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
