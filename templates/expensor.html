@@ -44,7 +44,7 @@
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="EVO_evolution_month_12m" class="plot" style="height: 450px"></div>
+    <div id="EVO_evolution_month_trend" class="plot" style="height: 450px"></div>
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
@@ -245,8 +245,8 @@
       {
         name: "Incomes 12m",
         color: "{{ colors['Incomes_dim'] }}",
-        data: [{{ dash["month"]["Incomes_12m"] }}, 0, 0],
-        stack: "last_12m",
+        data: [{{ dash["month"]["Incomes_trend"] }}, 0, 0],
+        stack: "last_trend",
       },
       {
         name: "Expenses",
@@ -257,8 +257,8 @@
       {
         name: "Expenses 12m",
         color: "{{ colors['Expenses_dim'] }}",
-        data: [0, {{ dash["month"]["Expenses_12m"] }}, 0],
-        stack: "last_12m",
+        data: [0, {{ dash["month"]["Expenses_trend"] }}, 0],
+        stack: "last_trend",
       },
       {
         name: "EBIT",
@@ -269,8 +269,8 @@
       {
         name: "EBIT 12m",
         color: "{{ colors['EBIT_dim'] }}",
-        data: [0, 0, {{ dash["month"]["EBIT_12m"] }}],
-        stack: "last_12m",
+        data: [0, 0, {{ dash["month"]["EBIT_trend"] }}],
+        stack: "last_trend",
       },
     ],
   });
@@ -287,8 +287,8 @@
       {
         name: "Liquid 12m",
         color: "{{ colors['Liquid_dim'] }}",
-        data: [{{ dash["month"]["Liquid_12m"] }}],
-        stack: "last_12m",
+        data: [{{ dash["month"]["Liquid_trend"] }}],
+        stack: "last_trend",
       },
     ],
   });
@@ -338,7 +338,7 @@
       }, {% endfor %}
     ],
   });
-  Highcharts.chart('EVO_evolution_month_12m', {
+  Highcharts.chart('EVO_evolution_month_trend', {
     ...plot_datetime,
     title: {text: 'Month evolution (12 months MA)'},
     series: [
@@ -346,7 +346,7 @@
       {
         name: "{{ name }}",
         color: "{{ colors[name] }}",
-        data: [{% for mdate, value in month[name + "_12m"].items() %}
+        data: [{% for mdate, value in month[name + "_trend"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       }, {% endfor %}
@@ -647,9 +647,9 @@
     title: {text: 'Liquid vs Expenses'},
     series: [
       {
-        name: "Expenses 12m MA",
+        name: "Expenses trend",
         color: "{{ colors['Expenses'] }}",
-        data: [{% for mdate, value in month["Expenses_12m"].items() %}
+        data: [{% for mdate, value in month["Expenses_trend"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
@@ -663,23 +663,23 @@
         ]
       },
       {
-        name: "Liquid 6m EWM",
+        name: "Liquid trend",
         color: "{{ colors['Liquid'] }}",
-        data: [{% for mdate, value in month["Liquid_6m_e"].items() %}
+        data: [{% for mdate, value in month["Liquid_trend"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
       {
         name: "Minimum liquid recomended",
         color: "{{ colors['Min_value'] }}",
-        data: [{% for mdate, value in month['Expenses_12m'].items() %}
+        data: [{% for mdate, value in month['Expenses_trend'].items() %}
           [Date.parse("{{ mdate }}"), {{ 3*value | int }}], {% endfor %}
         ]
       },
       {
         name: "Liquid recomended",
         color: "{{ colors['Recomended_value'] }}",
-        data: [{% for mdate, value in month['Expenses_12m'].items() %}
+        data: [{% for mdate, value in month['Expenses_trend'].items() %}
           [Date.parse("{{ mdate }}"), {{ 6*value | int }}], {% endfor %}
         ]
       }
@@ -726,9 +726,9 @@
         ]
       },
       {
-        name: "Months 6m EWM / 12m MA",
+        name: "Months trend",
         color: "{{ colors['Liquid'] }}",
-        data: [{% for mdate, value in ratios['Liquid_6m_e/Expenses_12m'].items() %}
+        data: [{% for mdate, value in ratios['Liquid_trend/Expenses_trend'].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       }
@@ -881,7 +881,7 @@
        {
         name: "12 months MA",
         color: "{{ colors['Savings'] }}",
-        data: [{% for mdate, value in month["Savings_12m"].items() %}
+        data: [{% for mdate, value in month["Savings_trend"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
@@ -933,9 +933,9 @@
         ]
       },
       {
-        name: "Expenses 6m EWM",
+        name: "Expenses trend",
         color: "{{ colors['Expenses'] }}",
-        data: [{% for mdate, value in month['Expenses_6m_e'].items() %}
+        data: [{% for mdate, value in month['Expenses_trend'].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
@@ -969,9 +969,9 @@
         ]
       },
       {
-        name: "Years 6m EWM",
+        name: "Years trend",
         color: "{{ colors['Survival'] }}",
-        data: [{% for mdate, value in ratios['Total_Worth_6m_e/Expenses_6m_e'].items() %}
+        data: [{% for mdate, value in ratios['Total_Worth_trend/Expenses_trend'].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },

@@ -14,7 +14,7 @@ from .functions import add_missing_months
 from .functions import filter_by_date
 from .functions import serie_to_dict
 from .functions import series_to_dicts
-from .functions import time_average
+from .functions import smooth_serie
 from utils import get_vdropbox
 from utils import log
 
@@ -51,8 +51,7 @@ def get_basic_traces(dfs, col_period, mdate):
     # Append time averaged data
     if col_period == c.COL_MONTH_DATE:
         for name, serie in series.items():
-            out[f"{name}_12m"] = serie_to_dict(time_average(serie, months=12))
-            out[f"{name}_6m_e"] = serie_to_dict(time_average(serie, months=6, exponential=True))
+            out[f"{name}_trend"] = serie_to_dict(smooth_serie(serie))
 
     # Get by groups
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
@@ -88,8 +87,7 @@ def get_investment_or_liquid(dfs, yml, entity):
 
     out = {
         entity: serie_to_dict(dfg["Total"]),
-        f"{entity}_12m": serie_to_dict(time_average(dfg, months=12)["Total"]),
-        f"{entity}_6m_e": serie_to_dict(time_average(dfg, months=6, exponential=True)["Total"]),
+        f"{entity}_trend": serie_to_dict(smooth_serie(dfg)["Total"]),
     }
 
     aux = OrderedDict()
@@ -167,7 +165,7 @@ def get_comparison_traces(dfs):
     # Expenses and incomes
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
         df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
-        out[name] = get_traces(time_average(df))
+        out[name] = get_traces(smooth_serie(df))
 
     # Prepare transactions for EBIT
     dfg = dfs[c.DF_TRANS].copy()
@@ -176,7 +174,7 @@ def get_comparison_traces(dfs):
 
     # Add EBIT
     df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
-    out[c.EBIT] = get_traces(time_average(df))
+    out[c.EBIT] = get_traces(smooth_serie(df))
 
     # Add liquid
     dfg = dfs[c.DF_LIQUID].reset_index().copy()
@@ -184,7 +182,7 @@ def get_comparison_traces(dfs):
     dfg[c.COL_YEAR] = pd.to_datetime(dfg[c.COL_DATE]).dt.year
     dfg[c.COL_AMOUNT] = dfg["Total"]
     df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
-    out[c.LIQUID] = get_traces(time_average(df, months=3, exponential=True))
+    out[c.LIQUID] = get_traces(smooth_serie(df))
 
     log.debug("Comparison traces added")
 
@@ -237,7 +235,7 @@ def get_dashboard(data, mdate):
     """
 
     traces = [c.EXPENSES, c.INCOMES, c.EBIT, c.LIQUID]
-    traces += [x + "_12m" for x in traces] + ["Worth", "Invest"]
+    traces += [x + "_trend" for x in traces] + ["Worth", "Invest"]
 
     out = {}
 
@@ -308,9 +306,8 @@ def get_ratios(data):
         c.LIQUID,
         "Worth",
         "Invest",
-        f"{c.EXPENSES}_12m",
-        f"{c.EXPENSES}_6m_e",
-        f"{c.LIQUID}_6m_e",
+        f"{c.EXPENSES}_trend",
+        f"{c.LIQUID}_trend",
     ]
     for name in names:
         aux[name] = pd.Series(data["month"][name])
@@ -318,10 +315,11 @@ def get_ratios(data):
 
     out = {
         f"{c.LIQUID}/{c.EXPENSES}": aux[c.LIQUID] / aux[c.EXPENSES],
-        f"{c.LIQUID}_6m_e/{c.EXPENSES}_12m": aux[f"{c.LIQUID}_6m_e"] / aux[f"{c.EXPENSES}_12m"],
+        f"{c.LIQUID}_trend/{c.EXPENSES}_trend": aux[f"{c.LIQUID}_trend"]
+        / aux[f"{c.EXPENSES}_trend"],
         f"Total_Worth/{c.EXPENSES}": (aux["Worth"] + aux[c.LIQUID]) / (12 * aux[c.EXPENSES]),
-        f"Total_Worth_6m_e/{c.EXPENSES}_6m_e": (aux["Worth"] + aux[f"{c.LIQUID}_6m_e"])
-        / (12 * aux[f"{c.EXPENSES}_12m"]),
+        f"Total_Worth_trend/{c.EXPENSES}_trend": (aux["Worth"] + aux[f"{c.LIQUID}_trend"])
+        / (12 * aux[f"{c.EXPENSES}_trend"]),
         "Total_worth_performance": 100 * (aux["Worth"] + aux[c.LIQUID]) / aux[c.INCOMES].cumsum(),
         "Total_invest_performance": 100 * (aux["Invest"] + aux[c.LIQUID]) / aux[c.INCOMES].cumsum(),
     }
