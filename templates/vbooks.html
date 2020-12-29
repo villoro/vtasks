@@ -148,7 +148,7 @@
       {
         name: "Total 12m",
         color: "{{ colors['Total_dim'] }}",
-        data: [{% for mdate, value in month_by_category["Total_12m"].items() %}
+        data: [{% for mdate, value in month_by_category["Total_trend"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
@@ -161,9 +161,9 @@
         ]
       },
       {
-        name: "{{ name + '_12m' }}",
+        name: "{{ name + '_trend' }}",
         color: "{{ colors[name + '_dim'] }}",
-        data: [{% for mdate, value in month_by_category[name + "_12m"].items() %}
+        data: [{% for mdate, value in month_by_category[name + "_trend"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       }, {% endfor %}
