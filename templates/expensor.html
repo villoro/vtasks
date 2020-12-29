@@ -44,10 +44,6 @@
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="EVO_evolution_month_trend" class="plot" style="height: 450px"></div>
-  </div>
-
-  <div class="w3-card w3-round w3-center w3-white elem">
     <div id="EVO_evolution_year" class="plot" style="height: 450px"></div>
   </div>
 
@@ -329,20 +325,14 @@
     series: [
       {% for name in ["EBIT", "Incomes", "Expenses"] %}{
         name: "{{ name }}",
-        color: "{{ colors[name] }}",
+        color: "{{ colors[name + '_dim'] }}",
+        visible: false,
         data: [{% for mdate, value in month[name].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
-      }, {% endfor %}
-    ],
-  });
-  Highcharts.chart('EVO_evolution_month_trend', {
-    ...plot_datetime,
-    title: {text: 'Month evolution (trend)'},
-    series: [
-      {% for name in ["EBIT", "Incomes", "Expenses"] %}
+      },
       {
-        name: "{{ name }}",
+        name: "{{ name }} trend",
         color: "{{ colors[name] }}",
         data: [{% for mdate, value in month[name + "_trend"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
