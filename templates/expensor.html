@@ -177,8 +177,8 @@
 {% block plots %}
 <script>
 
-  // PLOT SHARED CONFIGURATIONS
-  const plot_basic = {
+  // DEFAULT OPTIONS
+  Highcharts.setOptions({
     credits: false,
     yAxis: {
       title: {text: null}
@@ -186,17 +186,18 @@
     plotOptions: {
       series: {
         marker: {enabled: false},
-        stickyTracking: false
+        stickyTracking: false,
+        animation: false
       }
     }
-  }
+  });
+
+  // PLOT SHARED CONFIGURATIONS
   const plot_datetime = {
-    ...plot_basic,
     xAxis: {type: 'datetime'},
     chart: {zoomType: "x"},
   }
   const plot_stacked = {
-    ...plot_basic,
     plotOptions: {
       series: {
         marker: {enabled: false},
@@ -465,7 +466,6 @@
 
   // COMPARISON SECTION
   const plot_comparison = {
-    ...plot_basic,
     xAxis: {
       title: {text: "Months"},
       type: 'category'
