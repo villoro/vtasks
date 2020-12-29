@@ -243,7 +243,7 @@
         stack: "last",
       },
       {
-        name: "Incomes 12m",
+        name: "Incomes trend",
         color: "{{ colors['Incomes_dim'] }}",
         data: [{{ dash["month"]["Incomes_trend"] }}, 0, 0],
         stack: "last_trend",
@@ -255,7 +255,7 @@
         stack: "last",
       },
       {
-        name: "Expenses 12m",
+        name: "Expenses trend",
         color: "{{ colors['Expenses_dim'] }}",
         data: [0, {{ dash["month"]["Expenses_trend"] }}, 0],
         stack: "last_trend",
@@ -267,7 +267,7 @@
         stack: "last",
       },
       {
-        name: "EBIT 12m",
+        name: "EBIT trend",
         color: "{{ colors['EBIT_dim'] }}",
         data: [0, 0, {{ dash["month"]["EBIT_trend"] }}],
         stack: "last_trend",
@@ -285,7 +285,7 @@
         stack: "last",
       },
       {
-        name: "Liquid 12m",
+        name: "Liquid trend",
         color: "{{ colors['Liquid_dim'] }}",
         data: [{{ dash["month"]["Liquid_trend"] }}],
         stack: "last_trend",
@@ -340,7 +340,7 @@
   });
   Highcharts.chart('EVO_evolution_month_trend', {
     ...plot_datetime,
-    title: {text: 'Month evolution (12 months MA)'},
+    title: {text: 'Month evolution (trend)'},
     series: [
       {% for name in ["EBIT", "Incomes", "Expenses"] %}
       {
@@ -486,7 +486,7 @@
   }
   Highcharts.chart('COMP_incomes', {
     ...plot_comparison,
-    title: {text: 'Incomes comparison (12 months MA)'},
+    title: {text: 'Incomes comparison (trend)'},
     series: [
       {% for y, data in comp["Incomes"].items() %}{
         name: "{{ y }}",
@@ -500,7 +500,7 @@
   });
   Highcharts.chart('COMP_expenses', {
     ...plot_comparison,
-    title: {text: 'Expenses comparison (12 months MA)'},
+    title: {text: 'Expenses comparison (trend)'},
     series: [
       {% for y, data in comp["Expenses"].items() %}{
         name: "{{ y }}",
@@ -514,7 +514,7 @@
   });
   Highcharts.chart('COMP_EBIT', {
     ...plot_comparison,
-    title: {text: 'EBIT comparison (12 months MA)'},
+    title: {text: 'EBIT comparison (trend)'},
     series: [
       {% for y, data in comp["EBIT"].items() %}{
         name: "{{ y }}",
@@ -879,7 +879,7 @@
         ]
       },
        {
-        name: "12 months MA",
+        name: "Savings ratio trend",
         color: "{{ colors['Savings'] }}",
         data: [{% for mdate, value in month["Savings_trend"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
