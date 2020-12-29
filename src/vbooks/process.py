@@ -33,7 +33,12 @@ def get_year_data(dfi):
     df = dfi.pivot_table(values="Pages", index="Year", columns="Language", aggfunc="sum").fillna(0)
 
     out = {x: serie_to_dict(df[x]) for x in df.columns}
-    out["Total"] = serie_to_dict(df.sum(axis=1))
+
+    # Add total and make sure years without data are included with a 0
+    df = dfi.set_index(c.COL_DATE).resample("YS")[["Pages"]].sum().reset_index()
+    df[c.COL_DATE] = df[c.COL_DATE].dt.year
+
+    out["Total"] = serie_to_dict(df.set_index(c.COL_DATE)["Pages"])
 
     return out
 
