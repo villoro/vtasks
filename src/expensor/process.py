@@ -16,7 +16,7 @@ from utils import read_df_gdrive
 from utils import timeit
 
 MIN_DATE = "2015-12-01"
-NUM_OF_JOBS_DEFAULT = 10  # If 1 or lower no multiprocessing
+NUM_OF_JOBS_DEFAULT = 1  # If 1 or lower no multiprocessing
 
 
 def get_data():
