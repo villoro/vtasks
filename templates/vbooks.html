@@ -17,6 +17,14 @@
     </div>
     {% endfor %}
   </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="DASH_evolution" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="DASH_languages" class="plot" style="height: 250px"></div>
+  </div>
 </div>
 
 <!-- EVO -->
@@ -77,6 +85,39 @@
     title: {text: ""},
     chart: {zoomType: "x", type: "bar"},
   }
+  const plot_pie = {
+    ...plot_stacked_no_title,
+    tooltip: {
+      formatter: function () {
+        return "<b>" + this.series.name + ":</b> " + this.y + " (" + this.percentage.toFixed(2) + " %)";
+      }
+    },
+  }
+
+  // DASHBOARD SECTION
+  Highcharts.chart('DASH_evolution', {
+    ...plot_datetime,
+    title: {text: 'Year evolution'},
+    series: [
+      {% for name, values in year_by_category.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{% for mdate, value in values.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('DASH_languages', {
+    ...plot_pie,
+    series: [
+      {% for name in languages %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{{ dashboard[name] }}],
+      }, {% endfor %}
+    ],
+  });
 
   // EVOLUTION SECTION
   Highcharts.chart('EVO_evolution_year', {
@@ -139,19 +180,11 @@
   });
 
   // PIES SECTION
-  const plot_pie = {
-    ...plot_stacked_no_title,
-    tooltip: {
-      formatter: function () {
-        return "<b>" + this.series.name + ":</b> " + this.y + " (" + this.percentage.toFixed(2) + " %)";
-      }
-    },
-  }
   Highcharts.chart('PIE_lang', {
     ...plot_pie,
     xAxis: {categories: ["All time"]},
     series: [
-      {% for name in year_by_category %}{
+      {% for name in languages %}{
         name: "{{ name }}",
         color: "{{ colors[name] }}",
         data: [{{ dashboard[name] }}],

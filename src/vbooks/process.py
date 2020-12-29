@@ -14,7 +14,6 @@ from expensor.functions import time_average
 def get_books():
     df = u.read_df_gdrive(c.SPREADSHEET, c.SHEET_BOOKS).reset_index()
     df[c.COL_DATE] = pd.to_datetime(df[c.COL_DATE])
-    df["Year"] = df[c.COL_DATE].dt.year
 
     return df
 
@@ -23,22 +22,36 @@ def get_dashboard(dfi):
 
     out = serie_to_dict(dfi.groupby("Language")["Pages"].sum())
     out["Total"] = int(dfi["Pages"].sum())
-    out["Years"] = int(dfi["Year"].nunique())
+    out["Years"] = int(dfi[c.COL_DATE].dt.year.nunique())
 
     return out
 
 
+def to_year_start(dfi):
+    """ Get yearly data so that there are no missing years """
+
+    df = dfi.copy()
+
+    if c.COL_DATE in df.columns:
+        df = df.set_index(c.COL_DATE)
+
+    # Transform to year start
+    df = df.resample("YS").sum().reset_index()
+
+    # Cast date to year
+    df[c.COL_DATE] = df[c.COL_DATE].dt.year
+
+    return df.set_index(c.COL_DATE)
+
+
 def get_year_data(dfi):
 
-    df = dfi.pivot_table(values="Pages", index="Year", columns="Language", aggfunc="sum").fillna(0)
+    df = dfi.pivot_table(values="Pages", index=c.COL_DATE, columns="Language", aggfunc="sum")
+    df = to_year_start(df)
 
     out = {x: serie_to_dict(df[x]) for x in df.columns}
 
-    # Add total and make sure years without data are included with a 0
-    df = dfi.set_index(c.COL_DATE).resample("YS")[["Pages"]].sum().reset_index()
-    df[c.COL_DATE] = df[c.COL_DATE].dt.year
-
-    out["Total"] = serie_to_dict(df.set_index(c.COL_DATE)["Pages"])
+    out["Total"] = serie_to_dict(to_year_start(dfi)["Pages"])
 
     return out
 
@@ -84,13 +97,13 @@ def extract_data(export=False):
 def vbooks():
     """ Creates the report """
 
-    data = extract_data(True)
+    data = extract_data()
 
     # Add title
     data["title"] = "VBooks"
     data["sections"] = {
         "evolution": "fa-chart-line",
-        "comparison": "fa-poll",
+        # "comparison": "fa-poll",
         "pies": "fa-chart-pie",
     }
 
