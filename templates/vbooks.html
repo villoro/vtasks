@@ -43,8 +43,8 @@
 {% block plots %}
 <script>
 
-  // PLOT SHARED CONFIGURATIONS
-  const plot_basic = {
+  // DEFAULT OPTIONS
+  Highcharts.setOptions({
     credits: false,
     yAxis: {
       title: {text: null}
@@ -55,14 +55,14 @@
         stickyTracking: false
       }
     }
-  }
+  });
+
+  // PLOT SHARED CONFIGURATIONS
   const plot_datetime = {
-    ...plot_basic,
     xAxis: {type: 'datetime'},
     chart: {zoomType: "x"},
   }
   const plot_stacked = {
-    ...plot_basic,
     plotOptions: {
       series: {
         marker: {enabled: false},
@@ -70,6 +70,9 @@
         stacking: 'normal',
       }
     }
+  }
+  const plot_datetime_stacked = {
+    ...plot_datetime, ...plot_stacked
   }
   const plot_stacked_no_title = {
     ...plot_stacked,
@@ -112,8 +115,7 @@
 
   // EVOLUTION SECTION
   Highcharts.chart('EVO_evolution_year', {
-    ...plot_datetime,
-    ...plot_stacked,
+    ...plot_datetime_stacked,
     title: {text: 'Year evolution'},
     series: [
       {
