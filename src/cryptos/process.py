@@ -1,29 +1,39 @@
 import cryptocompare
+import pandas as pd
 
-import utils as u
+from datetime import date
+
+import gspreadsheets as gsh
+
+from utils import log
+
+SPREADSHEET = "crypto_data"
+SHEET = "prices"
 
 
 def get_crypto_prices(cryptos):
     """ Get latest prices of a list of cryptos """
 
+    log.info("Retriving crypto prices")
+
     # Query cryptos
     data = cryptocompare.get_price([*cryptos])
 
-    # Return a dict with prices
+    # Create a dict with prices
     return {i: x["EUR"] for i, x in data.items()}
 
 
-def get_coordinates(df):
-    """ Get gdrive coordinates as a pandas dataframe """
+def update_prices(mdate):
+    """ Update latest cryptos prices """
 
-    df_index = df.copy()
+    mfilter = mdate.strftime("%Y-%m-01")
 
-    # Get column letter (Chr(65) = 'A')
-    index_to_letter = lambda x: chr(65 + x + 1)
+    df = gsh.read_df_gdrive(SPREADSHEET, SHEET, "all")
 
-    numbers = pd.Series([str(x + 2) for x in range(df_index.shape[0])], index=df_index.index)
+    # Update prices
+    values = get_crypto_prices(df.columns)
+    new_prices = pd.DataFrame(values, index=[mfilter])
+    df.update(new_prices)
 
-    for i, col in enumerate(df_index.columns):
-        df_index[col] = index_to_letter(i) + numbers
-
-    return df_index
+    # Update gspreadsheet
+    gsh.update_gspread(SPREADSHEET, SHEET, df, mfilter)

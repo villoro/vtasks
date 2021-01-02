@@ -88,3 +88,55 @@ def read_df_gdrive(spreadsheet_name, sheet_name, cols_to_numeric=[]):
         df[col] = pd.to_numeric(df[col])
 
     return df
+
+
+def get_coordinates(df):
+    """ Get gdrive coordinates as a pandas dataframe """
+
+    df_index = df.copy()
+
+    # Get column letter (Chr(65) = 'A')
+    index_to_letter = lambda x: chr(65 + x + 1)
+
+    n_rows = df_index.shape[0]
+    numbers = pd.Series([str(x + 2) for x in range(n_rows)], index=df_index.index)
+
+    for i, col in enumerate(df_index.columns):
+        df_index[col] = index_to_letter(i) + numbers
+
+    return df_index
+
+
+def update_gspread(spreadsheet_name, sheet_name, df, mfilter):
+    """
+        Update a google spreadsheet based on a pandas dataframe row
+
+        Args:
+            spreadsheet_name:   name of the document
+            sheet_name:         name of the sheet inside the document
+            df:                 pandas dataframe
+            mfilter:            rows that will be updated      
+    """
+
+    # Get worksheet
+    wks = get_gdrive_sheet(spreadsheet_name, sheet_name)
+
+    # Extract range from coordinates and filter
+    coordinates = get_coordinates(df).loc[mfilter]
+
+    if isinstance(coordinates, pd.Series):
+        mrange = f"{coordinates.iloc[0]}:{coordinates.iloc[-1]}"
+    else:
+        mrange = f"{coordinates.iloc[0, 0]}:{coordinates.iloc[-1, -1]}"
+
+    # Filter data to be updated
+    values = df.loc[mfilter].values.tolist()
+
+    # Make sure that values is a list of lists
+    if not isinstance(values[0], list):
+        values = [values]
+
+    # Update values in gspreadsheet
+    wks.update(mrange, values)
+
+    log.info(f"{spreadsheet_name}/{sheet_name}/{mrange} updated")
