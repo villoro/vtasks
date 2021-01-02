@@ -3,6 +3,7 @@ repos:
   rev: v2.3.0
   hooks:
   - id: check-yaml
+  - id: no-commit-to-branch
 - repo: https://github.com/psf/black
   rev: 19.10b0
   hooks:
