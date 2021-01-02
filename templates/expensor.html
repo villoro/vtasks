@@ -997,7 +997,6 @@
     },
     series: [
       {
-        marker: {enabled: false},
         lineWidth: 0.5,
         dashStyle: 'dot',
         color: "#000000",
@@ -1006,6 +1005,7 @@
         ]
       },
       {
+        marker: {enabled: true},
         type: "bubble",
         color: "{{ colors['Liquid'] }}",
         data: [{% for x in bubbles %}
