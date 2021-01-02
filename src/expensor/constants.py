@@ -21,7 +21,7 @@ COL_TYPE = "Type"
 
 EXPENSES = "Expenses"
 INCOMES = "Incomes"
-EBIT = "EBIT"
+RESULT = "Result"
 LIQUID = "Liquid"
 INVEST = "Investment"
 SAVINGS = "Savings"
@@ -51,7 +51,7 @@ DEFAULT_COLORS = {
     EXPENSES: ("red", 500), f"{EXPENSES}_dim": ("red", 100),
     INCOMES: ("green", 500), f"{INCOMES}_dim": ("green", 100),
     "Incomes_passive": ("lime", 500),
-    EBIT: ("amber", 500), f"{EBIT}_dim": ("amber", 100),
+    RESULT: ("amber", 500), f"{RESULT}_dim": ("amber", 100),
     LIQUID: ("blue", 500), f"{LIQUID}_dim": ("blue", 100),
     "Min_value": ("grey", 700), "Recomended_value": ("grey", 400),
     "Max_value": ("orange", 500),

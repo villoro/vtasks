@@ -10,7 +10,7 @@
   {{ title }}
 {% endblock %}
 
-{% set cards = ["Incomes", "Expenses", "EBIT", "Liquid", "Worth", "Total_Worth"] %}
+{% set cards = ["Incomes", "Expenses", "Result", "Liquid", "Worth", "Total_Worth"] %}
 {% block body %}
 <!-- DASH -->
 <div id="dashboard" class="section w3-center">
@@ -79,7 +79,7 @@
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="COMP_EBIT" class="plot" style="height: 400px"></div>
+    <div id="COMP_result" class="plot" style="height: 400px"></div>
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
@@ -229,7 +229,7 @@
   // DASHBOARD SECTION
   Highcharts.chart('DASH_basic_traces', {
     ...plot_stacked_no_title,
-    xAxis: {categories: ["Incomes", "Expenses", "EBIT"]},
+    xAxis: {categories: ["Incomes", "Expenses", "Result"]},
     series: [
       {
         name: "Incomes",
@@ -256,15 +256,15 @@
         stack: "last_trend",
       },
       {
-        name: "EBIT",
-        color: "{{ colors['EBIT'] }}",
-        data: [0, 0, {{ dash["month"]["EBIT"] }}],
+        name: "Result",
+        color: "{{ colors['Result'] }}",
+        data: [0, 0, {{ dash["month"]["Result"] }}],
         stack: "last",
       },
       {
-        name: "EBIT trend",
-        color: "{{ colors['EBIT_dim'] }}",
-        data: [0, 0, {{ dash["month"]["EBIT_trend"] }}],
+        name: "Result trend",
+        color: "{{ colors['Result_dim'] }}",
+        data: [0, 0, {{ dash["month"]["Result_trend"] }}],
         stack: "last_trend",
       },
     ],
@@ -324,7 +324,7 @@
     title: {text: 'Month evolution'},
     xAxis: {type: 'datetime'},
     series: [
-      {% for name in ["EBIT", "Incomes", "Expenses"] %}{
+      {% for name in ["Result", "Incomes", "Expenses"] %}{
         name: "{{ name }}",
         color: "{{ colors[name + '_dim'] }}",
         visible: false,
@@ -345,7 +345,7 @@
     ...plot_datetime,
     title: {text: 'Year evolution'},
     series: [
-      {% for name in ["Incomes", "Expenses", "EBIT"] %}{
+      {% for name in ["Incomes", "Expenses", "Result"] %}{
         name: "{{ name }}",
         color: "{{ colors[name] }}",
         type: 'column',
@@ -500,14 +500,14 @@
       }, {% endfor %}
     ],
   });
-  Highcharts.chart('COMP_EBIT', {
+  Highcharts.chart('COMP_result', {
     ...plot_comparison,
-    title: {text: 'EBIT comparison (trend)'},
+    title: {text: 'Result comparison (trend)'},
     series: [
-      {% for y, data in comp["EBIT"].items() %}{
+      {% for y, data in comp["Result"].items() %}{
         name: "{{ y }}",
-        color: "{{ colors['comp']['EBIT'][y]['color'] }}",
-        lineWidth: {{ colors['comp']['EBIT'][y]['size'] }},
+        color: "{{ colors['comp']['Result'][y]['color'] }}",
+        lineWidth: {{ colors['comp']['Result'][y]['size'] }},
         data: [{% for x, value in data.items() %}
           [{{ x }}, {% if value is number %}{{ value }}{% else %}null{% endif %}], {% endfor %}
         ]
@@ -968,7 +968,7 @@
           value: 100,
         },
         {
-          label: {text: 'EBIT 0', align: 'right'},
+          label: {text: 'Result 0', align: 'right'},
           color: "{{ colors['Min_value'] }}",
           value: 0,
         },
