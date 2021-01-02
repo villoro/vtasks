@@ -2,10 +2,12 @@ import cryptocompare
 import pandas as pd
 
 from datetime import date
+from prefect import task
 
 import gspreadsheets as gsh
 
 from utils import log
+from utils import timeit
 
 SPREADSHEET = "crypto_data"
 SHEET = "prices"
@@ -23,7 +25,9 @@ def get_crypto_prices(cryptos):
     return {i: x["EUR"] for i, x in data.items()}
 
 
-def update_prices(mdate):
+@task
+@timeit
+def update_crypto_prices(mdate):
     """ Update latest cryptos prices """
 
     mfilter = mdate.strftime("%Y-%m-01")
