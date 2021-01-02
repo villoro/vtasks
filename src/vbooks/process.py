@@ -10,11 +10,12 @@ import utils as u
 from . import constants as c
 from expensor.functions import serie_to_dict
 from expensor.functions import smooth_serie
+from gspreadsheets import read_df_gdrive
 from utils import timeit
 
 
 def get_books():
-    df = u.read_df_gdrive(c.SPREADSHEET, c.SHEET_BOOKS).reset_index()
+    df = read_df_gdrive(c.SPREADSHEET, c.SHEET_BOOKS).reset_index()
     df[c.COL_DATE] = pd.to_datetime(df[c.COL_DATE])
 
     return df
