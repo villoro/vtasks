@@ -32,8 +32,7 @@ def update_prices(mdate):
 
     # Update prices
     values = get_crypto_prices(df.columns)
-    new_prices = pd.DataFrame(values, index=[mfilter])
-    df.update(new_prices)
+    df.loc[mfilter] = pd.Series(values)
 
     # Update gspreadsheet
     gsh.update_gspread(SPREADSHEET, SHEET, df, mfilter)

@@ -137,6 +137,5 @@ def update_gspread(spreadsheet_name, sheet_name, df, mfilter):
         values = [values]
 
     # Update values in gspreadsheet
+    log.info(f"Updating {spreadsheet_name}/{sheet_name}/{mrange}")
     wks.update(mrange, values)
-
-    log.info(f"{spreadsheet_name}/{sheet_name}/{mrange} updated")
