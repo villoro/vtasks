@@ -4,6 +4,7 @@ import pandas as pd
 from os import path
 
 from utils import PATH_ROOT
+from utils import get_secret
 from utils import log
 
 PATH_GDRIVE_KEY = f"{PATH_ROOT}/gdrive.json"
