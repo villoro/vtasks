@@ -6,13 +6,14 @@ from multiprocessing import Pool
 
 import pandas as pd
 
+from prefect import task
+
 from . import constants as c
 from . import create_report
 from . import extract_data
-from prefect import task
+from gspreadsheets import read_df_gdrive
 from utils import get_vdropbox
 from utils import log
-from utils import read_df_gdrive
 from utils import timeit
 
 MIN_DATE = "2015-12-01"
@@ -45,7 +46,7 @@ def create_one_report(dfs, mdate):
 
 @task
 @timeit
-def expensor(mdate, df_trans, pro, n_jobs=NUM_OF_JOBS_DEFAULT):
+def expensor(mdate, df_trans, pro, n_jobs=NUM_OF_JOBS_DEFAULT, **kwa):
 
     # TODO: use df_trans input argument instead of reading it from dropbox
 

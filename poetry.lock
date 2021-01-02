@@ -182,6 +182,17 @@ natsort = "*"
 python-dateutil = "*"
 
 [[package]]
+name = "cryptocompare"
+version = "0.7.3"
+description = "Wrapper for CryptoCompare.com"
+category = "main"
+optional = false
+python-versions = ">=3"
+
+[package.dependencies]
+requests = "*"
+
+[[package]]
 name = "cryptography"
 version = "2.9.2"
 description = "cryptography is a package which provides cryptographic recipes and primitives to Python developers."
@@ -1639,7 +1650,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = "3.7.9"
-content-hash = "ea0b100700a0af190dc970898203804e1cc4a2a77156981fd540717a7204bd8e"
+content-hash = "4c0d6ebe0c397903cccf603d290069f77da61c484181014fc06dec3952fc2341"
 
 [metadata.files]
 appdirs = [
@@ -1761,6 +1772,9 @@ colorama = [
 croniter = [
     {file = "croniter-0.3.34-py2.py3-none-any.whl", hash = "sha256:15597ef0639f8fbab09cbf8c277fa8c65c8b9dbe818c4b2212f95dbc09c6f287"},
     {file = "croniter-0.3.34.tar.gz", hash = "sha256:7186b9b464f45cf3d3c83a18bc2344cc101d7b9fd35a05f2878437b14967e964"},
+]
+cryptocompare = [
+    {file = "cryptocompare-0.7.3.tar.gz", hash = "sha256:5f70c63e8932055f2449c044216ae4c3de33918ac143c7c7f72de26a85fdf34a"},
 ]
 cryptography = [
     {file = "cryptography-2.9.2-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:daf54a4b07d67ad437ff239c8a4080cfd1cc7213df57d33c97de7b4738048d5e"},
