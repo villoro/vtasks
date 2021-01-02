@@ -107,7 +107,7 @@ def get_coordinates(df):
     return df_index
 
 
-def update_gspread(spreadsheet_name, sheet_name, df, mfilter):
+def update_gspread(spreadsheet_name, sheet_name, df, mfilter, columns=None):
     """
         Update a google spreadsheet based on a pandas dataframe row
 
@@ -115,14 +115,23 @@ def update_gspread(spreadsheet_name, sheet_name, df, mfilter):
             spreadsheet_name:   name of the document
             sheet_name:         name of the sheet inside the document
             df:                 pandas dataframe
-            mfilter:            rows that will be updated      
+            mfilter:            rows that will be updated
+            columns:            which columns to update
     """
 
     # Get worksheet
     wks = get_gdrive_sheet(spreadsheet_name, sheet_name)
 
+    # If no columns are passed, update them all
+    if columns is None:
+        columns = df.columns.tolist()
+
+    # Make sure columns is a list
+    if not isinstance(columns, list):
+        columns = [columns]
+
     # Extract range from coordinates and filter
-    coordinates = get_coordinates(df).loc[mfilter]
+    coordinates = get_coordinates(df).loc[mfilter, columns]
 
     if isinstance(coordinates, pd.Series):
         mrange = f"{coordinates.iloc[0]}:{coordinates.iloc[-1]}"
@@ -130,7 +139,7 @@ def update_gspread(spreadsheet_name, sheet_name, df, mfilter):
         mrange = f"{coordinates.iloc[0, 0]}:{coordinates.iloc[-1, -1]}"
 
     # Filter data to be updated
-    values = df.loc[mfilter].values.tolist()
+    values = df.loc[mfilter, columns].values.tolist()
 
     # Make sure that values is a list of lists
     if not isinstance(values[0], list):

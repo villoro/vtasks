@@ -8,7 +8,7 @@ from prefect.utilities import logging
 
 import utils as u
 
-from cryptos import update_crypto_prices
+from cryptos import update_cryptos
 from expensor import expensor
 from flights import flights
 from flights import merge_flights_history
@@ -24,7 +24,7 @@ with Flow("do_all") as flow:
     pro = Parameter("pro")
 
     # Crypto
-    dummy_crypto = update_crypto_prices(mdate)
+    dummy_crypto = update_cryptos(mdate)
 
     # Expensor
     df_trans = money_lover(mdate, export_data=True)
