@@ -21,7 +21,7 @@ from utils import log
 
 def get_basic_traces(dfs, col_period, mdate):
     """
-        Extract Incomes, Expenses, EBIT and savings traces
+        Extract Incomes, Expenses, Result and savings traces
 
         Args:
             dfs:        dict with dataframes
@@ -41,10 +41,10 @@ def get_basic_traces(dfs, col_period, mdate):
         series[name] = aux
 
     # Extract expenses and incomes
-    series[c.EBIT] = series[c.INCOMES] - series[c.EXPENSES]
+    series[c.RESULT] = series[c.INCOMES] - series[c.EXPENSES]
 
     # Add savings ratio
-    series[c.SAVINGS] = (100 * series[c.EBIT] / series[c.INCOMES]).apply(lambda x: max(0, x))
+    series[c.SAVINGS] = (100 * series[c.RESULT] / series[c.INCOMES]).apply(lambda x: max(0, x))
 
     out = series_to_dicts(series)
 
@@ -167,14 +167,14 @@ def get_comparison_traces(dfs):
         df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
         out[name] = get_traces(smooth_serie(df))
 
-    # Prepare transactions for EBIT
+    # Prepare transactions for Result
     dfg = dfs[c.DF_TRANS].copy()
     mfilter = dfg[c.COL_TYPE] == c.EXPENSES
     dfg.loc[mfilter, c.COL_AMOUNT] = -dfg.loc[mfilter, c.COL_AMOUNT]
 
-    # Add EBIT
+    # Add Result
     df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
-    out[c.EBIT] = get_traces(smooth_serie(df))
+    out[c.RESULT] = get_traces(smooth_serie(df))
 
     # Add liquid
     dfg = dfs[c.DF_LIQUID].reset_index().copy()
@@ -234,7 +234,7 @@ def get_dashboard(data, mdate):
             mdate:  date of the report
     """
 
-    traces = [c.EXPENSES, c.INCOMES, c.EBIT, c.LIQUID]
+    traces = [c.EXPENSES, c.INCOMES, c.RESULT, c.LIQUID]
     traces += [x + "_trend" for x in traces] + ["Worth", "Invest"]
 
     out = {}
@@ -389,7 +389,7 @@ def extract_sankey(data):
 
         incomes = mdict[c.INCOMES]
         expenses = mdict[c.EXPENSES]
-        ebit = incomes - expenses
+        result = incomes - expenses
 
         if tw == "month":
             invest = mdict["Invest"] - mdict["Invest_1m"]
@@ -397,11 +397,11 @@ def extract_sankey(data):
             invest = data["dash"]["month"]["Invest"] - data["dash"]["month"]["Invest_1y"]
 
         # Values for traces
-        incomes_to_invest = max(min(ebit, invest), 0)
-        incomes_to_savings = max(ebit - max(invest, 0), 0)
-        invest_to_expenses = max(-max(invest, ebit), 0)
+        incomes_to_invest = max(min(result, invest), 0)
+        incomes_to_savings = max(result - max(invest, 0), 0)
+        invest_to_expenses = max(-max(invest, result), 0)
         invest_to_savings = -min(invest + invest_to_expenses, 0)
-        savings_to_expenses = -min(ebit + invest_to_expenses, 0)
+        savings_to_expenses = -min(result + invest_to_expenses, 0)
         savings_to_invest = max(invest - incomes_to_invest, 0)
 
         # Create flows
@@ -456,9 +456,9 @@ def get_colors_comparisons(dfs):
 
         return out
 
-    # Incomes, Expenses and EBIT
+    # Incomes, Expenses and result
     out = {}
-    for name, color_name in [(c.INCOMES, "green"), (c.EXPENSES, "red"), (c.EBIT, "amber")]:
+    for name, color_name in [(c.INCOMES, "green"), (c.EXPENSES, "red"), (c.RESULT, "amber")]:
         out[name] = extract_colors_from_years(dfs[c.DF_TRANS][c.COL_YEAR], color_name)
 
     # Liquid
@@ -510,8 +510,8 @@ def main(dfs, mdate=datetime.now(), export_data=False):
 
     out = {}
 
-    # Expenses, incomes, EBIT and Savings ratio
-    log.debug("Extracting expenses, incomes, EBIT and savings ratio")
+    # Expenses, incomes, result and savings ratio
+    log.debug("Extracting expenses, incomes, result and savings ratio")
     for period, col_period in {"month": c.COL_MONTH_DATE, "year": c.COL_YEAR}.items():
         out[period] = get_basic_traces(dfs, col_period, mdate)
 
