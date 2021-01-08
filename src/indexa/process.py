@@ -22,3 +22,14 @@ def get_accounts():
 
     accounts = query_indexa("users/me")["accounts"]
     return [x["account_number"] for x in accounts]
+
+
+def get_invested_and_worth(account):
+    """ Gets the money invested and the actual worth of an account """
+
+    data = query_indexa(f"accounts/{account}/performance")
+
+    invested = data["return"]["investment"]
+    worth = data["return"]["total_amount"]
+
+    return round(invested, 2), round(worth, 2)
