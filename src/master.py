@@ -12,6 +12,7 @@ from cryptos import update_cryptos
 from expensor import expensor
 from flights import flights
 from flights import merge_flights_history
+from indexa import update_indexa
 from money_lover import money_lover
 from utils import log
 from vbooks import vbooks
@@ -23,12 +24,19 @@ with Flow("do_all") as flow:
     mdate = Parameter("mdate")
     pro = Parameter("pro")
 
-    # Crypto
+    # Crypto + Indexa
     dummy_crypto = update_cryptos(mdate)
+    dummy_indexa = update_indexa(mdate)
 
     # Expensor
     df_trans = money_lover(mdate, export_data=True)
-    expensor(mdate, df_trans=df_trans, pro=pro, dummy_crypto=dummy_crypto)
+    expensor(
+        mdate=mdate,
+        df_trans=df_trans,
+        pro=pro,
+        dummy_crypto=dummy_crypto,
+        dummy_indexa=dummy_indexa,
+    )
 
     # Flights
     flights(mdate)
