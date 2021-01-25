@@ -105,8 +105,7 @@ def run_etl():
     result = u.timeit(flow.run)(mdate=date.today(), pro=pro)
     log.info("End of vtasks")
 
-    if pro:
-        copy_log(vdp)
+    copy_log(vdp)
 
     if not result.is_successful():
         log.error("ETL has failed")
