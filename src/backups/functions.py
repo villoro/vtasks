@@ -38,7 +38,7 @@ def get_files_to_backup(vdp, uri):
     return path, filenames
 
 
-def backup(uri):
+def one_backup(uri):
     """ Backs up some files """
 
     vdp = get_vdropbox()
@@ -50,6 +50,15 @@ def backup(uri):
         origin = f"{path}/{filename}"
         dest = f"{path}/{YEAR}/{DAY} {filename}"
 
-        log.info(f"Backing up '{origin}'")
+        if updated_yesterday(vdp, origin):
 
-        vdp.dbx.files_copy(origin, dest)
+            if not vdp.file_exists(dest):
+                log.info(f"Backing up '{origin}'")
+
+                vdp.dbx.files_copy(origin, dest)
+
+            else:
+                log.debug(f"File '{origin}' has already been backed up")
+
+        else:
+            log.debug(f"Skipping '{origin}' since has not been updated")
