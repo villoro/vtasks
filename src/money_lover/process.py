@@ -13,17 +13,26 @@ from utils import get_vdropbox
 from utils import log
 from utils import timeit
 
-MONEY_LOVER_REGEX = r"\d{4}-\d{2}-\d{2}(.xls)"
+REGEX_MONEY_LOVER = r"^(MoneyLover-)?\d{4}-\d{2}-\d{2}(.xls|.csv)"
+REGEX_DATE = r"(\d{4}-\d{2}-\d{2})"
 
 
 def get_money_lover_df(vdp):
     """ gets the name of the money lover excel file """
 
     # Get all money_lover files in a list
-    files = []
+    files = {}
     for file in vdp.ls(c.PATH_MONEY_LOVER):
-        if re.search(MONEY_LOVER_REGEX, file):
-            files.append(file)
+        if re.search(REGEX_MONEY_LOVER, file):
+
+            # Extract the date as string from the name
+            date_str = re.search(REGEX_DATE, file).group()
+
+            files[date_str] = file
+
+    # Get the name of the file with the greatest date
+    last_file = sorted(files.items())[-1]
+    last_filename = last_file[1]
 
     # Iterate all files and transform all to parquet except the last one
     for file in files:
@@ -33,10 +42,15 @@ def get_money_lover_df(vdp):
         uri_out = f"{c.PATH_MONEY_LOVER}/{name[:4]}/{name}.parquet"
 
         log.info(f"Reading '{uri_in}' from dropbox")
-        df = vdp.read_excel(uri_in, index_col=0)
+
+        extension = file.split(".")[-1]
+        if extension == "csv":
+            df = vdp.read_csv(uri_in, index_col=0, sep=";")
+        else:
+            df = vdp.read_excel(uri_in, index_col=0)
 
         # Return the list file
-        if file == files[-1]:
+        if filename == last_filename:
             return df
 
         log.info(f"Exporting '{uri_out}' to dropbox")
