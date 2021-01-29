@@ -6,7 +6,7 @@ from datetime import timedelta
 from utils import get_vdropbox
 from utils import log
 
-URIS = ["/Aplicaciones/KeePass/(.).kdbx", "/Aplicaciones/expensor/(.).yaml"]
+URIS = ["/Aplicaciones/KeePass/(.).kdbx", "/Aplicaciones/expensor/(.).(yaml|yml)"]
 
 YEAR = f"{date.today():%Y}"
 DAY = f"{date.today():%Y_%m_%d}"
