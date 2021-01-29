@@ -35,11 +35,10 @@ def get_money_lover_df(vdp):
     last_filename = last_file[1]
 
     # Iterate all files and transform all to parquet except the last one
-    for file in files:
-        name, extension = file.split(".")
+    for date, filename in sorted(files.items()):
 
-        uri_in = f"{c.PATH_MONEY_LOVER}/{file}"
-        uri_out = f"{c.PATH_MONEY_LOVER}/{name[:4]}/{name}.parquet"
+        uri_in = f"{c.PATH_MONEY_LOVER}/{filename}"
+        uri_out = f"{c.PATH_MONEY_LOVER}/{date[:4]}/{date}.parquet"
 
         log.info(f"Reading '{uri_in}' from dropbox")
 
