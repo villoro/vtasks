@@ -6,7 +6,11 @@ from datetime import timedelta
 from utils import get_vdropbox
 from utils import log
 
-URIS = ["/Aplicaciones/KeePass/(.).kdbx", "/Aplicaciones/expensor/(.).(yaml|yml)"]
+URIS = [
+    "/Aplicaciones/KeePass/(.).kdbx",
+    "/Aplicaciones/expensor/(.).(yaml|yml)",
+    "/Aplicaciones/FreeFileSync/(.).ffs_gui",
+]
 
 YEAR = f"{date.today():%Y}"
 DAY = f"{date.today():%Y_%m_%d}"
@@ -48,7 +52,7 @@ def one_backup(vdp, uri):
     # Backup all files
     for filename in filenames:
         origin = f"{path}/{filename}"
-        dest = f"{path}/{YEAR}/{DAY} {filename}"
+        dest = f"{path}/Backups/{YEAR}/{DAY} {filename}"
 
         if updated_yesterday(vdp, origin):
 
