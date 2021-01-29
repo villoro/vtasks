@@ -6,6 +6,8 @@ from datetime import timedelta
 from utils import get_vdropbox
 from utils import log
 
+URIS = ["/Aplicaciones/KeePass/(.).kdbx", "/Aplicaciones/expensor/(.).yaml"]
+
 YEAR = f"{date.today():%Y}"
 DAY = f"{date.today():%Y_%m_%d}"
 
@@ -38,10 +40,8 @@ def get_files_to_backup(vdp, uri):
     return path, filenames
 
 
-def one_backup(uri):
+def one_backup(vdp, uri):
     """ Backs up some files """
-
-    vdp = get_vdropbox()
 
     path, filenames = get_files_to_backup(vdp, uri)
 
@@ -53,7 +53,7 @@ def one_backup(uri):
         if updated_yesterday(vdp, origin):
 
             if not vdp.file_exists(dest):
-                log.info(f"Backing up '{origin}'")
+                log.info(f"Copying '{origin}' to '{dest}'")
 
                 vdp.dbx.files_copy(origin, dest)
 
@@ -62,3 +62,12 @@ def one_backup(uri):
 
         else:
             log.debug(f"Skipping '{origin}' since has not been updated")
+
+
+def backup_files():
+
+    vdp = get_vdropbox()
+
+    for uri in URIS:
+        log.info(f"Backing up '{uri}'")
+        one_backup(vdp, uri)
