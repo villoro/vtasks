@@ -13,7 +13,7 @@ from utils import get_vdropbox
 from utils import log
 from utils import timeit
 
-REGEX_MONEY_LOVER = r"^(MoneyLover-)?\d{4}-\d{2}-\d{2}(.xls|.csv)"
+REGEX_MONEY_LOVER = r"^(MoneyLover-)?\d{4}-\d{2}-\d{2}(.xls|.csv)$"
 REGEX_DATE = r"(\d{4}-\d{2}-\d{2})"
 
 

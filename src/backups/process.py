@@ -69,13 +69,38 @@ def one_backup(vdp, path, filenames):
             log.debug(f"Skipping '{origin}' since has not been updated")
 
 
+def backup_files():
+    """ Back up all files from URIS """
+
+    vdp = get_vdropbox()
+
+    for uri in URIS:
+        log.info(f"Backing up '{uri}'")
+
+        path, filenames = get_files_to_backup(vdp, uri)
+
+        one_backup(vdp, uri)
+
+
 def get_backup_data(vdp, path):
 
     base_path = f"{path}/Backups"
 
     dfs = []
 
+    # Check if there are backups
+    if not vdp.file_exists(base_path):
+        return None
+
+    # Retrive all backups
     for year in vdp.ls(base_path):
+
+        log.debug(f"Doing '{path}/{year}'")
+
+        # Skip iteration if it's not a year
+        if not re.search(r"^\d{4}$", year):
+            log.debug("Skipping")
+            continue
 
         uri = f"{base_path}/{year}"
         backups = vdp.ls(uri)
@@ -84,9 +109,34 @@ def get_backup_data(vdp, path):
         df = pd.DataFrame(backups, columns=["filename"])
         df["entity"] = df["filename"].str[11:]
         df["date"] = pd.to_datetime(df["filename"].str[:10], format="%Y_%m_%d")
-        df["path"] = uri + df["filename"]
+        df["uri"] = uri + "/" + df["filename"]
 
         dfs.append(df)
+
+    # No data nothing to concatenate
+    if not dfs:
+        return None
+
+    df = pd.concat(dfs)
+    df["base_path"] = path
+
+    return df.set_index("uri")
+
+
+def get_all_backups(vdp):
+    """ Get all backups """
+
+    dfs = []
+
+    for uri in URIS:
+        path, filenames = get_files_to_backup(vdp, uri)
+
+        log.debug(f"Scanning '{path}'")
+
+        df = get_backup_data(vdp, path)
+
+        if df is not None:
+            dfs.append(df)
 
     return pd.concat(dfs)
 
@@ -107,19 +157,20 @@ def tag_duplicates(df_in):
     df.loc[is_newer_30d, "date_filter"] = df.loc[is_newer_30d, "date"].dt.strftime("%Y-%m-%d")
 
     # Mark the first duplicated for deletion
-    df["delete"] = df.duplicated(["entity", "date_filter"], keep="last")
+    df["delete"] = df.duplicated(["entity", "base_path", "date_filter"], keep="last")
 
     return df
 
 
-def backup_files():
-    """ Back up all files from URIS """
+def clean_backups():
+    """ Delete backups so that only one per month remain (except if newer than 30d) """
 
     vdp = get_vdropbox()
 
-    for uri in URIS:
-        log.info(f"Backing up '{uri}'")
+    df = get_all_backups(vdp)
+    df = tag_duplicates(df)
 
-        path, filenames = get_files_to_backup(vdp, uri)
-
-        one_backup(vdp, uri)
+    # Delete files tagged as 'delete'
+    for uri in df[df["delete"]].index:
+        log.debug(f"Deleting '{uri}'")
+        # vdp.delete(uri)
