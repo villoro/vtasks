@@ -1,88 +1,21 @@
 import re
 
-from datetime import date
 from datetime import datetime
 from datetime import timedelta
 
 import pandas as pd
 
+from prefect import task
+
+from .backup_files import get_files_to_backup
+from .config import URIS
 from utils import get_vdropbox
 from utils import log
-
-URIS = [
-    "/Aplicaciones/KeePass/(.).kdbx",
-    "/Aplicaciones/expensor/(.).(yaml|yml)",
-    "/Aplicaciones/FreeFileSync/(.).ffs_gui",
-]
-
-YEAR = f"{date.today():%Y}"
-DAY = f"{date.today():%Y_%m_%d}"
-
-
-def get_update_at(vdp, filename):
-    """ Get the date when a file was updated """
-
-    metadata = vdp.dbx.files_get_metadata(filename)
-    return metadata.client_modified.date()
-
-
-def updated_yesterday(vdp, filename):
-    """ True if the file has been updated after the start of yesterday """
-
-    updated_at = get_update_at(vdp, filename)
-
-    return updated_at > date.today() - timedelta(1)
-
-
-def get_files_to_backup(vdp, uri):
-    """ Get a path and a list of files form a regex """
-
-    # Extract path and regex
-    path = uri.split("/")
-    regex = path.pop()
-    path = "/".join(path)
-
-    filenames = [x for x in vdp.ls(path) if re.search(regex, x)]
-
-    return path, filenames
-
-
-def one_backup(vdp, path, filenames):
-    """ Back up a list of files from a folder """
-
-    # Backup all files
-    for filename in filenames:
-        origin = f"{path}/{filename}"
-        dest = f"{path}/Backups/{YEAR}/{DAY} {filename}"
-
-        if updated_yesterday(vdp, origin):
-
-            if not vdp.file_exists(dest):
-                log.info(f"Copying '{origin}' to '{dest}'")
-
-                vdp.dbx.files_copy(origin, dest)
-
-            else:
-                log.debug(f"File '{origin}' has already been backed up")
-
-        else:
-            log.debug(f"Skipping '{origin}' since has not been updated")
-
-
-def backup_files():
-    """ Back up all files from URIS """
-
-    vdp = get_vdropbox()
-
-    for uri in URIS:
-        log.info(f"Backing up '{uri}'")
-
-        path, filenames = get_files_to_backup(vdp, uri)
-
-        one_backup(vdp, uri)
+from utils import timeit
 
 
 def get_backup_data(vdp, path):
+    """ Get info about the backups """
 
     base_path = f"{path}/Backups"
 
@@ -95,7 +28,7 @@ def get_backup_data(vdp, path):
     # Retrive all backups
     for year in vdp.ls(base_path):
 
-        log.debug(f"Doing '{path}/{year}'")
+        log.debug(f"Exploring '{path}/{year}'")
 
         # Skip iteration if it's not a year
         if not re.search(r"^\d{4}$", year):
@@ -162,7 +95,9 @@ def tag_duplicates(df_in):
     return df
 
 
-def clean_backups():
+@task
+@timeit
+def process():
     """ Delete backups so that only one per month remain (except if newer than 30d) """
 
     vdp = get_vdropbox()
