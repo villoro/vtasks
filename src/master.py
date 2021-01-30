@@ -8,6 +8,8 @@ from prefect.utilities import logging
 
 import utils as u
 
+from backups import backup_files
+from backups import clean_backups
 from cryptos import update_cryptos
 from expensor import expensor
 from flights import flights
@@ -23,6 +25,10 @@ logging.get_logger = lambda x: log
 with Flow("do_all") as flow:
     mdate = Parameter("mdate")
     pro = Parameter("pro")
+
+    # Backups
+    backup_files()
+    clean_backups()
 
     # Crypto + Indexa
     dummy_crypto = update_cryptos(mdate)
