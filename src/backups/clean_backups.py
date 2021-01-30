@@ -64,7 +64,7 @@ def get_all_backups(vdp):
     for uri in URIS:
         path, filenames = get_files_to_backup(vdp, uri)
 
-        log.debug(f"Scanning '{path}'")
+        log.info(f"Scanning '{path}'")
 
         df = get_backup_data(vdp, path)
 
@@ -107,5 +107,4 @@ def clean_backups():
 
     # Delete files tagged as 'delete'
     for uri in df[df["delete"]].index:
-        log.debug(f"Deleting '{uri}'")
-        # vdp.delete(uri)
+        vdp.delete(uri)
