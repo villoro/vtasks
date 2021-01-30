@@ -1,7 +1,10 @@
 import re
 
 from datetime import date
+from datetime import datetime
 from datetime import timedelta
+
+import pandas as pd
 
 from utils import get_vdropbox
 from utils import log
@@ -44,10 +47,8 @@ def get_files_to_backup(vdp, uri):
     return path, filenames
 
 
-def one_backup(vdp, uri):
-    """ Backs up some files """
-
-    path, filenames = get_files_to_backup(vdp, uri)
+def one_backup(vdp, path, filenames):
+    """ Back up a list of files from a folder """
 
     # Backup all files
     for filename in filenames:
@@ -68,10 +69,57 @@ def one_backup(vdp, uri):
             log.debug(f"Skipping '{origin}' since has not been updated")
 
 
+def get_backup_data(vdp, path):
+
+    base_path = f"{path}/Backups"
+
+    dfs = []
+
+    for year in vdp.ls(base_path):
+
+        uri = f"{base_path}/{year}"
+        backups = vdp.ls(uri)
+
+        # Create a dataframe with relevant data of each backup
+        df = pd.DataFrame(backups, columns=["filename"])
+        df["entity"] = df["filename"].str[11:]
+        df["date"] = pd.to_datetime(df["filename"].str[:10], format="%Y_%m_%d")
+        df["path"] = uri + df["filename"]
+
+        dfs.append(df)
+
+    return pd.concat(dfs)
+
+
+def tag_duplicates(df_in):
+    """
+        Tag entries to delete. Old files (>30d) keep the latest for each month.
+        New files (<30) keep them all.
+    """
+
+    df = df_in.copy()
+
+    # Use the month as general filter
+    df["date_filter"] = df["date"].dt.strftime("%Y-%m")
+
+    # For files newer than 30d, keep them all (use the day for the filter)
+    is_newer_30d = df["date"] > datetime.now() - timedelta(30)
+    df.loc[is_newer_30d, "date_filter"] = df.loc[is_newer_30d, "date"].dt.strftime("%Y-%m-%d")
+
+    # Mark the first duplicated for deletion
+    df["delete"] = df.duplicated(["entity", "date_filter"], keep="last")
+
+    return df
+
+
 def backup_files():
+    """ Back up all files from URIS """
 
     vdp = get_vdropbox()
 
     for uri in URIS:
         log.info(f"Backing up '{uri}'")
+
+        path, filenames = get_files_to_backup(vdp, uri)
+
         one_backup(vdp, uri)
