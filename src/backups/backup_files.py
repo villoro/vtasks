@@ -68,7 +68,7 @@ def one_backup(vdp, uri):
 
 @task
 @timeit
-def process():
+def backup_files():
     """ Back up all files from URIS """
 
     vdp = get_vdropbox()

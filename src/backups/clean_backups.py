@@ -97,7 +97,7 @@ def tag_duplicates(df_in):
 
 @task
 @timeit
-def process():
+def clean_backups():
     """ Delete backups so that only one per month remain (except if newer than 30d) """
 
     vdp = get_vdropbox()
