@@ -53,9 +53,6 @@ dist/
 runs/
 logs/
 
-# Configuration info
-*config.py
-
 # Working notebook
 *Test.ipynb
 
