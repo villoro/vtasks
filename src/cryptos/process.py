@@ -38,7 +38,7 @@ def update_crypto_prices(mfilter):
     df.loc[mfilter] = pd.Series(values)
 
     # Update gspreadsheet
-    gsh.update_gspread(SPREADSHEET_CRYPTO, SHEET_PRICES, df, mfilter)
+    gsh.df_to_gspread(SPREADSHEET_CRYPTO, SHEET_PRICES, df, mfilter)
 
 
 def update_expensor(mfilter):
@@ -55,7 +55,7 @@ def update_expensor(mfilter):
     # Update kraken value
     df.at[mfilter, col_crypto] = prices.at[mfilter, "Total"]
 
-    gsh.update_gspread(FILE_DATA, DF_WORTH, df, mfilter, col_crypto)
+    gsh.df_to_gspread(FILE_DATA, DF_WORTH, df, mfilter, col_crypto)
 
 
 @task

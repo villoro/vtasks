@@ -73,5 +73,5 @@ def update_indexa(mdate):
 
     # Update gdrive values
     cols = [*portfolio.keys()]
-    gsh.update_gspread(FILE_DATA, DF_INVEST, df_invest, mfilter, cols)
-    gsh.update_gspread(FILE_DATA, DF_WORTH, df_worth, mfilter, cols)
+    gsh.df_to_gspread(FILE_DATA, DF_INVEST, df_invest, mfilter, cols)
+    gsh.df_to_gspread(FILE_DATA, DF_WORTH, df_worth, mfilter, cols)

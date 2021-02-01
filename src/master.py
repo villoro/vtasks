@@ -19,7 +19,7 @@ from money_lover import money_lover
 from utils import log
 from vbooks import vbooks
 
-# Replace loguru log
+# Replace prefect log with loguru log
 logging.get_logger = lambda x: log
 
 with Flow("do_all") as flow:

@@ -108,7 +108,7 @@ def get_coordinates(df):
     return df_index
 
 
-def update_gspread(spreadsheet_name, sheet_name, df, mfilter, columns=None):
+def df_to_gspread(spreadsheet_name, sheet_name, df, mfilter, columns=None):
     """
         Update a google spreadsheet based on a pandas dataframe row
 
