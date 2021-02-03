@@ -65,34 +65,6 @@ def smooth_serie(dfi,):
     return time_average(df, months=6, center=True)
 
 
-# TODO: delete this function
-def _get_min_month_start(dfi):
-    """ Extracts the min month_start of a dataframe """
-
-    df = dfi.copy()
-
-    if isinstance(df, pd.DataFrame) and (c.COL_DATE in df.columns):
-        df = df.set_index(c.COL_DATE)
-
-    return df.resample("MS").first().index.min()
-
-
-# TODO: delete this function
-def add_missing_months(df, mdate):
-    """
-        Adds missing months from the min month to mdate
-        
-        Args:
-            df:     dataframe with date as index
-            mdate:  date for the max month
-    """
-
-    min_date = _get_min_month_start(df)
-    max_date = mdate.replace(day=1)
-
-    return df.reindex(pd.date_range(min_date, max_date, freq="MS"))
-
-
 def filter_by_date(dfs, mdate):
     """
         No data greater than mdate and complete missing months

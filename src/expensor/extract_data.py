@@ -10,7 +10,6 @@ from datetime import datetime
 from vpalette import get_colors
 
 from . import constants as c
-from .functions import add_missing_months
 from .functions import filter_by_date
 from .functions import serie_to_dict
 from .functions import series_to_dicts
@@ -137,8 +136,8 @@ def get_salaries(dfs, mdate):
     df = dfs[c.DF_SALARY].copy()
 
     # First complete data from previous months then with 0
-    df = add_missing_months(df, mdate)
-    df = df.fillna(method="ffill").fillna(0)
+    index = pd.date_range(df.index.min(), mdate, freq="MS")
+    df = df.reindex(index).fillna(method="ffill").fillna(0)
 
     return {
         "salary": {
