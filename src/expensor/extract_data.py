@@ -19,29 +19,36 @@ from utils import get_vdropbox
 from utils import log
 
 
-def get_basic_traces(dfs, col_period, mdate):
+def get_categories(dfs, mtype):
+    """
+        Gets a list of categories
+
+        Args:
+            dfs:    dict with dataframes
+            mtype:  [Incomes/Expenes]
+    """
+
+    df = dfs[c.DF_CATEG]
+
+    return reversed(df[df[c.COL_TYPE] == name].index.to_list())
+
+
+def get_basic_traces(dfs, period, mdate):
     """
         Extract Incomes, Expenses, Result and savings traces
 
         Args:
             dfs:        dict with dataframes
-            col_period: month or year
+            period:     month or year [MS/YS]
             mdate:      date of the report
     """
 
     series = {}
     for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
-
-        aux = df.groupby(col_period)[c.COL_AMOUNT].sum()
-
-        # Add missing months for month grouping
-        if col_period == c.COL_MONTH_DATE:
-            aux = add_missing_months(aux, mdate).fillna(0)
-
-        series[name] = aux
+        series[name] = df.resample(period)[c.COL_AMOUNT].sum()
 
     # Extract expenses and incomes
-    series[c.RESULT] = series[c.INCOMES] - series[c.EXPENSES]
+    series[c.RESULT] = (series[c.INCOMES] - series[c.EXPENSES]).dropna()
 
     # Add savings ratio
     series[c.SAVINGS] = (100 * series[c.RESULT] / series[c.INCOMES]).apply(lambda x: max(0, x))
@@ -49,20 +56,18 @@ def get_basic_traces(dfs, col_period, mdate):
     out = series_to_dicts(series)
 
     # Append time averaged data
-    if col_period == c.COL_MONTH_DATE:
+    if period == "MS":
         for name, serie in series.items():
             out[f"{name}_trend"] = serie_to_dict(smooth_serie(serie))
 
     # Get by groups
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
 
-        df = dfg.pivot_table(c.COL_AMOUNT, col_period, c.COL_CATEGORY, "sum").fillna(0)
-
-        df_categ = dfs[c.DF_CATEG]
-        df_categ = df_categ[df_categ[c.COL_TYPE] == name]
+        df = dfg.pivot_table(c.COL_AMOUNT, c.COL_DATE, c.COL_CATEGORY, "sum")
+        df = df.resample("YS").sum().fillna(0)
 
         aux = OrderedDict()
-        for x in reversed(df_categ.index.to_list()):
+        for x in get_categories(dfs, name):
             if x in df.columns:
                 aux[x] = df[x]
 
@@ -512,8 +517,8 @@ def main(dfs, mdate=datetime.now(), export_data=False):
 
     # Expenses, incomes, result and savings ratio
     log.debug("Extracting expenses, incomes, result and savings ratio")
-    for period, col_period in {"month": c.COL_MONTH_DATE, "year": c.COL_YEAR}.items():
-        out[period] = get_basic_traces(dfs, col_period, mdate)
+    for period in ["month", "year"]:
+        out[period] = get_basic_traces(dfs, period[0].upper() + "S", mdate)
 
     # Liquid, worth and invested
     log.debug("Adding liquid, worth and invested")
