@@ -65,6 +65,7 @@ def smooth_serie(dfi,):
     return time_average(df, months=6, center=True)
 
 
+# TODO: delete this function
 def _get_min_month_start(dfi):
     """ Extracts the min month_start of a dataframe """
 
@@ -76,6 +77,7 @@ def _get_min_month_start(dfi):
     return df.resample("MS").first().index.min()
 
 
+# TODO: delete this function
 def add_missing_months(df, mdate):
     """
         Adds missing months from the min month to mdate
@@ -103,26 +105,12 @@ def filter_by_date(dfs, mdate):
     # Get last date of month
     mdate = pd.to_datetime(mdate) + pd.tseries.offsets.MonthEnd(1)
 
-    # Liquid, worth and invest dataframes
-    dfs_out = {}
-    for name in [c.DF_LIQUID, c.DF_WORTH, c.DF_INVEST]:
-        df = dfs[name].copy()
+    for name, df in dfs.items():
 
-        # No future data
-        df = df[df.index <= mdate]
+        # Filter out future data
+        if df.index.name == c.COL_DATE:
+            df = df[df.index <= mdate]
 
-        # No missing months
-        df = add_missing_months(df, mdate)
-        df.index.name = c.COL_DATE
+        dfs[name] = df
 
-        dfs_out[name] = df
-
-    # Transactions df
-    df = dfs[c.DF_TRANS].copy()
-    dfs_out[c.DF_TRANS] = df[df[c.COL_DATE] <= mdate]
-
-    # Copy missing dataframes
-    for name in set(c.DFS_ALL) - set(dfs_out.keys()):
-        dfs_out[name] = dfs[name].copy()
-
-    return dfs_out
+    return dfs

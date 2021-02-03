@@ -30,7 +30,7 @@ def get_data():
     # Add transactions
     log.debug("Reading data from dropbox")
     vdp = get_vdropbox()
-    dfs[c.DF_TRANS] = vdp.read_excel(c.FILE_TRANSACTIONS)
+    dfs[c.DF_TRANS] = vdp.read_excel(c.FILE_TRANSACTIONS).set_index(c.COL_DATE)
 
     return dfs
 
