@@ -78,7 +78,7 @@ def get_basic_traces(dfs, period, mdate):
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
 
         df = dfg.pivot_table(c.COL_AMOUNT, c.COL_DATE, c.COL_CATEGORY, "sum")
-        df = resample(df, "YS", mdate)
+        df = resample(df, period, mdate)
 
         aux = OrderedDict()
         for x in get_categories(dfs, name):
@@ -176,7 +176,7 @@ def get_comparison_traces(dfs):
     def get_one_trace(df, col=c.COL_AMOUNT):
         """ Create the comparison trace """
 
-        df = smooth_serie(df[[col]])
+        df = smooth_serie(df[[col]].resample("MS").sum())
         df["Month"] = df.index.month
         df["Year"] = df.index.year
 
