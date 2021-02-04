@@ -29,7 +29,7 @@ def get_categories(dfs, mtype):
 
     df = dfs[c.DF_CATEG]
 
-    return reversed(df[df[c.COL_TYPE] == name].index.to_list())
+    return reversed(df[df[c.COL_TYPE] == mtype].index.to_list())
 
 
 def get_basic_traces(dfs, period, mdate):
@@ -201,25 +201,20 @@ def get_pie_traces(dfs):
     """
 
     out = {}
-    for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
+    for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
 
-        df_cat = dfs[c.DF_CATEG]
-        categories = df_cat[df_cat[c.COL_TYPE] == name].index.tolist()
-
-        df = dfg.pivot_table(c.COL_AMOUNT, c.COL_MONTH_DATE, c.COL_CATEGORY, "sum").fillna(0)
+        df = df.pivot_table(c.COL_AMOUNT, c.COL_DATE, c.COL_CATEGORY, "sum").fillna(0)
 
         def export_trace(serie):
             """ Extract all possible categories """
 
             # Keep only present categories
-            indexs = [x for x in categories if x in serie.index]
-
-            # Reverse categories order
-            return serie_to_dict(serie[indexs][::-1])
+            indexs = [x for x in get_categories(dfs, name) if x in serie.index]
+            return serie_to_dict(serie[indexs])
 
         out[name] = {
-            "month": export_trace(df.iloc[-1, :]),
-            "year": export_trace(df[df.index.year == df.index.year[-1]].sum()),
+            "month": export_trace(df.resample("MS").sum().iloc[-1, :]),
+            "year": export_trace(df.resample("YS").sum().iloc[-1, :]),
             "all": export_trace(df.sum()),
         }
 
