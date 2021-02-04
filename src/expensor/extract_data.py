@@ -13,6 +13,7 @@ from vpalette import get_colors
 
 from . import constants as c
 from .functions import filter_by_date
+from .functions import resample
 from .functions import serie_to_dict
 from .functions import series_to_dicts
 from .functions import smooth_serie
@@ -32,19 +33,6 @@ def get_categories(dfs, mtype):
     df = dfs[c.DF_CATEG]
 
     return reversed(df[df[c.COL_TYPE] == mtype].index.to_list())
-
-
-def resample(df, period, mdate):
-    """ Resample and fill missing periods """
-
-    index = pd.date_range(df.index.min(), mdate, freq=period)
-    df = df.resample(period).sum().reindex(index).fillna(0)
-
-    # If working with years, cast the index to integer
-    if period == "YS":
-        df.index = df.index.year
-
-    return df
 
 
 def get_basic_traces(dfs, period, mdate):
