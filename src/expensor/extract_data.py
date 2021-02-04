@@ -337,20 +337,17 @@ def get_ratios(data):
     return out
 
 
-def get_bubbles(dfs, mdate, min_year=2011):
+def get_bubbles(dfs, mdate, min_date="2011-12-01"):
     """ Get info for bubbles plot """
 
     # Get expenses/incomes and extrapolate for last year if necessary
     aux = {}
     for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
-        dfa = df.groupby(c.COL_YEAR).agg({c.COL_AMOUNT: "sum", c.COL_MONTH: "nunique"})
+        dfa = df.resample("YS").agg({c.COL_AMOUNT: "sum", c.COL_MONTH: "nunique"})
         aux[name] = dfa[c.COL_AMOUNT] * 12 / dfa[c.COL_MONTH]
 
-    def get_year(dfi):
-        """ Get year data """
-        df = dfi.copy()
-        df["Year"] = df.index.year
-        return df.drop_duplicates("Year", keep="last").set_index("Year")["Total"]
+    # Get last value of each year
+    get_year = lambda x: x.resample("YS").last()["Total"]
 
     aux["Liquid"] = get_year(dfs[c.DF_LIQUID])
     aux["Worth"] = get_year(dfs[c.DF_WORTH])
@@ -363,9 +360,7 @@ def get_bubbles(dfs, mdate, min_year=2011):
     df["doomsday"] = df["Total_Worth"] / df["Expenses"]
 
     # First year has strange values
-    df = df[df.index > min_year]
-
-    df = df.apply(lambda x: round(x, 2))
+    df = df[df.index > min_date].apply(lambda x: round(x, 2))
 
     out = []
     for i, row in df.iterrows():
