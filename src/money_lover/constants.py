@@ -18,9 +18,6 @@ FORBIDDEN_CATEGORIES = [
 # fmt: on
 
 COL_DATE = "Date"
-COL_MONTH_DATE = "Month_date"
-COL_MONTH = "Month"
-COL_YEAR = "Year"
 COL_NOTES = "Note"
 COL_AMOUNT = "Amount"
 COL_CATEGORY = "Category"
@@ -41,8 +38,5 @@ COLS_DF_TRANS = [
     COL_AMOUNT,
     COL_TYPE,
     COL_DATE,
-    COL_MONTH_DATE,
-    COL_MONTH,
-    COL_YEAR,
     COL_NOTES,
 ]

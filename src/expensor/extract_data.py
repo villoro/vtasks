@@ -337,9 +337,10 @@ def get_bubbles(dfs, mdate, min_year=2011):
     # Get expenses/incomes and extrapolate for last year if necessary
     aux = {}
     for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
-        dfa = df.resample("YS").agg({c.COL_AMOUNT: "sum", c.COL_MONTH: "nunique"})
-        dfa.index = dfa.index.year
-        aux[name] = dfa[c.COL_AMOUNT] * 12 / dfa[c.COL_MONTH]
+        df["Month"] = df.index.month
+        df = df.resample("YS").agg({c.COL_AMOUNT: "sum", "Month": "nunique"})
+        df.index = df.index.year
+        aux[name] = df[c.COL_AMOUNT] * 12 / df["Month"]
 
     def get_year(dfi):
         """ Get last value of each year """
@@ -449,7 +450,8 @@ def get_colors_comparisons(dfs):
     # Incomes, Expenses and result
     out = {}
     for name, color_name in [(c.INCOMES, "green"), (c.EXPENSES, "red"), (c.RESULT, "amber")]:
-        out[name] = extract_colors_from_years(dfs[c.DF_TRANS][c.COL_YEAR], color_name)
+        years = dfs[c.DF_TRANS].resample("YS").sum().index.year
+        out[name] = extract_colors_from_years(years, color_name)
 
     # Liquid
     years = dfs[c.DF_LIQUID].index.year
