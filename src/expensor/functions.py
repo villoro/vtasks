@@ -65,14 +65,16 @@ def smooth_serie(dfi,):
     return time_average(df, months=6, center=True)
 
 
-def filter_by_date(dfs, mdate):
+def filter_by_date(dfs_in, mdate):
     """
         No data greater than mdate and complete missing months
 
         Args:
-            dfs:    dict with dataframes
+            dfs_in: dict with dataframes
             mdate:  date of the report
     """
+
+    dfs = dfs_in.copy()
 
     # Get last date of month
     mdate = pd.to_datetime(mdate) + pd.tseries.offsets.MonthEnd(1)

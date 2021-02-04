@@ -460,7 +460,7 @@ def get_colors_comparisons(dfs):
         out[name] = extract_colors_from_years(dfs[c.DF_TRANS][c.COL_YEAR], color_name)
 
     # Liquid
-    years = pd.to_datetime(dfs[c.DF_LIQUID].reset_index()[c.COL_DATE]).dt.year
+    years = dfs[c.DF_LIQUID].index.year
     out[c.LIQUID] = extract_colors_from_years(years, "blue")
 
     return out

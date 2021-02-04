@@ -51,7 +51,8 @@ def expensor(mdate, df_trans, pro, n_jobs=NUM_OF_JOBS_DEFAULT, **kwa):
     # TODO: use df_trans input argument instead of reading it from dropbox
 
     mdate = pd.to_datetime(mdate)
-    all_dates = pd.date_range(start=MIN_DATE, end=mdate, freq="MS")
+    # Reversed since first we want the latest month
+    all_dates = pd.date_range(start=MIN_DATE, end=mdate, freq="MS").to_list()[::-1]
 
     dfs = get_data()
 
@@ -60,7 +61,7 @@ def expensor(mdate, df_trans, pro, n_jobs=NUM_OF_JOBS_DEFAULT, **kwa):
         log.info(f"Doing reports in parallel with {n_jobs} jobs")
 
         # Create tuples with arguments
-        args = [(dfs, x) for x in all_dates.tolist()]
+        args = [(dfs, x) for x in all_dates]
 
         with Pool(n_jobs) as p:
             p.starmap(create_one_report, args)
@@ -68,5 +69,5 @@ def expensor(mdate, df_trans, pro, n_jobs=NUM_OF_JOBS_DEFAULT, **kwa):
     # No parallelization
     else:
         log.info(f"Doing reports without parallelization")
-        for x in all_dates.tolist():
+        for x in all_dates:
             create_one_report(dfs, x)
