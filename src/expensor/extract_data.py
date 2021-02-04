@@ -32,6 +32,13 @@ def get_categories(dfs, mtype):
     return reversed(df[df[c.COL_TYPE] == mtype].index.to_list())
 
 
+def resample(df, period, mdate):
+    """ Resample and fill missing periods """
+
+    index = pd.date_range(df.index.min(), mdate, freq=period)
+    return df.resample(period).sum().reindex(index).fillna(0)
+
+
 def get_basic_traces(dfs, period, mdate):
     """
         Extract Incomes, Expenses, Result and savings traces
@@ -44,7 +51,7 @@ def get_basic_traces(dfs, period, mdate):
 
     series = {}
     for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
-        series[name] = df.resample(period)[c.COL_AMOUNT].sum()
+        series[name] = resample(df[c.COL_AMOUNT], period, mdate)
 
     # Extract expenses and incomes
     series[c.RESULT] = (series[c.INCOMES] - series[c.EXPENSES]).dropna()
@@ -63,7 +70,7 @@ def get_basic_traces(dfs, period, mdate):
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
 
         df = dfg.pivot_table(c.COL_AMOUNT, c.COL_DATE, c.COL_CATEGORY, "sum")
-        df = df.resample("YS").sum().fillna(0)
+        df = resample(df, "YS", mdate)
 
         aux = OrderedDict()
         for x in get_categories(dfs, name):
@@ -192,7 +199,7 @@ def get_comparison_traces(dfs):
     return out
 
 
-def get_pie_traces(dfs):
+def get_pie_traces(dfs, mdate):
     """
         Add traces for pie plots
 
@@ -213,8 +220,8 @@ def get_pie_traces(dfs):
             return serie_to_dict(serie[indexs])
 
         out[name] = {
-            "month": export_trace(df.resample("MS").sum().iloc[-1, :]),
-            "year": export_trace(df.resample("YS").sum().iloc[-1, :]),
+            "month": export_trace(resample(df, "MS", mdate).iloc[-1, :]),
+            "year": export_trace(resample(df, "YS", mdate).iloc[-1, :]),
             "all": export_trace(df.sum()),
         }
 
@@ -523,7 +530,7 @@ def main(dfs, mdate=datetime.now(), export_data=False):
     out["month"].update(get_salaries(dfs, mdate))
 
     out["comp"] = get_comparison_traces(dfs)
-    out["pies"] = get_pie_traces(dfs)
+    out["pies"] = get_pie_traces(dfs, mdate)
     out["dash"] = get_dashboard(out, mdate)
     out["ratios"] = get_ratios(out)
     out["bubbles"] = get_bubbles(dfs, mdate)
