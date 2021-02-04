@@ -2,6 +2,8 @@
     Create the raw data for the reprot
 """
 
+from datetime import date
+
 import numpy as np
 import pandas as pd
 
@@ -244,12 +246,7 @@ def get_dashboard(data, mdate):
 
     out = {}
 
-    for tw in ["month", "year"]:
-
-        if tw == "month":
-            date_index = mdate.strftime("%Y-%m-%d")
-        else:
-            date_index = mdate.year
+    for tw, date_index in [("month", f"{mdate:%Y-%m-01}"), ("year", f"{mdate:%Y-01-01}")]:
 
         out[tw] = {}
 
@@ -257,6 +254,7 @@ def get_dashboard(data, mdate):
         for name in traces:
             mdict = data[tw].get(name, None)
 
+            # This is intentional so that we don't include some years for the year tw
             if mdict is not None:
                 out[tw][name] = mdict[date_index]
 
@@ -272,18 +270,12 @@ def get_dashboard(data, mdate):
 
     # Add value of end of year before worth, invested and liquid
     for name in [c.LIQUID, "Worth", "Invest"]:
-        mdict = data["month"][name]
+        # MS of the last month of last year
+        last_year = date(year=mdate.year - 1, month=12, day=1).isoformat()
 
-        dates = [x for x in mdict.keys() if x.startswith(str(mdate.year - 1))]
+        out["month"][f"{name}_1y"] = data["month"][name].get(last_year, 0)
 
-        if dates:
-            value = mdict.get(max(dates), 0)
-        else:
-            value = 0
-
-        out["month"][f"{name}_1y"] = value
-
-    # Invest last month
+    # Invest last month (for the Sankey)
     mdict = data["month"]["Invest"]
     out["month"]["Invest_1m"] = mdict[list(mdict.keys())[-2]]
 
