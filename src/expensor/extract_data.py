@@ -158,35 +158,34 @@ def get_comparison_traces(dfs):
 
     out = {}
 
-    get_traces = (
-        lambda df: df.reset_index()
-        .pivot_table(c.COL_AMOUNT, c.COL_MONTH, c.COL_YEAR, "sum")
-        .apply(lambda x: round(x, 2))
-        .fillna("null")
-        .to_dict()
-    )
+    def get_one_trace(df, col=c.COL_AMOUNT):
+        """ Create the comparison trace """
+
+        df = smooth_serie(df[[col]])
+        df["Month"] = df.index.month
+        df["Year"] = df.index.year
+
+        return (
+            df.pivot_table(col, "Month", "Year", "sum")
+            .apply(lambda x: round(x, 2))
+            .fillna("null")
+            .to_dict()
+        )
 
     # Expenses and incomes
-    for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
-        df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
-        out[name] = get_traces(smooth_serie(df))
+    for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
+        out[name] = get_one_trace(df)
 
     # Prepare transactions for Result
-    dfg = dfs[c.DF_TRANS].copy()
-    mfilter = dfg[c.COL_TYPE] == c.EXPENSES
-    dfg.loc[mfilter, c.COL_AMOUNT] = -dfg.loc[mfilter, c.COL_AMOUNT]
+    df = dfs[c.DF_TRANS].copy()
+    mfilter = df[c.COL_TYPE] == c.EXPENSES
+    df.loc[mfilter, c.COL_AMOUNT] = -df.loc[mfilter, c.COL_AMOUNT]
 
     # Add Result
-    df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
-    out[c.RESULT] = get_traces(smooth_serie(df))
+    out[c.RESULT] = get_one_trace(df)
 
     # Add liquid
-    dfg = dfs[c.DF_LIQUID].reset_index().copy()
-    dfg[c.COL_MONTH] = pd.to_datetime(dfg[c.COL_DATE]).dt.month
-    dfg[c.COL_YEAR] = pd.to_datetime(dfg[c.COL_DATE]).dt.year
-    dfg[c.COL_AMOUNT] = dfg["Total"]
-    df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
-    out[c.LIQUID] = get_traces(smooth_serie(df))
+    out[c.LIQUID] = get_one_trace(dfs[c.DF_LIQUID], "Total")
 
     log.debug("Comparison traces added")
 
