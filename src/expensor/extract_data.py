@@ -38,7 +38,13 @@ def resample(df, period, mdate):
     """ Resample and fill missing periods """
 
     index = pd.date_range(df.index.min(), mdate, freq=period)
-    return df.resample(period).sum().reindex(index).fillna(0)
+    df = df.resample(period).sum().reindex(index).fillna(0)
+
+    # If working with years, cast the index to integer
+    if period == "YS":
+        df.index = df.index.year
+
+    return df
 
 
 def get_basic_traces(dfs, period, mdate):
@@ -246,7 +252,7 @@ def get_dashboard(data, mdate):
 
     out = {}
 
-    for tw, date_index in [("month", f"{mdate:%Y-%m-01}"), ("year", f"{mdate:%Y-01-01}")]:
+    for tw, date_index in [("month", f"{mdate:%Y-%m-01}"), ("year", mdate.year)]:
 
         out[tw] = {}
 
