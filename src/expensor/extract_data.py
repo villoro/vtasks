@@ -2,6 +2,8 @@
     Create the raw data for the reprot
 """
 
+from datetime import date
+
 import numpy as np
 import pandas as pd
 
@@ -10,8 +12,8 @@ from datetime import datetime
 from vpalette import get_colors
 
 from . import constants as c
-from .functions import add_missing_months
 from .functions import filter_by_date
+from .functions import resample
 from .functions import serie_to_dict
 from .functions import series_to_dicts
 from .functions import smooth_serie
@@ -19,29 +21,36 @@ from utils import get_vdropbox
 from utils import log
 
 
-def get_basic_traces(dfs, col_period, mdate):
+def get_categories(dfs, mtype):
+    """
+        Gets a list of categories
+
+        Args:
+            dfs:    dict with dataframes
+            mtype:  [Incomes/Expenes]
+    """
+
+    df = dfs[c.DF_CATEG]
+
+    return reversed(df[df[c.COL_TYPE] == mtype].index.to_list())
+
+
+def get_basic_traces(dfs, period, mdate):
     """
         Extract Incomes, Expenses, Result and savings traces
 
         Args:
             dfs:        dict with dataframes
-            col_period: month or year
+            period:     month or year [MS/YS]
             mdate:      date of the report
     """
 
     series = {}
     for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
-
-        aux = df.groupby(col_period)[c.COL_AMOUNT].sum()
-
-        # Add missing months for month grouping
-        if col_period == c.COL_MONTH_DATE:
-            aux = add_missing_months(aux, mdate).fillna(0)
-
-        series[name] = aux
+        series[name] = resample(df[c.COL_AMOUNT], period, mdate)
 
     # Extract expenses and incomes
-    series[c.RESULT] = series[c.INCOMES] - series[c.EXPENSES]
+    series[c.RESULT] = (series[c.INCOMES] - series[c.EXPENSES]).dropna()
 
     # Add savings ratio
     series[c.SAVINGS] = (100 * series[c.RESULT] / series[c.INCOMES]).apply(lambda x: max(0, x))
@@ -49,20 +58,18 @@ def get_basic_traces(dfs, col_period, mdate):
     out = series_to_dicts(series)
 
     # Append time averaged data
-    if col_period == c.COL_MONTH_DATE:
+    if period == "MS":
         for name, serie in series.items():
             out[f"{name}_trend"] = serie_to_dict(smooth_serie(serie))
 
     # Get by groups
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
 
-        df = dfg.pivot_table(c.COL_AMOUNT, col_period, c.COL_CATEGORY, "sum").fillna(0)
-
-        df_categ = dfs[c.DF_CATEG]
-        df_categ = df_categ[df_categ[c.COL_TYPE] == name]
+        df = dfg.pivot_table(c.COL_AMOUNT, c.COL_DATE, c.COL_CATEGORY, "sum")
+        df = resample(df, period, mdate)
 
         aux = OrderedDict()
-        for x in reversed(df_categ.index.to_list()):
+        for x in get_categories(dfs, name):
             if x in df.columns:
                 aux[x] = df[x]
 
@@ -132,8 +139,8 @@ def get_salaries(dfs, mdate):
     df = dfs[c.DF_SALARY].copy()
 
     # First complete data from previous months then with 0
-    df = add_missing_months(df, mdate)
-    df = df.fillna(method="ffill").fillna(0)
+    index = pd.date_range(df.index.min(), mdate, freq="MS")
+    df = df.reindex(index).fillna(method="ffill").fillna(0)
 
     return {
         "salary": {
@@ -154,42 +161,41 @@ def get_comparison_traces(dfs):
 
     out = {}
 
-    get_traces = (
-        lambda df: df.reset_index()
-        .pivot_table(c.COL_AMOUNT, c.COL_MONTH, c.COL_YEAR, "sum")
-        .apply(lambda x: round(x, 2))
-        .fillna("null")
-        .to_dict()
-    )
+    def get_one_trace(df, col=c.COL_AMOUNT):
+        """ Create the comparison trace """
+
+        df = smooth_serie(df[[col]].resample("MS").sum())
+        df["Month"] = df.index.month
+        df["Year"] = df.index.year
+
+        return (
+            df.pivot_table(col, "Month", "Year", "sum")
+            .apply(lambda x: round(x, 2))
+            .fillna("null")
+            .to_dict()
+        )
 
     # Expenses and incomes
-    for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
-        df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
-        out[name] = get_traces(smooth_serie(df))
+    for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
+        out[name] = get_one_trace(df)
 
     # Prepare transactions for Result
-    dfg = dfs[c.DF_TRANS].copy()
-    mfilter = dfg[c.COL_TYPE] == c.EXPENSES
-    dfg.loc[mfilter, c.COL_AMOUNT] = -dfg.loc[mfilter, c.COL_AMOUNT]
+    df = dfs[c.DF_TRANS].copy()
+    mfilter = df[c.COL_TYPE] == c.EXPENSES
+    df.loc[mfilter, c.COL_AMOUNT] = -df.loc[mfilter, c.COL_AMOUNT]
 
     # Add Result
-    df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
-    out[c.RESULT] = get_traces(smooth_serie(df))
+    out[c.RESULT] = get_one_trace(df)
 
     # Add liquid
-    dfg = dfs[c.DF_LIQUID].reset_index().copy()
-    dfg[c.COL_MONTH] = pd.to_datetime(dfg[c.COL_DATE]).dt.month
-    dfg[c.COL_YEAR] = pd.to_datetime(dfg[c.COL_DATE]).dt.year
-    dfg[c.COL_AMOUNT] = dfg["Total"]
-    df = dfg.groupby([c.COL_YEAR, c.COL_MONTH]).agg({c.COL_AMOUNT: "sum"})
-    out[c.LIQUID] = get_traces(smooth_serie(df))
+    out[c.LIQUID] = get_one_trace(dfs[c.DF_LIQUID], "Total")
 
     log.debug("Comparison traces added")
 
     return out
 
 
-def get_pie_traces(dfs):
+def get_pie_traces(dfs, mdate):
     """
         Add traces for pie plots
 
@@ -198,25 +204,20 @@ def get_pie_traces(dfs):
     """
 
     out = {}
-    for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
+    for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
 
-        df_cat = dfs[c.DF_CATEG]
-        categories = df_cat[df_cat[c.COL_TYPE] == name].index.tolist()
-
-        df = dfg.pivot_table(c.COL_AMOUNT, c.COL_MONTH_DATE, c.COL_CATEGORY, "sum").fillna(0)
+        df = df.pivot_table(c.COL_AMOUNT, c.COL_DATE, c.COL_CATEGORY, "sum").fillna(0)
 
         def export_trace(serie):
             """ Extract all possible categories """
 
             # Keep only present categories
-            indexs = [x for x in categories if x in serie.index]
-
-            # Reverse categories order
-            return serie_to_dict(serie[indexs][::-1])
+            indexs = [x for x in get_categories(dfs, name) if x in serie.index]
+            return serie_to_dict(serie[indexs])
 
         out[name] = {
-            "month": export_trace(df.iloc[-1, :]),
-            "year": export_trace(df[df.index.year == df.index.year[-1]].sum()),
+            "month": export_trace(resample(df, "MS", mdate).iloc[-1, :]),
+            "year": export_trace(resample(df, "YS", mdate).iloc[-1, :]),
             "all": export_trace(df.sum()),
         }
 
@@ -239,12 +240,7 @@ def get_dashboard(data, mdate):
 
     out = {}
 
-    for tw in ["month", "year"]:
-
-        if tw == "month":
-            date_index = mdate.strftime("%Y-%m-%d")
-        else:
-            date_index = mdate.year
+    for tw, date_index in [("month", f"{mdate:%Y-%m-01}"), ("year", mdate.year)]:
 
         out[tw] = {}
 
@@ -252,6 +248,7 @@ def get_dashboard(data, mdate):
         for name in traces:
             mdict = data[tw].get(name, None)
 
+            # This is intentional so that we don't include some years for the year tw
             if mdict is not None:
                 out[tw][name] = mdict[date_index]
 
@@ -267,18 +264,12 @@ def get_dashboard(data, mdate):
 
     # Add value of end of year before worth, invested and liquid
     for name in [c.LIQUID, "Worth", "Invest"]:
-        mdict = data["month"][name]
+        # MS of the last month of last year
+        last_year = date(year=mdate.year - 1, month=12, day=1).isoformat()
 
-        dates = [x for x in mdict.keys() if x.startswith(str(mdate.year - 1))]
+        out["month"][f"{name}_1y"] = data["month"][name].get(last_year, 0)
 
-        if dates:
-            value = mdict.get(max(dates), 0)
-        else:
-            value = 0
-
-        out["month"][f"{name}_1y"] = value
-
-    # Invest last month
+    # Invest last month (for the Sankey)
     mdict = data["month"]["Invest"]
     out["month"]["Invest_1m"] = mdict[list(mdict.keys())[-2]]
 
@@ -346,14 +337,16 @@ def get_bubbles(dfs, mdate, min_year=2011):
     # Get expenses/incomes and extrapolate for last year if necessary
     aux = {}
     for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
-        dfa = df.groupby(c.COL_YEAR).agg({c.COL_AMOUNT: "sum", c.COL_MONTH: "nunique"})
-        aux[name] = dfa[c.COL_AMOUNT] * 12 / dfa[c.COL_MONTH]
+        df["Month"] = df.index.month
+        df = df.resample("YS").agg({c.COL_AMOUNT: "sum", "Month": "nunique"})
+        df.index = df.index.year
+        aux[name] = df[c.COL_AMOUNT] * 12 / df["Month"]
 
     def get_year(dfi):
-        """ Get year data """
-        df = dfi.copy()
-        df["Year"] = df.index.year
-        return df.drop_duplicates("Year", keep="last").set_index("Year")["Total"]
+        """ Get last value of each year """
+        df = dfi.resample("YS").last()["Total"]
+        df.index = df.index.year
+        return df
 
     aux["Liquid"] = get_year(dfs[c.DF_LIQUID])
     aux["Worth"] = get_year(dfs[c.DF_WORTH])
@@ -366,9 +359,7 @@ def get_bubbles(dfs, mdate, min_year=2011):
     df["doomsday"] = df["Total_Worth"] / df["Expenses"]
 
     # First year has strange values
-    df = df[df.index > min_year]
-
-    df = df.apply(lambda x: round(x, 2))
+    df = df[df.index > min_year].apply(lambda x: round(x, 2))
 
     out = []
     for i, row in df.iterrows():
@@ -459,10 +450,11 @@ def get_colors_comparisons(dfs):
     # Incomes, Expenses and result
     out = {}
     for name, color_name in [(c.INCOMES, "green"), (c.EXPENSES, "red"), (c.RESULT, "amber")]:
-        out[name] = extract_colors_from_years(dfs[c.DF_TRANS][c.COL_YEAR], color_name)
+        years = dfs[c.DF_TRANS].resample("YS").sum().index.year
+        out[name] = extract_colors_from_years(years, color_name)
 
     # Liquid
-    years = pd.to_datetime(dfs[c.DF_LIQUID].reset_index()[c.COL_DATE]).dt.year
+    years = dfs[c.DF_LIQUID].index.year
     out[c.LIQUID] = extract_colors_from_years(years, "blue")
 
     return out
@@ -512,8 +504,8 @@ def main(dfs, mdate=datetime.now(), export_data=False):
 
     # Expenses, incomes, result and savings ratio
     log.debug("Extracting expenses, incomes, result and savings ratio")
-    for period, col_period in {"month": c.COL_MONTH_DATE, "year": c.COL_YEAR}.items():
-        out[period] = get_basic_traces(dfs, col_period, mdate)
+    for period in ["month", "year"]:
+        out[period] = get_basic_traces(dfs, period[0].upper() + "S", mdate)
 
     # Liquid, worth and invested
     log.debug("Adding liquid, worth and invested")
@@ -525,7 +517,7 @@ def main(dfs, mdate=datetime.now(), export_data=False):
     out["month"].update(get_salaries(dfs, mdate))
 
     out["comp"] = get_comparison_traces(dfs)
-    out["pies"] = get_pie_traces(dfs)
+    out["pies"] = get_pie_traces(dfs, mdate)
     out["dash"] = get_dashboard(out, mdate)
     out["ratios"] = get_ratios(out)
     out["bubbles"] = get_bubbles(dfs, mdate)

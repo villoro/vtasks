@@ -516,7 +516,7 @@
   });
   Highcharts.chart('COMP_liquid', {
     ...plot_comparison,
-    title: {text: 'Liquid comparison (3 months EWM)'},
+    title: {text: 'Liquid comparison (trend)'},
     series: [
       {% for y, data in comp["Liquid"].items() %}{
         name: "{{ y }}",

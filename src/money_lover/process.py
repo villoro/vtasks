@@ -70,9 +70,6 @@ def transform_transactions(df_in):
 
     # Add time filter columns (store everything as string to ensure JSON compatibility)
     df[c.COL_DATE] = pd.to_datetime(df[c.COL_DATE], dayfirst=True)
-    df[c.COL_MONTH_DATE] = pd.to_datetime(df[c.COL_DATE].dt.strftime("%Y-%m-01"))
-    df[c.COL_MONTH] = df[c.COL_DATE].dt.month
-    df[c.COL_YEAR] = df[c.COL_DATE].dt.year
 
     # Tag expenses/incomes
     df.loc[df[c.COL_AMOUNT] > 0, c.COL_TYPE] = c.INCOMES

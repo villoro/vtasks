@@ -10,6 +10,19 @@ import pandas as pd
 from . import constants as c
 
 
+def resample(df, period, mdate):
+    """ Resample and fill missing periods """
+
+    index = pd.date_range(df.index.min(), mdate, freq=period)
+    df = df.resample(period).sum().reindex(index).fillna(0)
+
+    # If working with years, cast the index to integer
+    if period == "YS":
+        df.index = df.index.year
+
+    return df
+
+
 def serie_to_dict(serie):
     """ Transform a serie to a dict """
 
@@ -65,64 +78,26 @@ def smooth_serie(dfi,):
     return time_average(df, months=6, center=True)
 
 
-def _get_min_month_start(dfi):
-    """ Extracts the min month_start of a dataframe """
-
-    df = dfi.copy()
-
-    if isinstance(df, pd.DataFrame) and (c.COL_DATE in df.columns):
-        df = df.set_index(c.COL_DATE)
-
-    return df.resample("MS").first().index.min()
-
-
-def add_missing_months(df, mdate):
-    """
-        Adds missing months from the min month to mdate
-        
-        Args:
-            df:     dataframe with date as index
-            mdate:  date for the max month
-    """
-
-    min_date = _get_min_month_start(df)
-    max_date = mdate.replace(day=1)
-
-    return df.reindex(pd.date_range(min_date, max_date, freq="MS"))
-
-
-def filter_by_date(dfs, mdate):
+def filter_by_date(dfs_in, mdate):
     """
         No data greater than mdate and complete missing months
 
         Args:
-            dfs:    dict with dataframes
+            dfs_in: dict with dataframes
             mdate:  date of the report
     """
+
+    dfs = dfs_in.copy()
 
     # Get last date of month
     mdate = pd.to_datetime(mdate) + pd.tseries.offsets.MonthEnd(1)
 
-    # Liquid, worth and invest dataframes
-    dfs_out = {}
-    for name in [c.DF_LIQUID, c.DF_WORTH, c.DF_INVEST]:
-        df = dfs[name].copy()
+    for name, df in dfs.items():
 
-        # No future data
-        df = df[df.index <= mdate]
+        # Filter out future data
+        if df.index.name == c.COL_DATE:
+            df = df[df.index <= mdate]
 
-        # No missing months
-        df = add_missing_months(df, mdate)
-        df.index.name = c.COL_DATE
+        dfs[name] = df
 
-        dfs_out[name] = df
-
-    # Transactions df
-    df = dfs[c.DF_TRANS].copy()
-    dfs_out[c.DF_TRANS] = df[df[c.COL_DATE] <= mdate]
-
-    # Copy missing dataframes
-    for name in set(c.DFS_ALL) - set(dfs_out.keys()):
-        dfs_out[name] = dfs[name].copy()
-
-    return dfs_out
+    return dfs
