@@ -846,13 +846,14 @@
     ...plot_datetime,
     title: {text: 'Passive income vs Expenses'},
     series: [
+      {% for x in [3, 4, 5] %}
       {
-        name: "Passive Income",
-        color: "{{ colors['Incomes_passive'] }}",
+        name: "Passive Income {{ x }}%",
+        color: "{{ colors['Passive_income_' + x | string] }}",
         data: [{% for mdate, value in month['Worth'].items() %}
-          [Date.parse("{{ mdate }}"), {{ (value/300) | round(2) }}], {% endfor %}
+          [Date.parse("{{ mdate }}"), {{ (x*value/1200) | round(2) }}], {% endfor %}
         ]
-      },
+      }, {% endfor %}
       {
         name: "Expenses",
         color: "{{ colors['Expenses_dim'] }}",
