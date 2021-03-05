@@ -27,11 +27,13 @@ def get_api():
 
 
 def get_balances(api=None):
-    """ Retrive balances as dict """
+    """ Retrive balances as a pandas serie """
 
     # Allow lazy loading
     if api is None:
         api = get_api()
+
+    log.info("Getting balances from kraken")
 
     # Get balances as a pandas serie
     serie = api.get_account_balance()["vol"]

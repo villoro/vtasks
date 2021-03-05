@@ -6,6 +6,7 @@ from prefect import task
 
 import gspreadsheets as gsh
 
+from cryptos.kraken import get_balances
 from expensor.constants import DF_WORTH
 from expensor.constants import FILE_DATA
 from utils import log
@@ -14,6 +15,7 @@ from utils import timeit
 SPREADSHEET_CRYPTO = "crypto_data"
 SHEET_PRICES = "prices"
 SHEET_VALUE = "value"
+SHEET_VOL_KRAKEN = "vol_kraken"
 
 
 def get_crypto_prices(cryptos):
@@ -41,6 +43,18 @@ def update_crypto_prices(mfilter):
     gsh.df_to_gspread(SPREADSHEET_CRYPTO, SHEET_PRICES, df, mfilter)
 
 
+def update_kraken_balances(mfilter):
+    """ Update balances from kraken """
+
+    df = gsh.read_df_gdrive(SPREADSHEET_CRYPTO, SHEET_VOL_KRAKEN, "all")
+
+    # Retrive from kraken API and update
+    df.loc[mfilter] = get_balances()
+
+    # Update gspreadsheet
+    gsh.df_to_gspread(SPREADSHEET_CRYPTO, SHEET_VOL_KRAKEN, df, mfilter)
+
+
 def update_expensor(mfilter):
     """ Update expensor cryptos worth based on crypto values"""
 
@@ -65,4 +79,5 @@ def update_cryptos(mdate):
     mfilter = mdate.strftime("%Y-%m-01")
 
     update_crypto_prices(mfilter)
+    update_kraken_balances(mfilter)
     update_expensor(mfilter)
