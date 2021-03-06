@@ -79,24 +79,17 @@ class INGAPI:
             "Date": mdate,
             "Digest": f"SHA-256={digest}",
             "X-ING-ReqID": req_id,
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "application/json",
         }
 
         # Add extra headers
         if token:
             headers.update(
-                {
-                    "Authorization": f"Bearer {token}",
-                    "Signature": ",".join(signature_details),
-                    "Accept": "application/json",
-                }
+                {"Authorization": f"Bearer {token}", "Signature": ",".join(signature_details),}
             )
         else:
-            headers.update(
-                {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "Authorization": "Signature " + ",".join(signature_details),
-                }
-            )
+            headers.update({"Authorization": "Signature " + ",".join(signature_details)})
 
         # Do the real query
         result = requests.request(
