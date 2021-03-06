@@ -1,4 +1,3 @@
-import hashlib
 import json
 import requests
 import uuid
@@ -17,68 +16,58 @@ class INGAPI:
         self,
         host="https://api.sandbox.ing.com",
         client_id="e77d776b-90af-4684-bebc-521e5b2614dd",
-        file_key="certs/example_client_signing.key",
+        sign_key="certs/example_client_signing.key",
         tls_cert="certs/example_client_tls.cer",
         tls_key="certs/example_client_tls.key",
     ):
 
         self.host = host
         self.client_id = client_id
-        self.file_key = file_key
+        self.sign_key = sign_key
         self.tls_cert = tls_cert
         self.tls_key = tls_key
 
         # Set an empty token until it's requested
         self.token = None
 
-    def digest_body(self, text):
+    def encode_sha256(self, text, sign=False):
         """ digest a text with SHA256 """
 
-        digest = hashlib.sha256()
+        digest = SHA256.new()
         digest.update(text.encode())
 
-        return b64encode(digest.digest()).decode()
+        if sign:
+            with open(self.sign_key, "r") as file:
+                data = file.read()
 
-    def sign(self, stringToSign):
+            private_key = RSA.importKey(data)
+            signer = PKCS1_v1_5.new(private_key)
+            out = signer.sign(digest)
 
-        with open(self.file_key, "r") as file:
-            data = file.read()
+        else:
+            out = digest.digest()
 
-        private_key = RSA.importKey(data)
-        signer = PKCS1_v1_5.new(private_key)
+        return b64encode(out).decode()
 
-        digest = SHA256.new()
-        digest.update(stringToSign.encode())
+    def sign(self, method, endpoint, mdate, digest, req_id):
 
-        signingString = signer.sign(digest)
-        signingString = b64encode(signingString).decode()
-
-        return signingString
-
-    def calculate_signature(self, method, endpoint, mdate, digest, reqId):
-        stringToSign = (
+        text = (
             f"(request-target): {method} {endpoint}\n"
             + f"date: {mdate}\n"
             + f"digest: SHA-256={digest}\n"
-            + f"x-ing-reqid: {reqId}"
+            + f"x-ing-reqid: {req_id}"
         )
-        return self.sign(stringToSign)
 
-    def query(self, method, endpoint, body="", token=None):
+        return self.encode_sha256(text, True)
 
-        reqId = str(uuid.uuid4())
+    def query(self, endpoint, method="GET", body="", token=None):
+        """ Query an endpoint """
+
         mdate = datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
-        cert = (self.tls_cert, self.tls_key)
-        digest = self.digest_body(body)
+        digest = self.encode_sha256(body)
+        req_id = str(uuid.uuid4())
 
-        signature = self.calculate_signature(method.lower(), endpoint, mdate, digest, reqId)
-
-        headers = {
-            "Date": mdate,
-            "Digest": f"SHA-256={digest}",
-            "X-ING-ReqID": reqId,
-        }
-
+        signature = self.sign(method.lower(), endpoint, mdate, digest, req_id)
         signature_details = (
             f'keyId="{self.client_id}"',
             'algorithm="rsa-sha256"',
@@ -86,6 +75,13 @@ class INGAPI:
             f'signature="{signature}"',
         )
 
+        headers = {
+            "Date": mdate,
+            "Digest": f"SHA-256={digest}",
+            "X-ING-ReqID": req_id,
+        }
+
+        # Add extra headers
         if token:
             headers.update(
                 {
@@ -102,19 +98,24 @@ class INGAPI:
                 }
             )
 
+        # Do the real query
         result = requests.request(
-            method.upper(), self.host + endpoint, headers=headers, data=body, cert=cert
+            method.upper(),
+            self.host + endpoint,
+            headers=headers,
+            data=body,
+            cert=(self.tls_cert, self.tls_key),
         )
 
         result.raise_for_status()
-
         return result
 
     def get_token(self):
+        """ Update self.token """
+
         res = self.query(
-            method="POST",
             endpoint="/oauth2/token",
+            method="POST",
             body="grant_type=client_credentials&scope=greetings%3Aview",
         )
         self.token = res.json()["access_token"]
-        return token
