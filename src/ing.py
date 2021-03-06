@@ -114,8 +114,6 @@ class INGAPI:
         """ Update self.token """
 
         res = self.query(
-            endpoint="/oauth2/token",
-            method="POST",
-            body="grant_type=client_credentials&scope=greetings%3Aview",
+            endpoint="/oauth2/token", method="POST", body="grant_type=client_credentials",
         )
         self.token = res.json()["access_token"]
