@@ -16,9 +16,9 @@ class INGAPI:
         self,
         host="https://api.sandbox.ing.com",
         client_id="e77d776b-90af-4684-bebc-521e5b2614dd",
-        sign_key="certs/example_client_signing.key",
-        tls_cert="certs/example_client_tls.cer",
-        tls_key="certs/example_client_tls.key",
+        sign_key="certificates/example_client_signing.key",
+        tls_cert="certificates/example_client_tls.cer",
+        tls_key="certificates/example_client_tls.key",
     ):
 
         self.host = host
