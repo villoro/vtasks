@@ -2,7 +2,6 @@ import json
 import requests
 import uuid
 
-from base64 import b64decode
 from base64 import b64encode
 from datetime import datetime
 
