@@ -30,6 +30,12 @@ class INGAPI:
         # Set an empty token until it's requested
         self.token = None
 
+    def get_signing_key(self):
+        """ Gets the signing key """
+
+        with open(self.sign_key, "r") as file:
+            return file.read()
+
     def encode_sha256(self, text, sign=False):
         """ digest a text with SHA256 """
 
@@ -37,10 +43,7 @@ class INGAPI:
         digest.update(text.encode())
 
         if sign:
-            with open(self.sign_key, "r") as file:
-                data = file.read()
-
-            private_key = RSA.importKey(data)
+            private_key = RSA.importKey(self.get_signing_key())
             signer = PKCS1_v1_5.new(private_key)
             out = signer.sign(digest)
 
@@ -101,6 +104,7 @@ class INGAPI:
             cert=(self.tls_cert, self.tls_key),
         )
 
+        # Check that the result is valid
         result.raise_for_status()
         return result
 
