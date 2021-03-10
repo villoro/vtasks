@@ -49,16 +49,25 @@ class INGAPI:
 
         return b64encode(out).decode()
 
-    def sign(self, method, endpoint, mdate, digest, req_id):
+    def get_signature(self, method, endpoint, mdate, digest, req_id):
 
-        text = (
-            f"(request-target): {method} {endpoint}\n"
-            + f"date: {mdate}\n"
-            + f"digest: SHA-256={digest}\n"
-            + f"x-ing-reqid: {req_id}"
-        )
+        text = [
+            f"(request-target): {method.lower()} {endpoint}",
+            f"date: {mdate}",
+            f"digest: SHA-256={digest}",
+            f"x-ing-reqid: {req_id}",
+        ]
 
-        return self.encode_sha256(text, True)
+        signature_digest = self.encode_sha256("\n".join(text), True)
+
+        signature = [
+            f'keyId="{self.client_id}"',
+            'algorithm="rsa-sha256"',
+            'headers="(request-target) date digest x-ing-reqid"',
+            f'signature="{signature_digest}"',
+        ]
+
+        return ",".join(signature)
 
     def query(self, endpoint, method="GET", body="", token=None):
         """ Query an endpoint """
@@ -67,14 +76,7 @@ class INGAPI:
         digest = self.encode_sha256(body)
         req_id = str(uuid.uuid4())
 
-        signature = self.sign(method.lower(), endpoint, mdate, digest, req_id)
-        signature_details = (
-            f'keyId="{self.client_id}"',
-            'algorithm="rsa-sha256"',
-            'headers="(request-target) date digest x-ing-reqid"',
-            f'signature="{signature}"',
-        )
-
+        # Basic headers
         headers = {
             "Date": mdate,
             "Digest": f"SHA-256={digest}",
@@ -83,13 +85,12 @@ class INGAPI:
             "Accept": "application/json",
         }
 
-        # Add extra headers
+        # Add Authorization header
+        signature = self.get_signature(method, endpoint, mdate, digest, req_id)
         if token:
-            headers.update(
-                {"Authorization": f"Bearer {token}", "Signature": ",".join(signature_details),}
-            )
+            headers.update({"Authorization": f"Bearer {token}", "Signature": signature})
         else:
-            headers.update({"Authorization": "Signature " + ",".join(signature_details)})
+            headers.update({"Authorization": f"Signature {signature}"})
 
         # Do the real query
         result = requests.request(
