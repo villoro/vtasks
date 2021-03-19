@@ -1,5 +1,4 @@
 import re
-import yaml
 
 from datetime import date
 from datetime import timedelta
@@ -10,6 +9,7 @@ from utils import get_files_from_regex
 from utils import get_path
 from utils import get_vdropbox
 from utils import log
+from utils import read_yaml
 from utils import timeit
 
 YEAR = f"{date.today():%Y}"
@@ -58,13 +58,6 @@ def one_backup(vdp, path, regex):
             log.debug(f"Skipping '{origin}' since has not been updated")
 
 
-def get_patterns():
-    """ Get the files and paths from the yaml config file """
-
-    with open(PATH_FILES, "r") as file:
-        return yaml.safe_load(file)
-
-
 @task
 @timeit
 def backup_files():
@@ -72,6 +65,6 @@ def backup_files():
 
     vdp = get_vdropbox()
 
-    for kwargs in get_patterns():
+    for kwargs in read_yaml(PATH_FILES):
         log.info("Scanning '{path}/{regex}'".format(**kwargs))
         one_backup(vdp, **kwargs)

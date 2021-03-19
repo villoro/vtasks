@@ -1,6 +1,7 @@
 import functools
 import re
 import sys
+import yaml
 
 from datetime import date
 from pathlib import Path
@@ -119,3 +120,10 @@ def render_jinja_template(template_name, data):
 
     # Render the template
     return template.render(**data)
+
+
+def read_yaml(filename):
+    """ Read a yaml file """
+
+    with open(filename, "r") as file:
+        return yaml.safe_load(file)

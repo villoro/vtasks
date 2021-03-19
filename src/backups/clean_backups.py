@@ -7,10 +7,11 @@ import pandas as pd
 
 from prefect import task
 
-from .backup_files import get_patterns
+from .backup_files import PATH_FILES
 from utils import get_files_from_regex
 from utils import get_vdropbox
 from utils import log
+from utils import read_yaml
 from utils import timeit
 
 
@@ -61,7 +62,7 @@ def get_all_backups(vdp):
 
     dfs = []
 
-    for kwargs in get_patterns():
+    for kwargs in read_yaml(PATH_FILES):
 
         log.info("Scanning '{path}'".format(**kwargs))
 
