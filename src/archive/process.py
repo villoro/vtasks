@@ -23,6 +23,7 @@ def rename_files(vdp, path, regex, output):
         log.info(f"Archiving '{origin}'")
 
         vdp.dbx.files_copy(origin, dest)
+        vdp.delete(origin)
 
 
 @task
