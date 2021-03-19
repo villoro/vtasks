@@ -6,6 +6,7 @@ from datetime import timedelta
 from prefect import task
 
 from .config import URIS
+from utils import get_files_from_regex
 from utils import get_vdropbox
 from utils import log
 from utils import timeit
@@ -29,23 +30,10 @@ def updated_yesterday(vdp, filename):
     return updated_at > date.today() - timedelta(1)
 
 
-def get_files_to_backup(vdp, uri):
-    """ Get a path and a list of files form a regex """
-
-    # Extract path and regex
-    path = uri.split("/")
-    regex = path.pop()
-    path = "/".join(path)
-
-    filenames = [x for x in vdp.ls(path) if re.search(regex, x)]
-
-    return path, filenames
-
-
 def one_backup(vdp, uri):
     """ Back up a list of files from a folder """
 
-    path, filenames = get_files_to_backup(vdp, uri)
+    path, filenames = get_files_from_regex(vdp, uri)
 
     # Backup all files
     for filename in filenames:

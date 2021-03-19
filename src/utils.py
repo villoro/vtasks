@@ -1,4 +1,5 @@
 import functools
+import re
 import sys
 
 from datetime import date
@@ -63,6 +64,19 @@ def get_vdropbox():
         VDROPBOX = Vdropbox(get_secret("DROPBOX_TOKEN"), log=log)
 
     return VDROPBOX
+
+
+def get_files_from_regex(vdp, uri):
+    """ Get a path and a list of files form a regex """
+
+    # Extract path and regex
+    path = uri.split("/")
+    regex = path.pop()
+    path = "/".join(path)
+
+    filenames = [x for x in vdp.ls(path) if re.search(regex, x)]
+
+    return path, filenames
 
 
 def timeit(func):

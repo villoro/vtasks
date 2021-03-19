@@ -7,8 +7,8 @@ import pandas as pd
 
 from prefect import task
 
-from .backup_files import get_files_to_backup
 from .config import URIS
+from utils import get_files_from_regex
 from utils import get_vdropbox
 from utils import log
 from utils import timeit
@@ -62,7 +62,7 @@ def get_all_backups(vdp):
     dfs = []
 
     for uri in URIS:
-        path, filenames = get_files_to_backup(vdp, uri)
+        path, filenames = get_files_from_regex(vdp, uri)
 
         log.info(f"Scanning '{path}'")
 
