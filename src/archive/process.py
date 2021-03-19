@@ -5,6 +5,7 @@ from prefect import task
 
 from utils import get_files_from_regex
 from utils import get_path
+from utils import get_secret
 from utils import get_vdropbox
 from utils import log
 from utils import read_yaml
