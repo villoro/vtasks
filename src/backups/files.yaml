@@ -1,0 +1,11 @@
+-
+  path: /Aplicaciones/KeePass
+  regex: (.).kdbx
+
+-
+  path: /Aplicaciones/expensor
+  regex: (.).(yaml|yml)
+
+-
+  path: /Aplicaciones/FreeFileSync
+  regex: (.).ffs_gui

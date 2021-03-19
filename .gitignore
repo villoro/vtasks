@@ -58,3 +58,6 @@ logs/
 
 # Gdrive json
 gdrive.json
+
+# Certificates
+src/certificates/

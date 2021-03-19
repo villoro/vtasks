@@ -1,5 +1,7 @@
 import functools
+import re
 import sys
+import yaml
 
 from datetime import date
 from pathlib import Path
@@ -65,6 +67,37 @@ def get_vdropbox():
     return VDROPBOX
 
 
+def get_files_that_match(vdp, folder, regex):
+    """ Get all files in a folder that match a regex """
+
+    out = []
+
+    for file in vdp.ls(folder):
+        match = re.search(regex, file)
+
+        if match:
+            out.append((folder, file, match.groupdict()))
+
+    return out
+
+
+def get_files_from_regex(vdp, path, regex):
+    """ Get all files based on a path and a regex for the filename """
+
+    # No '*' return all files directly
+    if not path.endswith("/*"):
+        return get_files_that_match(vdp, path, regex)
+
+    # Query all folders
+    base_path = path.replace("/*", "")
+
+    out = []
+    for x in vdp.ls(base_path):
+        out += get_files_that_match(vdp, f"{base_path}/{x}", regex)
+
+    return out
+
+
 def timeit(func):
     """ Timing decorator """
 
@@ -95,3 +128,10 @@ def render_jinja_template(template_name, data):
 
     # Render the template
     return template.render(**data)
+
+
+def read_yaml(filename):
+    """ Read a yaml file """
+
+    with open(filename, "r") as file:
+        return yaml.safe_load(file)
