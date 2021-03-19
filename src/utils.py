@@ -66,17 +66,27 @@ def get_vdropbox():
     return VDROPBOX
 
 
-def get_files_from_regex(vdp, uri):
-    """ Get a path and a list of files form a regex """
+def get_files_that_match(vdp, folder, regex):
+    """ Get all files in a folder that match a regex """
 
-    # Extract path and regex
-    path = uri.split("/")
-    regex = path.pop()
-    path = "/".join(path)
+    return [(folder, x) for x in vdp.ls(folder) if re.search(regex, x)]
 
-    filenames = [x for x in vdp.ls(path) if re.search(regex, x)]
 
-    return path, filenames
+def get_files_from_regex(vdp, path, regex):
+    """ Get all files based on a path and a regex for the filename """
+
+    # No '*' return all files directly
+    if not path.endswith("/*"):
+        return get_files_that_match(vdp, path, regex)
+
+    # Query all folders
+    base_path = path.replace("/*", "")
+
+    out = []
+    for x in vdp.ls(base_path):
+        out += get_files_that_match(vdp, f"{base_path}/{x}", regex)
+
+    return out
 
 
 def timeit(func):

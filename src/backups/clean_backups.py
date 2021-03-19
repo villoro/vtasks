@@ -7,14 +7,14 @@ import pandas as pd
 
 from prefect import task
 
-from .config import URIS
+from .backup_files import get_patterns
 from utils import get_files_from_regex
 from utils import get_vdropbox
 from utils import log
 from utils import timeit
 
 
-def get_backup_data(vdp, path):
+def get_backup_data(vdp, path, regex):
     """ Get info about the backups """
 
     base_path = f"{path}/Backups"
@@ -61,12 +61,11 @@ def get_all_backups(vdp):
 
     dfs = []
 
-    for uri in URIS:
-        path, filenames = get_files_from_regex(vdp, uri)
+    for kwargs in get_patterns():
 
-        log.info(f"Scanning '{path}'")
+        log.info("Scanning '{path}'".format(**kwargs))
 
-        df = get_backup_data(vdp, path)
+        df = get_backup_data(vdp, **kwargs)
 
         if df is not None:
             dfs.append(df)

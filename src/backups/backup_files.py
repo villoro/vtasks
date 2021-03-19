@@ -1,18 +1,21 @@
 import re
+import yaml
 
 from datetime import date
 from datetime import timedelta
 
 from prefect import task
 
-from .config import URIS
 from utils import get_files_from_regex
+from utils import get_path
 from utils import get_vdropbox
 from utils import log
 from utils import timeit
 
 YEAR = f"{date.today():%Y}"
 DAY = f"{date.today():%Y_%m_%d}"
+
+PATH_FILES = get_path("src/backups/files.yaml")
 
 
 def get_update_at(vdp, filename):
@@ -30,15 +33,16 @@ def updated_yesterday(vdp, filename):
     return updated_at > date.today() - timedelta(1)
 
 
-def one_backup(vdp, uri):
+def one_backup(vdp, path, regex):
     """ Back up a list of files from a folder """
 
-    path, filenames = get_files_from_regex(vdp, uri)
-
     # Backup all files
-    for filename in filenames:
+    for path, filename in get_files_from_regex(vdp, path, regex):
+
         origin = f"{path}/{filename}"
         dest = f"{path}/Backups/{YEAR}/{DAY} {filename}"
+
+        log.debug(f"Trying to backup '{origin}")
 
         if updated_yesterday(vdp, origin):
 
@@ -54,6 +58,13 @@ def one_backup(vdp, uri):
             log.debug(f"Skipping '{origin}' since has not been updated")
 
 
+def get_patterns():
+    """ Get the files and paths from the yaml config file """
+
+    with open(PATH_FILES, "r") as file:
+        return yaml.safe_load(file)
+
+
 @task
 @timeit
 def backup_files():
@@ -61,6 +72,6 @@ def backup_files():
 
     vdp = get_vdropbox()
 
-    for uri in URIS:
-        log.info(f"Scanning '{uri}'")
-        one_backup(vdp, uri)
+    for kwargs in get_patterns():
+        log.info("Scanning '{path}/{regex}'".format(**kwargs))
+        one_backup(vdp, **kwargs)
