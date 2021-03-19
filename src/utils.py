@@ -70,7 +70,15 @@ def get_vdropbox():
 def get_files_that_match(vdp, folder, regex):
     """ Get all files in a folder that match a regex """
 
-    return [(folder, x) for x in vdp.ls(folder) if re.search(regex, x)]
+    out = []
+
+    for file in vdp.ls(folder):
+        match = re.search(regex, file)
+
+        if match:
+            out.append((folder, file, match.groupdict()))
+
+    return out
 
 
 def get_files_from_regex(vdp, path, regex):

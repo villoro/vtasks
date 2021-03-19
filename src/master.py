@@ -8,6 +8,7 @@ from prefect.utilities import logging
 
 import utils as u
 
+from archive import archive
 from backups import backup_files
 from backups import clean_backups
 from cryptos import update_cryptos
@@ -25,6 +26,9 @@ logging.get_logger = lambda x: log
 with Flow("do_all") as flow:
     mdate = Parameter("mdate")
     pro = Parameter("pro")
+
+    # Archive documents
+    archive()
 
     # Backups
     backup_files()

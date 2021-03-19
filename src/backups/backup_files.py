@@ -37,7 +37,7 @@ def one_backup(vdp, path, regex):
     """ Back up a list of files from a folder """
 
     # Backup all files
-    for path, filename in get_files_from_regex(vdp, path, regex):
+    for path, filename, _ in get_files_from_regex(vdp, path, regex):
 
         origin = f"{path}/{filename}"
         dest = f"{path}/Backups/{YEAR}/{DAY} {filename}"

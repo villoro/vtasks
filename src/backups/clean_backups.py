@@ -8,7 +8,6 @@ import pandas as pd
 from prefect import task
 
 from .backup_files import PATH_FILES
-from utils import get_files_from_regex
 from utils import get_vdropbox
 from utils import log
 from utils import read_yaml
