@@ -1,4 +1,0 @@
--
-  path: /REP/Documentacio/Legal
-  regex: Informe mensual Indexa Capital - (?P<account>\w{8}) - (?P<year>\d{4})-(?P<month>\d{2}).pdf
-  output: "{year}/{year}_{month} Informe mensual Indexa Capital - {account}.pdf"
