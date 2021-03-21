@@ -22,12 +22,10 @@ def rename_files(vdp, path, regex, output):
     for path, file, kwargs in get_files_from_regex(vdp, path, regex):
 
         origin = f"{path}/{file}"
-        dest = f"{path}/{output.format(**kwargs)}"
+        dest = output.format(**kwargs)
 
         log.info(f"Archiving '{origin}'")
-
-        vdp.dbx.files_copy(origin, dest)
-        vdp.delete(origin)
+        vdp.mv(origin, dest)
 
 
 def extract_files(vdp, path, regex, output, pwd, kwargs):
@@ -39,7 +37,7 @@ def extract_files(vdp, path, regex, output, pwd, kwargs):
     for path, file, _ in get_files_from_regex(vdp, path, regex):
 
         origin = f"{path}/{file}"
-        dest = f"{path}/{output.format(**kwargs)}"
+        dest = output.format(**kwargs)
 
         log.info(f"Extracting '{origin}'")
 

@@ -2,13 +2,18 @@ renames:
   indexa:
     path: /Docs/Legal
     regex: Informe mensual Indexa Capital - (?P<account>\w{8}) - (?P<year>\d{4})-(?P<month>\d{2}).pdf
-    output: "{year}/{year}_{month} Informe mensual Indexa Capital - {account}.pdf"
+    output: /Docs/Legal/{year}/{year}_{month} Informe mensual Indexa Capital - {account}.pdf
+
+  caixa_enginyers: # This is a one run archive task
+    path: /REP/Tickets i factures/Caixa enginyers/*
+    regex: (?P<text>[\w+\-]*)_(?P<day>\d{2})-(?P<month>\d{2})-(?P<year>\d{4}).pdf
+    output: /Docs/Legal/{year}/{year}_{month}_{day} Caixa_enginyers {text}.pdf
 
 extractions:
   glovo_month:
     path: /Docs/Legal
     regex: Hoja de salario ID(\d{9}).zip
-    output: "{year}/{year}_{month} Nomina Glovo.pdf"
+    output: /Docs/Legal/{year}/{year}_{month} Nomina Glovo.pdf
     pwd: user_id
     kwargs:
       # year and month for the month before
@@ -18,7 +23,7 @@ extractions:
   glovo_year:
     path: /Docs/Legal
     regex: Certificado de ingresos y retenciones (\d{4}).zip
-    output: "{year}/{year} Glovo certificat ingresos i retencions.pdf"
+    output: /Docs/Legal/{year}/{year} Glovo certificat ingresos i retencions.pdf
     pwd: user_id
     kwargs:
       # Year before
