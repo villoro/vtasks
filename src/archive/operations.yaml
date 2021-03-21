@@ -4,10 +4,15 @@ renames:
     regex: Informe mensual Indexa Capital - (?P<account>\w{8}) - (?P<year>\d{4})-(?P<month>\d{2}).pdf
     output: /Docs/Legal/{year}/{year}_{month} Informe mensual Indexa Capital - {account}.pdf
 
-  caixa_enginyers: # This is a one run archive task
-    path: /REP/Tickets i factures/Caixa enginyers/*
-    regex: (?P<text>[\w+\-]*)_(?P<day>\d{2})-(?P<month>\d{2})-(?P<year>\d{4}).pdf
-    output: /Docs/Legal/{year}/{year}_{month}_{day} Caixa_enginyers {text}.pdf
+  month_underscore:
+    path: /Docs/Legal/*
+    regex: (?P<year>\d{4})_(?P<month>\d{2})_(?P<day>\d{2})_(?P<text>[\w+\- ]*)\.(?P<extension>\w+)
+    output: /Docs/Legal/{year}/{year}_{month}_{day} {text}.{extension}
+
+  year_underscore:
+    path: /Docs/Legal/*
+    regex: (?P<year>\d{4})_(?P<month>\d{2})_(?P<text>[^0-9][\w+\- ]*)\.(?P<extension>\w+)
+    output: /Docs/Legal/{year}/{year}_{month} {text}.{extension}
 
 extractions:
   glovo_month:

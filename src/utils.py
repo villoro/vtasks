@@ -92,8 +92,9 @@ def get_files_from_regex(vdp, path, regex):
     base_path = path.replace("/*", "")
 
     out = []
-    for x in vdp.ls(base_path):
-        out += get_files_that_match(vdp, f"{base_path}/{x}", regex)
+    for file in vdp.ls(base_path):
+        if "." not in file:
+            out += get_files_that_match(vdp, f"{base_path}/{file}", regex)
 
     return out
 
