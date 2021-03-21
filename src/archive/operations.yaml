@@ -1,11 +1,11 @@
 renames:
-  -
+  indexa:
     path: /REP/Documentacio/Legal
     regex: Informe mensual Indexa Capital - (?P<account>\w{8}) - (?P<year>\d{4})-(?P<month>\d{2}).pdf
     output: "{year}/{year}_{month} Informe mensual Indexa Capital - {account}.pdf"
 
 extractions:
-  -
+  glovo_month:
     path: /REP/Documentacio/Legal
     regex: Hoja de salario ID(\d{9}).zip
     output: "{year}/{year}_{month} Nomina Glovo.pdf"
@@ -14,3 +14,12 @@ extractions:
       # year and month for the month before
       year: (date.today() - timedelta(days=32)).year
       month: str((date.today() - timedelta(days=32)).month).zfill(2)
+
+  glovo_year:
+    path: /REP/Documentacio/Legal
+    regex: Certificado de ingresos y retenciones (\d{4}).zip
+    output: "{year}/{year} Glovo certificato ingresos y retenciones.pdf"
+    pwd: user_id
+    kwargs:
+      # Year before
+      year: date.today().year - 1

@@ -59,9 +59,9 @@ def archive():
     vdp = get_vdropbox()
 
     # Rename some files
-    for kwargs in OPERATIONS["renames"]:
+    for kwargs in OPERATIONS["renames"].values():
         rename_files(vdp, **kwargs)
 
     # Extract some files
-    for kwargs in OPERATIONS["extractions"]:
+    for kwargs in OPERATIONS["extractions"].values():
         extract_files(vdp, **kwargs)
