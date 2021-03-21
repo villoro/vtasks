@@ -15,19 +15,39 @@ from utils import timeit
 PATH_OPERATIONS = get_path("src/archive/operations.yaml")
 OPERATIONS = read_yaml(PATH_OPERATIONS)
 
+MONTHS = {
+    "Enero": 1,
+    "Febrero": 2,
+    "Marzo": 3,
+    "Abril": 4,
+    "Mayo": 5,
+    "Junio": 6,
+    "Julio": 7,
+    "Agosto": 8,
+    "Setiembre": 9,
+    "Octubre": 10,
+    "Noviembre": 11,
+    "Diciembre": 12,
+}
+
+MONTHS = {i: str(x).zfill(2) for i, x in MONTHS.items()}
+
 
 def rename_files(vdp, path, regex, output):
     """ Rename files based on regexs """
 
     for path, file, kwargs in get_files_from_regex(vdp, path, regex):
 
+        # Get month from month_text if needed
+        month_text = kwargs.get("month_text")
+        if month_text:
+            kwargs["month"] = MONTHS.get(month_text, month_text)
+
         origin = f"{path}/{file}"
-        dest = f"{path}/{output.format(**kwargs)}"
+        dest = output.format(**kwargs)
 
         log.info(f"Archiving '{origin}'")
-
-        vdp.dbx.files_copy(origin, dest)
-        vdp.delete(origin)
+        vdp.mv(origin, dest)
 
 
 def extract_files(vdp, path, regex, output, pwd, kwargs):
@@ -39,7 +59,7 @@ def extract_files(vdp, path, regex, output, pwd, kwargs):
     for path, file, _ in get_files_from_regex(vdp, path, regex):
 
         origin = f"{path}/{file}"
-        dest = f"{path}/{output.format(**kwargs)}"
+        dest = output.format(**kwargs)
 
         log.info(f"Extracting '{origin}'")
 
@@ -59,9 +79,9 @@ def archive():
     vdp = get_vdropbox()
 
     # Rename some files
-    for kwargs in OPERATIONS["renames"]:
+    for kwargs in OPERATIONS["renames"].values():
         rename_files(vdp, **kwargs)
 
     # Extract some files
-    for kwargs in OPERATIONS["extractions"]:
+    for kwargs in OPERATIONS["extractions"].values():
         extract_files(vdp, **kwargs)
