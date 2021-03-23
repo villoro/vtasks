@@ -2,6 +2,8 @@ import gspread
 import pandas as pd
 
 from os import path
+from requests.exceptions import ConnectionError
+from time import sleep
 
 from utils import PATH_ROOT
 from utils import get_secret
@@ -12,12 +14,12 @@ PATH_GDRIVE_KEY = f"{PATH_ROOT}/gdrive.json"
 GDRIVE = None
 
 
-def init_gdrive():
+def init_gdrive(force=False):
     """ Export gdrive json auth """
 
     # Init GDRIVE if it has not been init
     global GDRIVE
-    if GDRIVE is None:
+    if GDRIVE is None or force:
 
         if not path.exists(PATH_GDRIVE_KEY):
 
@@ -29,7 +31,7 @@ def init_gdrive():
         GDRIVE = gspread.service_account(filename=PATH_GDRIVE_KEY)
 
 
-def get_gdrive_sheet(spreadsheet_name, sheet_name):
+def get_gdrive_sheet(spreadsheet_name, sheet_name, retries=3):
     """
         Get a google drive spreadsheet
 
@@ -40,9 +42,25 @@ def get_gdrive_sheet(spreadsheet_name, sheet_name):
 
     init_gdrive()
 
-    # Open sheet
-    spreadsheet = GDRIVE.open(spreadsheet_name)
-    return spreadsheet.worksheet(sheet_name)
+    msg_error = "ConnectionError ({}) when trying to get '{}/{}'. Details: {}"
+
+    # Open sheet in a way we can have some retries
+    for x in range(retries):
+        try:
+            # Get the spreadsheet
+            spreadsheet = GDRIVE.open(spreadsheet_name)
+            return spreadsheet.worksheet(sheet_name)
+
+        except ConnectionError as e:
+            log.warning(msg_error.format(x, spreadsheet_name, sheet_name, e))
+            # Sleep to avoid query limitations
+            sleep(x * 10)
+
+            # Init gdrive again just in case
+            init_gdrive(force=True)
+
+    log.error(msg_error.format("last_attempt", spreadsheet_name, sheet_name, e))
+    raise ValueError("Too many reading attemps in 'get_gdrive_sheet'")
 
 
 def read_df_gdrive(spreadsheet_name, sheet_name, cols_to_numeric=[]):
