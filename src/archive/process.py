@@ -43,6 +43,11 @@ def rename_files(vdp, path, regex, output):
         if month_text:
             kwargs["month"] = MONTHS.get(month_text, month_text)
 
+        # Get month from quarter if needed
+        quarter = kwargs.get("quarter")
+        if quarter:
+            kwargs["month"] = str(int(quarter) * 3).zfill(2)
+
         origin = f"{path}/{file}"
         dest = output.format(**kwargs)
 
