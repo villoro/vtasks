@@ -78,7 +78,7 @@ def download_log(vdp):
         # Add a new line between runs
         data += "\n"
 
-        with open(u.get_path(u.LOG_PATH), "w", encoding="utf8") as file:
+        with open(u.get_path(u.LOG_PATH), "w", encoding="latin1") as file:
             file.write(data)
 
     else:
@@ -90,7 +90,7 @@ def copy_log(vdp):
 
     log.info(f"Copying '{u.LOG_PATH}' to dropbox")
 
-    with open(u.get_path(u.LOG_PATH), encoding="utf8") as file:
+    with open(u.get_path(u.LOG_PATH), encoding="latin1") as file:
         data = file.read()
 
     vdp.write_file(data, u.LOG_PATH_DROPBOX)

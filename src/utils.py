@@ -131,8 +131,8 @@ def render_jinja_template(template_name, data):
     return template.render(**data)
 
 
-def read_yaml(filename):
+def read_yaml(filename, encoding="utf8"):
     """ Read a yaml file """
 
-    with open(filename, "r") as file:
+    with open(filename, "r", encoding=encoding) as file:
         return yaml.safe_load(file)

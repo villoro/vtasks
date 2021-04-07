@@ -1,8 +1,13 @@
 renames:
-  indexa:
+  indexa_month:
     path: /Docs/Legal
     regex: Informe mensual Indexa Capital - (?P<account>\w{8}) - (?P<year>\d{4})-(?P<month>\d{2}).pdf
     output: /Docs/Legal/{year}/{year}_{month} Informe mensual Indexa Capital - {account}.pdf
+
+  indexa_costs:
+    path: /Docs/Legal
+    regex: Comisiones_de_gestión_Indexa(?:[^a-zA-Z0-9]*)?(?P<year>\d{4})-T(?P<quarter>\d{1}).pdf
+    output: /Docs/Legal/{year}/{year}_{month} Comisiones Indexa Capital.pdf
 
   ing:
     path: /Docs/Legal
@@ -22,7 +27,7 @@ renames:
 extractions:
   glovo_month:
     path: /Docs/Legal
-    regex: Hoja de salario ID(\d{9}).zip
+    regex: Hoja de salario ID\d{9}.zip
     output: /Docs/Legal/{year}/{year}_{month} Nomina Glovo.pdf
     pwd: user_id
     kwargs:
@@ -32,7 +37,7 @@ extractions:
 
   glovo_year:
     path: /Docs/Legal
-    regex: Certificado de ingresos y retenciones (\d{4}).zip
+    regex: Certificado de ingresos y retenciones \d{4}.zip
     output: /Docs/Legal/{year}/{year} Glovo certificat ingresos i retencions.pdf
     pwd: user_id
     kwargs:
