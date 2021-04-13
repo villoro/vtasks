@@ -111,11 +111,7 @@
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="LIQ_vs_expenses" class="plot" style="height: 450px"></div>
-  </div>
-
-  <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="LIQ_survival_ratio" class="plot" style="height: 400px"></div>
+    <div id="LIQ_survival_ratio" class="plot" style="height: 450px"></div>
   </div>
 </div>
 
@@ -628,49 +624,6 @@
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       }, {% endfor %}
-    ],
-  });
-  Highcharts.chart('LIQ_vs_expenses', {
-    ...plot_datetime,
-    title: {text: 'Liquid vs Expenses'},
-    series: [
-      {
-        name: "Expenses trend",
-        color: "{{ colors['Expenses'] }}",
-        data: [{% for mdate, value in month["Expenses_trend"].items() %}
-          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
-        ]
-      },
-      {
-        name: "Liquid",
-        color: "{{ colors['Liquid_dim'] }}",
-        dashStyle: 'shortdot',
-        visible: false,
-        data: [{% for mdate, value in month["Liquid"].items() %}
-          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
-        ]
-      },
-      {
-        name: "Liquid trend",
-        color: "{{ colors['Liquid'] }}",
-        data: [{% for mdate, value in month["Liquid_trend"].items() %}
-          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
-        ]
-      },
-      {
-        name: "Minimum liquid recomended",
-        color: "{{ colors['Min_value'] }}",
-        data: [{% for mdate, value in month['Expenses_trend'].items() %}
-          [Date.parse("{{ mdate }}"), {{ 3*value | int }}], {% endfor %}
-        ]
-      },
-      {
-        name: "Liquid recomended",
-        color: "{{ colors['Recomended_value'] }}",
-        data: [{% for mdate, value in month['Expenses_trend'].items() %}
-          [Date.parse("{{ mdate }}"), {{ 6*value | int }}], {% endfor %}
-        ]
-      }
     ],
   });
   Highcharts.chart('LIQ_survival_ratio', {
