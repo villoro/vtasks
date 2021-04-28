@@ -1,11 +1,11 @@
 import gspread
 import pandas as pd
 
-from os import path
 from requests.exceptions import ConnectionError
 from time import sleep
 
 from utils import PATH_ROOT
+from utils import export_secret
 from utils import get_secret
 from utils import log
 
@@ -21,12 +21,7 @@ def init_gdrive(force=False):
     global GDRIVE
     if GDRIVE is None or force:
 
-        if not path.exists(PATH_GDRIVE_KEY):
-
-            log.info(f"Exporting '{PATH_GDRIVE_KEY}'")
-
-            with open(PATH_GDRIVE_KEY, "w") as file:
-                file.write(get_secret("GSPREADSHEET_JSON"))
+        export_secret(PATH_GDRIVE_KEY, "GSPREADSHEET_JSON")
 
         GDRIVE = gspread.service_account(filename=PATH_GDRIVE_KEY)
 

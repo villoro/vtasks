@@ -4,6 +4,7 @@ import sys
 import yaml
 
 from datetime import date
+from os import path
 from pathlib import Path
 from time import time
 
@@ -52,6 +53,17 @@ def get_secret(key):
         CIPHER = Cipher(secrets_file=get_path("secrets.yaml"), environ_var_name="VTASKS_TOKEN")
 
     return CIPHER.get_secret(key)
+
+
+def export_secret(uri, secret_name):
+    """ Export a secret from secrets.yaml """
+
+    if not path.exists(uri):
+
+        log.info(f"Exporting '{uri}'")
+
+        with open(uri, "w") as file:
+            file.write(get_secret(secret_name))
 
 
 VDROPBOX = None
