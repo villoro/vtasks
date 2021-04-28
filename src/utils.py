@@ -30,7 +30,12 @@ CIPHER = None
 def get_path(path_relative):
     """ Returns absolute path using PATH_ROOT """
 
-    return str(PATH_ROOT / path_relative)
+    path_out = PATH_ROOT
+
+    for x in path_relative.split("/"):
+        path_out /= x
+
+    return str(path_out)
 
 
 CONFIG = {
