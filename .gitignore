@@ -57,7 +57,7 @@ logs/
 *Test.ipynb
 
 # Gdrive json
-gdrive.json
+auth/
 
 # Certificates
 src/certificates/

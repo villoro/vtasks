@@ -9,7 +9,7 @@ from utils import PATH_ROOT
 from utils import get_secret
 from utils import log
 
-PATH_GDRIVE_KEY = f"{PATH_ROOT}/gdrive.json"
+PATH_GDRIVE_KEY = f"{PATH_ROOT}/auth/gspreadsheets.json"
 
 GDRIVE = None
 
@@ -26,7 +26,7 @@ def init_gdrive(force=False):
             log.info(f"Exporting '{PATH_GDRIVE_KEY}'")
 
             with open(PATH_GDRIVE_KEY, "w") as file:
-                file.write(get_secret("GDRIVE"))
+                file.write(get_secret("GSPREADSHEET_JSON"))
 
         GDRIVE = gspread.service_account(filename=PATH_GDRIVE_KEY)
 

@@ -22,7 +22,7 @@ def get_api():
 
     log.debug("Getting kraken API object")
 
-    kx_api = krakenex.API(get_secret("kraken_key"), get_secret("kraken_secret"))
+    kx_api = krakenex.API(get_secret("KRAKEN_KEY"), get_secret("KRAKEN_SECRET"))
     return KrakenAPI(kx_api)
 
 
