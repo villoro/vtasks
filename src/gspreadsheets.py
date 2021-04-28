@@ -10,7 +10,7 @@ from utils import get_path
 from utils import get_secret
 from utils import log
 
-PATH_GSPREADSHEET_KEY = get_path("/auth/gspreadsheets.json")
+PATH_GSPREADSHEET_KEY = get_path("auth/gspreadsheets.json")
 
 GDRIVE = None
 

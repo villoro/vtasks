@@ -1,5 +1,4 @@
 import jinja2
-import oyaml as yaml
 import pandas as pd
 
 from prefect import task
