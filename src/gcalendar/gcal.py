@@ -9,9 +9,13 @@ from gcsa.google_calendar import GoogleCalendar
 
 from utils import export_secret
 from utils import get_path
+from utils import get_vdropbox
+from utils import log
 
 PATH_GCAL_JSON = get_path("auth/gcal.json")
 PATH_TOKEN = get_path("auth/token.pickle")
+
+PATH_GCAL_DROPBOX = f"/Aplicaciones/gcalendar/{date.today():%Y_%m_%d}.parquet"
 
 PATH_CALENDARS = str(Path(__file__).parent / "calendars.yaml")
 
@@ -35,16 +39,69 @@ def get_calendar(name):
     )
 
 
-def query_events(calendar, start=MIN_DATE, end=date.today()):
+def query_events(calendar, start=MIN_DATE, end=date.today(), drop_invalid=True):
     """ Get events from one calendar """
 
-    events = []
+    data = []
 
     # Retrive all events between start and end
-    for event in calendar.get_events(start, end, order_by="updated", single_events=True):
-        events.append(
-            {"id": event.id, "summary": event.summary, "start": event.start, "end": event.end,}
+    events = calendar.get_events(start, end, order_by="updated", single_events=True)
+
+    for event in events:
+        data.append(
+            {
+                # "id": event.id,
+                "summary": event.summary,
+                "start": event.start,
+                "end": event.end,
+            }
         )
 
     # Return them as a nice pandas dataframe
-    return pd.DataFrame(events).dropna(subset=["start"])
+    df = pd.DataFrame(data)
+
+    if drop_invalid:
+        df = df.dropna(subset=["start"])
+
+    return df
+
+
+def get_all_events(calendars):
+    """ Get all events from all calendars """
+
+    log.info("Querying all calendars")
+
+    dfs = []
+
+    for name, data in calendars.items():
+
+        log.debug(f"Querying calendar '{name}'")
+
+        calendar = get_calendar(data["url"])
+
+        df = query_events(calendar)
+        df["calendar"] = name
+
+        dfs.append(df)
+
+    df = pd.concat(dfs).reset_index(drop=True)
+
+    # Cast datetime columns
+    df["start"] = pd.to_datetime(df["start"], utc=True)
+    df["end"] = pd.to_datetime(df["end"], utc=True)
+
+    return df
+
+
+def export_events():
+    """ Export all events as a parquet """
+
+    vdp = get_vdropbox()
+
+    # Get events
+    calendars = read_calendars()
+    df = get_all_events(calendars)
+
+    # Export events
+    vdp.write_parquet(df, PATH_GCAL_DROPBOX)
+    return df
