@@ -12,6 +12,7 @@ from utils import export_secret
 from utils import get_path
 from utils import get_vdropbox
 from utils import log
+from utils import save_secret
 from utils import timeit
 
 PATH_GCAL_JSON = get_path("auth/gcal.json")
@@ -24,6 +25,16 @@ PATH_CALENDARS = str(Path(__file__).parent / "calendars.yaml")
 MIN_DATE = date(2011, 11, 5)
 
 export_secret(PATH_GCAL_JSON, "GCAL_JSON")
+export_secret(PATH_TOKEN, "GCAL_TOKEN", binary=True)
+
+
+def load_token():
+    """ Load token as a secret """
+
+    with open(PATH_TOKEN, "rb") as stream:
+        data = stream.read()
+
+    save_secret("GCAL_TOKEN", data)
 
 
 def read_calendars():

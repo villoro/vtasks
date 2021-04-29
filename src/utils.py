@@ -24,8 +24,6 @@ PATH_ROOT = Path(__file__).parent.parent
 LOG_PATH = f"logs/{date.today():%Y_%m}/{date.today():%Y_%m_%d}.log"
 LOG_PATH_DROPBOX = f"/Aplicaciones/vtasks/{LOG_PATH}"
 
-CIPHER = None
-
 
 def get_path(path_relative):
     """ Returns absolute path using PATH_ROOT """
@@ -36,6 +34,10 @@ def get_path(path_relative):
         path_out /= x
 
     return str(path_out)
+
+
+CIPHER = None
+CIPHER_KWARGS = {"secrets_file": get_path("secrets.yaml"), "environ_var_name": "VTASKS_TOKEN"}
 
 
 CONFIG = {
@@ -50,25 +52,43 @@ log.configure(**CONFIG)
 log.enable("vtasks")
 
 
-def get_secret(key):
+def get_secret(key, encoding="utf8"):
     """ Retrives one encrypted secret """
 
     global CIPHER
     if CIPHER is None:
-        CIPHER = Cipher(secrets_file=get_path("secrets.yaml"), environ_var_name="VTASKS_TOKEN")
+        CIPHER = Cipher(**CIPHER_KWARGS)
 
-    return CIPHER.get_secret(key)
+    return CIPHER.get_secret(key, encoding=encoding)
 
 
-def export_secret(uri, secret_name):
+def save_secret(key, value):
+    """ Retrives one encrypted secret """
+
+    global CIPHER
+    if CIPHER is None:
+        CIPHER = Cipher(**CIPHER_KWARGS)
+
+    return CIPHER.save_secret(key, value)
+
+
+def export_secret(uri, secret_name, binary=False):
     """ Export a secret from secrets.yaml """
+
+    if binary:
+        mode = "wb"
+        encoding = None
+
+    else:
+        mode = "w"
+        encoding = "utf8"
 
     if not path.exists(uri):
 
         log.info(f"Exporting '{uri}'")
 
-        with open(uri, "w") as file:
-            file.write(get_secret(secret_name))
+        with open(uri, mode) as file:
+            file.write(get_secret(secret_name, encoding=encoding))
 
 
 VDROPBOX = None
