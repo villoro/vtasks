@@ -6,16 +6,18 @@ import oyaml as yaml
 import pandas as pd
 
 from gcsa.google_calendar import GoogleCalendar
+from prefect import task
 
 from utils import export_secret
 from utils import get_path
 from utils import get_vdropbox
 from utils import log
+from utils import timeit
 
 PATH_GCAL_JSON = get_path("auth/gcal.json")
 PATH_TOKEN = get_path("auth/token.pickle")
 
-PATH_GCAL_DROPBOX = f"/Aplicaciones/gcalendar/{date.today():%Y_%m_%d}.parquet"
+PATH_GCAL_DROPBOX = "/Aplicaciones/gcalendar/calendar.parquet"
 
 PATH_CALENDARS = str(Path(__file__).parent / "calendars.yaml")
 
@@ -93,7 +95,9 @@ def get_all_events(calendars):
     return df
 
 
-def export_events():
+@task
+@timeit
+def export_calendar_events():
     """ Export all events as a parquet """
 
     vdp = get_vdropbox()
