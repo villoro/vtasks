@@ -56,8 +56,9 @@ logs/
 # Working notebook
 *Test.ipynb
 
-# Gdrive json
-gdrive.json
+# Auth jsons
+auth/*
+!auth/info.txt
 
 # Certificates
 src/certificates/

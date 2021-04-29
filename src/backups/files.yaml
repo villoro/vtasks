@@ -9,3 +9,8 @@
 -
   path: /Aplicaciones/FreeFileSync
   regex: (.).ffs_gui
+
+-
+  path: /Aplicaciones/gcalendar
+  regex: calendar.parquet
+

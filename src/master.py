@@ -15,6 +15,7 @@ from cryptos import update_cryptos
 from expensor import expensor
 from flights import flights
 from flights import merge_flights_history
+from gcalendar import export_calendar_events
 from indexa import update_indexa
 from money_lover import money_lover
 from utils import log
@@ -30,22 +31,23 @@ with Flow("do_all") as flow:
     # Archive documents
     archive()
 
+    # Calendar export
+    export_calendar_events(mdate)
+
     # Backups
-    backup_files()
-    clean_backups()
+    backup_files(upstream_tasks=[export_calendar_events(mdate)])
+    clean_backups(upstream_tasks=[backup_files])
 
     # Crypto + Indexa
-    dummy_crypto = update_cryptos(mdate)
-    dummy_indexa = update_indexa(mdate)
+    update_cryptos(mdate)
+    update_indexa(mdate)
 
     # Expensor
-    df_trans = money_lover(mdate, export_data=True)
+    money_lover()
     expensor(
         mdate=mdate,
-        df_trans=df_trans,
         pro=pro,
-        dummy_crypto=dummy_crypto,
-        dummy_indexa=dummy_indexa,
+        upstream_tasks=[update_cryptos(mdate), update_indexa(mdate), money_lover],
     )
 
     # Flights

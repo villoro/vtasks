@@ -4,8 +4,6 @@
 
 from datetime import datetime
 
-import oyaml as yaml
-
 import utils as u
 
 from . import constants as c

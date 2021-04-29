@@ -27,11 +27,12 @@ prefect = "^0.13.9"
 pyarrow = "^2.0.0"
 pykrakenapi = "^0.1.9"
 regex = "^2020.10.28"
-vcrypto = "^2.0.0"
+vcrypto = "^2.1.0"
 vdropbox = "^0.2.4"
 vpalette = "^2.0.0"
 vtime = "^2.0.0"
 xlrd = "^1.2.0"
+gcsa = "^1.2.0"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
