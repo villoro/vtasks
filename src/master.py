@@ -32,24 +32,22 @@ with Flow("do_all") as flow:
     archive()
 
     # Calendar export
-    df_cal = export_calendar_events()
+    export_calendar_events(mdate)
 
     # Backups
-    backup_files()
+    backup_files(upstream_tasks=[export_calendar_events(mdate)])
     clean_backups()
 
     # Crypto + Indexa
-    dummy_crypto = update_cryptos(mdate)
-    dummy_indexa = update_indexa(mdate)
+    update_cryptos(mdate)
+    update_indexa(mdate)
 
     # Expensor
-    df_trans = money_lover(mdate, export_data=True)
+    money_lover()
     expensor(
         mdate=mdate,
-        df_trans=df_trans,
         pro=pro,
-        dummy_crypto=dummy_crypto,
-        dummy_indexa=dummy_indexa,
+        upstream_tasks=[update_cryptos(mdate), update_indexa(mdate), money_lover],
     )
 
     # Flights

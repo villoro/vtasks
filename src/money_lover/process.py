@@ -83,7 +83,7 @@ def transform_transactions(df_in):
 
 @task
 @timeit
-def money_lover(mdate, export_data=True):
+def money_lover():
     """ Retrives all dataframes and update DFS global var """
 
     vdp = get_vdropbox()
@@ -95,7 +95,4 @@ def money_lover(mdate, export_data=True):
     df = transform_transactions(df)
 
     # Export
-    if export_data:
-        vdp.write_excel(df, c.FILE_TRANSACTIONS)
-
-    return df
+    vdp.write_excel(df, c.FILE_TRANSACTIONS)

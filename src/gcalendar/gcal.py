@@ -1,5 +1,4 @@
 from datetime import date
-from datetime import timedelta
 from pathlib import Path
 
 import oyaml as yaml
@@ -41,7 +40,7 @@ def get_calendar(name):
     )
 
 
-def query_events(calendar, start=MIN_DATE, end=date.today(), drop_invalid=True):
+def query_events(calendar, end, start=MIN_DATE, drop_invalid=True):
     """ Get events from one calendar """
 
     data = []
@@ -68,7 +67,7 @@ def query_events(calendar, start=MIN_DATE, end=date.today(), drop_invalid=True):
     return df
 
 
-def get_all_events(calendars):
+def get_all_events(calendars, exec_date):
     """ Get all events from all calendars """
 
     log.info("Querying all calendars")
@@ -81,7 +80,7 @@ def get_all_events(calendars):
 
         calendar = get_calendar(data["url"])
 
-        df = query_events(calendar)
+        df = query_events(calendar, end=exec_date)
         df["calendar"] = name
 
         dfs.append(df)
@@ -97,15 +96,14 @@ def get_all_events(calendars):
 
 @task
 @timeit
-def export_calendar_events():
+def export_calendar_events(exec_date):
     """ Export all events as a parquet """
 
     vdp = get_vdropbox()
 
     # Get events
     calendars = read_calendars()
-    df = get_all_events(calendars)
+    df = get_all_events(calendars, exec_date)
 
     # Export events
     vdp.write_parquet(df, PATH_GCAL_DROPBOX)
-    return df

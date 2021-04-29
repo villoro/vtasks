@@ -46,9 +46,7 @@ def create_one_report(dfs, mdate):
 
 @task
 @timeit
-def expensor(mdate, df_trans, pro, n_jobs=NUM_OF_JOBS_DEFAULT, **kwa):
-
-    # TODO: use df_trans input argument instead of reading it from dropbox
+def expensor(mdate, pro, n_jobs=NUM_OF_JOBS_DEFAULT):
 
     mdate = pd.to_datetime(mdate)
     # Reversed since first we want the latest month
