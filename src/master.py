@@ -36,7 +36,7 @@ with Flow("do_all") as flow:
 
     # Backups
     backup_files(upstream_tasks=[export_calendar_events(mdate)])
-    clean_backups()
+    clean_backups(upstream_tasks=[backup_files])
 
     # Crypto + Indexa
     update_cryptos(mdate)

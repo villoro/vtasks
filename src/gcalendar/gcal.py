@@ -5,6 +5,7 @@ import oyaml as yaml
 import pandas as pd
 
 from gcsa.google_calendar import GoogleCalendar
+from gcsa.serializers.event_serializer import EventSerializer
 from prefect import task
 
 from utils import export_secret
@@ -49,10 +50,13 @@ def query_events(calendar, end, start=MIN_DATE, drop_invalid=True):
     events = calendar.get_events(start, end, order_by="updated", single_events=True)
 
     for event in events:
+
         data.append(
             {
-                # "id": event.id,
-                "summary": event.summary,
+                # Serialize the event
+                **EventSerializer.to_json(event),
+                # And replace 'start' and 'end' with the easier to use values
+                # Defaults from 'to_json' are dict that include timezone and we don't want that
                 "start": event.start,
                 "end": event.end,
             }
@@ -85,6 +89,7 @@ def get_all_events(calendars, exec_date):
 
         dfs.append(df)
 
+    log.info("Concatenating events from all calendars")
     df = pd.concat(dfs).reset_index(drop=True)
 
     # Cast datetime columns
