@@ -1667,7 +1667,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
 name = "vcrypto"
-version = "2.0.0"
+version = "2.1.0"
 description = "Utility to easily store password/secrets"
 category = "main"
 optional = false
@@ -1807,7 +1807,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.7.9"
-content-hash = "b82949280027c05ac8b7cf8ad60e57693fb8994342cf5913f309286cee9fc4c6"
+content-hash = "8af9a7ec3c0b0ae6b0ff825aa2fe188037775de520f7ba88e5518a9e9c5c5ee4"
 
 [metadata.files]
 appdirs = [
@@ -2707,8 +2707,8 @@ urllib3 = [
     {file = "urllib3-1.25.10.tar.gz", hash = "sha256:91056c15fa70756691db97756772bb1eb9678fa585d9184f24534b100dc60f4a"},
 ]
 vcrypto = [
-    {file = "vcrypto-2.0.0-py3-none-any.whl", hash = "sha256:2db004a4d616a5f70d9ea96f7e90d9206dbcf8f36025997e0ca9e414b5e5dea4"},
-    {file = "vcrypto-2.0.0.tar.gz", hash = "sha256:3c86fb72ebb667f5d0fc74c116154b35b7568dfc83733733648aaf27f997fefe"},
+    {file = "vcrypto-2.1.0-py3-none-any.whl", hash = "sha256:8e15a1ec66ff5b8b9cc0543c5ff1898a4a2834454848549b36e13ff13387a3de"},
+    {file = "vcrypto-2.1.0.tar.gz", hash = "sha256:5bed06af05b261124be82aa03dbe873290c0c62946f9d12522cd376aa500fb20"},
 ]
 vdropbox = [
     {file = "vdropbox-0.2.4-py3-none-any.whl", hash = "sha256:e30ea7f724cd9a08b5e8962f949daba276a90bbdca758473912b805c9b72e8bc"},
