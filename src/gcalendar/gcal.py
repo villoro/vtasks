@@ -107,6 +107,10 @@ def get_all_events(calendars, exec_date):
     df["start"] = pd.to_datetime(df["start"], utc=True)
     df["end"] = pd.to_datetime(df["end"], utc=True)
 
+    # Add duration and start_day
+    df["duration"] = (df["end"] - df["start"]) / pd.Timedelta("1h")
+    df["start_day"] = pd.to_datetime(df["start"].dt.date)
+
     return df
 
 
