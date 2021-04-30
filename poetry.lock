@@ -310,7 +310,7 @@ tls = ["pyOpenSSL (>=17.5.0)", "cryptography (>=3.4.7)", "idna (>=2.0.0)"]
 
 [[package]]
 name = "dropbox"
-version = "10.11.0"
+version = "10.10.0"
 description = "Official Dropbox API Client"
 category = "main"
 optional = false
@@ -2055,9 +2055,9 @@ docker = [
     {file = "docker-5.0.0.tar.gz", hash = "sha256:3e8bc47534e0ca9331d72c32f2881bb13b93ded0bcdeab3c833fb7cf61c0a9a5"},
 ]
 dropbox = [
-    {file = "dropbox-10.11.0-py2-none-any.whl", hash = "sha256:0668d8f67fd2dfc37ac7324a52787d862ea5f488497cb307e659b3c7346dae0f"},
-    {file = "dropbox-10.11.0-py3-none-any.whl", hash = "sha256:b14fc395990b37f9b91723dbe5a637936514543c2a2234bebda0a1223961f53c"},
-    {file = "dropbox-10.11.0.tar.gz", hash = "sha256:aa7771998ff9c7d2583ff06149c6823308f829e900526c483b8fb67df7effdc6"},
+    {file = "dropbox-10.10.0-py2-none-any.whl", hash = "sha256:4f3fcb6a988ba35fc0d17be05b40590e72fdd794b8795eb61d9fceb70b385399"},
+    {file = "dropbox-10.10.0-py3-none-any.whl", hash = "sha256:386686bc423396f3dc7174291b38b8e86e8eca3143c9886c73817d74a94f53e3"},
+    {file = "dropbox-10.10.0.tar.gz", hash = "sha256:df43e9e0bdcae6d610dd754a5ec72f2f91a311bbc2c8a28d076df69695b18398"},
 ]
 entrypoints = [
     {file = "entrypoints-0.3-py2.py3-none-any.whl", hash = "sha256:589f874b313739ad35be6e0cd7efde2a4e9b6fea91edcc34e58ecbb8dbe56d19"},
