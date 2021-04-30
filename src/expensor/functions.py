@@ -71,7 +71,7 @@ def time_average(dfi, months=12, exponential=False, center=False):
     return df.mean().apply(lambda x: round(x, 2))
 
 
-def smooth_serie(dfi,):
+def smooth_serie(dfi):
     """ Smooth a serie by doing a time_average 2 times """
 
     df = time_average(dfi, months=12, center=True)
