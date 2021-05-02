@@ -10,7 +10,7 @@ from .gcal import PATH_GCAL_DATA
 from .gcal import read_calendars
 
 
-def get_daily_data(vdp):
+def get_daily_data(vdp, mdate):
     """ Gets duration by calendar and day """
 
     df = vdp.read_parquet(PATH_GCAL_DATA)
@@ -21,7 +21,9 @@ def get_daily_data(vdp):
     df = df.pivot_table(index="start_day", columns="calendar", values="duration", aggfunc="sum")
 
     # Make sure all days are present
-    return df.fillna(0).resample("D").sum()
+    df = df.fillna(0).resample("D").sum()
+    # First filter to start of the month and then one day less to avoid incomplete months
+    return df.loc[:mdate].iloc[:-1]
 
 
 def to_percentages(df):
@@ -40,10 +42,8 @@ def get_pies(df_m, df_m_trend):
     }
 
 
-def extract_data(vdp, export=False):
+def extract_data(vdp, df, export=False):
     """ Extract data from the dataframe """
-
-    df = get_daily_data(vdp)
 
     df_w_trend = df.resample("W").sum().apply(smooth_serie)
     df_m = df.resample("MS").sum()
@@ -69,11 +69,15 @@ def extract_data(vdp, export=False):
 
 # @task
 # @timeit
-def gcal_report():
+def gcal_report(mdate):
     """ Creates the report """
+
+    mdate = mdate.replace(day=1)
+
     vdp = get_vdropbox()
 
-    data = extract_data(vdp)
+    df = get_daily_data(vdp, mdate)
+    data = extract_data(vdp, df)
 
     # Add title
     data["title"] = "Calendar"
