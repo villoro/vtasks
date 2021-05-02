@@ -39,6 +39,16 @@
     <div id="EVO_week_trend" class="plot" style="height: 450px"></div>
   </div>
 </div>
+
+<!-- PIE -->
+<div id="pies" class="section" style="display:none;">
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="PIE_month" class="plot" style="height: 200px"></div>
+    <div id="PIE_year" class="plot" style="height: 100px"></div>
+    <div id="PIE_all" class="plot" style="height: 100px"></div>
+  </div>
+</div>
+
 {% endblock %}
 
 
@@ -80,14 +90,6 @@
     ...plot_stacked,
     title: {text: ""},
     chart: {zoomType: "x", type: "bar"},
-  }
-  const plot_pie = {
-    ...plot_stacked_no_title,
-    tooltip: {
-      formatter: function () {
-        return "<b>" + this.series.name + ":</b> " + this.y + " (" + this.percentage.toFixed(2) + " %)";
-      }
-    },
   }
   const labels_percent = {
     title: {text: null},
@@ -173,6 +175,55 @@
         data: [{% for mdate, value in values.items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
+      }, {% endfor %}
+    ],
+  });
+
+  // PIES SECTION
+  const plot_pie = {
+    ...plot_stacked_no_title,
+    tooltip: {
+      formatter: function () {
+        return "<b>" + this.series.name + ":</b> " + this.percentage.toFixed(2) + " %";
+      }
+    },
+    yAxis: {
+      ...labels_percent,
+      categories: pies["all"],
+      max: 100,
+    },
+  }
+  const plot_pie_no_legend = {
+    ...plot_pie,
+    legend: {enabled: false},
+  }
+  Highcharts.chart('PIE_month', {
+    ...plot_pie,
+    series: [
+      {% for name, value in pies["month"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{{ value }}],
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('PIE_year', {
+    ...plot_pie_no_legend,
+    series: [
+      {% for name, value in pies["year"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{{ value }}],
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('PIE_all', {
+    ...plot_pie_no_legend,
+    series: [
+      {% for name, value in pies["all"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{{ value }}],
       }, {% endfor %}
     ],
   });
