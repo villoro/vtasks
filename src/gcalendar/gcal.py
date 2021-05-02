@@ -18,7 +18,8 @@ from utils import timeit
 PATH_GCAL_JSON = get_path("auth/gcal.json")
 PATH_TOKEN = get_path("auth/token.pickle")
 
-PATH_GCAL_DROPBOX = "/Aplicaciones/gcalendar/calendar.parquet"
+PATH_GCAL = "/Aplicaciones/gcalendar"
+PATH_GCAL_DATA = f"{PATH_GCAL}/calendar.parquet"
 
 PATH_CALENDARS = str(Path(__file__).parent / "calendars.yaml")
 
@@ -91,7 +92,7 @@ def get_all_events(calendars, exec_date):
 
     for name, data in calendars.items():
 
-        log.debug(f"Querying calendar '{name}'")
+        log.info(f"Querying calendar '{name}'")
 
         calendar = get_calendar(data["url"])
 
@@ -106,6 +107,10 @@ def get_all_events(calendars, exec_date):
     # Cast datetime columns
     df["start"] = pd.to_datetime(df["start"], utc=True)
     df["end"] = pd.to_datetime(df["end"], utc=True)
+
+    # Add duration and start_day
+    df["duration"] = (df["end"] - df["start"]) / pd.Timedelta("1h")
+    df["start_day"] = pd.to_datetime(df["start"].dt.date)
 
     return df
 
@@ -122,4 +127,4 @@ def export_calendar_events(exec_date):
     df = get_all_events(calendars, exec_date)
 
     # Export events
-    vdp.write_parquet(df, PATH_GCAL_DROPBOX)
+    vdp.write_parquet(df, PATH_GCAL_DATA)

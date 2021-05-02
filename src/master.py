@@ -16,6 +16,7 @@ from expensor import expensor
 from flights import flights
 from flights import merge_flights_history
 from gcalendar import export_calendar_events
+from gcalendar import gcal_report
 from indexa import update_indexa
 from money_lover import money_lover
 from utils import log
@@ -31,8 +32,9 @@ with Flow("do_all") as flow:
     # Archive documents
     archive()
 
-    # Calendar export
+    # Calendar
     export_calendar_events(mdate)
+    gcal_report(mdate, upstream_tasks=[export_calendar_events(mdate)])
 
     # Backups
     backup_files(upstream_tasks=[export_calendar_events(mdate)])

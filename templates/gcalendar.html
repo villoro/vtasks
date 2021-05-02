@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {{ title }}
+{% endblock %}
+
+{% block body %}
+<!-- DASH -->
+<div id="dashboard" class="section w3-center">
+  <h1>Calendar Report</h1>
+  <div class="mgrid">
+    {% for name, value in cards.items() %}<div class="w3-card w3-round" style="background-color: {{ colors[name] }}; color:white;">
+      <h3 style="margin-bottom: -16px;">{{ name }}</h3>
+      <h2>{{ value }}</h2>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- EVO -->
+<div id="evolution" class="section" style="display:none;">
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_month_trend" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_month" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_month_trend_percent" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_month_percent" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_week_trend" class="plot" style="height: 450px"></div>
+  </div>
+</div>
+
+<!-- PIE -->
+<div id="pies" class="section" style="display:none;">
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="PIE_month" class="plot" style="height: 200px"></div>
+    <div id="PIE_year" class="plot" style="height: 100px"></div>
+    <div id="PIE_all" class="plot" style="height: 100px"></div>
+  </div>
+</div>
+
+{% endblock %}
+
+
+{% block plots %}
+<script>
+
+  // DEFAULT OPTIONS
+  Highcharts.setOptions({
+    credits: false,
+    yAxis: {
+      title: {text: null}
+    },
+    plotOptions: {
+      series: {
+        marker: {enabled: false},
+        stickyTracking: false
+      }
+    }
+  });
+
+  // PLOT SHARED CONFIGURATIONS
+  const plot_datetime = {
+    xAxis: {type: 'datetime'},
+    chart: {zoomType: "x"},
+  }
+  const plot_stacked = {
+    plotOptions: {
+      series: {
+        marker: {enabled: false},
+        stickyTracking: false,
+        stacking: 'normal',
+      }
+    }
+  }
+  const plot_datetime_stacked = {
+    ...plot_datetime, ...plot_stacked
+  }
+  const plot_stacked_no_title = {
+    ...plot_stacked,
+    title: {text: ""},
+    chart: {zoomType: "x", type: "bar"},
+  }
+  const labels_percent = {
+    title: {text: null},
+    labels: {
+      formatter: function() {return this.value + " %";}
+    },
+  }
+
+
+  // EVOLUTION SECTION
+  Highcharts.chart('EVO_month_trend', {
+    ...plot_datetime_stacked,
+    title: {text: 'Month trend evolution'},
+    series: [
+      {% for name, values in month_trend.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        type: 'area',
+        data: [{% for mdate, value in values.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('EVO_month', {
+    ...plot_datetime_stacked,
+    title: {text: 'Month evolution'},
+    series: [
+      {% for name, values in month.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        type: 'area',
+        data: [{% for mdate, value in values.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('EVO_month_trend_percent', {
+    ...plot_datetime_stacked,
+    title: {text: 'Month trend percent evolution'},
+    yAxis : {
+      ...labels_percent,
+      max: 100,
+    },
+    series: [
+      {% for name, values in month_trend_percent.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        type: 'area',
+        data: [{% for mdate, value in values.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('EVO_month_percent', {
+    ...plot_datetime_stacked,
+    title: {text: 'Month percent evolution'},
+    yAxis : {
+      ...labels_percent,
+      max: 100,
+    },
+    series: [
+      {% for name, values in month_percent.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        type: 'area',
+        data: [{% for mdate, value in values.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('EVO_week_trend', {
+    ...plot_datetime_stacked,
+    title: {text: 'Week trend evolution'},
+    series: [
+      {% for name, values in week_trend.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        type: 'area',
+        data: [{% for mdate, value in values.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+
+  // PIES SECTION
+  const plot_pie = {
+    ...plot_stacked_no_title,
+    tooltip: {
+      formatter: function () {
+        return "<b>" + this.series.name + ":</b> " + this.percentage.toFixed(2) + " %";
+      }
+    },
+    yAxis: {
+      ...labels_percent,
+      max: 100,
+    },
+  }
+  const plot_pie_no_legend = {
+    ...plot_pie,
+    legend: {enabled: false},
+  }
+  Highcharts.chart('PIE_month', {
+    ...plot_pie,
+    series: [
+      {% for name, value in pies["month"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{{ value }}],
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('PIE_year', {
+    ...plot_pie_no_legend,
+    series: [
+      {% for name, value in pies["year"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{{ value }}],
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('PIE_all', {
+    ...plot_pie_no_legend,
+    series: [
+      {% for name, value in pies["all"].items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{{ value }}],
+      }, {% endfor %}
+    ],
+  });
+</script>
+{% endblock %}
