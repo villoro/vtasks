@@ -8,13 +8,13 @@
 <!-- DASH -->
 <div id="dashboard" class="section w3-center">
   <h1>Calendar Report</h1>
-<!--   <div class="mgrid">
-    {% for name in cards %}<div class="w3-card w3-round" style="background-color: {{ colors[name] }}; color:white;">
+  <div class="mgrid">
+    {% for name, value in cards.items() %}<div class="w3-card w3-round" style="background-color: {{ colors[name] }}; color:white;">
       <h3 style="margin-bottom: -16px;">{{ name }}</h3>
-      <h2>{{ dashboard[name] }}</h2>
+      <h2>{{ value }}</h2>
     </div>
     {% endfor %}
-  </div> -->
+  </div>
 </div>
 
 <!-- EVO -->

@@ -51,8 +51,25 @@ def get_pies(df_m, df_m_trend):
     }
 
 
+def get_cards(data, calendars):
+    """ Get last month for main calendars """
+
+    out = {}
+
+    for i, mdict in data["month"].items():
+
+        # If it's one of the main calendars
+        if calendars[i].get("main", False):
+            # Add value for last month
+            out[i] = mdict[[*mdict][-1]]
+
+    return out
+
+
 def extract_data(vdp, df, export=False):
     """ Extract data from the dataframe """
+
+    calendars = read_calendars()
 
     df_w_trend = df.resample("W").sum().apply(smooth_serie)
     df_m = df.resample("MS").sum()
@@ -67,8 +84,10 @@ def extract_data(vdp, df, export=False):
         "month_trend": serie_to_dict(df_m_trend),
         "month_trend_percent": serie_to_dict(to_percentages(df_m_trend)),
         "pies": get_pies(df_m, df_m_trend),
-        "colors": {name: data["color"] for name, data in read_calendars().items()},
+        "colors": {name: data["color"] for name, data in calendars.items()},
     }
+
+    out["cards"] = get_cards(out, calendars)
 
     if export:
         vdp.write_yaml(out, f"I will fail")
@@ -81,6 +100,7 @@ def extract_data(vdp, df, export=False):
 def gcal_report(mdate):
     """ Creates the report """
 
+    # Start of last month
     mdate = mdate.replace(day=1)
 
     vdp = get_vdropbox()
