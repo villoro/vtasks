@@ -18,7 +18,8 @@ from utils import timeit
 PATH_GCAL_JSON = get_path("auth/gcal.json")
 PATH_TOKEN = get_path("auth/token.pickle")
 
-PATH_GCAL_DROPBOX = "/Aplicaciones/gcalendar/calendar.parquet"
+PATH_GCAL = "/Aplicaciones/gcalendar"
+PATH_GCAL_DATA = f"{PATH_GCAL}/calendar.parquet"
 
 PATH_CALENDARS = str(Path(__file__).parent / "calendars.yaml")
 
@@ -126,4 +127,4 @@ def export_calendar_events(exec_date):
     df = get_all_events(calendars, exec_date)
 
     # Export events
-    vdp.write_parquet(df, PATH_GCAL_DROPBOX)
+    vdp.write_parquet(df, PATH_GCAL_DATA)
