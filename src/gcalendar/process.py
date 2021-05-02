@@ -95,8 +95,8 @@ def extract_data(vdp, df, export=False):
     return out
 
 
-# @task
-# @timeit
+@task
+@timeit
 def gcal_report(mdate):
     """ Creates the report """
 
