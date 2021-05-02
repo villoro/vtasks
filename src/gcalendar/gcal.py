@@ -91,7 +91,7 @@ def get_all_events(calendars, exec_date):
 
     for name, data in calendars.items():
 
-        log.debug(f"Querying calendar '{name}'")
+        log.info(f"Querying calendar '{name}'")
 
         calendar = get_calendar(data["url"])
 
