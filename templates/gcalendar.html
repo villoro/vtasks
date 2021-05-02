@@ -20,19 +20,19 @@
 <!-- EVO -->
 <div id="evolution" class="section" style="display:none;">
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="EVO_month" class="plot" style="height: 450px"></div>
-  </div>
-
-  <div class="w3-card w3-round w3-center w3-white elem">
     <div id="EVO_month_trend" class="plot" style="height: 450px"></div>
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="EVO_month_percent" class="plot" style="height: 450px"></div>
+    <div id="EVO_month" class="plot" style="height: 450px"></div>
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
     <div id="EVO_month_trend_percent" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_month_percent" class="plot" style="height: 450px"></div>
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
@@ -100,20 +100,6 @@
 
 
   // EVOLUTION SECTION
-  Highcharts.chart('EVO_month', {
-    ...plot_datetime_stacked,
-    title: {text: 'Month evolution'},
-    series: [
-      {% for name, values in month.items() %}{
-        name: "{{ name }}",
-        color: "{{ colors[name] }}",
-        type: 'area',
-        data: [{% for mdate, value in values.items() %}
-          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
-        ]
-      }, {% endfor %}
-    ],
-  });
   Highcharts.chart('EVO_month_trend', {
     ...plot_datetime_stacked,
     title: {text: 'Month trend evolution'},
@@ -128,15 +114,11 @@
       }, {% endfor %}
     ],
   });
-  Highcharts.chart('EVO_month_percent', {
+  Highcharts.chart('EVO_month', {
     ...plot_datetime_stacked,
-    title: {text: 'Month percent evolution'},
-    yAxis : {
-      ...labels_percent,
-      max: 100,
-    },
+    title: {text: 'Month evolution'},
     series: [
-      {% for name, values in month_percent.items() %}{
+      {% for name, values in month.items() %}{
         name: "{{ name }}",
         color: "{{ colors[name] }}",
         type: 'area',
@@ -155,6 +137,24 @@
     },
     series: [
       {% for name, values in month_trend_percent.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        type: 'area',
+        data: [{% for mdate, value in values.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('EVO_month_percent', {
+    ...plot_datetime_stacked,
+    title: {text: 'Month percent evolution'},
+    yAxis : {
+      ...labels_percent,
+      max: 100,
+    },
+    series: [
+      {% for name, values in month_percent.items() %}{
         name: "{{ name }}",
         color: "{{ colors[name] }}",
         type: 'area',
