@@ -56,12 +56,16 @@ def get_cards(data, calendars):
 
     out = {}
 
-    for i, mdict in data["month"].items():
+    # Cast to list to so that keys can be reversed
+    for x in reversed([*data["month"]]):
 
         # If it's one of the main calendars
-        if calendars[i].get("main", False):
+        if calendars[x].get("main", False):
+
+            mdict = data["month"][x]
+
             # Add value for last month
-            out[i] = mdict[[*mdict][-1]]
+            out[x] = mdict[[*mdict][-1]]
 
     return out
 
