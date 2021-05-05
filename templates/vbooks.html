@@ -90,12 +90,20 @@
 
   // DASHBOARD SECTION
   Highcharts.chart('DASH_evolution', {
-    ...plot_datetime,
+    ...plot_datetime_stacked,
     title: {text: 'Year evolution'},
     series: [
+      {
+        name: "Total",
+        color: "{{ colors['Total'] }}",
+        data: [{% for mdate, value in year.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
       {% for name, values in year_by_category.items() %}{
         name: "{{ name }}",
         color: "{{ colors[name] }}",
+        type: 'column',
         data: [{% for mdate, value in values.items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
@@ -115,20 +123,12 @@
 
   // EVOLUTION SECTION
   Highcharts.chart('EVO_evolution_year', {
-    ...plot_datetime_stacked,
+    ...plot_datetime,
     title: {text: 'Year evolution'},
     series: [
-      {
-        name: "Total",
-        color: "{{ colors['Total'] }}",
-        data: [{% for mdate, value in year.items() %}
-          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
-        ]
-      },
       {% for name, values in year_by_category.items() %}{
         name: "{{ name }}",
         color: "{{ colors[name] }}",
-        type: 'column',
         data: [{% for mdate, value in values.items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
