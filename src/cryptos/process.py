@@ -2,7 +2,6 @@ import cryptocompare
 import pandas as pd
 
 from datetime import date
-from prefect import task
 
 import gspreadsheets as gsh
 
@@ -10,7 +9,7 @@ from cryptos.kraken import get_balances
 from expensor.constants import DF_WORTH
 from expensor.constants import FILE_DATA
 from utils import log
-from utils import timeit
+from utils import vtask
 
 SPREADSHEET_CRYPTO = "crypto_data"
 SHEET_PRICES = "prices"
@@ -72,8 +71,7 @@ def update_expensor(mfilter):
     gsh.df_to_gspread(FILE_DATA, DF_WORTH, df, mfilter, col_crypto)
 
 
-@task
-@timeit
+@vtask
 def update_cryptos(mdate):
 
     mfilter = mdate.strftime("%Y-%m-01")

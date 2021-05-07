@@ -3,7 +3,6 @@ import requests
 import utils as u
 
 from datetime import date
-from prefect import task
 
 import gspreadsheets as gsh
 
@@ -11,7 +10,7 @@ from expensor.constants import DF_INVEST
 from expensor.constants import DF_WORTH
 from expensor.constants import FILE_DATA
 from utils import log
-from utils import timeit
+from utils import vtask
 
 BASE_URL = "https://api.indexacapital.com"
 TOKEN_NAME = "INDEXA_TOKEN"
@@ -51,8 +50,7 @@ def get_invested_and_worth(account):
     return {"invested": round(invested, 2), "worth": round(worth, 2)}
 
 
-@task
-@timeit
+@vtask
 def update_indexa(mdate):
 
     mfilter = mdate.strftime("%Y-%m-01")

@@ -33,28 +33,22 @@ with Flow("do_all") as flow:
     archive()
 
     # Calendar
-    export_calendar_events(mdate)
-    gcal_report(mdate, upstream_tasks=[export_calendar_events(mdate)])
+    gcal_report(mdate=mdate, upstream_tasks=[export_calendar_events(mdate=mdate)])
 
     # Backups
-    backup_files(upstream_tasks=[export_calendar_events(mdate)])
+    backup_files(upstream_tasks=[export_calendar_events(mdate=mdate)])
     clean_backups(upstream_tasks=[backup_files])
 
-    # Crypto + Indexa
-    update_cryptos(mdate)
-    update_indexa(mdate)
-
     # Expensor
-    money_lover()
     expensor(
         mdate=mdate,
         pro=pro,
-        upstream_tasks=[update_cryptos(mdate), update_indexa(mdate), money_lover],
+        upstream_tasks=[update_cryptos(mdate=mdate), update_indexa(mdate=mdate), money_lover],
     )
 
     # Flights
-    flights(mdate)
-    merge_flights_history(mdate)
+    flights(mdate=mdate)
+    merge_flights_history(mdate=mdate)
 
     # Vbooks
     vbooks()

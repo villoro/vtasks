@@ -1,7 +1,6 @@
 import jinja2
 import pandas as pd
 
-from prefect import task
 from vpalette import get_colors
 
 import utils as u
@@ -10,7 +9,7 @@ from . import constants as c
 from expensor.functions import serie_to_dict
 from expensor.functions import smooth_serie
 from gspreadsheets import read_df_gdrive
-from utils import timeit
+from utils import vtask
 
 
 def get_books():
@@ -93,8 +92,7 @@ def extract_data(export=False):
     return out
 
 
-@task
-@timeit
+@vtask
 def vbooks():
     """ Creates the report """
 

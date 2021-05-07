@@ -3,14 +3,13 @@ import re
 from datetime import date
 from datetime import timedelta
 
-from prefect import task
 
 from utils import get_files_from_regex
 from utils import get_path
 from utils import get_vdropbox
 from utils import log
 from utils import read_yaml
-from utils import timeit
+from utils import vtask
 
 YEAR = f"{date.today():%Y}"
 DAY = f"{date.today():%Y_%m_%d}"
@@ -58,8 +57,7 @@ def one_backup(vdp, path, regex):
             log.debug(f"Skipping '{origin}' since has not been updated")
 
 
-@task
-@timeit
+@vtask
 def backup_files():
     """ Back up all files from URIS """
 
