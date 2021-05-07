@@ -1,11 +1,9 @@
 import pandas as pd
 
-from prefect import task
-
 from utils import get_vdropbox
 from utils import log
 from utils import render_jinja_template
-from utils import timeit
+from utils import vtask
 
 from expensor.functions import serie_to_dict
 from expensor.functions import smooth_serie
@@ -102,8 +100,7 @@ def extract_data(vdp, df, export=False):
     return out
 
 
-@task
-@timeit
+@vtask
 def gcal_report(mdate):
     """ Creates the report """
 

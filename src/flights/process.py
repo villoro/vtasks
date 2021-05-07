@@ -2,13 +2,11 @@ import regex as re
 
 import pandas as pd
 
-from prefect import task
-
 from . import constants as c
 from .rapidapi import query_pair
 from utils import get_vdropbox
 from utils import log
-from utils import timeit
+from utils import vtask
 
 
 def get_airports_pairs():
@@ -49,8 +47,7 @@ def retrive_all_flights():
         log.error(f"There are no flights")
 
 
-@task
-@timeit
+@vtask
 def flights(mdate):
 
     filename = c.FILE_FLIGHTS_DAY.format(date=mdate)
@@ -66,8 +63,7 @@ def flights(mdate):
         vdp.write_parquet(df, filename)
 
 
-@task
-@timeit
+@vtask
 def merge_flights_history(mdate):
 
     vdp = get_vdropbox()

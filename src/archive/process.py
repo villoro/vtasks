@@ -1,7 +1,6 @@
 from datetime import date
 from datetime import timedelta
 
-from prefect import task
 
 from utils import get_files_from_regex
 from utils import get_path
@@ -9,8 +8,7 @@ from utils import get_secret
 from utils import get_vdropbox
 from utils import log
 from utils import read_yaml
-from utils import timeit
-
+from utils import vtask
 
 PATH_OPERATIONS = get_path("src/archive/operations.yaml")
 OPERATIONS = read_yaml(PATH_OPERATIONS)
@@ -77,8 +75,7 @@ def extract_files(vdp, path, regex, output, pwd, kwargs):
         vdp.delete(origin)
 
 
-@task
-@timeit
+@vtask
 def archive():
 
     vdp = get_vdropbox()

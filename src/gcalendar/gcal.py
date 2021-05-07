@@ -6,14 +6,13 @@ import pandas as pd
 
 from gcsa.google_calendar import GoogleCalendar
 from gcsa.serializers.event_serializer import EventSerializer
-from prefect import task
 
 from utils import export_secret
 from utils import get_path
 from utils import get_vdropbox
 from utils import log
 from utils import save_secret
-from utils import timeit
+from utils import vtask
 
 PATH_GCAL_JSON = get_path("auth/gcal.json")
 PATH_TOKEN = get_path("auth/token.pickle")
@@ -83,7 +82,7 @@ def query_events(calendar, end, start=MIN_DATE, drop_invalid=True):
     return df
 
 
-def get_all_events(calendars, exec_date):
+def get_all_events(calendars, mdate):
     """ Get all events from all calendars """
 
     log.info("Querying all calendars")
@@ -96,7 +95,7 @@ def get_all_events(calendars, exec_date):
 
         calendar = get_calendar(data["url"])
 
-        df = query_events(calendar, end=exec_date)
+        df = query_events(calendar, end=mdate)
         df["calendar"] = name
 
         dfs.append(df)
@@ -115,16 +114,15 @@ def get_all_events(calendars, exec_date):
     return df
 
 
-@task
-@timeit
-def export_calendar_events(exec_date):
+@vtask
+def export_calendar_events(mdate):
     """ Export all events as a parquet """
 
     vdp = get_vdropbox()
 
     # Get events
     calendars = read_calendars()
-    df = get_all_events(calendars, exec_date)
+    df = get_all_events(calendars, mdate)
 
     # Export events
     vdp.write_parquet(df, PATH_GCAL_DATA)

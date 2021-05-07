@@ -5,13 +5,11 @@ from datetime import timedelta
 
 import pandas as pd
 
-from prefect import task
-
 from .backup_files import PATH_FILES
 from utils import get_vdropbox
 from utils import log
 from utils import read_yaml
-from utils import timeit
+from utils import vtask
 
 
 def get_backup_data(vdp, path, regex):
@@ -94,8 +92,7 @@ def tag_duplicates(df_in):
     return df
 
 
-@task
-@timeit
+@vtask
 def clean_backups():
     """ Delete backups so that only one per month remain (except if newer than 30d) """
 

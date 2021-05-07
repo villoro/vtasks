@@ -5,13 +5,10 @@
 import pandas as pd
 import re
 
-from prefect import task
-
-
 from . import constants as c
 from utils import get_vdropbox
 from utils import log
-from utils import timeit
+from utils import vtask
 
 REGEX_MONEY_LOVER = r"^(MoneyLover-)?\d{4}-\d{2}-\d{2}(.xls|.csv)$"
 REGEX_DATE = r"(\d{4}-\d{2}-\d{2})"
@@ -81,8 +78,7 @@ def transform_transactions(df_in):
     return df[c.COLS_DF_TRANS]
 
 
-@task
-@timeit
+@vtask
 def money_lover():
     """ Retrives all dataframes and update DFS global var """
 

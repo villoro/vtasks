@@ -6,7 +6,6 @@ from multiprocessing import Pool
 
 import pandas as pd
 
-from prefect import task
 
 from . import constants as c
 from . import create_report
@@ -14,7 +13,7 @@ from . import extract_data
 from gspreadsheets import read_df_gdrive
 from utils import get_vdropbox
 from utils import log
-from utils import timeit
+from utils import vtask
 
 MIN_DATE = "2015-12-01"
 NUM_OF_JOBS_DEFAULT = 1  # If 1 or lower no multiprocessing
@@ -44,8 +43,7 @@ def create_one_report(dfs, mdate):
     log.success(f"Report {mdate:%Y-%m} created")
 
 
-@task
-@timeit
+@vtask
 def expensor(mdate, pro, n_jobs=NUM_OF_JOBS_DEFAULT):
 
     mdate = pd.to_datetime(mdate)
