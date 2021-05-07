@@ -166,9 +166,8 @@ def vtask(func):
     """
 
     class VTask(Task):
-        @timeit
         def run(self, **kwargs):
-            func(**kwargs)
+            timeit(func)(**kwargs)
 
     return VTask(name=func.__name__, max_retries=3, retry_delay=timedelta(seconds=10))
 
