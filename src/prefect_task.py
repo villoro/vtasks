@@ -4,7 +4,7 @@ from time import time
 from prefect import Task
 
 from slack import slack_state_handler
-from utils import timeit
+from utils import log
 
 
 def vtask(func):
@@ -16,15 +16,16 @@ def vtask(func):
     class VTask(Task):
         def run(self, **kwargs):
 
-            # TODO: improve the double timeing
             t0 = time()
-            timeit(func)(**kwargs)
+            func(**kwargs)
             total_time = time() - t0
 
             if total_time < 60:
-                self.duration = f"{total_time:.2f} seconds"
+                self.duration = f"{total_time:.2f} s"
             else:
-                self.duration = f"{total_time/60:.2f} minutes"
+                self.duration = f"{total_time/60:.2f} min"
+
+            log.info(f"{func.__name__} done in {self.duration}")
 
     return VTask(
         name=func.__name__,
