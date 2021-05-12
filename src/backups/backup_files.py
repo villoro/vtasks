@@ -4,12 +4,12 @@ from datetime import date
 from datetime import timedelta
 
 
+from prefect_task import vtask
 from utils import get_files_from_regex
 from utils import get_path
 from utils import get_vdropbox
 from utils import log
 from utils import read_yaml
-from utils import vtask
 
 YEAR = f"{date.today():%Y}"
 DAY = f"{date.today():%Y_%m_%d}"

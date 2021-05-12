@@ -8,8 +8,8 @@ import gspreadsheets as gsh
 from cryptos.kraken import get_balances
 from expensor.constants import DF_WORTH
 from expensor.constants import FILE_DATA
+from prefect_task import vtask
 from utils import log
-from utils import vtask
 
 SPREADSHEET_CRYPTO = "crypto_data"
 SHEET_PRICES = "prices"

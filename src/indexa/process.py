@@ -9,8 +9,8 @@ import gspreadsheets as gsh
 from expensor.constants import DF_INVEST
 from expensor.constants import DF_WORTH
 from expensor.constants import FILE_DATA
+from prefect_task import vtask
 from utils import log
-from utils import vtask
 
 BASE_URL = "https://api.indexacapital.com"
 TOKEN_NAME = "INDEXA_TOKEN"

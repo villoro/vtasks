@@ -3,6 +3,7 @@ import re
 import sys
 import yaml
 
+from argparse import ArgumentParser
 from datetime import date
 from datetime import timedelta
 from os import path
@@ -13,7 +14,7 @@ import jinja2
 import pandas as pd
 
 from loguru import logger as log
-from prefect import Task
+
 from vcrypto import Cipher
 from vdropbox import Vdropbox
 
@@ -52,6 +53,25 @@ CONFIG = {
 
 log.configure(**CONFIG)
 log.enable("vtasks")
+
+ENV_PRO = False
+
+
+def detect_env():
+    """ Detect if it is PRO environment """
+
+    parser = ArgumentParser()
+    parser.add_argument("--pro", help="Wether it is PRO or not (DEV)", default=False, type=bool)
+
+    args = parser.parse_args()
+
+    global ENV_PRO
+    ENV_PRO = args.pro
+
+    if ENV_PRO:
+        log.info("Working on PRO")
+    else:
+        log.info("Working on DEV")
 
 
 def get_secret(key, encoding="utf8"):
@@ -157,19 +177,6 @@ def timeit(func):
         return result
 
     return timed_execution
-
-
-def vtask(func):
-    """
-        Custom decorator for prefect tasks.
-        By default it has 3 retries and 10 seconds as retry_delay
-    """
-
-    class VTask(Task):
-        def run(self, **kwargs):
-            timeit(func)(**kwargs)
-
-    return VTask(name=func.__name__, max_retries=3, retry_delay=timedelta(seconds=10))
 
 
 def render_jinja_template(template_name, data):

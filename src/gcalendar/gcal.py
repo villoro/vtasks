@@ -7,12 +7,12 @@ import pandas as pd
 from gcsa.google_calendar import GoogleCalendar
 from gcsa.serializers.event_serializer import EventSerializer
 
+from prefect_task import vtask
 from utils import export_secret
 from utils import get_path
 from utils import get_vdropbox
 from utils import log
 from utils import save_secret
-from utils import vtask
 
 PATH_GCAL_JSON = get_path("auth/gcal.json")
 PATH_TOKEN = get_path("auth/token.pickle")

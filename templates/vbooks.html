@@ -148,7 +148,7 @@
         ]
       },
       {
-        name: "Total 12m",
+        name: "Total_trend",
         color: "{{ colors['Total_dim'] }}",
         data: [{% for mdate, value in month_by_category["Total_trend"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}

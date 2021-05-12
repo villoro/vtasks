@@ -9,7 +9,7 @@ from . import constants as c
 from expensor.functions import serie_to_dict
 from expensor.functions import smooth_serie
 from gspreadsheets import read_df_gdrive
-from utils import vtask
+from prefect_task import vtask
 
 
 def get_books():

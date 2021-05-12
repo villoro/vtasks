@@ -1,6 +1,4 @@
-from argparse import ArgumentParser
 from datetime import date
-
 
 from prefect import Flow
 from prefect import Parameter
@@ -19,6 +17,7 @@ from gcalendar import export_calendar_events
 from gcalendar import gcal_report
 from indexa import update_indexa
 from money_lover import money_lover
+from utils import detect_env
 from utils import log
 from vbooks import vbooks
 
@@ -27,7 +26,6 @@ logging.get_logger = lambda x: log
 
 with Flow("do_all") as flow:
     mdate = Parameter("mdate")
-    pro = Parameter("pro")
 
     # Archive documents
     archive()
@@ -42,7 +40,6 @@ with Flow("do_all") as flow:
     # Expensor
     expensor(
         mdate=mdate,
-        pro=pro,
         upstream_tasks=[update_cryptos(mdate=mdate), update_indexa(mdate=mdate), money_lover],
     )
 
@@ -52,17 +49,6 @@ with Flow("do_all") as flow:
 
     # Vbooks
     vbooks()
-
-
-def detect_env():
-    """ Detect if it is PRO environment """
-
-    parser = ArgumentParser()
-    parser.add_argument("--pro", help="Wether it is PRO or not (DEV)", default=False, type=bool)
-
-    args = parser.parse_args()
-
-    return args.pro
 
 
 def download_log(vdp):
@@ -102,15 +88,10 @@ def run_etl():
 
     download_log(vdp)
 
-    pro = detect_env()
-
-    if pro:
-        log.info("Working on PRO")
-    else:
-        log.info("Working on DEV")
+    detect_env()
 
     log.info("Starting vtasks")
-    result = u.timeit(flow.run)(mdate=date.today(), pro=pro)
+    result = u.timeit(flow.run)(mdate=date.today())
     log.info("End of vtasks")
 
     copy_log(vdp)
