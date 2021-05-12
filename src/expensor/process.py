@@ -44,7 +44,7 @@ def create_one_report(dfs, mdate):
 
 
 @vtask
-def expensor(mdate, pro, n_jobs=NUM_OF_JOBS_DEFAULT):
+def expensor(mdate, n_jobs=NUM_OF_JOBS_DEFAULT):
 
     mdate = pd.to_datetime(mdate)
     # Reversed since first we want the latest month

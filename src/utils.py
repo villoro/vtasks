@@ -3,6 +3,7 @@ import re
 import sys
 import yaml
 
+from argparse import ArgumentParser
 from datetime import date
 from datetime import timedelta
 from os import path
@@ -52,6 +53,25 @@ CONFIG = {
 
 log.configure(**CONFIG)
 log.enable("vtasks")
+
+ENV_PRO = False
+
+
+def detect_env():
+    """ Detect if it is PRO environment """
+
+    parser = ArgumentParser()
+    parser.add_argument("--pro", help="Wether it is PRO or not (DEV)", default=False, type=bool)
+
+    args = parser.parse_args()
+
+    global ENV_PRO
+    ENV_PRO = args.pro
+
+    if ENV_PRO:
+        log.info("Working on PRO")
+    else:
+        log.info("Working on DEV")
 
 
 def get_secret(key, encoding="utf8"):
