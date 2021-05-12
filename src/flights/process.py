@@ -4,9 +4,9 @@ import pandas as pd
 
 from . import constants as c
 from .rapidapi import query_pair
+from prefect_task import vtask
 from utils import get_vdropbox
 from utils import log
-from utils import vtask
 
 
 def get_airports_pairs():

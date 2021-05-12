@@ -6,10 +6,10 @@ from datetime import timedelta
 import pandas as pd
 
 from .backup_files import PATH_FILES
+from prefect_task import vtask
 from utils import get_vdropbox
 from utils import log
 from utils import read_yaml
-from utils import vtask
 
 
 def get_backup_data(vdp, path, regex):

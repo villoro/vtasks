@@ -1,9 +1,9 @@
 import pandas as pd
 
+from prefect_task import vtask
 from utils import get_vdropbox
 from utils import log
 from utils import render_jinja_template
-from utils import vtask
 
 from expensor.functions import serie_to_dict
 from expensor.functions import smooth_serie

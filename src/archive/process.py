@@ -2,13 +2,13 @@ from datetime import date
 from datetime import timedelta
 
 
+from prefect_task import vtask
 from utils import get_files_from_regex
 from utils import get_path
 from utils import get_secret
 from utils import get_vdropbox
 from utils import log
 from utils import read_yaml
-from utils import vtask
 
 PATH_OPERATIONS = get_path("src/archive/operations.yaml")
 OPERATIONS = read_yaml(PATH_OPERATIONS)

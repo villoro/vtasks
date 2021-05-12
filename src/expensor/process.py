@@ -11,9 +11,9 @@ from . import constants as c
 from . import create_report
 from . import extract_data
 from gspreadsheets import read_df_gdrive
+from prefect_task import vtask
 from utils import get_vdropbox
 from utils import log
-from utils import vtask
 
 MIN_DATE = "2015-12-01"
 NUM_OF_JOBS_DEFAULT = 1  # If 1 or lower no multiprocessing

@@ -14,7 +14,7 @@ import jinja2
 import pandas as pd
 
 from loguru import logger as log
-from prefect import Task
+
 from vcrypto import Cipher
 from vdropbox import Vdropbox
 
@@ -177,19 +177,6 @@ def timeit(func):
         return result
 
     return timed_execution
-
-
-def vtask(func):
-    """
-        Custom decorator for prefect tasks.
-        By default it has 3 retries and 10 seconds as retry_delay
-    """
-
-    class VTask(Task):
-        def run(self, **kwargs):
-            timeit(func)(**kwargs)
-
-    return VTask(name=func.__name__, max_retries=3, retry_delay=timedelta(seconds=10))
 
 
 def render_jinja_template(template_name, data):
