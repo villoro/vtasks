@@ -1,8 +1,8 @@
 import json
 import requests
 
-from utils import ENV_PRO
 from utils import get_secret
+from utils import is_pro
 
 
 def send_slack(text="", channel="test", blocks=None):
@@ -25,19 +25,20 @@ def send_slack(text="", channel="test", blocks=None):
 
 def slack_state_handler(task, old_state, new_state):
 
-    if new_state.is_finished():
+    if not new_state.is_finished():
+        return new_state
 
-        failure = new_state.is_failed()
+    failure = new_state.is_failed()
 
-        # Prepare message
-        emoji = ":x:" if failure else ":heavy_check_mark:"
-        msg = f"*{task.name}:* {task.duration} {emoji}"
+    # Prepare message
+    emoji = ":x:" if failure else ":heavy_check_mark:"
+    msg = f"*{task.name}:* {task.duration} {emoji}"
 
-        # Notify result
-        send_slack(msg, channel="events" if ENV_PRO else "test")
+    # Notify result
+    send_slack(msg, channel="events" if is_pro() else "test")
 
-        # In pro notify about failures in general
-        if failure and ENV_PRO:
-            send_slack(msg, channel="general")
+    # In pro notify about failures in general
+    if failure and is_pro():
+        send_slack(msg, channel="general")
 
     return new_state
