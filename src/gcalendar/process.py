@@ -76,7 +76,7 @@ def extract_data(vdp, df, export=False):
 
     calendars = read_calendars()
 
-    df_w_trend = df.resample("W").sum().apply(smooth_serie)
+    df_w_trend = df.resample("W-MON").sum().apply(smooth_serie)
     df_m = df.resample("MS").sum()
     df_m_trend = df_m.apply(smooth_serie)
 

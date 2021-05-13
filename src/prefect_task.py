@@ -14,6 +14,10 @@ def vtask(func):
     """
 
     class VTask(Task):
+
+        # Set a default value just in case the task fails
+        duration = "no run"
+
         def run(self, **kwargs):
 
             t0 = time()

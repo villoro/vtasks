@@ -1,4 +1,5 @@
 import functools
+import os
 import re
 import sys
 import yaml
@@ -54,7 +55,11 @@ CONFIG = {
 log.configure(**CONFIG)
 log.enable("vtasks")
 
-ENV_PRO = False
+
+def is_pro():
+    """ Check if working in PRO """
+
+    return os.environ.get("VTASKS_ENV", "False") == "True"
 
 
 def detect_env():
@@ -65,10 +70,9 @@ def detect_env():
 
     args = parser.parse_args()
 
-    global ENV_PRO
-    ENV_PRO = args.pro
+    os.environ["VTASKS_ENV"] = str(args.pro)
 
-    if ENV_PRO:
+    if args.pro:
         log.info("Working on PRO")
     else:
         log.info("Working on DEV")
