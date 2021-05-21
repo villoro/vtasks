@@ -31,8 +31,10 @@ def slack_state_handler(task, old_state, new_state):
     failure = new_state.is_failed()
 
     # Prepare message
-    emoji = ":x:" if failure else ":heavy_check_mark:"
-    msg = f"*{task.name}:* {task.duration} {emoji}"
+    if failure:
+        msg = f"*{task.name}:* :x:"
+    else:
+        msg = f"*{task.name}:* {task.duration} :heavy_check_mark:"
 
     # Notify result
     send_slack(msg, channel="events" if is_pro() else "test")
