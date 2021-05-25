@@ -803,6 +803,7 @@
       {
         name: "Passive Income {{ x }}%",
         color: "{{ colors['Passive_income_' + x | string] }}",
+        visible: {% if x == 4 %} true {% else %} false {% endif %},
         data: [{% for mdate, value in month['Worth'].items() %}
           [Date.parse("{{ mdate }}"), {{ (x*value/1200) | round(2) }}], {% endfor %}
         ]
