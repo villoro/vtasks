@@ -4,6 +4,11 @@ renames:
     regex: Informe mensual Indexa Capital - (?P<account>\w{8}) - (?P<year>\d{4})-(?P<month>\d{2}).pdf
     output: /Docs/Legal/{year}/{year}_{month} Informe mensual Indexa Capital - {account}.pdf
 
+  indexa_month_new:
+    path: /Docs/Legal
+    regex: Informe_mensual_Indexa_Capital(?P<account>\w{8})(?P<year>\d{4})-(?P<month>\d{2}).pdf
+    output: /Docs/Legal/{year}/{year}_{month} Informe mensual Indexa Capital - {account}.pdf
+
   indexa_costs:
     path: /Docs/Legal
     regex: Comisiones_de_gestión_Indexa(?:[^a-zA-Z0-9]*)?(?P<year>\d{4})-T(?P<quarter>\d{1}).pdf
