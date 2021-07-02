@@ -1678,7 +1678,7 @@ cryptography = ">=2.9.2,<3.0.0"
 
 [[package]]
 name = "vdropbox"
-version = "0.2.5"
+version = "0.2.6"
 description = "Utilities to read/write python objects to/from dropbox"
 category = "main"
 optional = false
@@ -2711,8 +2711,8 @@ vcrypto = [
     {file = "vcrypto-2.1.0.tar.gz", hash = "sha256:5bed06af05b261124be82aa03dbe873290c0c62946f9d12522cd376aa500fb20"},
 ]
 vdropbox = [
-    {file = "vdropbox-0.2.5-py3-none-any.whl", hash = "sha256:42a74b364e723c2d8e97acb1efe7c120032d6031f9878c1113f28204c60f1bd7"},
-    {file = "vdropbox-0.2.5.tar.gz", hash = "sha256:91d6bf420c9a97f1968472d04cc9b8544227ebdad8b587e1fcc0bfa93d8f4c56"},
+    {file = "vdropbox-0.2.6-py3-none-any.whl", hash = "sha256:93450af50436fb9bef6ae9dbad612c8c9c2e2574db6dce4b8a9ccb61f734a2ed"},
+    {file = "vdropbox-0.2.6.tar.gz", hash = "sha256:9bf5f83331f0fe8c72d3ed81cc7bd6971f0aca83ebb3b503a9cb0e3db02f68d9"},
 ]
 virtualenv = [
     {file = "virtualenv-20.0.32-py2.py3-none-any.whl", hash = "sha256:9160a8f6196afcb8bb91405b5362651f302ee8e810fc471f5f9ce9a06b070298"},
