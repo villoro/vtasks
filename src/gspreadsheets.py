@@ -16,7 +16,7 @@ GDRIVE = None
 
 
 def init_gdrive(force=False):
-    """ Export gdrive json auth """
+    """Export gdrive json auth"""
 
     # Init GDRIVE if it has not been init
     global GDRIVE
@@ -29,11 +29,11 @@ def init_gdrive(force=False):
 
 def get_gdrive_sheet(spreadsheet_name, sheet_name, retries=3):
     """
-        Get a google drive spreadsheet
+    Get a google drive spreadsheet
 
-        Args:
-            spreadsheet_name:   name of the document
-            sheet_name:         name of the sheet inside the document
+    Args:
+        spreadsheet_name:   name of the document
+        sheet_name:         name of the sheet inside the document
     """
 
     init_gdrive()
@@ -61,15 +61,15 @@ def get_gdrive_sheet(spreadsheet_name, sheet_name, retries=3):
 
 def read_df_gdrive(spreadsheet_name, sheet_name, cols_to_numeric=[]):
     """
-        Reads a google spreadsheet
+    Reads a google spreadsheet
 
-        Args:
-            spreadsheet_name:   name of the document
-            sheet_name:         name of the sheet inside the document
-            index_as_datetime:  wether to cast the index as datetime or not
-            cols_to_numeric:    columns that must be transformed to numeric.
-                                    if None all will be transformed
-            fillna:             wether to fill NA with 0 or not
+    Args:
+        spreadsheet_name:   name of the document
+        sheet_name:         name of the sheet inside the document
+        index_as_datetime:  wether to cast the index as datetime or not
+        cols_to_numeric:    columns that must be transformed to numeric.
+                                if None all will be transformed
+        fillna:             wether to fill NA with 0 or not
     """
 
     sheet = get_gdrive_sheet(spreadsheet_name, sheet_name)
@@ -106,7 +106,7 @@ def read_df_gdrive(spreadsheet_name, sheet_name, cols_to_numeric=[]):
 
 
 def get_coordinates(df):
-    """ Get gdrive coordinates as a pandas dataframe """
+    """Get gdrive coordinates as a pandas dataframe"""
 
     df_index = df.copy()
 
@@ -124,14 +124,14 @@ def get_coordinates(df):
 
 def df_to_gspread(spreadsheet_name, sheet_name, df, mfilter, columns=None):
     """
-        Update a google spreadsheet based on a pandas dataframe row
+    Update a google spreadsheet based on a pandas dataframe row
 
-        Args:
-            spreadsheet_name:   name of the document
-            sheet_name:         name of the sheet inside the document
-            df:                 pandas dataframe
-            mfilter:            rows that will be updated
-            columns:            which columns to update
+    Args:
+        spreadsheet_name:   name of the document
+        sheet_name:         name of the sheet inside the document
+        df:                 pandas dataframe
+        mfilter:            rows that will be updated
+        columns:            which columns to update
     """
 
     # Get worksheet

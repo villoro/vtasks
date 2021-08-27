@@ -11,7 +11,7 @@ from utils import log
 
 
 def main(mdate=datetime.now(), data=None):
-    """ Creates the report """
+    """Creates the report"""
 
     mdate = mdate.replace(day=1)
 

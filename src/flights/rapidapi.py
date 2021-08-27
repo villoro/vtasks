@@ -31,17 +31,17 @@ def query_flights(
     locale="en-US",
 ):
     """
-        Query flights iterating until there is a result
+    Query flights iterating until there is a result
 
-        Args:
-            origin:         code for origin airport
-            destination:    code for destination airport
-            day:            day for the flights [date]
-            max_attempts:   number of retries
-            seconds_sleep:  seconds to sleep before returning a result
-            country:        code for country (default: ES)
-            currency:       code for currency (default: EUR)
-            locale:         code for output info (default: en-US)
+    Args:
+        origin:         code for origin airport
+        destination:    code for destination airport
+        day:            day for the flights [date]
+        max_attempts:   number of retries
+        seconds_sleep:  seconds to sleep before returning a result
+        country:        code for country (default: ES)
+        currency:       code for currency (default: EUR)
+        locale:         code for output info (default: en-US)
     """
 
     url = f"{BASE_URL}{country}/{currency}/{locale}/{origin}/{destination}/{day:%Y-%m-%d}"
@@ -71,11 +71,11 @@ def query_flights(
 
 def fix_places(df, data):
     """
-        Map Places id to actual airport code
-        
-        Args:
-            df:     dataframe with flights
-            data:   output of the request as dict containg 'Places' info
+    Map Places id to actual airport code
+
+    Args:
+        df:     dataframe with flights
+        data:   output of the request as dict containg 'Places' info
     """
 
     # Get places
@@ -92,11 +92,11 @@ def fix_places(df, data):
 
 def fix_carriers(df, data):
     """
-        Map Carriers id to actual carrier name
-        
-        Args:
-            df:     dataframe with flights
-            data:   output of the request as dict containg 'Carriers' info
+    Map Carriers id to actual carrier name
+
+    Args:
+        df:     dataframe with flights
+        data:   output of the request as dict containg 'Carriers' info
     """
     # Get carriers
     df_carriers = pd.DataFrame(data["Carriers"])
@@ -110,7 +110,7 @@ def fix_carriers(df, data):
 
 def retrive_quotes(data):
     """
-        Get info from quotes as a pandas dataframe
+    Get info from quotes as a pandas dataframe
     """
 
     out = []
@@ -134,7 +134,7 @@ def retrive_quotes(data):
 
 def parse_data(data):
     """
-        Parse all data from the request and create a pandas dataframe with fligths
+    Parse all data from the request and create a pandas dataframe with fligths
     """
 
     df = retrive_quotes(data)
@@ -156,12 +156,12 @@ def parse_data(data):
 
 def query_pair(origin, destination, n_days=366):
     """
-        Query all flights between 2 airports
+    Query all flights between 2 airports
 
-        Args:
-            origin:         code for origin airport
-            destination:    code for destination airport
-            n_days:         max days of history
+    Args:
+        origin:         code for origin airport
+        destination:    code for destination airport
+        n_days:         max days of history
     """
 
     # Start at day 1 since it will only query when day==1

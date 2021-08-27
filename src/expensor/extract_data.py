@@ -23,11 +23,11 @@ from utils import log
 
 def get_categories(dfs, mtype):
     """
-        Gets a list of categories
+    Gets a list of categories
 
-        Args:
-            dfs:    dict with dataframes
-            mtype:  [Incomes/Expenes]
+    Args:
+        dfs:    dict with dataframes
+        mtype:  [Incomes/Expenes]
     """
 
     df = dfs[c.DF_CATEG]
@@ -37,12 +37,12 @@ def get_categories(dfs, mtype):
 
 def get_basic_traces(dfs, period, mdate):
     """
-        Extract Incomes, Expenses, Result and savings traces
+    Extract Incomes, Expenses, Result and savings traces
 
-        Args:
-            dfs:        dict with dataframes
-            period:     month or year [MS/YS]
-            mdate:      date of the report
+    Args:
+        dfs:        dict with dataframes
+        period:     month or year [MS/YS]
+        mdate:      date of the report
     """
 
     series = {}
@@ -80,12 +80,12 @@ def get_basic_traces(dfs, period, mdate):
 
 def get_investment_or_liquid(dfs, yml, entity):
     """
-        Retrives investment or liquid data
+    Retrives investment or liquid data
 
-        Args:
-            dfs:    dict with dataframes
-            yml:    dict with config info
-            entity: entity to process
+    Args:
+        dfs:    dict with dataframes
+        yml:    dict with config info
+        entity: entity to process
     """
 
     dfg = dfs[entity].copy()
@@ -112,10 +112,10 @@ def get_investment_or_liquid(dfs, yml, entity):
 
 def get_total_investments(data):
     """
-        Extract data for dashboard cards
-        
-        Args:
-            data:   dict with data
+    Extract data for dashboard cards
+
+    Args:
+        data:   dict with data
     """
 
     liquid = pd.Series(data["month"][c.LIQUID])
@@ -130,10 +130,10 @@ def get_total_investments(data):
 
 def get_salaries(dfs, mdate):
     """
-        Extract salaries
+    Extract salaries
 
-        Args:
-            data:   dict with data
+    Args:
+        data:   dict with data
     """
 
     df = dfs[c.DF_SALARY].copy()
@@ -153,16 +153,16 @@ def get_salaries(dfs, mdate):
 
 def get_comparison_traces(dfs):
     """
-        Add traces for comparison plots
+    Add traces for comparison plots
 
-        Args:
-            dfs:    dict with dataframes
+    Args:
+        dfs:    dict with dataframes
     """
 
     out = {}
 
     def get_one_trace(df, col=c.COL_AMOUNT):
-        """ Create the comparison trace """
+        """Create the comparison trace"""
 
         df = smooth_serie(df[[col]].resample("MS").sum())
         df["Month"] = df.index.month
@@ -197,10 +197,10 @@ def get_comparison_traces(dfs):
 
 def get_pie_traces(dfs, mdate):
     """
-        Add traces for pie plots
+    Add traces for pie plots
 
-        Args:
-            dfs:    dict with dataframes
+    Args:
+        dfs:    dict with dataframes
     """
 
     out = {}
@@ -209,7 +209,7 @@ def get_pie_traces(dfs, mdate):
         df = df.pivot_table(c.COL_AMOUNT, c.COL_DATE, c.COL_CATEGORY, "sum").fillna(0)
 
         def export_trace(serie):
-            """ Extract all possible categories """
+            """Extract all possible categories"""
 
             # Keep only present categories
             indexs = [x for x in get_categories(dfs, name) if x in serie.index]
@@ -228,11 +228,11 @@ def get_pie_traces(dfs, mdate):
 
 def get_dashboard(data, mdate):
     """
-        Extract data for dashboard cards
-        
-        Args:
-            data:   dict with data
-            mdate:  date of the report
+    Extract data for dashboard cards
+
+    Args:
+        data:   dict with data
+        mdate:  date of the report
     """
 
     traces = [c.EXPENSES, c.INCOMES, c.RESULT, c.LIQUID]
@@ -288,7 +288,7 @@ def get_dashboard(data, mdate):
 
 
 def get_ratios(data):
-    """ Calculate ratios """
+    """Calculate ratios"""
 
     aux = {}
     names = [
@@ -332,7 +332,7 @@ def get_ratios(data):
 
 
 def get_bubbles(dfs, mdate, min_year=2011):
-    """ Get info for bubbles plot """
+    """Get info for bubbles plot"""
 
     # Get expenses/incomes and extrapolate for last year if necessary
     aux = {}
@@ -343,7 +343,7 @@ def get_bubbles(dfs, mdate, min_year=2011):
         aux[name] = df[c.COL_AMOUNT] * 12 / df["Month"]
 
     def get_year(dfi):
-        """ Get last value of each year """
+        """Get last value of each year"""
         df = dfi.resample("YS").last()["Total"]
         df.index = df.index.year
         return df
@@ -372,7 +372,7 @@ def get_bubbles(dfs, mdate, min_year=2011):
 
 
 def extract_sankey(data):
-    """ Calculate Sankey flows """
+    """Calculate Sankey flows"""
 
     out = {}
     for tw in ["month", "year"]:
@@ -423,19 +423,19 @@ def extract_sankey(data):
 
 def get_colors_comparisons(dfs):
     """
-        Get colors for comparison plots
-        
-        Args:
-            dfs:    dict with dataframes
+    Get colors for comparison plots
+
+    Args:
+        dfs:    dict with dataframes
     """
 
     def extract_colors_from_years(years, color_name):
         """
-            Extract colors from a list of years
-            
-            Args:
-                years:      series with years
-                color_name: name of the color
+        Extract colors from a list of years
+
+        Args:
+            years:      series with years
+            color_name: name of the color
         """
 
         out = {}
@@ -462,8 +462,8 @@ def get_colors_comparisons(dfs):
 
 def add_colors(dfs, yml):
     """
-        Get colors from config file.
-        It can't be named get_colors since that function already exists
+    Get colors from config file.
+    It can't be named get_colors since that function already exists
     """
 
     out = {name: get_colors(data) for name, data in c.DEFAULT_COLORS.items()}
@@ -489,7 +489,7 @@ def add_colors(dfs, yml):
 
 
 def main(dfs, mdate=datetime.now(), export_data=False):
-    """ Create the report """
+    """Create the report"""
 
     mdate = mdate.replace(day=1)
 

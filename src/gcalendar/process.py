@@ -14,7 +14,7 @@ from .gcal import read_calendars
 
 
 def get_daily_data(vdp, mdate):
-    """ Gets duration by calendar and day """
+    """Gets duration by calendar and day"""
 
     df = vdp.read_parquet(PATH_GCAL_DATA)
 
@@ -31,7 +31,7 @@ def get_daily_data(vdp, mdate):
 
 
 def to_percentages(df):
-    """ Divide times by totals """
+    """Divide times by totals"""
 
     # If it's a dataframe get total by row
     if isinstance(df, pd.DataFrame):
@@ -43,7 +43,7 @@ def to_percentages(df):
 
 
 def get_pies(df_m, df_m_trend):
-    """ Get pies info """
+    """Get pies info"""
 
     return {
         "all": serie_to_dict(to_percentages(df_m.mean())),
@@ -53,7 +53,7 @@ def get_pies(df_m, df_m_trend):
 
 
 def get_cards(data, calendars):
-    """ Get last month for main calendars """
+    """Get last month for main calendars"""
 
     out = {}
 
@@ -72,7 +72,7 @@ def get_cards(data, calendars):
 
 
 def extract_data(vdp, df, export=False):
-    """ Extract data from the dataframe """
+    """Extract data from the dataframe"""
 
     calendars = read_calendars()
 
@@ -102,7 +102,7 @@ def extract_data(vdp, df, export=False):
 
 @vtask
 def gcal_report(mdate):
-    """ Creates the report """
+    """Creates the report"""
 
     # Start of last month
     mdate = mdate.replace(day=1)
