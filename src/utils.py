@@ -30,7 +30,7 @@ LOG_PATH_DROPBOX = f"/Aplicaciones/vtasks/{LOG_PATH}"
 
 
 def get_path(path_relative):
-    """ Returns absolute path using PATH_ROOT """
+    """Returns absolute path using PATH_ROOT"""
 
     path_out = PATH_ROOT
 
@@ -47,7 +47,7 @@ CIPHER_KWARGS = {"secrets_file": get_path("secrets.yaml"), "environ_var_name": "
 CONFIG = {
     "handlers": [
         {"sink": sys.stdout, "level": "INFO"},
-        {"sink": get_path(LOG_PATH), "level": "INFO",},
+        {"sink": get_path(LOG_PATH), "level": "INFO"},
     ]
 }
 
@@ -57,13 +57,13 @@ log.enable("vtasks")
 
 
 def is_pro():
-    """ Check if working in PRO """
+    """Check if working in PRO"""
 
     return os.environ.get("VTASKS_ENV", "False") == "True"
 
 
 def detect_env():
-    """ Detect if it is PRO environment """
+    """Detect if it is PRO environment"""
 
     parser = ArgumentParser()
     parser.add_argument("--pro", help="Wether it is PRO or not (DEV)", default=False, type=bool)
@@ -79,7 +79,7 @@ def detect_env():
 
 
 def get_secret(key, encoding="utf8"):
-    """ Retrives one encrypted secret """
+    """Retrives one encrypted secret"""
 
     global CIPHER
     if CIPHER is None:
@@ -89,7 +89,7 @@ def get_secret(key, encoding="utf8"):
 
 
 def save_secret(key, value):
-    """ Retrives one encrypted secret """
+    """Retrives one encrypted secret"""
 
     global CIPHER
     if CIPHER is None:
@@ -99,7 +99,7 @@ def save_secret(key, value):
 
 
 def export_secret(uri, secret_name, binary=False):
-    """ Export a secret from secrets.yaml """
+    """Export a secret from secrets.yaml"""
 
     if binary:
         mode = "wb"
@@ -121,7 +121,7 @@ VDROPBOX = None
 
 
 def get_vdropbox():
-    """ Creates a vdropbox instance """
+    """Creates a vdropbox instance"""
 
     global VDROPBOX
     if VDROPBOX is None:
@@ -131,7 +131,7 @@ def get_vdropbox():
 
 
 def get_files_that_match(vdp, folder, regex):
-    """ Get all files in a folder that match a regex """
+    """Get all files in a folder that match a regex"""
 
     out = []
 
@@ -145,7 +145,7 @@ def get_files_that_match(vdp, folder, regex):
 
 
 def get_files_from_regex(vdp, path, regex):
-    """ Get all files based on a path and a regex for the filename """
+    """Get all files based on a path and a regex for the filename"""
 
     # No '*' return all files directly
     if not path.endswith("/*"):
@@ -163,11 +163,11 @@ def get_files_from_regex(vdp, path, regex):
 
 
 def timeit(func):
-    """ Timing decorator """
+    """Timing decorator"""
 
     @functools.wraps(func)
     def timed_execution(*args, **kwa):
-        """ Outputs the execution time of a function """
+        """Outputs the execution time of a function"""
         t0 = time()
         result = func(*args, **kwa)
 
@@ -184,7 +184,7 @@ def timeit(func):
 
 
 def render_jinja_template(template_name, data):
-    """ Render a jinja2 template """
+    """Render a jinja2 template"""
 
     # Set up jinja to render parent templates and retrive template
     loader = jinja2.FileSystemLoader(get_path("templates"))
@@ -195,7 +195,7 @@ def render_jinja_template(template_name, data):
 
 
 def read_yaml(filename, encoding="utf8"):
-    """ Read a yaml file """
+    """Read a yaml file"""
 
     with open(filename, "r", encoding=encoding) as file:
         return yaml.safe_load(file)

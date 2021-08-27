@@ -9,8 +9,8 @@ from utils import log
 
 def vtask(func):
     """
-        Custom decorator for prefect tasks.
-        By default it has 3 retries and 10 seconds as retry_delay
+    Custom decorator for prefect tasks.
+    By default it has 3 retries and 10 seconds as retry_delay
     """
 
     class VTask(Task):

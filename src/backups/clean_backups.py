@@ -13,7 +13,7 @@ from utils import read_yaml
 
 
 def get_backup_data(vdp, path, regex):
-    """ Get info about the backups """
+    """Get info about the backups"""
 
     base_path = f"{path}/Backups"
 
@@ -55,7 +55,7 @@ def get_backup_data(vdp, path, regex):
 
 
 def get_all_backups(vdp):
-    """ Get all backups """
+    """Get all backups"""
 
     dfs = []
 
@@ -73,8 +73,8 @@ def get_all_backups(vdp):
 
 def tag_duplicates(df_in):
     """
-        Tag entries to delete. Old files (>30d) keep the latest for each month.
-        New files (<30) keep them all.
+    Tag entries to delete. Old files (>30d) keep the latest for each month.
+    New files (<30) keep them all.
     """
 
     df = df_in.copy()
@@ -94,7 +94,7 @@ def tag_duplicates(df_in):
 
 @vtask
 def clean_backups():
-    """ Delete backups so that only one per month remain (except if newer than 30d) """
+    """Delete backups so that only one per month remain (except if newer than 30d)"""
 
     vdp = get_vdropbox()
 

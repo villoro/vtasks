@@ -15,7 +15,7 @@ REGEX_DATE = r"(\d{4}-\d{2}-\d{2})"
 
 
 def get_money_lover_df(vdp):
-    """ gets the name of the money lover excel file """
+    """gets the name of the money lover excel file"""
 
     # Get all money_lover files in a list
     files = {}
@@ -56,10 +56,10 @@ def get_money_lover_df(vdp):
 
 def transform_transactions(df_in):
     """
-        It does all required transformations in order to use the transaction dataframe
+    It does all required transformations in order to use the transaction dataframe
 
-        Args:
-            df_in:  raw dataframe with transactions
+    Args:
+        df_in:  raw dataframe with transactions
     """
 
     df = df_in.rename(c.REPLACES_DF_TRANS, axis="columns").copy()
@@ -80,7 +80,7 @@ def transform_transactions(df_in):
 
 @vtask
 def money_lover():
-    """ Retrives all dataframes and update DFS global var """
+    """Retrives all dataframes and update DFS global var"""
 
     vdp = get_vdropbox()
 

@@ -10,7 +10,7 @@ from utils import log
 
 
 def get_airports_pairs():
-    """ Get a set of all airports combinations """
+    """Get a set of all airports combinations"""
 
     vdp = get_vdropbox()
     df_airports = vdp.read_excel(c.FILE_AIRPORTS)
@@ -26,7 +26,7 @@ def get_airports_pairs():
 
 
 def retrive_all_flights():
-    """ Get a dataframe with all flights """
+    """Get a dataframe with all flights"""
 
     dfs = []
     airports_pairs = get_airports_pairs()

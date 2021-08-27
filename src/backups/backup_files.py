@@ -18,14 +18,14 @@ PATH_FILES = get_path("src/backups/files.yaml")
 
 
 def get_update_at(vdp, filename):
-    """ Get the date when a file was updated """
+    """Get the date when a file was updated"""
 
     metadata = vdp.dbx.files_get_metadata(filename)
     return metadata.client_modified.date()
 
 
 def updated_yesterday(vdp, filename):
-    """ True if the file has been updated after the start of yesterday """
+    """True if the file has been updated after the start of yesterday"""
 
     updated_at = get_update_at(vdp, filename)
 
@@ -33,7 +33,7 @@ def updated_yesterday(vdp, filename):
 
 
 def one_backup(vdp, path, regex):
-    """ Back up a list of files from a folder """
+    """Back up a list of files from a folder"""
 
     # Backup all files
     for path, filename, _ in get_files_from_regex(vdp, path, regex):
@@ -59,7 +59,7 @@ def one_backup(vdp, path, regex):
 
 @vtask
 def backup_files():
-    """ Back up all files from URIS """
+    """Back up all files from URIS"""
 
     vdp = get_vdropbox()
 

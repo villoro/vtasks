@@ -29,7 +29,7 @@ def get_dashboard(dfi):
 
 
 def to_year_start(dfi):
-    """ Get yearly data so that there are no missing years """
+    """Get yearly data so that there are no missing years"""
 
     df = dfi.copy()
 
@@ -94,7 +94,7 @@ def extract_data(export=False):
 
 @vtask
 def vbooks():
-    """ Creates the report """
+    """Creates the report"""
 
     data = extract_data()
 

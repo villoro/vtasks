@@ -20,7 +20,7 @@ NUM_OF_JOBS_DEFAULT = 1  # If 1 or lower no multiprocessing
 
 
 def get_data():
-    """ Retrive dataframes """
+    """Retrive dataframes"""
 
     # Get dfs
     log.debug("Reading excels from gdrive")
@@ -35,7 +35,7 @@ def get_data():
 
 
 def create_one_report(dfs, mdate):
-    """ Creates a report for one month """
+    """Creates a report for one month"""
 
     data = extract_data.main(dfs, mdate, export_data=False)
     create_report.main(mdate, data=data)

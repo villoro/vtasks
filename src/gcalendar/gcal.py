@@ -30,7 +30,7 @@ export_secret(PATH_GCAL_JSON, "GCAL_JSON")
 
 
 def download_token(vdp):
-    """ Download token from dropbox """
+    """Download token from dropbox"""
 
     if not TOKEN_FILENAME in vdp.ls(PATH_GCAL):
         log.warning("GCAL token not found in dropbox")
@@ -47,7 +47,7 @@ def download_token(vdp):
 
 
 def upload_token(vdp):
-    """ Upload token to dropbox """
+    """Upload token to dropbox"""
 
     with open(PATH_TOKEN_LOCAL, "rb") as stream:
         data = stream.read()
@@ -56,22 +56,25 @@ def upload_token(vdp):
 
 
 def read_calendars():
-    """ Read calendars info """
+    """Read calendars info"""
 
     with open(PATH_CALENDARS, "r") as stream:
         return yaml.safe_load(stream)
 
 
 def get_calendar(name):
-    """ Wrapper for GoogleCalendar """
+    """Wrapper for GoogleCalendar"""
 
     return GoogleCalendar(
-        name, credentials_path=PATH_GCAL_JSON, token_path=PATH_TOKEN_LOCAL, read_only=True,
+        name,
+        credentials_path=PATH_GCAL_JSON,
+        token_path=PATH_TOKEN_LOCAL,
+        read_only=True,
     )
 
 
 def query_events(calendar, end, start=MIN_DATE, drop_invalid=True):
-    """ Get events from one calendar """
+    """Get events from one calendar"""
 
     data = []
 
@@ -101,7 +104,7 @@ def query_events(calendar, end, start=MIN_DATE, drop_invalid=True):
 
 
 def get_all_events(calendars, mdate):
-    """ Get all events from all calendars """
+    """Get all events from all calendars"""
 
     log.info("Querying all calendars")
 
@@ -134,7 +137,7 @@ def get_all_events(calendars, mdate):
 
 @vtask
 def export_calendar_events(mdate):
-    """ Export all events as a parquet """
+    """Export all events as a parquet"""
 
     vdp = get_vdropbox()
 
