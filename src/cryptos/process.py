@@ -18,7 +18,7 @@ SHEET_VOL_KRAKEN = "vol_kraken"
 
 
 def get_crypto_prices(cryptos):
-    """ Get latest prices of a list of cryptos """
+    """Get latest prices of a list of cryptos"""
 
     log.info("Retriving crypto prices")
 
@@ -30,7 +30,7 @@ def get_crypto_prices(cryptos):
 
 
 def update_crypto_prices(mfilter):
-    """ Update latest cryptos prices """
+    """Update latest cryptos prices"""
 
     df = gsh.read_df_gdrive(SPREADSHEET_CRYPTO, SHEET_PRICES, "all")
 
@@ -43,7 +43,7 @@ def update_crypto_prices(mfilter):
 
 
 def update_kraken_balances(mfilter):
-    """ Update balances from kraken """
+    """Update balances from kraken"""
 
     df = gsh.read_df_gdrive(SPREADSHEET_CRYPTO, SHEET_VOL_KRAKEN, "all")
 
@@ -55,7 +55,7 @@ def update_kraken_balances(mfilter):
 
 
 def update_expensor(mfilter):
-    """ Update expensor cryptos worth based on crypto values"""
+    """Update expensor cryptos worth based on crypto values"""
 
     col_crypto = "kraken"
 

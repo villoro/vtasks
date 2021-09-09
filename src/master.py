@@ -52,7 +52,7 @@ with Flow("do_all") as flow:
 
 
 def download_log(vdp):
-    """ Get log info from dropbox before running the script """
+    """Get log info from dropbox before running the script"""
 
     if vdp.file_exists(u.LOG_PATH_DROPBOX):
         log.info("Downloading log from dropbox")
@@ -70,7 +70,7 @@ def download_log(vdp):
 
 
 def copy_log(vdp):
-    """ Copy log to dropbox """
+    """Copy log to dropbox"""
 
     log.info(f"Copying '{u.LOG_PATH}' to dropbox")
 
@@ -81,7 +81,7 @@ def copy_log(vdp):
 
 
 def run_etl():
-    """ Run the ETL for today """
+    """Run the ETL for today"""
 
     # Get dropbox connector
     vdp = u.get_vdropbox()

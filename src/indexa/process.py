@@ -19,7 +19,7 @@ ACCOUNTS = {"indexa": "HVGLMEL8", "indexa_pp": "PYDTR6X6"}
 
 
 def query_indexa(endpoint):
-    """ Raw function for querying indexa """
+    """Raw function for querying indexa"""
 
     url = f"{BASE_URL}/{endpoint}"
     log.info(f"Querying '{url}'")
@@ -33,14 +33,14 @@ def query_indexa(endpoint):
 
 
 def get_accounts():
-    """ Get user accounts """
+    """Get user accounts"""
 
     accounts = query_indexa("users/me")["accounts"]
     return [x["account_number"] for x in accounts]
 
 
 def get_invested_and_worth(account):
-    """ Gets the money invested and the actual worth of an account """
+    """Gets the money invested and the actual worth of an account"""
 
     data = query_indexa(f"accounts/{account}/performance")
 

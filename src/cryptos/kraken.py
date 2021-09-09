@@ -18,7 +18,7 @@ PAIRS = {
 
 
 def get_api():
-    """ Get krakenx API object """
+    """Get krakenx API object"""
 
     log.debug("Getting kraken API object")
 
@@ -27,7 +27,7 @@ def get_api():
 
 
 def get_balances(api=None):
-    """ Retrive balances as a pandas serie """
+    """Retrive balances as a pandas serie"""
 
     # Allow lazy loading
     if api is None:

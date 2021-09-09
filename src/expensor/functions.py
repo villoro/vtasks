@@ -11,7 +11,7 @@ from . import constants as c
 
 
 def resample(df, period, mdate):
-    """ Resample and fill missing periods """
+    """Resample and fill missing periods"""
 
     index = pd.date_range(df.index.min(), mdate, freq=period)
     df = df.resample(period).sum().reindex(index).fillna(0)
@@ -24,7 +24,7 @@ def resample(df, period, mdate):
 
 
 def serie_to_dict(serie):
-    """ Transform a serie to a dict """
+    """Transform a serie to a dict"""
 
     # If index is datetime transform to string
     if np.issubdtype(serie.index, np.datetime64):
@@ -34,7 +34,7 @@ def serie_to_dict(serie):
 
 
 def series_to_dicts(series):
-    """ Transform a dict with series to a dict of dicts """
+    """Transform a dict with series to a dict of dicts"""
 
     out = OrderedDict()
 
@@ -46,12 +46,12 @@ def series_to_dicts(series):
 
 def time_average(dfi, months=12, exponential=False, center=False):
     """
-        Do some time average
-        
-        Args:
-            dfi:            input dataframe (or series)
-            months:         num of months for the average
-            exponential:    whether to use EWM or simple rolling
+    Do some time average
+
+    Args:
+        dfi:            input dataframe (or series)
+        months:         num of months for the average
+        exponential:    whether to use EWM or simple rolling
     """
 
     # Exponential moving average
@@ -72,7 +72,7 @@ def time_average(dfi, months=12, exponential=False, center=False):
 
 
 def smooth_serie(dfi):
-    """ Smooth a serie by doing a time_average 2 times """
+    """Smooth a serie by doing a time_average 2 times"""
 
     df = time_average(dfi, months=12, center=True)
     return time_average(df, months=6, center=True)
@@ -80,11 +80,11 @@ def smooth_serie(dfi):
 
 def filter_by_date(dfs_in, mdate):
     """
-        No data greater than mdate and complete missing months
+    No data greater than mdate and complete missing months
 
-        Args:
-            dfs_in: dict with dataframes
-            mdate:  date of the report
+    Args:
+        dfs_in: dict with dataframes
+        mdate:  date of the report
     """
 
     dfs = dfs_in.copy()

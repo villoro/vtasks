@@ -32,7 +32,7 @@ MONTHS = {i: str(x).zfill(2) for i, x in MONTHS.items()}
 
 
 def rename_files(vdp, path, regex, output):
-    """ Rename files based on regexs """
+    """Rename files based on regexs"""
 
     for path, file, kwargs in get_files_from_regex(vdp, path, regex):
 
@@ -54,7 +54,7 @@ def rename_files(vdp, path, regex, output):
 
 
 def extract_files(vdp, path, regex, output, pwd, kwargs):
-    """ Extract files based on regexs """
+    """Extract files based on regexs"""
 
     # Evaluate as python expresions
     kwargs = {key: eval(val) for key, val in kwargs.items()}
