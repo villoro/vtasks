@@ -121,7 +121,7 @@ def vbooks():
     data["title"] = "VBooks"
     data["sections"] = {
         "evolution": "fa-chart-line",
-        # "comparison": "fa-poll",
+        "comparison": "fa-poll",
     }
 
     # Create report
