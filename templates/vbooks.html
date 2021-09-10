@@ -98,6 +98,18 @@
       }
     },
   }
+  const labels_percent = {
+    title: {text: null},
+    labels: {
+      formatter: function() {return this.value + " %";}
+    },
+  }
+  const y_percent = {
+    yAxis : {
+      ...labels_percent,
+      max: 100,
+    },
+  }
 
   // DASHBOARD SECTION
   Highcharts.chart('DASH_evolution', {
@@ -177,6 +189,38 @@
         name: "{{ name + '_trend' }}",
         color: "{{ colors[name + '_dim'] }}",
         data: [{% for mdate, value in month_by_category[name + "_trend"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+
+  // COMPARISON SECTION
+  Highcharts.chart('COMP_year_percent', {
+    ...plot_datetime_stacked,
+    ...y_percent,
+    title: {text: 'Year evolution percent'},
+    series: [
+      {% for name, values in year_percent.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        type: 'area',
+        data: [{% for mdate, value in values.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('COMP_year_percent_cumsum', {
+    ...plot_datetime_stacked,
+    ...y_percent,
+    title: {text: 'Year evolution percent cumulative'},
+    series: [
+      {% for name, values in year_percent_cumsum.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        type: 'area',
+        data: [{% for mdate, value in values.items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       }, {% endfor %}

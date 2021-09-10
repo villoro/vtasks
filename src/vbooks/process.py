@@ -80,7 +80,7 @@ def get_year_percent(data, cumsum=True):
         df = df.cumsum()
 
     # Get percentatges
-    df = df.div(df["Total"], axis=0)
+    df = 100 * df.div(df["Total"], axis=0).fillna(0)
 
     return {x: serie_to_dict(df[x]) for x in df.columns if x != "Total"}
 
