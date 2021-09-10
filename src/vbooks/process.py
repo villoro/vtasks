@@ -72,6 +72,19 @@ def get_month_data(dfi):
     return out
 
 
+def get_year_percent(data, cumsum=True):
+
+    df = pd.DataFrame(data)
+
+    if cumsum:
+        df = df.cumsum()
+
+    # Get percentatges
+    df = 100 * df.div(df["Total"], axis=0).fillna(0)
+
+    return {x: serie_to_dict(df[x]) for x in df.columns if x != "Total"}
+
+
 def extract_data(export=False):
 
     df = get_books()
@@ -83,6 +96,12 @@ def extract_data(export=False):
         "colors": {name: get_colors(data) for name, data in c.COLORS.items()},
     }
 
+    # Add percents
+    data = out["year_by_category"]
+    out["year_percent"] = get_year_percent(data, cumsum=False)
+    out["year_percent_cumsum"] = get_year_percent(data, cumsum=True)
+
+    # Extract totals
     out["year"] = out["year_by_category"].pop("Total")
     out["month"] = out["month_by_category"].pop("Total")
 
@@ -102,7 +121,7 @@ def vbooks():
     data["title"] = "VBooks"
     data["sections"] = {
         "evolution": "fa-chart-line",
-        # "comparison": "fa-poll",
+        "comparison": "fa-poll",
     }
 
     # Create report

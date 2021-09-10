@@ -37,6 +37,17 @@
     <div id="EVO_evolution_month" class="plot" style="height: 450px"></div>
   </div>
 </div>
+
+<!-- COMP -->
+<div id="comparison" class="section" style="display:none;">
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="COMP_year_percent" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="COMP_year_percent_cumsum" class="plot" style="height: 450px"></div>
+  </div>
+</div>
 {% endblock %}
 
 
@@ -85,6 +96,18 @@
       formatter: function () {
         return "<b>" + this.series.name + ":</b> " + this.y + " (" + this.percentage.toFixed(2) + " %)";
       }
+    },
+  }
+  const labels_percent = {
+    title: {text: null},
+    labels: {
+      formatter: function() {return this.value + " %";}
+    },
+  }
+  const y_percent = {
+    yAxis : {
+      ...labels_percent,
+      max: 100,
     },
   }
 
@@ -166,6 +189,38 @@
         name: "{{ name + '_trend' }}",
         color: "{{ colors[name + '_dim'] }}",
         data: [{% for mdate, value in month_by_category[name + "_trend"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+
+  // COMPARISON SECTION
+  Highcharts.chart('COMP_year_percent', {
+    ...plot_datetime_stacked,
+    ...y_percent,
+    title: {text: 'Year evolution percent'},
+    series: [
+      {% for name, values in year_percent.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        type: 'area',
+        data: [{% for mdate, value in values.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('COMP_year_percent_cumsum', {
+    ...plot_datetime_stacked,
+    ...y_percent,
+    title: {text: 'Year evolution percent cumulative'},
+    series: [
+      {% for name, values in year_percent_cumsum.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        type: 'area',
+        data: [{% for mdate, value in values.items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       }, {% endfor %}
