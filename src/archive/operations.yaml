@@ -21,17 +21,17 @@ renames:
 
   day_underscore:
     path: /Docs/Legal/*
-    regex: (?P<year>\d{4})_(?P<month>\d{2})_(?P<day>\d{2})_(?P<text>[\w\-\s]*)\.(?P<extension>\w+)
+    regex: (?P<year>\d{4})_(?P<month>\d{2})_(?P<day>\d{2})_(?P<text>[\w\-\s\(\)]*)\.(?P<extension>\w+)
     output: /Docs/Legal/{year}/{year}_{month}_{day} {text}.{extension}
 
   month_underscore:
     path: /Docs/Legal/*
-    regex: (?P<year>\d{4})_(?P<month>\d{2})_(?P<text>[^0-9][\w\-\s]*)\.(?P<extension>\w+)
+    regex: (?P<year>\d{4})_(?P<month>\d{2})_(?P<text>[^0-9][\w\-\s\(\)]*)\.(?P<extension>\w+)
     output: /Docs/Legal/{year}/{year}_{month} {text}.{extension}
 
   year_underscore:
     path: /Docs/Legal/*
-    regex: (?P<year>\d{4})_(?P<text>[^0-9][\w\-\s]*)\.(?P<extension>\w+)
+    regex: (?P<year>\d{4})_(?P<text>[^0-9][\w\-\s\(\)]*)\.(?P<extension>\w+)
     output: /Docs/Legal/{year}/{year} {text}.{extension}
 
   to_year_folder:
