@@ -19,15 +19,25 @@ renames:
     regex: extracto_mensual_(?P<month_text>\w+)_(?P<year>\d{4}).pdf
     output: /Docs/Legal/{year}/{year}_{month} extracto mensual ING.pdf
 
+  day_underscore:
+    path: /Docs/Legal/*
+    regex: (?P<year>\d{4})_(?P<month>\d{2})_(?P<day>\d{2})_(?P<text>[\w\-\s]*)\.(?P<extension>\w+)
+    output: /Docs/Legal/{year}/{year}_{month}_{day} {text}.{extension}
+
   month_underscore:
     path: /Docs/Legal/*
-    regex: (?P<year>\d{4})_(?P<month>\d{2})_(?P<day>\d{2})[_|\s](?P<text>[\w\-\s]*)\.(?P<extension>\w+)
-    output: /Docs/Legal/{year}/{year}_{month}_{day} {text}.{extension}
+    regex: (?P<year>\d{4})_(?P<month>\d{2})_(?P<text>[^0-9][\w\-\s]*)\.(?P<extension>\w+)
+    output: /Docs/Legal/{year}/{year}_{month} {text}.{extension}
 
   year_underscore:
     path: /Docs/Legal/*
-    regex: (?P<year>\d{4})_(?P<month>\d{2})[_|\s](?P<text>[^0-9][\w\-\s]*)\.(?P<extension>\w+)
-    output: /Docs/Legal/{year}/{year}_{month} {text}.{extension}
+    regex: (?P<year>\d{4})_(?P<text>[^0-9][\w\-\s]*)\.(?P<extension>\w+)
+    output: /Docs/Legal/{year}/{year} {text}.{extension}
+
+  to_year_folder:
+    path: /Docs/Legal
+    regex: (?P<year>\d{4})_(?P<other>.*)
+    output: /Docs/Legal/{year}/{year}_{other}
 
 extractions:
   glovo_month:
