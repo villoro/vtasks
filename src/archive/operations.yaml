@@ -21,12 +21,12 @@ renames:
 
   month_underscore:
     path: /Docs/Legal/*
-    regex: (?P<year>\d{4})_(?P<month>\d{2})_(?P<day>\d{2})_(?P<text>[\w+\- ]*)\.(?P<extension>\w+)
+    regex: (?P<year>\d{4})_(?P<month>\d{2})_(?P<day>\d{2})[_|\s](?P<text>[\w\-\s]*)\.(?P<extension>\w+)
     output: /Docs/Legal/{year}/{year}_{month}_{day} {text}.{extension}
 
   year_underscore:
     path: /Docs/Legal/*
-    regex: (?P<year>\d{4})_(?P<month>\d{2})_(?P<text>[^0-9][\w+\- ]*)\.(?P<extension>\w+)
+    regex: (?P<year>\d{4})_(?P<month>\d{2})[_|\s](?P<text>[^0-9][\w\-\s]*)\.(?P<extension>\w+)
     output: /Docs/Legal/{year}/{year}_{month} {text}.{extension}
 
 extractions:
