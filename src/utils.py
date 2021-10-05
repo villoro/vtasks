@@ -136,7 +136,7 @@ def get_files_that_match(vdp, folder, regex):
     out = []
 
     for file in vdp.ls(folder):
-        match = re.search(regex, file)
+        match = re.match(regex, file)
 
         if match:
             out.append((folder, file, match.groupdict()))
