@@ -34,8 +34,9 @@ with Flow("do_all") as flow:
     gcal_report(mdate=mdate, upstream_tasks=[export_calendar_events(mdate=mdate)])
 
     # Backups
-    backup_files(upstream_tasks=[export_calendar_events(mdate=mdate)])
-    clean_backups(upstream_tasks=[backup_files])
+    clean_backups(
+        upstream_tasks=[backup_files(upstream_tasks=[export_calendar_events(mdate=mdate)])]
+    )
 
     # Expensor
     expensor(
@@ -43,9 +44,9 @@ with Flow("do_all") as flow:
         upstream_tasks=[update_cryptos(mdate=mdate), update_indexa(mdate=mdate), money_lover],
     )
 
-    # Flights
-    flights(mdate=mdate)
-    merge_flights_history(mdate=mdate)
+    # Flights (temporally disabled since rapidapi integration with skyscanner is not working)
+    # flights(mdate=mdate)
+    # merge_flights_history(mdate=mdate)
 
     # Vbooks
     vbooks()
