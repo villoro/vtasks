@@ -5,11 +5,10 @@ from datetime import timedelta
 
 import pandas as pd
 
-from .backup_files import PATH_FILES
+from .files import files_regexs
 from prefect_task import vtask
 from utils import get_vdropbox
 from utils import log
-from utils import read_yaml
 
 
 def get_backup_data(vdp, path, regex):
@@ -59,7 +58,7 @@ def get_all_backups(vdp):
 
     dfs = []
 
-    for kwargs in read_yaml(PATH_FILES):
+    for kwargs in files_regexs:
 
         log.info("Scanning '{path}'".format(**kwargs))
 
