@@ -31,12 +31,11 @@ with Flow("do_all") as flow:
     archive()
 
     # Calendar
-    gcal_report(mdate=mdate, upstream_tasks=[export_calendar_events(mdate=mdate)])
+    export_cal = export_calendar_events(mdate=mdate)
+    gcal_report(mdate=mdate, upstream_tasks=[export_cal])
 
     # Backups
-    clean_backups(
-        upstream_tasks=[backup_files(upstream_tasks=[export_calendar_events(mdate=mdate)])]
-    )
+    clean_backups(upstream_tasks=[backup_files(upstream_tasks=[export_cal])])
 
     # Expensor
     expensor(
