@@ -4,17 +4,15 @@ from datetime import date
 from datetime import timedelta
 
 
+from .files import files_regexs
 from prefect_task import vtask
 from utils import get_files_from_regex
 from utils import get_path
 from utils import get_vdropbox
 from utils import log
-from utils import read_yaml
 
 YEAR = f"{date.today():%Y}"
 DAY = f"{date.today():%Y_%m_%d}"
-
-PATH_FILES = get_path("src/backups/files.yaml")
 
 
 def get_update_at(vdp, filename):
@@ -63,6 +61,6 @@ def backup_files():
 
     vdp = get_vdropbox()
 
-    for kwargs in read_yaml(PATH_FILES):
+    for kwargs in files_regexs:
         log.info("Scanning '{path}/{regex}'".format(**kwargs))
         one_backup(vdp, **kwargs)

@@ -10,36 +10,49 @@ from prefect_task import vtask
 from utils import get_vdropbox
 from utils import log
 
-REGEX_MONEY_LOVER = r"^(MoneyLover-)?\d{4}-\d{2}-\d{2}(.xls|.csv)$"
-REGEX_DATE = r"(\d{4}-\d{2}-\d{2})"
+REGEX_MONEY_LOVER = r"^(MoneyLover-)?(?P<date>\d{4}-\d{2}-\d{2})( \((?P<num>\d+)\))?(.xls|.csv)$"
+
+
+def get_files(vdp):
+    """gets a dict with all money lover files"""
+
+    files = {}
+    for file in vdp.ls(c.PATH_MONEY_LOVER):
+        result = re.search(REGEX_MONEY_LOVER, file)
+
+        if not result:
+            continue
+
+        params = result.groupdict()
+
+        # If num is missing fill with 0
+        if not params["num"]:
+            params["num"] = 0
+
+        # Make sure to handle double digit nums
+        params["num"] = str(params["num"]).zfill(2)
+
+        files["{date}_{num}".format(**params)] = file
+
+    return files
 
 
 def get_money_lover_df(vdp):
-    """gets the name of the money lover excel file"""
+    """gets the money lover file as a dataframe"""
 
-    # Get all money_lover files in a list
-    files = {}
-    for file in vdp.ls(c.PATH_MONEY_LOVER):
-        if re.search(REGEX_MONEY_LOVER, file):
+    files = get_files(vdp)
 
-            # Extract the date as string from the name
-            date_str = re.search(REGEX_DATE, file).group()
-
-            files[date_str] = file
-
-    # Get the name of the file with the greatest date
-    last_file = sorted(files.items())[-1]
-    last_filename = last_file[1]
+    last_filename = sorted(files.items())[-1][1]
 
     # Iterate all files and transform all to parquet except the last one
-    for date, filename in sorted(files.items()):
+    for key, filename in sorted(files.items()):
 
         uri_in = f"{c.PATH_MONEY_LOVER}/{filename}"
-        uri_out = f"{c.PATH_MONEY_LOVER}/{date[:4]}/{date}.parquet"
+        uri_out = f"{c.PATH_MONEY_LOVER}/{key[:4]}/{key[:10]}.parquet"
 
         log.info(f"Reading '{uri_in}' from dropbox")
 
-        extension = file.split(".")[-1]
+        extension = filename.split(".")[-1]
         if extension == "csv":
             df = vdp.read_csv(uri_in, index_col=0, sep=";")
         else:

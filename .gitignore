@@ -45,8 +45,8 @@ dist/
 runs/
 logs/
 
-# Working notebook
-*Test.ipynb
+# Notebooks at src
+src/*.ipynb
 
 # Auth jsons
 auth/*
@@ -54,3 +54,5 @@ auth/*
 
 # Certificates
 src/certificates/
+
+
