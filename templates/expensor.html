@@ -696,6 +696,15 @@
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },
+      {
+        name: "Total Income",
+        color: "{{ colors['Incomes'] }}",
+        visible: false,
+        dashStyle: 'shortdashdot',
+        data: [{% for mdate, value in month["Total_Income"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
     ],
   });
   Highcharts.chart('INV_worth_by_type', {
