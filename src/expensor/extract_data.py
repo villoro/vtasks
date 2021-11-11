@@ -121,10 +121,12 @@ def get_total_investments(data):
     liquid = pd.Series(data["month"][c.LIQUID])
     worth = pd.Series(data["month"]["Worth"])
     invest = pd.Series(data["month"]["Invest"])
+    income = pd.Series(data["month"][c.INCOMES])
 
     return {
         "Total_Worth": serie_to_dict((liquid + worth).dropna()),
         "Total_Invest": serie_to_dict((liquid + invest).dropna()),
+        "Total_Income": serie_to_dict(income.cumsum()),
     }
 
 
