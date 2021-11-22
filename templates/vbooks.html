@@ -135,6 +135,7 @@
   });
   Highcharts.chart('DASH_languages', {
     ...plot_pie,
+    xAxis: {categories: ["All time"]},
     series: [
       {% for name in languages %}{
         name: "{{ name }}",
