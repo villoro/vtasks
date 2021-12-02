@@ -163,3 +163,20 @@ def df_to_gspread(spreadsheet_name, sheet_name, df, mfilter, columns=None):
     # Update values in gspreadsheet
     log.info(f"Updating {spreadsheet_name}/{sheet_name}/{mrange}")
     wks.update(mrange, values)
+
+
+def update_cell(spreadsheet_name, sheet_name, cell, value):
+    """
+    Update a cell on google spreadsheet
+
+    Args:
+        spreadsheet_name:   name of the document
+        sheet_name:         name of the sheet inside the document
+        cell:               cell index
+        value:              what to write
+    """
+
+    sheet = get_gdrive_sheet(spreadsheet_name, sheet_name)
+
+    log.info(f"Updating {spreadsheet_name}/{sheet_name}/{cell}")
+    sheet.update(cell, value)
