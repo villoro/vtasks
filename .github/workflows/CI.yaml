@@ -1,4 +1,4 @@
-name: Integration tests
+name: CI
 env:
   VTASKS_TOKEN: ${{ secrets.VTASKS_TOKEN }}
 
