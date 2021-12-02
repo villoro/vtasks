@@ -1,0 +1,46 @@
+CI-CD:
+- .github/*
+- .github/**/*
+- .pre-commit-config.yaml
+
+t/archive:
+- src/archive/*
+- src/archive/**/*
+
+t/backups:
+- src/backups/*
+- src/backups/**/*
+
+t/cryptos:
+- src/cryptos/*
+- src/cryptos/**/*
+
+t/expensor:
+- src/expensor/*
+- src/expensor/**/*
+- templates/base.html
+- templates/expensor.html
+
+t/flights:
+- src/flights/*
+- src/flights/**/*
+
+t/gcalendar:
+- src/gcalendar/*
+- src/gcalendar/**/*
+- templates/base.html
+- templates/gcalendar.html
+
+t/indexa:
+- src/indexa/*
+- src/indexa/**/*
+
+t/money_lover:
+- src/money_lover/*
+- src/money_lover/**/*
+
+t/vbooks:
+- src/vbooks/*
+- src/vbooks/**/*
+- templates/base.html
+- templates/vbooks.html
