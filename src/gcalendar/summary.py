@@ -47,7 +47,7 @@ def send_summary(mdate, channel):
     send_slack(channel=channel, blocks=[block])
 
 
-# @vtask
+@vtask
 def do_summary(mdate):
     """Creates the report"""
 

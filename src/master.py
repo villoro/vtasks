@@ -14,7 +14,7 @@ from expensor import expensor
 from flights import flights
 from flights import merge_flights_history
 from gcalendar import export_calendar_events
-from gcalendar import gcal_report
+from gcalendar import gcal_report, do_summary
 from indexa import update_indexa
 from money_lover import money_lover
 from utils import detect_env
@@ -33,6 +33,7 @@ with Flow("do_all") as flow:
     # Calendar
     export_cal = export_calendar_events(mdate=mdate)
     gcal_report(mdate=mdate, upstream_tasks=[export_cal])
+    do_summary(mdate=mdate, upstream_tasks=[export_cal])
 
     # Backups
     clean_backups(upstream_tasks=[backup_files(upstream_tasks=[export_cal])])
