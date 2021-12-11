@@ -19,10 +19,23 @@ def get_books():
     return df
 
 
+def get_todo():
+    df = read_df_gdrive(c.SPREADSHEET, c.SHEET_TODO).reset_index()
+    df[c.COL_PAGES] = df[c.COL_PAGES].replace("", 0)
+    # Replace owning status for nice names
+    df[c.COL_OWNED] = (
+        df[c.COL_OWNED]
+        .map({1: c.STATUS_OWNED, "b": c.STATUS_IN_LIBRARY})
+        .fillna(c.STATUS_NOT_OWNED)
+    )
+
+    return df
+
+
 def get_dashboard(dfi):
 
-    out = serie_to_dict(dfi.groupby("Language")["Pages"].sum())
-    out["Total"] = int(dfi["Pages"].sum())
+    out = serie_to_dict(dfi.groupby(c.COL_LANGUAGE)[c.COL_PAGES].sum())
+    out["Total"] = int(dfi[c.COL_PAGES].sum())
     out["Years"] = int(dfi[c.COL_DATE].dt.year.nunique())
 
     return out
@@ -47,12 +60,14 @@ def to_year_start(dfi):
 
 def get_year_data(dfi):
 
-    df = dfi.pivot_table(values="Pages", index=c.COL_DATE, columns="Language", aggfunc="sum")
+    df = dfi.pivot_table(
+        values=c.COL_PAGES, index=c.COL_DATE, columns=c.COL_LANGUAGE, aggfunc="sum"
+    )
     df = to_year_start(df)
 
     out = {x: serie_to_dict(df[x]) for x in df.columns}
 
-    out["Total"] = serie_to_dict(to_year_start(dfi)["Pages"])
+    out["Total"] = serie_to_dict(to_year_start(dfi)[c.COL_PAGES])
 
     return out
 
@@ -60,10 +75,10 @@ def get_year_data(dfi):
 def get_month_data(dfi):
 
     out = {
-        i: serie_to_dict(dfa.resample("MS")["Pages"].sum())
-        for i, dfa in dfi.set_index(c.COL_DATE).groupby("Language")
+        i: serie_to_dict(dfa.resample("MS")[c.COL_PAGES].sum())
+        for i, dfa in dfi.set_index(c.COL_DATE).groupby(c.COL_LANGUAGE)
     }
-    out["Total"] = serie_to_dict(dfi.set_index(c.COL_DATE).resample("MS")["Pages"].sum())
+    out["Total"] = serie_to_dict(dfi.set_index(c.COL_DATE).resample("MS")[c.COL_PAGES].sum())
 
     for name, data in {**out}.items():  # The ** is to avoid problems while mutating the dict
         serie = smooth_serie(pd.Series(data))
@@ -85,16 +100,21 @@ def get_year_percent(data, cumsum=True):
     return {x: serie_to_dict(df[x]) for x in df.columns if x != "Total"}
 
 
-def get_top_authors(dfi, top_n=20):
+def get_top(dfi, groupby, top_n=20):
 
-    df = dfi.groupby("Author").agg({"Pages": "sum"}).sort_values("Pages", ascending=False)[:top_n]
+    df = (
+        dfi.groupby(groupby)
+        .agg({c.COL_PAGES: "sum"})
+        .sort_values(c.COL_PAGES, ascending=False)[:top_n]
+    )
 
-    return serie_to_dict(df["Pages"])
+    return serie_to_dict(df[c.COL_PAGES])
 
 
 def extract_data(export=False):
 
     df = get_books()
+    df_todo = get_todo()
 
     out = {
         "dashboard": get_dashboard(df),
@@ -113,7 +133,12 @@ def extract_data(export=False):
     out["month"] = out["month_by_category"].pop("Total")
 
     # Top Authors
-    out["top_authors"] = get_top_authors(df)
+    out["top_authors"] = get_top(df, groupby=c.COL_AUTHOR)
+
+    # TO DO section
+    out["todo_by_author"] = get_top(df_todo, c.COL_AUTHOR)
+    out["todo_by_source"] = get_top(df_todo, c.COL_SOURCE)
+    out["todo_by_ownership"] = get_top(df_todo, c.COL_OWNED)
 
     if export:
         u.get_vdropbox().write_yaml(out, f"{c.PATH_VBOOKS}/report_data.yaml")
@@ -133,6 +158,7 @@ def vbooks():
         "evolution": "fa-chart-line",
         "percent": "fa-percent",
         "authors": "fa-user",
+        "todo": "fa-list",
     }
 
     # Create report
