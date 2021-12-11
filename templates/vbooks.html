@@ -270,6 +270,17 @@
   });
 
   // TODO SECTION
+  Highcharts.chart('TODO_by_ownership', {
+    ...plot_pie,
+    xAxis: {categories: ["TODO"]},
+    series: [
+      {% for name, value in todo_by_ownership.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{{ value }}],
+      }, {% endfor %}
+    ],
+  });
   Highcharts.chart('TODO_by_source', {
     ...plot_stacked_no_title,
     xAxis: {
@@ -280,7 +291,7 @@
     series: [
       {
         name: "pages",
-        color: "{{ colors["Authors"] }}",
+        color: "{{ colors["Sources"] }}",
         data: [
           {% for pages in todo_by_source.values() %}{{ pages }},{% endfor %}
         ],

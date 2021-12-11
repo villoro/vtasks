@@ -22,7 +22,12 @@ def get_books():
 def get_todo():
     df = read_df_gdrive(c.SPREADSHEET, c.SHEET_TODO).reset_index()
     df[c.COL_PAGES] = df[c.COL_PAGES].replace("", 0)
-    df[c.COL_OWNED] = df[c.COL_OWNED].map({1: "owned", "b": "in_library"}).fillna("not_owned")
+    # Replace owning status for nice names
+    df[c.COL_OWNED] = (
+        df[c.COL_OWNED]
+        .map({1: c.STATUS_OWNED, "b": c.STATUS_IN_LIBRARY})
+        .fillna(c.STATUS_NOT_OWNED)
+    )
 
     return df
 
