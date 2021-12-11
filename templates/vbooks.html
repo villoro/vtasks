@@ -253,7 +253,7 @@
   // AUTHORS SECTION
   Highcharts.chart('AUTH_top', {
     ...plot_stacked_horizontal,
-    title: {text: 'Top authors read'}
+    title: {text: 'Top authors read'},
     xAxis: {
       categories: [
         {% for author in top_authors %}"{{loop.index}}. {{ author }}", {% endfor %}
