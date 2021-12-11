@@ -1,9 +1,13 @@
 SPREADSHEET = "books_data"
 SHEET_BOOKS = "Books"
+SHEET_TODO = "TODO"
 
 PATH_VBOOKS = "/Aplicaciones/vbooks"
 
 COL_DATE = "Date"
+COL_PAGES = "Pages"
+COL_LANGUAGE = "Language"
+COL_AUTHOR = "Author"
 
 # fmt: off
 COLORS = {
