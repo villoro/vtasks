@@ -8,6 +8,8 @@ COL_DATE = "Date"
 COL_PAGES = "Pages"
 COL_LANGUAGE = "Language"
 COL_AUTHOR = "Author"
+COL_SOURCE = "Source"
+COL_OWNED = "Owned?"
 
 # fmt: off
 COLORS = {

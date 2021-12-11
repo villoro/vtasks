@@ -20,8 +20,9 @@ def get_books():
 
 
 def get_todo():
-    df = read_df_gdrive(c.SPREADSHEET, c.SHEET_BOOKS).reset_index()
-    df[c.COL_DATE] = pd.to_datetime(df[c.COL_DATE])
+    df = read_df_gdrive(c.SPREADSHEET, c.SHEET_TODO).reset_index()
+    df[c.COL_PAGES] = df[c.COL_PAGES].replace("", 0)
+    df[c.COL_OWNED] = df[c.COL_OWNED].map({1: "owned", "b": "in_library"}).fillna("not_owned")
 
     return df
 
@@ -94,10 +95,10 @@ def get_year_percent(data, cumsum=True):
     return {x: serie_to_dict(df[x]) for x in df.columns if x != "Total"}
 
 
-def get_top_authors(dfi, top_n=20):
+def get_top(dfi, groupby, top_n=20):
 
     df = (
-        dfi.groupby(c.COL_AUTHOR)
+        dfi.groupby(groupby)
         .agg({c.COL_PAGES: "sum"})
         .sort_values(c.COL_PAGES, ascending=False)[:top_n]
     )
@@ -108,6 +109,7 @@ def get_top_authors(dfi, top_n=20):
 def extract_data(export=False):
 
     df = get_books()
+    df_todo = get_todo()
 
     out = {
         "dashboard": get_dashboard(df),
@@ -126,7 +128,12 @@ def extract_data(export=False):
     out["month"] = out["month_by_category"].pop("Total")
 
     # Top Authors
-    out["top_authors"] = get_top_authors(df)
+    out["top_authors"] = get_top(df, groupby=c.COL_AUTHOR)
+
+    # TO DO section
+    out["todo_by_author"] = get_top(df_todo, c.COL_AUTHOR)
+    out["todo_by_source"] = get_top(df_todo, c.COL_SOURCE)
+    out["todo_by_ownership"] = get_top(df_todo, c.COL_OWNED)
 
     if export:
         u.get_vdropbox().write_yaml(out, f"{c.PATH_VBOOKS}/report_data.yaml")
@@ -146,6 +153,7 @@ def vbooks():
         "evolution": "fa-chart-line",
         "percent": "fa-percent",
         "authors": "fa-user",
+        "todo": "fa-list",
     }
 
     # Create report
