@@ -1,5 +1,6 @@
 from datetime import date
 
+from prefect_task import vtask
 from slack import send_slack
 from utils import get_vdropbox
 from utils import is_pro
@@ -53,11 +54,11 @@ def do_summary(mdate):
 
     if mdate.isoweekday() == 1:
 
-        log.info("Send gcalendar weekly report")
+        log.info("Sending gcalendar weekly report")
         send_summary(mdate, "events")
 
     elif not is_pro():
-        log.info("Send gcalendar weekly report for testing")
+        log.info("Sending gcalendar weekly report for testing")
         send_summary(mdate, "test")
 
     else:
