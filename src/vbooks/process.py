@@ -85,6 +85,13 @@ def get_year_percent(data, cumsum=True):
     return {x: serie_to_dict(df[x]) for x in df.columns if x != "Total"}
 
 
+def get_top_authors(dfi, top_n=20):
+
+    df = dfi.groupby("Author").agg({"Pages": "sum"}).sort_values("Pages", ascending=False)[:top_n]
+
+    return serie_to_dict(df["Pages"])
+
+
 def extract_data(export=False):
 
     df = get_books()
@@ -105,6 +112,9 @@ def extract_data(export=False):
     out["year"] = out["year_by_category"].pop("Total")
     out["month"] = out["month_by_category"].pop("Total")
 
+    # Top Authors
+    out["top_authors"] = get_top_authors(df)
+
     if export:
         u.get_vdropbox().write_yaml(out, f"{c.PATH_VBOOKS}/report_data.yaml")
 
@@ -121,7 +131,8 @@ def vbooks():
     data["title"] = "VBooks"
     data["sections"] = {
         "evolution": "fa-chart-line",
-        "comparison": "fa-poll",
+        "percent": "fa-percent",
+        "authors": "fa-user",
     }
 
     # Create report
