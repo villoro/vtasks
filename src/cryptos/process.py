@@ -15,6 +15,26 @@ SPREADSHEET_CRYPTO = "crypto_data"
 SHEET_PRICES = "prices"
 SHEET_VALUE = "value"
 SHEET_VOL_KRAKEN = "vol_kraken"
+SHEET_SUMMARY = "summary"
+
+# Crypto id: cell in summary
+MAIN_CRYPTOS = {"BTC": "B8", "ETH": "C8"}
+
+
+def get_market_cap(cryptos, order_magnitude=10 ** 9):
+    """Get market capitalization of the asked coins"""
+
+    data = cryptocompare.get_price(cryptos, full=True)
+
+    return {key: values["EUR"]["MKTCAP"] / order_magnitude for key, values in data["RAW"].items()}
+
+
+def update_market_cap():
+    """Update market capitalization in google spreadsheet"""
+    volumes = get_market_cap(list(MAIN_CRYPTOS))
+
+    for crypto, cell in MAIN_CRYPTOS.items():
+        gsh.update_cell(SPREADSHEET_CRYPTO, SHEET_SUMMARY, cell, volumes[crypto])
 
 
 def get_crypto_prices(cryptos):
@@ -75,6 +95,8 @@ def update_expensor(mfilter):
 def update_cryptos(mdate):
 
     mfilter = mdate.strftime("%Y-%m-01")
+
+    update_market_cap()
 
     update_crypto_prices(mfilter)
     update_kraken_balances(mfilter)

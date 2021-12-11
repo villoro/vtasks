@@ -540,7 +540,7 @@
   }
   Highcharts.chart('PIE_expenses_month', {
     ...plot_pie,
-    xAxis: {categories: ["Month"]},
+    xAxis: {categories: ["M"]},
     series: [
       {% for name, value in pies["Expenses"]["month"].items() %}{
         name: "{{ name }}",
@@ -551,7 +551,7 @@
   });
   Highcharts.chart('PIE_expenses_year', {
     ...plot_pie_no_legend,
-    xAxis: {categories: ["Year"]},
+    xAxis: {categories: ["Y"]},
     series: [
       {% for name, value in pies["Expenses"]["year"].items() %}{
         name: "{{ name }}",
@@ -562,7 +562,7 @@
   });
   Highcharts.chart('PIE_expenses_all', {
     ...plot_pie_no_legend,
-    xAxis: {categories: ["All time"]},
+    xAxis: {categories: ["A"]},
     series: [
       {% for name, value in pies["Expenses"]["all"].items() %}{
         name: "{{ name }}",
@@ -573,7 +573,7 @@
   });
   Highcharts.chart('PIE_incomes_month', {
     ...plot_pie,
-    xAxis: {categories: ["Month"]},
+    xAxis: {categories: ["M"]},
     series: [
       {% for name, value in pies["Incomes"]["month"].items() %}{
         name: "{{ name }}",
@@ -584,7 +584,7 @@
   });
   Highcharts.chart('PIE_incomes_year', {
     ...plot_pie_no_legend,
-    xAxis: {categories: ["Year"]},
+    xAxis: {categories: ["Y"]},
     series: [
       {% for name, value in pies["Incomes"]["year"].items() %}{
         name: "{{ name }}",
@@ -595,7 +595,7 @@
   });
   Highcharts.chart('PIE_incomes_all', {
     ...plot_pie_no_legend,
-    xAxis: {categories: ["All time"]},
+    xAxis: {categories: ["A"]},
     series: [
       {% for name, value in pies["Incomes"]["all"].items() %}{
         name: "{{ name }}",
@@ -693,6 +693,15 @@
         name: "Total Worth",
         color: "{{ colors['Worth'] }}",
         data: [{% for mdate, value in month["Total_Worth"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {
+        name: "Total Income",
+        color: "{{ colors['Incomes'] }}",
+        visible: false,
+        dashStyle: 'shortdashdot',
+        data: [{% for mdate, value in month["Total_Income"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       },

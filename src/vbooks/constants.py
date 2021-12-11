@@ -13,5 +13,6 @@ COLORS = {
     "English": ("green", 500), "English_dim": ("green", 300),
     "Italiano": ("purple", 500), "Italiano_dim": ("purple", 300),
     "Years": ("grey", 500),
+    "Authors": ("blue", 800),
 }
 # fmt: on

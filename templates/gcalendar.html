@@ -198,6 +198,7 @@
   }
   Highcharts.chart('PIE_month', {
     ...plot_pie,
+    xAxis: {categories: ["M"]},
     series: [
       {% for name, value in pies["month"].items() %}{
         name: "{{ name }}",
@@ -208,6 +209,7 @@
   });
   Highcharts.chart('PIE_year', {
     ...plot_pie_no_legend,
+    xAxis: {categories: ["Y"]},
     series: [
       {% for name, value in pies["year"].items() %}{
         name: "{{ name }}",
@@ -218,6 +220,7 @@
   });
   Highcharts.chart('PIE_all', {
     ...plot_pie_no_legend,
+    xAxis: {categories: ["A"]},
     series: [
       {% for name, value in pies["all"].items() %}{
         name: "{{ name }}",

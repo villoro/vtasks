@@ -38,14 +38,21 @@
   </div>
 </div>
 
-<!-- COMP -->
-<div id="comparison" class="section" style="display:none;">
+<!-- PER -->
+<div id="percent" class="section" style="display:none;">
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="COMP_year_percent" class="plot" style="height: 450px"></div>
+    <div id="PER_year_percent" class="plot" style="height: 450px"></div>
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="COMP_year_percent_cumsum" class="plot" style="height: 450px"></div>
+    <div id="PER_year_percent_cumsum" class="plot" style="height: 450px"></div>
+  </div>
+</div>
+
+<!-- AUTH -->
+<div id="authors" class="section" style="display:none;">
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="AUTH_top" class="plot" style="height: 800px"></div>
   </div>
 </div>
 {% endblock %}
@@ -135,6 +142,7 @@
   });
   Highcharts.chart('DASH_languages', {
     ...plot_pie,
+    xAxis: {categories: ["All time"]},
     series: [
       {% for name in languages %}{
         name: "{{ name }}",
@@ -195,8 +203,8 @@
     ],
   });
 
-  // COMPARISON SECTION
-  Highcharts.chart('COMP_year_percent', {
+  // PERCENT SECTION
+  Highcharts.chart('PER_year_percent', {
     ...plot_datetime_stacked,
     ...y_percent,
     title: {text: 'Year evolution percent'},
@@ -211,7 +219,7 @@
       }, {% endfor %}
     ],
   });
-  Highcharts.chart('COMP_year_percent_cumsum', {
+  Highcharts.chart('PER_year_percent_cumsum', {
     ...plot_datetime_stacked,
     ...y_percent,
     title: {text: 'Year evolution percent cumulative'},
@@ -224,6 +232,25 @@
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       }, {% endfor %}
+    ],
+  });
+
+  // AUTHORS SECTION
+  Highcharts.chart('AUTH_top', {
+    ...plot_stacked_no_title,
+    xAxis: {
+      categories: [
+        {% for author in top_authors %}"{{loop.index}}. {{ author }}", {% endfor %}
+      ]
+    },
+    series: [
+      {
+        name: "pages",
+        color: "{{ colors["Authors"] }}",
+        data: [
+          {% for pages in top_authors.values() %}{{ pages }},{% endfor %}
+        ],
+      }
     ],
   });
 </script>
