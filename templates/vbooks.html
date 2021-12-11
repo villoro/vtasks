@@ -55,6 +55,21 @@
     <div id="AUTH_top" class="plot" style="height: 800px"></div>
   </div>
 </div>
+
+<!-- TODO -->
+<div id="todo" class="section" style="display:none;">
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="TODO_by_ownership" class="plot" style="height: 250px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="TODO_by_source" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="TODO_by_author" class="plot" style="height: 700px"></div>
+  </div>
+</div>
 {% endblock %}
 
 
@@ -92,13 +107,12 @@
   const plot_datetime_stacked = {
     ...plot_datetime, ...plot_stacked
   }
-  const plot_stacked_no_title = {
+  const plot_stacked_horizontal = {
     ...plot_stacked,
-    title: {text: ""},
     chart: {zoomType: "x", type: "bar"},
   }
   const plot_pie = {
-    ...plot_stacked_no_title,
+    ...plot_stacked_horizontal,
     tooltip: {
       formatter: function () {
         return "<b>" + this.series.name + ":</b> " + this.y + " (" + this.percentage.toFixed(2) + " %)";
@@ -142,6 +156,7 @@
   });
   Highcharts.chart('DASH_languages', {
     ...plot_pie,
+    title: {text: 'Books read by language'},
     xAxis: {categories: ["All time"]},
     series: [
       {% for name in languages %}{
@@ -237,7 +252,8 @@
 
   // AUTHORS SECTION
   Highcharts.chart('AUTH_top', {
-    ...plot_stacked_no_title,
+    ...plot_stacked_horizontal,
+    title: {text: 'Top authors read'},
     xAxis: {
       categories: [
         {% for author in top_authors %}"{{loop.index}}. {{ author }}", {% endfor %}
@@ -249,6 +265,56 @@
         color: "{{ colors["Authors"] }}",
         data: [
           {% for pages in top_authors.values() %}{{ pages }},{% endfor %}
+        ],
+      }
+    ],
+  });
+
+  // TODO SECTION
+  Highcharts.chart('TODO_by_ownership', {
+    ...plot_pie,
+    title: {text: 'TODO by ownership'},
+    xAxis: {categories: ["TODO"]},
+    series: [
+      {% for name, value in todo_by_ownership.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{{ value }}],
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('TODO_by_source', {
+    ...plot_stacked_horizontal,
+    title: {text: 'TODO by recommending source'},
+    xAxis: {
+      categories: [
+        {% for author in todo_by_source %}"{{loop.index}}. {{ author }}", {% endfor %}
+      ]
+    },
+    series: [
+      {
+        name: "pages",
+        color: "{{ colors["Sources"] }}",
+        data: [
+          {% for pages in todo_by_source.values() %}{{ pages }},{% endfor %}
+        ],
+      }
+    ],
+  });
+  Highcharts.chart('TODO_by_author', {
+    ...plot_stacked_horizontal,
+    title: {text: 'TODO by author'},
+    xAxis: {
+      categories: [
+        {% for author in todo_by_author %}"{{loop.index}}. {{ author }}", {% endfor %}
+      ]
+    },
+    series: [
+      {
+        name: "pages",
+        color: "{{ colors["Authors"] }}",
+        data: [
+          {% for pages in todo_by_author.values() %}{{ pages }},{% endfor %}
         ],
       }
     ],
