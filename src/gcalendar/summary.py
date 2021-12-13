@@ -55,7 +55,7 @@ def do_summary(mdate):
     if mdate.isoweekday() == 1:
 
         log.info("Sending gcalendar weekly report")
-        send_summary(mdate, "events")
+        send_summary(mdate, "general")
 
     elif not is_pro():
         log.info("Sending gcalendar weekly report for testing")
