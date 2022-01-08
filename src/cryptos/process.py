@@ -18,7 +18,7 @@ SHEET_VOL_KRAKEN = "vol_kraken"
 SHEET_SUMMARY = "summary"
 
 # Crypto id: cell in summary
-MAIN_CRYPTOS = {"BTC": "B8", "ETH": "C8"}
+MAIN_CRYPTOS = {"BTC": "B9", "ETH": "C9"}
 
 
 def get_market_cap(cryptos, order_magnitude=10 ** 9):
