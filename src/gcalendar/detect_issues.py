@@ -28,13 +28,13 @@ def filter_confusions(df, min_alpha=0.1):
     df_confusions = df[df.count(axis=1) > 1]
 
     confusions = df_confusions[df_confusions < min_alpha].count(axis=1)
-    return df_confusions[confusions > 0]
+    return df_confusions[confusions > 0].dropna(axis=1, how="all")
 
 
-def get_confusions():
+def get_confusions(min_alpha=0.1):
     vdp = get_vdropbox()
 
     dfg = vdp.read_parquet(PATH_GCAL_DATA)
 
     df_matrix = get_confusion_matrix(dfg)
-    return filter_confusions(df_matrix)
+    return filter_confusions(df_matrix, min_alpha)
