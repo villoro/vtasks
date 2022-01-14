@@ -1,14 +1,22 @@
 from utils import get_vdropbox
+from utils import log
 
 from .gcal import PATH_GCAL_DATA
 
+PATH_GCAL = "/Aplicaciones/gcalendar"
+PATH_CONFUSIONS = f"{PATH_GCAL}/confusions.xlsx"
 
-def get_confusion_matrix(df_in, exclude_other=True):
+
+def get_confusion_matrix(df_in, exclude_other=True, merge_study=True):
     df = df_in.copy()
     df["aux"] = 1
 
     if exclude_other:
         df = df[df["calendar"] != "71_Other"]
+
+    if merge_study:
+        study_related = ["21_Class", "22_Practices", "23_Study", "51_Exams"]
+        df.loc[df["calendar"].isin(study_related), "calendar"] = "21-23/51 study_related"
 
     # Count by comment and calendar
     df_agg = df.pivot_table(
@@ -31,10 +39,18 @@ def filter_confusions(df, min_alpha=0.1):
     return df_confusions[confusions > 0].dropna(axis=1, how="all")
 
 
-def get_confusions(min_alpha=0.1):
+def extract_confusions(exclude_other=True, merge_study=True, min_alpha=0.1):
     vdp = get_vdropbox()
 
     dfg = vdp.read_parquet(PATH_GCAL_DATA)
 
-    df_matrix = get_confusion_matrix(dfg)
-    return filter_confusions(df_matrix, min_alpha)
+    df_matrix = get_confusion_matrix(dfg, exclude_other, merge_study)
+    df_confusions = filter_confusions(df_matrix, min_alpha)
+
+    num_confusions = df_confusions.shape[0]
+
+    if num_confusions > 0:
+        log.warning(f"There are {num_confusions} in google calendar. Exporting them")
+        vdp.write_excel(df_confusions, PATH_CONFUSIONS)
+    else:
+        log.success("There are no confusions in google calendar")
