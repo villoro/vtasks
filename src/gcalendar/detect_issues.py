@@ -3,6 +3,8 @@ from utils import log
 
 from .gcal import PATH_GCAL_DATA
 
+from prefect_task import vtask
+
 PATH_GCAL = "/Aplicaciones/gcalendar"
 PATH_CONFUSIONS = f"{PATH_GCAL}/confusions.xlsx"
 
@@ -39,7 +41,8 @@ def filter_confusions(df, min_alpha=0.1):
     return df_confusions[confusions > 0].dropna(axis=1, how="all")
 
 
-def extract_confusions(exclude_other=True, merge_study=True, min_alpha=0.1):
+@vtask
+def extract_gcal_confusions(exclude_other=True, merge_study=True, min_alpha=0.1):
     vdp = get_vdropbox()
 
     dfg = vdp.read_parquet(PATH_GCAL_DATA)
