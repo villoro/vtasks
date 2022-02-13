@@ -9,9 +9,10 @@ PATH_GCAL = "/Aplicaciones/gcalendar"
 PATH_CONFUSIONS = f"{PATH_GCAL}/confusions.xlsx"
 
 
-def get_confusion_matrix(df_in, exclude_other=True, merge_study=True):
+def clear_potential_confusions(df_in, exclude_other=True, merge_study=True):
+    """Clear some potential confusions that are not"""
+
     df = df_in.copy()
-    df["aux"] = 1
 
     if exclude_other:
         df = df[df["calendar"] != "71_Other"]
@@ -20,9 +21,16 @@ def get_confusion_matrix(df_in, exclude_other=True, merge_study=True):
         study_related = ["21_Class", "22_Practices", "23_Study", "51_Exams"]
         df.loc[df["calendar"].isin(study_related), "calendar"] = "21-23/51 study_related"
 
+    return df
+
+
+def get_confusion_matrix(df_in, col_text, col_category):
+    df = df_in.copy()
+    df["aux"] = 1
+
     # Count by comment and calendar
     df_agg = df.pivot_table(
-        index="summary", columns="calendar", values="aux", aggfunc="sum"
+        index=col_text, columns=col_category, values="aux", aggfunc="sum"
     ).fillna(0)
     df_agg.columns.name = ""
     df_agg.index.name = ""
@@ -47,7 +55,8 @@ def extract_gcal_confusions(exclude_other=True, merge_study=True, min_alpha=0.1)
 
     dfg = vdp.read_parquet(PATH_GCAL_DATA)
 
-    df_matrix = get_confusion_matrix(dfg, exclude_other, merge_study)
+    df_aux = clear_potential_confusions(dfg, exclude_other, merge_study)
+    df_matrix = get_confusion_matrix(df_aux, col_text="summary", col_category="calendar")
     df_confusions = filter_confusions(df_matrix, min_alpha)
 
     num_confusions = df_confusions.shape[0]
