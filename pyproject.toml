@@ -12,7 +12,7 @@ readme = "README.md"
 repository = "https://github.com/villoro/vtasks"
 
 [tool.poetry.dependencies]
-python = "^3.7.9"
+python = "3.9.10"
 cryptocompare = "^0.7.3"
 dropbox = "^11.0.0"
 gcsa = "^1.2.0"
