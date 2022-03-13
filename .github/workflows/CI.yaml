@@ -22,10 +22,10 @@ jobs:
             - 'templates/**'
 
     - if: steps.changes.outputs.code == 'true'
-      name: Set up Python 3.7
+      name: Set up Python 3.8.10
       uses: actions/setup-python@v2
       with:
-        python-version: 3.7.9
+        python-version: 3.8.10
 
     - if: steps.changes.outputs.code == 'true'
       name: Install dependencies
