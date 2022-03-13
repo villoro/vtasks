@@ -195,7 +195,7 @@ python-dateutil = "*"
 
 [[package]]
 name = "cryptocompare"
-version = "0.7.3"
+version = "0.7.5"
 description = "Wrapper for CryptoCompare.com"
 category = "main"
 optional = false
@@ -347,7 +347,7 @@ python-versions = "*"
 
 [[package]]
 name = "gcsa"
-version = "1.2.0"
+version = "1.3.0"
 description = "Simple API for Google Calendar management"
 category = "main"
 optional = false
@@ -360,6 +360,9 @@ google-auth-httplib2 = ">=0.0.4"
 google-auth-oauthlib = ">=0.4,<0.5"
 python-dateutil = ">=2.7"
 tzlocal = ">=2,<3"
+
+[package.extras]
+dev = ["setuptools", "pytest", "pytest-pep8", "pytest-cov", "pyfakefs", "sphinx (<2)", "sphinx-rtd-theme (<0.5)", "flake8", "twine", "tox"]
 
 [[package]]
 name = "google-api-core"
@@ -460,7 +463,7 @@ grpc = ["grpcio (>=1.0.0)"]
 
 [[package]]
 name = "gspread"
-version = "3.6.0"
+version = "3.7.0"
 description = "Google Spreadsheets Python API"
 category = "main"
 optional = false
@@ -469,7 +472,6 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 [package.dependencies]
 google-auth = ">=1.12.0"
 google-auth-oauthlib = ">=0.4.1"
-requests = ">=2.2.1"
 
 [[package]]
 name = "heapdict"
@@ -1817,7 +1819,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7.9"
-content-hash = "dd4d0dba5017b7e890fa0be6055dccf86ec13c00476b2d293a3b126d064d3da7"
+content-hash = "22788b5f7448c71ba47fba41ecd60c5cf6a7699aa218987a6487b7eea429bd98"
 
 [metadata.files]
 appdirs = [
@@ -1951,7 +1953,7 @@ croniter = [
     {file = "croniter-0.3.34.tar.gz", hash = "sha256:7186b9b464f45cf3d3c83a18bc2344cc101d7b9fd35a05f2878437b14967e964"},
 ]
 cryptocompare = [
-    {file = "cryptocompare-0.7.3.tar.gz", hash = "sha256:5f70c63e8932055f2449c044216ae4c3de33918ac143c7c7f72de26a85fdf34a"},
+    {file = "cryptocompare-0.7.5.tar.gz", hash = "sha256:7583d5519dc74cbd9e4c704e1530c5e8446f4500d4dda481357616e3439410da"},
 ]
 cryptography = [
     {file = "cryptography-2.9.2-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:daf54a4b07d67ad437ff239c8a4080cfd1cc7213df57d33c97de7b4738048d5e"},
@@ -2015,8 +2017,8 @@ filelock = [
     {file = "filelock-3.0.12.tar.gz", hash = "sha256:18d82244ee114f543149c66a6e0c14e9c4f8a1044b5cdaadd0f82159d6a6ff59"},
 ]
 gcsa = [
-    {file = "gcsa-1.2.0-py2.py3-none-any.whl", hash = "sha256:e7ab103f670d11a6924cc92767a3ba3d41002b03e6db0dc7dc2511cd277e19e8"},
-    {file = "gcsa-1.2.0.tar.gz", hash = "sha256:60a2ecbb98d4e551f102556a57353f86fbd11cb856f862358b585d00d5e79678"},
+    {file = "gcsa-1.3.0-py2.py3-none-any.whl", hash = "sha256:be2dcc01cd9632213b7e75b3441a8c60d91bb1d96b5a8d1e645f2697a6225fcb"},
+    {file = "gcsa-1.3.0.tar.gz", hash = "sha256:6f8794825e5c5c12c18c595a5ba1b09aacc3d0c061197b4fdbcab291f9bec29f"},
 ]
 google-api-core = [
     {file = "google-api-core-1.26.3.tar.gz", hash = "sha256:b914345c7ea23861162693a27703bab804a55504f7e6e9abcaff174d80df32ac"},
@@ -2043,8 +2045,8 @@ googleapis-common-protos = [
     {file = "googleapis_common_protos-1.53.0-py2.py3-none-any.whl", hash = "sha256:f6d561ab8fb16b30020b940e2dd01cd80082f4762fa9f3ee670f4419b4b8dbd0"},
 ]
 gspread = [
-    {file = "gspread-3.6.0-py3-none-any.whl", hash = "sha256:273da28275eb8dc664b1ca944e59255949d75ac3cac62d65797003dbb419a2cd"},
-    {file = "gspread-3.6.0.tar.gz", hash = "sha256:e04f1a6267b3929fc1600424c5ec83906d439672cafdd61a9d5b916a139f841c"},
+    {file = "gspread-3.7.0-py3-none-any.whl", hash = "sha256:056ceb9fb4f439c15ec39d84c91653c6435f775a1c8afc8fe7f909f8393821fb"},
+    {file = "gspread-3.7.0.tar.gz", hash = "sha256:4bda4ab8c5edb9e41cf4ae40d4d5fb30447522b4e43608e05c01351ab1b96912"},
 ]
 heapdict = [
     {file = "HeapDict-1.0.1-py3-none-any.whl", hash = "sha256:6065f90933ab1bb7e50db403b90cab653c853690c5992e69294c2de2b253fc92"},
