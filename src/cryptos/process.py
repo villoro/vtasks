@@ -21,7 +21,7 @@ SHEET_SUMMARY = "summary"
 MAIN_CRYPTOS = {"BTC": "B9", "ETH": "C9"}
 
 
-def get_market_cap(cryptos, order_magnitude=10 ** 9):
+def get_market_cap(cryptos, order_magnitude=10**9):
     """Get market capitalization of the asked coins"""
 
     data = cryptocompare.get_price(cryptos, full=True)
