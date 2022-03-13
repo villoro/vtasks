@@ -311,7 +311,7 @@ tls = ["pyOpenSSL (>=17.5.0)", "cryptography (>=1.3.4)", "idna (>=2.0.0)"]
 
 [[package]]
 name = "dropbox"
-version = "10.4.1"
+version = "11.28.0"
 description = "Official Dropbox API Client"
 category = "main"
 optional = false
@@ -320,6 +320,7 @@ python-versions = "*"
 [package.dependencies]
 requests = ">=2.16.2"
 six = ">=1.12.0"
+stone = ">=2"
 
 [[package]]
 name = "entrypoints"
@@ -1103,6 +1104,14 @@ importlib-metadata = {version = ">=0.12", markers = "python_version < \"3.8\""}
 dev = ["pre-commit", "tox"]
 
 [[package]]
+name = "ply"
+version = "3.11"
+description = "Python Lex & Yacc"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "pre-commit"
 version = "2.17.0"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
@@ -1540,6 +1549,18 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "stone"
+version = "3.3.1"
+description = "Stone is an interface description language (IDL) for APIs."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+ply = ">=3.4"
+six = ">=1.12.0"
+
+[[package]]
 name = "tabulate"
 version = "0.8.7"
 description = "Pretty-print tabular data"
@@ -1681,14 +1702,14 @@ cryptography = ">=2.9.2,<3.0.0"
 
 [[package]]
 name = "vdropbox"
-version = "0.2.6"
+version = "0.2.7"
 description = "Utilities to read/write python objects to/from dropbox"
 category = "main"
 optional = false
 python-versions = ">=3.6.1,<4.0.0"
 
 [package.dependencies]
-dropbox = ">=10.2.0,<11.0.0"
+dropbox = ">=11.0.0,<12.0.0"
 oyaml = ">=1.0,<2.0"
 pandas = ">=1.1.4,<2.0.0"
 
@@ -1810,7 +1831,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7.9"
-content-hash = "22788b5f7448c71ba47fba41ecd60c5cf6a7699aa218987a6487b7eea429bd98"
+content-hash = "b1a5d80b326bab88b51808702a3fbe20bd632b2cefda42c89b09b0d0fe87774a"
 
 [metadata.files]
 appdirs = [
@@ -1992,9 +2013,9 @@ docker = [
     {file = "docker-4.3.1.tar.gz", hash = "sha256:bad94b8dd001a8a4af19ce4becc17f41b09f228173ffe6a4e0355389eef142f2"},
 ]
 dropbox = [
-    {file = "dropbox-10.4.1-py2-none-any.whl", hash = "sha256:b4f137ced64c521f67dca7fc4daecddd4edcd70bf2b4e16c5730aad1fe21253c"},
-    {file = "dropbox-10.4.1-py3-none-any.whl", hash = "sha256:2aaca4eded7dd8516fa1b0187bf32a5836181dec17c23b5506914330f3b1b7ad"},
-    {file = "dropbox-10.4.1.tar.gz", hash = "sha256:20d039d030f7c1f54f22d182832c1909ee5b5626ad52469a19d274bf07041e06"},
+    {file = "dropbox-11.28.0-py2-none-any.whl", hash = "sha256:7d03ae41cb855ee211e6beb395649bf883aeba65aac7c589912de3b65409bafb"},
+    {file = "dropbox-11.28.0-py3-none-any.whl", hash = "sha256:51359fda86d9c2c56efd825ad738e98f7fa6d783de2637fbc44094ece965b79c"},
+    {file = "dropbox-11.28.0.tar.gz", hash = "sha256:1c9983acad41c738394235276c0b3898d02f8c10f342f64a4c0d0885ad716929"},
 ]
 entrypoints = [
     {file = "entrypoints-0.3-py2.py3-none-any.whl", hash = "sha256:589f874b313739ad35be6e0cd7efde2a4e9b6fea91edcc34e58ecbb8dbe56d19"},
@@ -2333,6 +2354,10 @@ pluggy = [
     {file = "pluggy-0.13.1-py2.py3-none-any.whl", hash = "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"},
     {file = "pluggy-0.13.1.tar.gz", hash = "sha256:15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0"},
 ]
+ply = [
+    {file = "ply-3.11-py2.py3-none-any.whl", hash = "sha256:096f9b8350b65ebd2fd1346b12452efe5b9607f7482813ffca50c22722a807ce"},
+    {file = "ply-3.11.tar.gz", hash = "sha256:00c7c1aaa88358b9c765b6d3000c6eec0ba42abca5351b095321aef446081da3"},
+]
 pre-commit = [
     {file = "pre_commit-2.17.0-py2.py3-none-any.whl", hash = "sha256:725fa7459782d7bec5ead072810e47351de01709be838c2ce1726b9591dad616"},
     {file = "pre_commit-2.17.0.tar.gz", hash = "sha256:c1a8040ff15ad3d648c70cc3e55b93e4d2d5b687320955505587fd79bbaed06a"},
@@ -2639,6 +2664,11 @@ sortedcontainers = [
     {file = "sortedcontainers-2.2.2-py2.py3-none-any.whl", hash = "sha256:c633ebde8580f241f274c1f8994a665c0e54a17724fecd0cae2f079e09c36d3f"},
     {file = "sortedcontainers-2.2.2.tar.gz", hash = "sha256:4e73a757831fc3ca4de2859c422564239a31d8213d09a2a666e375807034d2ba"},
 ]
+stone = [
+    {file = "stone-3.3.1-py2-none-any.whl", hash = "sha256:cd2f7f9056fc39b16c8fd46a26971dc5ccd30b5c2c246566cd2c0dd27ff96609"},
+    {file = "stone-3.3.1-py3-none-any.whl", hash = "sha256:e15866fad249c11a963cce3bdbed37758f2e88c8ff4898616bc0caeb1e216047"},
+    {file = "stone-3.3.1.tar.gz", hash = "sha256:4ef0397512f609757975f7ec09b35639d72ba7e3e17ce4ddf399578346b4cb50"},
+]
 tabulate = [
     {file = "tabulate-0.8.7-py3-none-any.whl", hash = "sha256:ac64cb76d53b1231d364babcd72abbb16855adac7de6665122f97b593f1eb2ba"},
     {file = "tabulate-0.8.7.tar.gz", hash = "sha256:db2723a20d04bcda8522165c73eea7c300eda74e0ce852d9022e0159d7895007"},
@@ -2754,8 +2784,8 @@ vcrypto = [
     {file = "vcrypto-2.1.0.tar.gz", hash = "sha256:5bed06af05b261124be82aa03dbe873290c0c62946f9d12522cd376aa500fb20"},
 ]
 vdropbox = [
-    {file = "vdropbox-0.2.6-py3-none-any.whl", hash = "sha256:93450af50436fb9bef6ae9dbad612c8c9c2e2574db6dce4b8a9ccb61f734a2ed"},
-    {file = "vdropbox-0.2.6.tar.gz", hash = "sha256:9bf5f83331f0fe8c72d3ed81cc7bd6971f0aca83ebb3b503a9cb0e3db02f68d9"},
+    {file = "vdropbox-0.2.7-py3-none-any.whl", hash = "sha256:7190ad7276ff10272bdf45133143efcea461fd28166f396e46eeff62343f8da4"},
+    {file = "vdropbox-0.2.7.tar.gz", hash = "sha256:b0296a3d8935326586b9df65a93ee3e04da2fe2ce158d6f45127b00189874a20"},
 ]
 virtualenv = [
     {file = "virtualenv-20.0.32-py2.py3-none-any.whl", hash = "sha256:9160a8f6196afcb8bb91405b5362651f302ee8e810fc471f5f9ce9a06b070298"},
