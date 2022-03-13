@@ -20,6 +20,7 @@ jobs:
           code:
             - 'src/**'
             - 'templates/**'
+            - 'poetry.lock'
 
     - if: steps.changes.outputs.code == 'true'
       name: Set up Python 3.9.10
