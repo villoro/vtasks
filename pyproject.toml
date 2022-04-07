@@ -36,7 +36,7 @@ xlrd = "^2.0.0"
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
 jupyter = "^1.0.0"
-notebook = "^6.0.3"
+notebook = "^6.4.10"
 pre-commit = "^2.3.0"
 pytest = "^7.0.0"
 
