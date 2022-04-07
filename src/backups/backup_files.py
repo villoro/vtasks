@@ -22,14 +22,6 @@ def get_update_at(vdp, filename):
     return metadata.client_modified.date()
 
 
-def updated_yesterday(vdp, filename):
-    """True if the file has been updated after the start of yesterday"""
-
-    updated_at = get_update_at(vdp, filename)
-
-    return updated_at > date.today() - timedelta(1)
-
-
 def one_backup(vdp, path, regex):
     """Back up a list of files from a folder"""
 
@@ -37,11 +29,12 @@ def one_backup(vdp, path, regex):
     for path, filename, _ in get_files_from_regex(vdp, path, regex):
 
         origin = f"{path}/{filename}"
-        dest = f"{path}/Backups/{YEAR}/{DAY} {filename}"
-
         log.debug(f"Trying to backup '{origin}")
+        updated_at = get_update_at(vdp, origin)
 
-        if updated_yesterday(vdp, origin):
+        if updated_at >= date.today() - timedelta(1):
+
+            dest = f"{path}/Backups/{YEAR}/{updated_at:%Y_%m_%d} {filename}"
 
             if not vdp.file_exists(dest):
                 log.info(f"Copying '{origin}' to '{dest}'")

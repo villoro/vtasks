@@ -77,7 +77,7 @@ def update_kraken_balances(mfilter):
 def update_expensor(mfilter):
     """Update expensor cryptos worth based on crypto values"""
 
-    col_crypto = "kraken"
+    col_crypto = "crypto"
 
     # Get worths
     df = gsh.read_df_gdrive(FILE_DATA, DF_WORTH, "all")
