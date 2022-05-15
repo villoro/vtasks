@@ -49,15 +49,17 @@ def read_everything(base_path):
 
     out = []
 
-    for root, _, files in tqdm(os.walk(base_path), total=count):
+    for path, _, files in tqdm(os.walk(base_path), total=count):
 
-        root = root.replace("\\", "/")
-        log.debug(f"Scanning {root=} with {len(files)} files")
+        path = path.replace("\\", "/")
+        log.debug(f"Scanning {path=} with {len(files)} files")
 
-        level, folder_date = get_folder_date(root)
+        level, folder_date = get_folder_date(path)
 
         for file in files:
-            data = Doc(folder=root, name=file, folder_date=folder_date, level=level).load()
+            log.debug(f"Loading {path=} {file=}")
+
+            data = Doc(folder=path, name=file, folder_date=folder_date, level=level).load()
             out.append(data)
 
     return pd.DataFrame(out)
