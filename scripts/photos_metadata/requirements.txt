@@ -2,3 +2,4 @@ pandas
 loguru
 tqdm
 exif
+pillow

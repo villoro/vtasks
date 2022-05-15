@@ -69,7 +69,7 @@ def summarize(df_in):
 
     df = df_in.copy()
 
-    for col in ["is_image", "error_dt", "error_dt_original"]:
+    for col in ["is_image", "error_dt", "error_dt_original", "missing_meta"]:
         df.loc[df[col] == False, col] = None
 
     aggs = {
@@ -83,6 +83,7 @@ def summarize(df_in):
         "level": pd.NamedAgg(column="level", aggfunc="max"),
         "error_dt": pd.NamedAgg(column="error_dt", aggfunc="count"),
         "error_dt_original": pd.NamedAgg(column="error_dt_original", aggfunc="count"),
+        "missing_meta": pd.NamedAgg(column="missing_meta", aggfunc="count"),
     }
 
     return df.groupby("folder").agg(**aggs).reset_index()

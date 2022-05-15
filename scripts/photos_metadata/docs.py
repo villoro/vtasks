@@ -10,6 +10,7 @@ class Doc(BaseModel):
     extension: str = None
     is_image: bool = False
     level: int = -1
+    missing_meta: bool = False
     # Dates
     datetime: str = ""
     datetime_original: str = ""
@@ -35,6 +36,8 @@ class Doc(BaseModel):
         if self.is_image:
             with open(path, "rb") as stream:
                 image = Image(stream)
+
+            self.missing_meta = len(image.list_all()) == 0
 
             for field in ["datetime", "datetime_original", "datetime_taken"]:
                 try:
