@@ -8,7 +8,7 @@ from loguru import logger as log
 from tqdm.notebook import tqdm
 
 REGEX = re.compile(r"(?P<year>\d{4})(_(?P<month>\d{2}))?(_(?P<day>\d{2}))?(.*)")
-IMAGE_FORMATS = ["jpg", "png"]
+IMAGE_FORMATS = ["jpg", "jpeg", "png"]
 
 
 def is_image(name):
@@ -139,6 +139,7 @@ def get_all_files_in_path(base_path, verbose=False, dry_run=True):
         for file in files:
             if not is_image(file):
                 log.info(f"Skipping {file=}")
+                out += [(base_path, folder, folder_date, file, "Skipped")]
                 continue
 
             path = f"{root}/{file}"
