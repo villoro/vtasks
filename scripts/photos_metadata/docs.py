@@ -11,13 +11,13 @@ class Doc(BaseModel):
     is_image: bool = False
     level: int = -1
     # Dates
-    datetime: str = None
-    datetime_original: str = None
-    datetime_taken: str = None
+    datetime: str = ""
+    datetime_original: str = ""
+    datetime_taken: str = ""
     folder_date: str = None
     # Validations
-    check_dt: bool = None
-    check_dt_original: bool = None
+    error_dt: bool = None
+    error_dt_original: bool = None
 
     @validator("extension", always=True)
     def get_extension(cls, v, values):
@@ -39,12 +39,14 @@ class Doc(BaseModel):
             for field in ["datetime", "datetime_original", "datetime_taken"]:
                 try:
                     value = image.get(field)
-                    setattr(self, field, value)
                 except KeyError:
-                    pass
+                    continue
 
-            self.check_dt = self.datetime.startswith(self.folder_date)
-            self.check_dt_original = self.datetime_original.startswith(self.folder_date)
+                if value:
+                    setattr(self, field, value)
+
+            self.error_dt = not self.datetime.startswith(self.folder_date)
+            self.error_dt_original = not self.datetime_original.startswith(self.folder_date)
 
         # Simplify processing by returning the data as dict here
         return self.dict()

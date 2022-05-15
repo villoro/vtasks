@@ -61,3 +61,26 @@ def read_everything(base_path):
             out.append(data)
 
     return pd.DataFrame(out)
+
+
+def summarize(df_in):
+
+    df = df_in.copy()
+
+    for col in ["is_image", "error_dt", "error_dt_original"]:
+        df.loc[df[col] == False, col] = None
+
+    aggs = {
+        "dt_min": pd.NamedAgg(column="datetime", aggfunc="min"),
+        "dt_max": pd.NamedAgg(column="datetime", aggfunc="max"),
+        "dt_original_min": pd.NamedAgg(column="datetime_original", aggfunc="min"),
+        "dt_original_max": pd.NamedAgg(column="datetime_original", aggfunc="max"),
+        "extensions": pd.NamedAgg(column="extension", aggfunc="unique"),
+        "images": pd.NamedAgg(column="is_image", aggfunc="count"),
+        "files": pd.NamedAgg(column="name", aggfunc="count"),
+        "level": pd.NamedAgg(column="level", aggfunc="max"),
+        "error_dt": pd.NamedAgg(column="error_dt", aggfunc="count"),
+        "error_dt_original": pd.NamedAgg(column="error_dt_original", aggfunc="count"),
+    }
+
+    return df.groupby("folder").agg(**aggs).reset_index()
