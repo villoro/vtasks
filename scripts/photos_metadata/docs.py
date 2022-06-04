@@ -1,7 +1,9 @@
+from datetime import datetime as dt  # To avoid collisions with 'datetime' attr
+
 from pydantic import BaseModel, validator
 from exif import Image
 
-IMAGE_FORMATS = ["jpg", "jpeg", "png"]
+IMAGE_FORMATS = ["jpg", "jpeg"]  # , "png"]
 
 
 class Doc(BaseModel):
@@ -19,6 +21,11 @@ class Doc(BaseModel):
     # Validations
     error_dt: bool = None
     error_dt_original: bool = None
+    updated_at: dt = None
+
+    @validator("updated_at", always=True)
+    def set_updated_at(cls, v, values):
+        return dt.now()
 
     @validator("extension", always=True)
     def get_extension(cls, v, values):

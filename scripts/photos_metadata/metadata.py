@@ -4,8 +4,9 @@ import re
 import pandas as pd
 
 from exif import Image
-from loguru import logger as log
 from tqdm.notebook import tqdm
+
+from utils import log
 
 REGEX = re.compile(r"(?P<year>\d{4})(_(?P<month>\d{2}))?(_(?P<day>\d{2}))?(.*)")
 IMAGE_FORMATS = ["jpg", "jpeg", "png"]

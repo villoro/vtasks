@@ -4,8 +4,8 @@ import re
 import pandas as pd
 
 from tqdm.notebook import tqdm
-from loguru import logger as log
 
+from utils import log
 from docs import Doc
 
 REGEX = re.compile(r"(?P<year>\d{4})(_(?P<month>\d{2}))?(_(?P<day>\d{2}))?(.*)")
