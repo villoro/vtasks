@@ -55,6 +55,12 @@ def get_money_lover_df(vdp):
         extension = filename.split(".")[-1]
         if extension == "csv":
             df = vdp.read_csv(uri_in, index_col=0, sep=";")
+
+            # Since the separator some time changes
+            # try another one when no columns are detected
+            if not df.shape[1]:
+                df = vdp.read_csv(uri_in, index_col=0, sep=",")
+
         else:
             df = vdp.read_excel(uri_in, index_col=0)
 
