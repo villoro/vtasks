@@ -94,21 +94,6 @@ python-dateutil = ">=2.7.0"
 six = ">=1.11.0"
 
 [[package]]
-name = "beautifulsoup4"
-version = "4.10.0"
-description = "Screen-scraping library"
-category = "dev"
-optional = false
-python-versions = ">3.0.0"
-
-[package.dependencies]
-soupsieve = ">1.2"
-
-[package.extras]
-html5lib = ["html5lib"]
-lxml = ["lxml"]
-
-[[package]]
 name = "black"
 version = "22.1.0"
 description = "The uncompromising code formatter."
@@ -450,7 +435,7 @@ python-dateutil = ">=2.7"
 tzlocal = ">=2,<3"
 
 [package.extras]
-dev = ["setuptools", "pytest", "pytest-pep8", "pytest-cov", "pyfakefs", "sphinx (<2)", "sphinx-rtd-theme (<0.5)", "flake8", "twine", "tox"]
+dev = ["tox", "twine", "flake8", "sphinx-rtd-theme (<0.5)", "sphinx (<2)", "pyfakefs", "pytest-cov", "pytest-pep8", "pytest", "setuptools"]
 
 [[package]]
 name = "google-api-core"
@@ -817,17 +802,6 @@ pywin32 = {version = ">=1.0", markers = "sys_platform == \"win32\" and platform_
 traitlets = "*"
 
 [[package]]
-name = "jupyterlab-pygments"
-version = "0.1.2"
-description = "Pygments theme using JupyterLab CSS variables"
-category = "dev"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-pygments = ">=2.4.1,<3"
-
-[[package]]
 name = "jupyterlab-widgets"
 version = "1.0.2"
 description = "A JupyterLab extension."
@@ -867,7 +841,7 @@ colorama = {version = ">=0.3.4", markers = "sys_platform == \"win32\""}
 win32-setctime = {version = ">=1.0.0", markers = "sys_platform == \"win32\""}
 
 [package.extras]
-dev = ["codecov (>=2.0.15)", "colorama (>=0.3.4)", "flake8 (>=3.7.7)", "tox (>=3.9.0)", "tox-travis (>=0.12)", "pytest (>=4.6.2)", "pytest-cov (>=2.7.1)", "Sphinx (>=2.2.1)", "sphinx-autobuild (>=0.7.1)", "sphinx-rtd-theme (>=0.4.3)", "black (>=19.10b0)", "isort (>=5.1.1)"]
+dev = ["isort (>=5.1.1)", "black (>=19.10b0)", "sphinx-rtd-theme (>=0.4.3)", "sphinx-autobuild (>=0.7.1)", "Sphinx (>=2.2.1)", "pytest-cov (>=2.7.1)", "pytest (>=4.6.2)", "tox-travis (>=0.12)", "tox (>=3.9.0)", "flake8 (>=3.7.7)", "colorama (>=0.3.4)", "codecov (>=2.0.15)"]
 
 [[package]]
 name = "markupsafe"
@@ -923,8 +897,8 @@ traitlets = "*"
 
 [[package]]
 name = "mistune"
-version = "0.8.4"
-description = "The fastest markdown parser in pure Python"
+version = "2.0.3"
+description = "A sane Markdown parser with useful plugins and renderers"
 category = "dev"
 optional = false
 python-versions = "*"
@@ -946,53 +920,32 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "nbclient"
-version = "0.5.13"
-description = "A client library for executing notebooks. Formerly nbconvert's ExecutePreprocessor."
-category = "dev"
-optional = false
-python-versions = ">=3.7.0"
-
-[package.dependencies]
-jupyter-client = ">=6.1.5"
-nbformat = ">=5.0"
-nest-asyncio = "*"
-traitlets = ">=5.0.0"
-
-[package.extras]
-sphinx = ["Sphinx (>=1.7)", "sphinx-book-theme", "mock", "moto", "myst-parser"]
-test = ["ipython (<8.0.0)", "ipykernel", "ipywidgets (<8.0.0)", "pytest (>=4.1)", "pytest-asyncio", "pytest-cov (>=2.6.1)", "check-manifest", "flake8", "mypy", "xmltodict", "black", "pip (>=18.1)", "wheel (>=0.31.0)", "setuptools (>=38.6.0)", "twine (>=1.11.0)"]
-
-[[package]]
 name = "nbconvert"
-version = "6.4.4"
+version = "5.5.0"
 description = "Converting Jupyter Notebooks"
 category = "dev"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [package.dependencies]
-beautifulsoup4 = "*"
 bleach = "*"
 defusedxml = "*"
 entrypoints = ">=0.2.2"
 jinja2 = ">=2.4"
 jupyter-core = "*"
-jupyterlab-pygments = "*"
-mistune = ">=0.8.1,<2"
-nbclient = ">=0.5.0,<0.6.0"
+mistune = ">=0.8.1"
 nbformat = ">=4.4"
 pandocfilters = ">=1.4.1"
-pygments = ">=2.4.1"
+pygments = "*"
 testpath = "*"
-traitlets = ">=5.0"
+traitlets = ">=4.2"
 
 [package.extras]
-all = ["pytest", "pytest-cov", "pytest-dependency", "ipykernel", "ipywidgets (>=7)", "pyppeteer (>=1,<1.1)", "tornado (>=4.0)", "sphinx (>=1.5.1)", "sphinx-rtd-theme", "nbsphinx (>=0.2.12)", "ipython"]
-docs = ["sphinx (>=1.5.1)", "sphinx-rtd-theme", "nbsphinx (>=0.2.12)", "ipython"]
+all = ["pytest", "pytest-cov", "ipykernel", "jupyter-client (>=4.2)", "ipywidgets (>=7)", "tornado (>=4.0)", "sphinx (>=1.5.1)", "sphinx-rtd-theme", "nbsphinx (>=0.2.12)", "sphinxcontrib-github-alt", "ipython"]
+docs = ["sphinx (>=1.5.1)", "sphinx-rtd-theme", "nbsphinx (>=0.2.12)", "sphinxcontrib-github-alt", "ipython", "jupyter-client (>=4.2)"]
+execute = ["jupyter-client (>=4.2)"]
 serve = ["tornado (>=4.0)"]
-test = ["pytest", "pytest-cov", "pytest-dependency", "ipykernel", "ipywidgets (>=7)", "pyppeteer (>=1,<1.1)"]
-webpdf = ["pyppeteer (>=1,<1.1)"]
+test = ["pytest", "pytest-cov", "ipykernel", "jupyter-client (>=4.2)", "ipywidgets (>=7)"]
 
 [[package]]
 name = "nbformat"
@@ -1164,7 +1117,7 @@ locket = "*"
 toolz = "*"
 
 [package.extras]
-complete = ["numpy (>=1.9.0)", "pandas (>=0.19.0)", "pyzmq", "blosc"]
+complete = ["blosc", "pyzmq", "pandas (>=0.19.0)", "numpy (>=1.9.0)"]
 
 [[package]]
 name = "pathspec"
@@ -1226,8 +1179,8 @@ optional = false
 python-versions = ">=3.6"
 
 [package.extras]
-dev = ["pre-commit", "tox"]
-testing = ["pytest", "pytest-benchmark"]
+testing = ["pytest-benchmark", "pytest"]
+dev = ["tox", "pre-commit"]
 
 [[package]]
 name = "ply"
@@ -1286,52 +1239,52 @@ toml = ">=0.9.4"
 urllib3 = ">=1.26.0"
 
 [package.extras]
-airtable = ["airtable-python-wrapper (>=0.11)"]
-all_extras = ["airtable-python-wrapper (>=0.11)", "boto3 (>=1.9)", "azure-core (>=1.10.0)", "azure-storage-blob (>=12.1.0)", "azureml-sdk (>=1.0.6)", "azure-cosmos (>=3.1.1)", "atlassian-python-api (>=2.0.1)", "dask-cloudprovider[aws] (>=0.2.0)", "black", "graphviz (>=0.8)", "jinja2 (>=2.0,<4.0)", "mypy (>=0.600,<0.813)", "Pygments (>=2.2,<3.0)", "pytest (>=6.0)", "testfixtures (>=6.10.3)", "pytest-env (>=0.6.0)", "pytest-xdist (>=2.0)", "flaky (>=3.0)", "responses (>=0.14.0)", "PyJWT (>=2.3.0)", "pydantic (>=1.9.0)", "dropbox (>=9.0,<10.0)", "firebolt-sdk (>=0.2.1)", "great-expectations (>=0.13.8)", "mistune (<2.0)", "google-cloud-bigquery (>=1.6.0)", "google-cloud-secret-manager (>=2.4.0)", "google-cloud-storage (>=1.13)", "google-cloud-aiplatform (>=1.4.0)", "google-auth (>=2.0)", "dulwich (>=0.19.7)", "PyGithub (>=1.51)", "python-gitlab (>=2.5.0)", "gspread (>=3.6.0)", "jira (>=2.0.0)", "papermill (>=2.2.0)", "nbconvert (>=6.0.7)", "confluent-kafka (>=1.7.0)", "dask-kubernetes (>=0.8.0)", "kubernetes (>=9.0.0a1.0)", "pandas (>=1.0.1)", "psycopg2-binary (>=2.8.2)", "prometheus-client (>=0.9.0)", "pymysql (>=0.9.3)", "pyodbc (>=4.0.30)", "pushbullet.py (>=0.11.0)", "redis (>=3.2.1)", "feedparser (>=5.0.1)", "snowflake-connector-python (>=1.8.2)", "spacy (>=2.0.0)", "jinja2 (>=2.0)", "hvac (>=0.10)", "graphviz (>=0.8.3)", "tweepy (>=3.5)", "pyarrow (>=5.0.0)", "pyexasol (>=0.16.1)", "soda-sql (>=2.0.0b25)", "soda-spark (>=0.2.1)", "sendgrid (>=6.7.0)", "py2neo (>=2021.2.3)"]
-all_orchestration_extras = ["boto3 (>=1.9)", "azure-storage-blob (>=12.1.0)", "atlassian-python-api (>=2.0.1)", "google-cloud-secret-manager (>=2.4.0)", "google-cloud-storage (>=1.13)", "google-cloud-aiplatform (>=1.4.0)", "google-auth (>=2.0)", "dulwich (>=0.19.7)", "PyGithub (>=1.51)", "python-gitlab (>=2.5.0)", "kubernetes (>=9.0.0a1.0)"]
-aws = ["boto3 (>=1.9)"]
-azure = ["azure-core (>=1.10.0)", "azure-storage-blob (>=12.1.0)", "azureml-sdk (>=1.0.6)", "azure-cosmos (>=3.1.1)"]
-base_library_ci = ["boto3 (>=1.9)", "azure-storage-blob (>=12.1.0)", "atlassian-python-api (>=2.0.1)", "google-cloud-secret-manager (>=2.4.0)", "google-cloud-storage (>=1.13)", "google-cloud-aiplatform (>=1.4.0)", "google-auth (>=2.0)", "dulwich (>=0.19.7)", "PyGithub (>=1.51)", "python-gitlab (>=2.5.0)", "kubernetes (>=9.0.0a1.0)", "black", "graphviz (>=0.8)", "jinja2 (>=2.0,<4.0)", "mypy (>=0.600,<0.813)", "Pygments (>=2.2,<3.0)", "pytest (>=6.0)", "testfixtures (>=6.10.3)", "pytest-env (>=0.6.0)", "pytest-xdist (>=2.0)", "flaky (>=3.0)", "responses (>=0.14.0)", "PyJWT (>=2.3.0)", "pandas (>=1.0.1)", "jira (>=2.0.0)"]
-bitbucket = ["atlassian-python-api (>=2.0.1)"]
-cubejs = ["PyJWT (>=2.3.0)"]
-dask_cloudprovider = ["dask-cloudprovider[aws] (>=0.2.0)"]
-databricks = ["pydantic (>=1.9.0)"]
-dev = ["black", "graphviz (>=0.8)", "jinja2 (>=2.0,<4.0)", "mypy (>=0.600,<0.813)", "Pygments (>=2.2,<3.0)", "pytest (>=6.0)", "testfixtures (>=6.10.3)", "pytest-env (>=0.6.0)", "pytest-xdist (>=2.0)", "flaky (>=3.0)", "responses (>=0.14.0)", "PyJWT (>=2.3.0)"]
-dremio = ["pyarrow (>=5.0.0)"]
-dropbox = ["dropbox (>=9.0,<10.0)"]
-exasol = ["pyexasol (>=0.16.1)"]
-firebolt = ["firebolt-sdk (>=0.2.1)"]
-gcp = ["google-cloud-bigquery (>=1.6.0)", "google-cloud-secret-manager (>=2.4.0)", "google-cloud-storage (>=1.13)", "google-cloud-aiplatform (>=1.4.0)", "google-auth (>=2.0)"]
-ge = ["great-expectations (>=0.13.8)", "mistune (<2.0)"]
-git = ["dulwich (>=0.19.7)"]
-github = ["PyGithub (>=1.51)"]
-gitlab = ["python-gitlab (>=2.5.0)"]
-google = ["google-cloud-bigquery (>=1.6.0)", "google-cloud-secret-manager (>=2.4.0)", "google-cloud-storage (>=1.13)", "google-cloud-aiplatform (>=1.4.0)", "google-auth (>=2.0)"]
-gsheets = ["gspread (>=3.6.0)"]
 jira = ["jira (>=2.0.0)"]
-jupyter = ["papermill (>=2.2.0)", "nbconvert (>=6.0.7)"]
-kafka = ["confluent-kafka (>=1.7.0)"]
-kubernetes = ["dask-kubernetes (>=0.8.0)", "kubernetes (>=9.0.0a1.0)"]
-mysql = ["pymysql (>=0.9.3)"]
-neo4j = ["py2neo (>=2021.2.3)"]
-pandas = ["pandas (>=1.0.1)"]
-postgres = ["psycopg2-binary (>=2.8.2)"]
-prometheus = ["prometheus-client (>=0.9.0)"]
-pushbullet = ["pushbullet.py (>=0.11.0)"]
-redis = ["redis (>=3.2.1)"]
-rss = ["feedparser (>=5.0.1)"]
-sendgrid = ["sendgrid (>=6.7.0)"]
-snowflake = ["snowflake-connector-python (>=1.8.2)"]
-sodaspark = ["soda-spark (>=0.2.1)"]
-sodasql = ["soda-sql (>=2.0.0b25)"]
-spacy = ["spacy (>=2.0.0)"]
-sql_server = ["pyodbc (>=4.0.30)"]
-task_library_ci = ["airtable-python-wrapper (>=0.11)", "boto3 (>=1.9)", "azure-core (>=1.10.0)", "azure-storage-blob (>=12.1.0)", "azureml-sdk (>=1.0.6)", "azure-cosmos (>=3.1.1)", "atlassian-python-api (>=2.0.1)", "black", "graphviz (>=0.8)", "jinja2 (>=2.0,<4.0)", "mypy (>=0.600,<0.813)", "Pygments (>=2.2,<3.0)", "pytest (>=6.0)", "testfixtures (>=6.10.3)", "pytest-env (>=0.6.0)", "pytest-xdist (>=2.0)", "flaky (>=3.0)", "responses (>=0.14.0)", "PyJWT (>=2.3.0)", "pydantic (>=1.9.0)", "dropbox (>=9.0,<10.0)", "firebolt-sdk (>=0.2.1)", "great-expectations (>=0.13.8)", "mistune (<2.0)", "google-cloud-bigquery (>=1.6.0)", "google-cloud-secret-manager (>=2.4.0)", "google-cloud-storage (>=1.13)", "google-cloud-aiplatform (>=1.4.0)", "google-auth (>=2.0)", "dulwich (>=0.19.7)", "PyGithub (>=1.51)", "python-gitlab (>=2.5.0)", "gspread (>=3.6.0)", "jira (>=2.0.0)", "papermill (>=2.2.0)", "nbconvert (>=6.0.7)", "confluent-kafka (>=1.7.0)", "dask-kubernetes (>=0.8.0)", "kubernetes (>=9.0.0a1.0)", "pandas (>=1.0.1)", "psycopg2-binary (>=2.8.2)", "prometheus-client (>=0.9.0)", "pymysql (>=0.9.3)", "pushbullet.py (>=0.11.0)", "redis (>=3.2.1)", "feedparser (>=5.0.1)", "snowflake-connector-python (>=1.8.2)", "spacy (>=2.0.0)", "jinja2 (>=2.0)", "hvac (>=0.10)", "graphviz (>=0.8.3)", "tweepy (>=3.5)", "pyarrow (>=5.0.0)", "pyexasol (>=0.16.1)", "soda-sql (>=2.0.0b25)", "soda-spark (>=0.2.1)", "sendgrid (>=6.7.0)", "py2neo (>=2021.2.3)"]
-templates = ["jinja2 (>=2.0)"]
-test = ["pytest (>=6.0)", "testfixtures (>=6.10.3)", "pytest-env (>=0.6.0)", "pytest-xdist (>=2.0)", "flaky (>=3.0)", "responses (>=0.14.0)", "PyJWT (>=2.3.0)"]
-twitter = ["tweepy (>=3.5)"]
-vault = ["hvac (>=0.10)"]
+gsheets = ["gspread (>=3.6.0)"]
+google = ["google-auth (>=2.0)", "google-cloud-aiplatform (>=1.4.0)", "google-cloud-storage (>=1.13)", "google-cloud-secret-manager (>=2.4.0)", "google-cloud-bigquery (>=1.6.0)"]
+gitlab = ["python-gitlab (>=2.5.0)"]
+github = ["PyGithub (>=1.51)"]
+git = ["dulwich (>=0.19.7)"]
+ge = ["mistune (<2.0)", "great-expectations (>=0.13.8)"]
+gcp = ["google-auth (>=2.0)", "google-cloud-aiplatform (>=1.4.0)", "google-cloud-storage (>=1.13)", "google-cloud-secret-manager (>=2.4.0)", "google-cloud-bigquery (>=1.6.0)"]
+firebolt = ["firebolt-sdk (>=0.2.1)"]
+exasol = ["pyexasol (>=0.16.1)"]
+dropbox = ["dropbox (>=9.0,<10.0)"]
+dremio = ["pyarrow (>=5.0.0)"]
+dev = ["PyJWT (>=2.3.0)", "responses (>=0.14.0)", "flaky (>=3.0)", "pytest-xdist (>=2.0)", "pytest-env (>=0.6.0)", "testfixtures (>=6.10.3)", "pytest (>=6.0)", "Pygments (>=2.2,<3.0)", "mypy (>=0.600,<0.813)", "jinja2 (>=2.0,<4.0)", "graphviz (>=0.8)", "black"]
+databricks = ["pydantic (>=1.9.0)"]
+dask_cloudprovider = ["dask-cloudprovider[aws] (>=0.2.0)"]
+cubejs = ["PyJWT (>=2.3.0)"]
+bitbucket = ["atlassian-python-api (>=2.0.1)"]
+base_library_ci = ["jira (>=2.0.0)", "pandas (>=1.0.1)", "PyJWT (>=2.3.0)", "responses (>=0.14.0)", "flaky (>=3.0)", "pytest-xdist (>=2.0)", "pytest-env (>=0.6.0)", "testfixtures (>=6.10.3)", "pytest (>=6.0)", "Pygments (>=2.2,<3.0)", "mypy (>=0.600,<0.813)", "jinja2 (>=2.0,<4.0)", "graphviz (>=0.8)", "black", "kubernetes (>=9.0.0a1.0)", "python-gitlab (>=2.5.0)", "PyGithub (>=1.51)", "dulwich (>=0.19.7)", "google-auth (>=2.0)", "google-cloud-aiplatform (>=1.4.0)", "google-cloud-storage (>=1.13)", "google-cloud-secret-manager (>=2.4.0)", "atlassian-python-api (>=2.0.1)", "azure-storage-blob (>=12.1.0)", "boto3 (>=1.9)"]
+azure = ["azure-cosmos (>=3.1.1)", "azureml-sdk (>=1.0.6)", "azure-storage-blob (>=12.1.0)", "azure-core (>=1.10.0)"]
+aws = ["boto3 (>=1.9)"]
+all_orchestration_extras = ["kubernetes (>=9.0.0a1.0)", "python-gitlab (>=2.5.0)", "PyGithub (>=1.51)", "dulwich (>=0.19.7)", "google-auth (>=2.0)", "google-cloud-aiplatform (>=1.4.0)", "google-cloud-storage (>=1.13)", "google-cloud-secret-manager (>=2.4.0)", "atlassian-python-api (>=2.0.1)", "azure-storage-blob (>=12.1.0)", "boto3 (>=1.9)"]
+all_extras = ["py2neo (>=2021.2.3)", "sendgrid (>=6.7.0)", "soda-spark (>=0.2.1)", "soda-sql (>=2.0.0b25)", "pyexasol (>=0.16.1)", "pyarrow (>=5.0.0)", "tweepy (>=3.5)", "graphviz (>=0.8.3)", "hvac (>=0.10)", "jinja2 (>=2.0)", "spacy (>=2.0.0)", "snowflake-connector-python (>=1.8.2)", "feedparser (>=5.0.1)", "redis (>=3.2.1)", "pushbullet.py (>=0.11.0)", "pyodbc (>=4.0.30)", "pymysql (>=0.9.3)", "prometheus-client (>=0.9.0)", "psycopg2-binary (>=2.8.2)", "pandas (>=1.0.1)", "kubernetes (>=9.0.0a1.0)", "dask-kubernetes (>=0.8.0)", "confluent-kafka (>=1.7.0)", "nbconvert (>=6.0.7)", "papermill (>=2.2.0)", "jira (>=2.0.0)", "gspread (>=3.6.0)", "python-gitlab (>=2.5.0)", "PyGithub (>=1.51)", "dulwich (>=0.19.7)", "google-auth (>=2.0)", "google-cloud-aiplatform (>=1.4.0)", "google-cloud-storage (>=1.13)", "google-cloud-secret-manager (>=2.4.0)", "google-cloud-bigquery (>=1.6.0)", "mistune (<2.0)", "great-expectations (>=0.13.8)", "firebolt-sdk (>=0.2.1)", "dropbox (>=9.0,<10.0)", "pydantic (>=1.9.0)", "PyJWT (>=2.3.0)", "responses (>=0.14.0)", "flaky (>=3.0)", "pytest-xdist (>=2.0)", "pytest-env (>=0.6.0)", "testfixtures (>=6.10.3)", "pytest (>=6.0)", "Pygments (>=2.2,<3.0)", "mypy (>=0.600,<0.813)", "jinja2 (>=2.0,<4.0)", "graphviz (>=0.8)", "black", "dask-cloudprovider[aws] (>=0.2.0)", "atlassian-python-api (>=2.0.1)", "azure-cosmos (>=3.1.1)", "azureml-sdk (>=1.0.6)", "azure-storage-blob (>=12.1.0)", "azure-core (>=1.10.0)", "boto3 (>=1.9)", "airtable-python-wrapper (>=0.11)"]
 viz = ["graphviz (>=0.8.3)"]
+vault = ["hvac (>=0.10)"]
+twitter = ["tweepy (>=3.5)"]
+test = ["PyJWT (>=2.3.0)", "responses (>=0.14.0)", "flaky (>=3.0)", "pytest-xdist (>=2.0)", "pytest-env (>=0.6.0)", "testfixtures (>=6.10.3)", "pytest (>=6.0)"]
+templates = ["jinja2 (>=2.0)"]
+task_library_ci = ["py2neo (>=2021.2.3)", "sendgrid (>=6.7.0)", "soda-spark (>=0.2.1)", "soda-sql (>=2.0.0b25)", "pyexasol (>=0.16.1)", "pyarrow (>=5.0.0)", "tweepy (>=3.5)", "graphviz (>=0.8.3)", "hvac (>=0.10)", "jinja2 (>=2.0)", "spacy (>=2.0.0)", "snowflake-connector-python (>=1.8.2)", "feedparser (>=5.0.1)", "redis (>=3.2.1)", "pushbullet.py (>=0.11.0)", "pymysql (>=0.9.3)", "prometheus-client (>=0.9.0)", "psycopg2-binary (>=2.8.2)", "pandas (>=1.0.1)", "kubernetes (>=9.0.0a1.0)", "dask-kubernetes (>=0.8.0)", "confluent-kafka (>=1.7.0)", "nbconvert (>=6.0.7)", "papermill (>=2.2.0)", "jira (>=2.0.0)", "gspread (>=3.6.0)", "python-gitlab (>=2.5.0)", "PyGithub (>=1.51)", "dulwich (>=0.19.7)", "google-auth (>=2.0)", "google-cloud-aiplatform (>=1.4.0)", "google-cloud-storage (>=1.13)", "google-cloud-secret-manager (>=2.4.0)", "google-cloud-bigquery (>=1.6.0)", "mistune (<2.0)", "great-expectations (>=0.13.8)", "firebolt-sdk (>=0.2.1)", "dropbox (>=9.0,<10.0)", "pydantic (>=1.9.0)", "PyJWT (>=2.3.0)", "responses (>=0.14.0)", "flaky (>=3.0)", "pytest-xdist (>=2.0)", "pytest-env (>=0.6.0)", "testfixtures (>=6.10.3)", "pytest (>=6.0)", "Pygments (>=2.2,<3.0)", "mypy (>=0.600,<0.813)", "jinja2 (>=2.0,<4.0)", "graphviz (>=0.8)", "black", "atlassian-python-api (>=2.0.1)", "azure-cosmos (>=3.1.1)", "azureml-sdk (>=1.0.6)", "azure-storage-blob (>=12.1.0)", "azure-core (>=1.10.0)", "boto3 (>=1.9)", "airtable-python-wrapper (>=0.11)"]
+sql_server = ["pyodbc (>=4.0.30)"]
+spacy = ["spacy (>=2.0.0)"]
+sodasql = ["soda-sql (>=2.0.0b25)"]
+sodaspark = ["soda-spark (>=0.2.1)"]
+snowflake = ["snowflake-connector-python (>=1.8.2)"]
+sendgrid = ["sendgrid (>=6.7.0)"]
+rss = ["feedparser (>=5.0.1)"]
+redis = ["redis (>=3.2.1)"]
+pushbullet = ["pushbullet.py (>=0.11.0)"]
+prometheus = ["prometheus-client (>=0.9.0)"]
+postgres = ["psycopg2-binary (>=2.8.2)"]
+pandas = ["pandas (>=1.0.1)"]
+neo4j = ["py2neo (>=2021.2.3)"]
+mysql = ["pymysql (>=0.9.3)"]
+kubernetes = ["kubernetes (>=9.0.0a1.0)", "dask-kubernetes (>=0.8.0)"]
+kafka = ["confluent-kafka (>=1.7.0)"]
+jupyter = ["nbconvert (>=6.0.7)", "papermill (>=2.2.0)"]
+airtable = ["airtable-python-wrapper (>=0.11)"]
 
 [[package]]
 name = "prometheus-client"
@@ -1637,7 +1590,7 @@ python-versions = ">=3.6"
 packaging = "*"
 
 [package.extras]
-test = ["pytest (>=6.0.0)", "pytest-cov (>=3.0.0)", "pytest-qt"]
+test = ["pytest-qt", "pytest-cov (>=3.0.0)", "pytest (>=6.0.0)"]
 
 [[package]]
 name = "regex"
@@ -1700,9 +1653,9 @@ optional = false
 python-versions = "*"
 
 [package.extras]
-nativelib = ["pyobjc-framework-cocoa", "pywin32"]
-objc = ["pyobjc-framework-cocoa"]
 win32 = ["pywin32"]
+objc = ["pyobjc-framework-cocoa"]
+nativelib = ["pywin32", "pyobjc-framework-cocoa"]
 
 [[package]]
 name = "six"
@@ -1721,14 +1674,6 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "soupsieve"
-version = "2.3.1"
-description = "A modern CSS selector implementation for Beautiful Soup."
-category = "dev"
-optional = false
-python-versions = ">=3.6"
-
-[[package]]
 name = "stack-data"
 version = "0.2.0"
 description = "Extract data from python stack frames and tracebacks for informative displays"
@@ -1742,7 +1687,7 @@ executing = "*"
 pure-eval = "*"
 
 [package.extras]
-tests = ["pytest", "typeguard", "pygments", "littleutils", "cython"]
+tests = ["cython", "littleutils", "pygments", "typeguard", "pytest"]
 
 [[package]]
 name = "stone"
@@ -1976,9 +1921,9 @@ optional = false
 python-versions = ">=3.6"
 
 [package.extras]
-docs = ["Sphinx (>=3.4)", "sphinx-rtd-theme (>=0.5)"]
-optional = ["python-socks", "wsaccel"]
 test = ["websockets"]
+optional = ["wsaccel", "python-socks"]
+docs = ["sphinx-rtd-theme (>=0.5)", "Sphinx (>=3.4)"]
 
 [[package]]
 name = "widgetsnbextension"
@@ -2000,7 +1945,7 @@ optional = false
 python-versions = ">=3.5"
 
 [package.extras]
-dev = ["pytest (>=4.6.2)", "black (>=19.3b0)"]
+dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 
 [[package]]
 name = "xlrd"
@@ -2011,9 +1956,9 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 
 [package.extras]
-build = ["wheel", "twine"]
+test = ["pytest-cov", "pytest"]
 docs = ["sphinx"]
-test = ["pytest", "pytest-cov"]
+build = ["twine", "wheel"]
 
 [[package]]
 name = "zict"
@@ -2094,10 +2039,6 @@ backcall = [
 beautiful-date = [
     {file = "beautiful-date-2.0.0.tar.gz", hash = "sha256:4afb3f8135dd00551fbbe2607c654fbd0453745d5b43a344d4d620aa89a7e6a0"},
     {file = "beautiful_date-2.0.0-py2.py3-none-any.whl", hash = "sha256:d29f4c02c9f015b060e5b57c5654e51871b50023e43c67847981374c4faf7e8b"},
-]
-beautifulsoup4 = [
-    {file = "beautifulsoup4-4.10.0-py3-none-any.whl", hash = "sha256:9a315ce70049920ea4572a4055bc4bd700c940521d36fc858205ad4fcde149bf"},
-    {file = "beautifulsoup4-4.10.0.tar.gz", hash = "sha256:c23ad23c521d818955a4151a67d81580319d4bf548d3d49f4223ae041ff98891"},
 ]
 black = [
     {file = "black-22.1.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:1297c63b9e1b96a3d0da2d85d11cd9bf8664251fd69ddac068b98dc4f34f73b6"},
@@ -2410,10 +2351,6 @@ jupyter-core = [
     {file = "jupyter_core-4.9.2-py3-none-any.whl", hash = "sha256:f875e4d27e202590311d468fa55f90c575f201490bd0c18acabe4e318db4a46d"},
     {file = "jupyter_core-4.9.2.tar.gz", hash = "sha256:d69baeb9ffb128b8cd2657fcf2703f89c769d1673c851812119e3a2a0e93ad9a"},
 ]
-jupyterlab-pygments = [
-    {file = "jupyterlab_pygments-0.1.2-py2.py3-none-any.whl", hash = "sha256:abfb880fd1561987efaefcb2d2ac75145d2a5d0139b1876d5be806e32f630008"},
-    {file = "jupyterlab_pygments-0.1.2.tar.gz", hash = "sha256:cfcda0873626150932f438eccf0f8bf22bfa92345b814890ab360d666b254146"},
-]
 jupyterlab-widgets = [
     {file = "jupyterlab_widgets-1.0.2-py3-none-any.whl", hash = "sha256:f5d9efface8ec62941173ba1cffb2edd0ecddc801c11ae2931e30b50492eb8f7"},
     {file = "jupyterlab_widgets-1.0.2.tar.gz", hash = "sha256:7885092b2b96bf189c3a705cc3c412a4472ec5e8382d0b47219a66cccae73cfa"},
@@ -2484,8 +2421,8 @@ matplotlib-inline = [
     {file = "matplotlib_inline-0.1.3-py3-none-any.whl", hash = "sha256:aed605ba3b72462d64d475a21a9296f400a19c4f74a31b59103d2a99ffd5aa5c"},
 ]
 mistune = [
-    {file = "mistune-0.8.4-py2.py3-none-any.whl", hash = "sha256:88a1051873018da288eee8538d476dffe1262495144b33ecb586c4ab266bb8d4"},
-    {file = "mistune-0.8.4.tar.gz", hash = "sha256:59a3429db53c50b5c6bcc8a07f8848cb00d7dc8bdb431a4ab41920d201d4756e"},
+    {file = "mistune-2.0.3-py2.py3-none-any.whl", hash = "sha256:e3964140c0775535fba50bd616fe180920044a64bc21850253267b07bff89924"},
+    {file = "mistune-2.0.3.tar.gz", hash = "sha256:d7605b46b6156b53b7d52a465202b29a6f00f4ea4130ad5d25e9d5547d6b7e50"},
 ]
 msgpack = [
     {file = "msgpack-1.0.3-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:96acc674bb9c9be63fa8b6dabc3248fdc575c4adc005c440ad02f87ca7edd079"},
@@ -2527,13 +2464,9 @@ mypy-extensions = [
     {file = "mypy_extensions-0.4.3-py2.py3-none-any.whl", hash = "sha256:090fedd75945a69ae91ce1303b5824f428daf5a028d2f6ab8a299250a846f15d"},
     {file = "mypy_extensions-0.4.3.tar.gz", hash = "sha256:2d82818f5bb3e369420cb3c4060a7970edba416647068eb4c5343488a6c604a8"},
 ]
-nbclient = [
-    {file = "nbclient-0.5.13-py3-none-any.whl", hash = "sha256:47ac905af59379913c1f8f541098d2550153cf8dc58553cbe18c702b181518b0"},
-    {file = "nbclient-0.5.13.tar.gz", hash = "sha256:40c52c9b5e3c31faecaee69f202b3f53e38d7c1c563de0fadde9d7eda0fdafe8"},
-]
 nbconvert = [
-    {file = "nbconvert-6.4.4-py3-none-any.whl", hash = "sha256:c0c13d11378e13f72b9cd509c008383dca4051c228e4985f75023b2a5d82fc9f"},
-    {file = "nbconvert-6.4.4.tar.gz", hash = "sha256:ee0dfe34bbd1082ac9bfc750aae3c73fcbc34a70c5574c6986ff83c10a3541fd"},
+    {file = "nbconvert-5.5.0-py2.py3-none-any.whl", hash = "sha256:4a978548d8383f6b2cfca4a3b0543afb77bc7cb5a96e8b424337ab58c12da9bc"},
+    {file = "nbconvert-5.5.0.tar.gz", hash = "sha256:138381baa41d83584459b5cfecfc38c800ccf1f37d9ddd0bd440783346a4c39c"},
 ]
 nbformat = [
     {file = "nbformat-5.2.0-py3-none-any.whl", hash = "sha256:3e30424e8291b2188347f5c3ba5273ed3766f12f8c5137c2e456a0815f36e785"},
@@ -3099,10 +3032,6 @@ six = [
 sortedcontainers = [
     {file = "sortedcontainers-2.4.0-py2.py3-none-any.whl", hash = "sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0"},
     {file = "sortedcontainers-2.4.0.tar.gz", hash = "sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e3379eaa43b9bfdb88"},
-]
-soupsieve = [
-    {file = "soupsieve-2.3.1-py3-none-any.whl", hash = "sha256:1a3cca2617c6b38c0343ed661b1fa5de5637f257d4fe22bd9f1338010a1efefb"},
-    {file = "soupsieve-2.3.1.tar.gz", hash = "sha256:b8d49b1cd4f037c7082a9683dfa1801aa2597fb11c3a1155b7a5b94829b4f1f9"},
 ]
 stack-data = [
     {file = "stack_data-0.2.0-py3-none-any.whl", hash = "sha256:999762f9c3132308789affa03e9271bbbe947bf78311851f4d485d8402ed858e"},
