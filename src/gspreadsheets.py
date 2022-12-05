@@ -95,6 +95,10 @@ def read_df_gdrive(spreadsheet_name, sheet_name, cols_to_numeric=[]):
     # Cast cols to numeric
     for col in cols_to_numeric:
 
+        if pd.api.types.is_numeric_dtype(df[col]):
+            # No need to cast
+            continue
+
         # Get rid of unwanted symbols
         for find, replace in [(".", ""), (",", "."), (" €", "")]:
             df[col] = df[col].str.replace(find, replace, regex=False)
