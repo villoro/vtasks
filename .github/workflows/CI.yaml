@@ -23,10 +23,10 @@ jobs:
             - 'poetry.lock'
 
     - if: steps.changes.outputs.code == 'true'
-      name: Set up Python 3.9.10
+      name: Set up Python 3.9.15
       uses: actions/setup-python@v2
       with:
-        python-version: 3.9.10
+        python-version: 3.9.15
 
     - if: steps.changes.outputs.code == 'true'
       name: Install dependencies
