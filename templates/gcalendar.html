@@ -20,6 +20,9 @@
     <div id="EVO_year" class="plot" style="height: 450px"></div>
   </div>
 
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_year_percent" class="plot" style="height: 450px"></div>
+  </div>
 </div>
 
 <!-- EVO -->
@@ -118,7 +121,24 @@
       }, {% endfor %}
     ],
   });
-
+  Highcharts.chart('EVO_year_percent', {
+    ...plot_datetime_stacked,
+    title: {text: 'Year percent evolution'},
+    yAxis : {
+      ...labels_percent,
+      max: 100,
+    },
+    series: [
+      {% for name, values in year_percent.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        type: 'area',
+        data: [{% for mdate, value in values.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
 
   // EVOLUTION SECTION
   Highcharts.chart('EVO_month_trend', {
