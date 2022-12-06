@@ -79,6 +79,10 @@ def extract_data(vdp, df, export=False):
     df_w_trend = df.resample("W-MON").sum().apply(smooth_serie)
     df_m = df.resample("MS").sum()
     df_m_trend = df_m.apply(smooth_serie)
+    df_y = df.resample("YS").sum()
+
+    # Filter out incomplete year
+    df_y = df_y[df_y.index.year > 2011]
 
     to_dict_reversed = lambda df: serie_to_dict()
 
@@ -90,6 +94,7 @@ def extract_data(vdp, df, export=False):
         "month_trend_percent": serie_to_dict(to_percentages(df_m_trend)),
         "pies": get_pies(df_m, df_m_trend),
         "colors": {name: data["color"] for name, data in calendars.items()},
+        "year": serie_to_dict(df_y),
     }
 
     out["cards"] = get_cards(out, calendars)

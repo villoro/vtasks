@@ -15,6 +15,11 @@
     </div>
     {% endfor %}
   </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_year" class="plot" style="height: 450px"></div>
+  </div>
+
 </div>
 
 <!-- EVO -->
@@ -97,6 +102,22 @@
       formatter: function() {return this.value + " %";}
     },
   }
+
+  // DASHBOARD SECTION
+  Highcharts.chart('EVO_year', {
+    ...plot_datetime_stacked,
+    title: {text: 'Year evolution'},
+    series: [
+      {% for name, values in year.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        type: 'area',
+        data: [{% for mdate, value in values.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
 
 
   // EVOLUTION SECTION
