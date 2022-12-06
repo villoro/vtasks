@@ -452,7 +452,7 @@ def get_colors_comparisons(dfs):
     # Incomes, Expenses and result
     out = {}
     for name, color_name in [(c.INCOMES, "green"), (c.EXPENSES, "red"), (c.RESULT, "amber")]:
-        years = dfs[c.DF_TRANS].resample("YS").sum().index.year
+        years = dfs[c.DF_TRANS].resample("YS").sum(numeric_only=True).index.year
         out[name] = extract_colors_from_years(years, color_name)
 
     # Liquid
