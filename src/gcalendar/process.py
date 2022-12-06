@@ -95,6 +95,7 @@ def extract_data(vdp, df, export=False):
         "pies": get_pies(df_m, df_m_trend),
         "colors": {name: data["color"] for name, data in calendars.items()},
         "year": serie_to_dict(df_y),
+        "year_percent": serie_to_dict(to_percentages(df_y)),
     }
 
     out["cards"] = get_cards(out, calendars)
