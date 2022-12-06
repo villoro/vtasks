@@ -50,7 +50,7 @@ def to_year_start(dfi):
         df = df.set_index(c.COL_DATE)
 
     # Transform to year start
-    df = df.resample("YS").sum().reset_index()
+    df = df.resample("YS").sum(numeric_only=True).reset_index()
 
     # Cast date to year
     df[c.COL_DATE] = df[c.COL_DATE].dt.year
