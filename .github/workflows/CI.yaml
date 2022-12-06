@@ -4,15 +4,28 @@ env:
 
 on:
   pull_request:
-    branches: [master]
 
 jobs:
-  integration_tests:
+  pre_commit:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+    - uses: pre-commit/action@v3.0.0
 
+  labeler:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/labeler@v3
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        sync-labels: true
+
+  integration_tests:
+    needs: [pre_commit, labeler]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
     - uses: dorny/paths-filter@v2
       id: changes
       with:
@@ -21,14 +34,12 @@ jobs:
             - 'src/**'
             - 'templates/**'
             - 'poetry.lock'
-
     # Python version must match the one defined in poetry (.lock file)
     - if: steps.changes.outputs.code == 'true'
       name: Set up Python 3.11.0
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: 3.11.0
-
     # Poetry version must match the one defined in heroku (with an env var)
     - if: steps.changes.outputs.code == 'true'
       name: Install dependencies
@@ -36,7 +47,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install poetry==1.2.2
         poetry install --without dev
-
     - if: steps.changes.outputs.code == 'true'
       name: Tests
       run: |
