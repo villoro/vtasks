@@ -8,14 +8,20 @@ from prefect import flow, task, get_run_logger
 
 import utils as u
 
-from .models import Flow, Task
+from .models import FlowRun, TaskRun, Flow
 
 COL_EXPORTED_AT = "exported_at"
 COL_CREATED = "created"
 
 PATH_VTASKS = "/Aplicaciones/vtasks"
-PATH_FLOWS = f"{PATH_VTASKS}/flows.parquet"
-PATH_TASKS = f"{PATH_VTASKS}/tasks.parquet"
+PATH_FLOW_RUNS = f"{PATH_VTASKS}/flows.parquet"
+PATH_TASK_RUNS = f"{PATH_VTASKS}/tasks.parquet"
+
+
+async def read_flows():
+    """extract task runs"""
+    client = get_client()
+    return await client.read_flows()
 
 
 async def read_flow_runs():
@@ -55,23 +61,23 @@ def update_parquet(df_new, parquet_path):
     vdp.write_parquet(df, parquet_path)
 
 
-@task(name="vtasks.vprefect.process_flows")
-def process_flows():
-    flows = asyncio.run(read_flow_runs())
+@task(name="vtasks.vprefect.process_flow_runs")
+def process_flow_runs():
+    flow_runs = asyncio.run(read_flow_runs())
 
-    df_new = parse_prefect(flows, Flow)
-    update_parquet(df_new, PATH_FLOWS)
+    df_new = parse_prefect(flow_runs, FlowRun)
+    update_parquet(df_new, PATH_FLOW_RUNS)
 
 
-@task(name="vtasks.vprefect.process_tasks")
-def process_tasks():
-    tasks = asyncio.run(read_task_runs())
+@task(name="vtasks.vprefect.process_task_runs")
+def process_task_runs():
+    task_runs = asyncio.run(read_task_runs())
 
-    df_new = parse_prefect(tasks, Task)
-    update_parquet(df_new, PATH_TASKS)
+    df_new = parse_prefect(task_runs, TaskRun)
+    update_parquet(df_new, PATH_TASK_RUNS)
 
 
 @flow(name="vtasks.vprefect")
 def vprefect():
-    process_flows()
-    process_tasks()
+    process_flow_runs()
+    process_task_runs()

@@ -6,6 +6,15 @@ from typing import Optional
 from pydantic import BaseModel, validator
 
 
+class Flow(BaseModel):
+    id: UUID
+    name: str
+
+    @validator("id")
+    def uuid_to_hex(cls, v):
+        return v.hex if v else None
+
+
 class BasePrefect(BaseModel):
     # UUIDs
     id: UUID
@@ -36,7 +45,7 @@ class BasePrefect(BaseModel):
         return v / timedelta(seconds=1)
 
 
-class Flow(BasePrefect):
+class FlowRun(BasePrefect):
     # UUIDs
     flow_id: UUID
     flow_version: UUID
@@ -54,7 +63,7 @@ class Flow(BasePrefect):
         return str(v)
 
 
-class Task(BasePrefect):
+class TaskRun(BasePrefect):
     # UUIDs
     flow_run_id: UUID
 
