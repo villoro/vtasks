@@ -12,6 +12,9 @@ from .models import FlowRun, TaskRun, Flow
 
 COL_EXPORTED_AT = "exported_at"
 COL_CREATED = "created"
+COL_NAME = "name"
+COL_FLOW_ID = "flow_id"
+COL_FLOW_NAME = "flow_name"
 
 PATH_VTASKS = "/Aplicaciones/vtasks"
 PATH_FLOW_RUNS = f"{PATH_VTASKS}/flows.parquet"
@@ -61,11 +64,26 @@ def update_parquet(df_new, parquet_path):
     vdp.write_parquet(df, parquet_path)
 
 
+def add_flow_name(df_in, flows):
+
+    df = df_in.copy()
+
+    flow_map = parse_prefect(flows, Flow)[COL_NAME].to_dict()
+    df[COL_FLOW_NAME] = df[COL_FLOW_ID].map(flow_map)
+
+    return df
+
+
 @task(name="vtasks.vprefect.process_flow_runs")
 def process_flow_runs():
+    flows = asyncio.run(read_flows())
     flow_runs = asyncio.run(read_flow_runs())
 
     df_new = parse_prefect(flow_runs, FlowRun)
+
+    # Retrive flow_name from flows
+    df_new = add_flow_name(df_new, flows)
+
     update_parquet(df_new, PATH_FLOW_RUNS)
 
 
