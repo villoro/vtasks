@@ -74,7 +74,7 @@ def add_flow_name(df_in, flows):
     return df
 
 
-@task(name="vtasks.vprefect.process_flow_runs")
+@task(name="vtasks.vprefect.flow_runs")
 def process_flow_runs():
     flows = asyncio.run(read_flows())
     flow_runs = asyncio.run(read_flow_runs())
@@ -87,7 +87,7 @@ def process_flow_runs():
     update_parquet(df_new, PATH_FLOW_RUNS)
 
 
-@task(name="vtasks.vprefect.process_task_runs")
+@task(name="vtasks.vprefect.task_runs")
 def process_task_runs():
     task_runs = asyncio.run(read_task_runs())
 
