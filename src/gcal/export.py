@@ -6,18 +6,14 @@ import pandas as pd
 
 from gcsa.google_calendar import GoogleCalendar
 from gcsa.serializers.event_serializer import EventSerializer
+from prefect import task, get_run_logger
 
-from prefect_task import vtask
-from utils import export_secret
-from utils import get_path
-from utils import get_vdropbox
-from utils import log
-from utils import save_secret
+import utils as u
 
 TOKEN_FILENAME = "token.pickle"
 
-PATH_GCAL_JSON = get_path("auth/gcal.json")
-PATH_TOKEN_LOCAL = get_path(f"auth/{TOKEN_FILENAME}")
+PATH_GCAL_JSON = u.get_path("auth/gcal.json")
+PATH_TOKEN_LOCAL = u.get_path(f"auth/{TOKEN_FILENAME}")
 
 PATH_GCAL = "/Aplicaciones/gcalendar"
 PATH_GCAL_DATA = f"{PATH_GCAL}/calendar.parquet"
@@ -26,11 +22,13 @@ PATH_CALENDARS = str(Path(__file__).parent / "calendars.yaml")
 
 MIN_DATE = date(2011, 11, 5)
 
-export_secret(PATH_GCAL_JSON, "GCAL_JSON")
+u.export_secret(PATH_GCAL_JSON, "GCAL_JSON")
 
 
 def download_token(vdp):
     """Download token from dropbox"""
+
+    log = get_run_logger()
 
     if not TOKEN_FILENAME in vdp.ls(PATH_GCAL):
         log.warning("GCAL token not found in dropbox")
@@ -106,6 +104,7 @@ def query_events(calendar, end, start=MIN_DATE, drop_invalid=True):
 def get_all_events(calendars, mdate):
     """Get all events from all calendars"""
 
+    log = get_run_logger()
     log.info("Querying all calendars")
 
     dfs = []
@@ -135,11 +134,11 @@ def get_all_events(calendars, mdate):
     return df
 
 
-@vtask
+@task(name="vtasks.gcal.export")
 def export_calendar_events(mdate):
     """Export all events as a parquet"""
 
-    vdp = get_vdropbox()
+    vdp = u.get_vdropbox()
 
     download_token(vdp)
 

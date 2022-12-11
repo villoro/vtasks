@@ -1,12 +1,11 @@
 from datetime import date
 
-from prefect_task import vtask
-from slack import send_slack
-from utils import get_vdropbox
-from utils import is_pro
-from utils import log
+from prefect import task, get_run_logger
 
-from .process import get_daily_data
+from slack import send_slack
+from utils import get_vdropbox, is_pro
+
+from .report import get_daily_data
 
 
 def get_n_week(dfi, n=1):
@@ -48,9 +47,11 @@ def send_summary(mdate, channel):
     send_slack(channel=channel, blocks=[block])
 
 
-@vtask
-def do_summary(mdate):
+@task(name="vtasks.gcal.summary")
+def do_summary(mdate: date):
     """Creates the report"""
+
+    log = get_run_logger()
 
     if mdate.isoweekday() == 1:
 

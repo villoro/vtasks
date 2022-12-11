@@ -1,16 +1,10 @@
 import pandas as pd
 
-from prefect_task import vtask
-from utils import get_vdropbox
-from utils import log
-from utils import render_jinja_template
+from prefect import task
 
-from expensor.functions import serie_to_dict
-from expensor.functions import smooth_serie
+import utils as u
 
-from .gcal import PATH_GCAL
-from .gcal import PATH_GCAL_DATA
-from .gcal import read_calendars
+from .export import PATH_GCAL, PATH_GCAL_DATA, read_calendars
 
 
 def get_daily_data(vdp, mdate):
@@ -46,9 +40,9 @@ def get_pies(df_m, df_m_trend):
     """Get pies info"""
 
     return {
-        "all": serie_to_dict(to_percentages(df_m.mean())),
-        "month": serie_to_dict(to_percentages(df_m.tail(1).T.iloc[:, 0])),
-        "year": serie_to_dict(to_percentages(df_m.iloc[-12:].mean())),
+        "all": u.serie_to_dict(to_percentages(df_m.mean())),
+        "month": u.serie_to_dict(to_percentages(df_m.tail(1).T.iloc[:, 0])),
+        "year": u.serie_to_dict(to_percentages(df_m.iloc[-12:].mean())),
     }
 
 
@@ -76,26 +70,26 @@ def extract_data(vdp, df, export=False):
 
     calendars = read_calendars()
 
-    df_w_trend = df.resample("W-MON").sum().apply(smooth_serie)
+    df_w_trend = df.resample("W-MON").sum().apply(u.smooth_serie)
     df_m = df.resample("MS").sum()
-    df_m_trend = df_m.apply(smooth_serie)
+    df_m_trend = df_m.apply(u.smooth_serie)
     df_y = df.resample("YS").sum()
 
     # Filter out incomplete year
     df_y = df_y[df_y.index.year > 2011]
 
-    to_dict_reversed = lambda df: serie_to_dict()
+    to_dict_reversed = lambda df: u.serie_to_dict()
 
     out = {
-        "week_trend": serie_to_dict(df_w_trend),
-        "month": serie_to_dict(df_m),
-        "month_percent": serie_to_dict(to_percentages(df_m)),
-        "month_trend": serie_to_dict(df_m_trend),
-        "month_trend_percent": serie_to_dict(to_percentages(df_m_trend)),
+        "week_trend": u.serie_to_dict(df_w_trend),
+        "month": u.serie_to_dict(df_m),
+        "month_percent": u.serie_to_dict(to_percentages(df_m)),
+        "month_trend": u.serie_to_dict(df_m_trend),
+        "month_trend_percent": u.serie_to_dict(to_percentages(df_m_trend)),
         "pies": get_pies(df_m, df_m_trend),
         "colors": {name: data["color"] for name, data in calendars.items()},
-        "year": serie_to_dict(df_y),
-        "year_percent": serie_to_dict(to_percentages(df_y)),
+        "year": u.serie_to_dict(df_y),
+        "year_percent": u.serie_to_dict(to_percentages(df_y)),
     }
 
     out["cards"] = get_cards(out, calendars)
@@ -106,14 +100,14 @@ def extract_data(vdp, df, export=False):
     return out
 
 
-@vtask
+@task(name="vtasks.gcal.report")
 def gcal_report(mdate):
     """Creates the report"""
 
     # Start of last month
     mdate = mdate.replace(day=1)
 
-    vdp = get_vdropbox()
+    vdp = u.get_vdropbox()
 
     df = get_daily_data(vdp, mdate)
     data = extract_data(vdp, df)
@@ -126,5 +120,5 @@ def gcal_report(mdate):
     }
 
     # Create report
-    report = render_jinja_template("gcalendar.html", data)
+    report = u.render_jinja_template("gcalendar.html", data)
     vdp.write_file(report, f"{PATH_GCAL}/gcalendar.html")
