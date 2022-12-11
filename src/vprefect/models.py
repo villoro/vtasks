@@ -19,7 +19,7 @@ class BasePrefect(BaseModel):
     created: datetime
     exported_at: datetime = datetime.now()
     start_time: datetime
-    end_time: datetime
+    end_time: Optional[datetime] = None
 
     # Timedeltas
     total_run_time: timedelta
@@ -45,7 +45,7 @@ class Flow(BasePrefect):
     # Other
     parameters: dict
 
-    @validator("id", "flow_id", "state_id", "flow_version", "parent_task_run_id")
+    @validator("id", "state_id", "flow_id", "flow_version", "parent_task_run_id")
     def uuid_to_hex(cls, v):
         return v.hex if v else None
 
@@ -68,7 +68,7 @@ class Task(BasePrefect):
     dynamic_key: int
     flow_run_run_count: int
 
-    @validator("id", "flow_run_id")
+    @validator("id", "state_id", "flow_run_id")
     def uuid_to_hex(cls, v):
         return v.hex if v else None
 

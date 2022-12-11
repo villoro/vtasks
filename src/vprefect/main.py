@@ -36,7 +36,7 @@ def parse_prefect(prefect_list, Model):
 
 
 def deduplicate(df_in):
-    df = df.sort_values([COL_EXPORTED_AT, COL_CREATED]).copy()
+    df = df_in.sort_values([COL_EXPORTED_AT, COL_CREATED]).copy()
     return df[~df.index.duplicated(keep="first")]
 
 
