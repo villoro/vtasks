@@ -4,6 +4,7 @@ import re
 import sys
 import yaml
 
+from collections import OrderedDict
 from argparse import ArgumentParser
 from datetime import date
 from datetime import timedelta
@@ -12,6 +13,7 @@ from pathlib import Path
 from time import time
 
 import jinja2
+import numpy as np
 import pandas as pd
 
 from loguru import logger as log
@@ -199,3 +201,58 @@ def read_yaml(filename, encoding="utf8"):
 
     with open(filename, "r", encoding=encoding) as file:
         return yaml.safe_load(file)
+
+
+def serie_to_dict(serie):
+    """Transform a serie to a dict"""
+
+    # If index is datetime transform to string
+    if np.issubdtype(serie.index, np.datetime64):
+        serie.index = serie.index.strftime("%Y-%m-%d")
+
+    return serie.apply(lambda x: round(x, 2)).to_dict()
+
+
+def series_to_dicts(series):
+    """Transform a dict with series to a dict of dicts"""
+
+    out = OrderedDict()
+
+    for name, x in series.items():
+        out[name] = serie_to_dict(x)
+
+    return out
+
+
+def time_average(dfi, months=12, exponential=False, center=False):
+    """
+    Do some time average
+
+    Args:
+        dfi:            input dataframe (or series)
+        months:         num of months for the average
+        exponential:    whether to use EWM or simple rolling
+    """
+
+    # Exponential moving average
+    if exponential:
+        # No negative values
+        months = max(0, months)
+
+        df = dfi.ewm(span=months, min_periods=0, adjust=False, ignore_na=False)
+
+    # Regular moving average
+    else:
+        # One month at least
+        months = max(1, months)
+
+        df = dfi.rolling(months, min_periods=1, center=center)
+
+    return df.mean().apply(lambda x: round(x, 2))
+
+
+def smooth_serie(dfi):
+    """Smooth a serie by doing a time_average 2 times"""
+
+    df = time_average(dfi, months=12, center=True)
+    return time_average(df, months=6, center=True)
