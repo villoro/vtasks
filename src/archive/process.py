@@ -1,14 +1,15 @@
 from datetime import date
 from datetime import timedelta
 
+from prefect import flow, task, get_run_logger
 
-from prefect_task import vtask
-from utils import get_files_from_regex
-from utils import get_path
-from utils import get_secret
-from utils import get_vdropbox
-from utils import log
-from utils import read_yaml
+from utils import (
+    get_files_from_regex,
+    get_path,
+    get_secret,
+    get_vdropbox,
+    read_yaml,
+)
 
 PATH_OPERATIONS = get_path("src/archive/operations.yaml")
 OPERATIONS = read_yaml(PATH_OPERATIONS)
@@ -31,8 +32,11 @@ MONTHS = {
 MONTHS = {i: str(x).zfill(2) for i, x in MONTHS.items()}
 
 
+@task(name="vtasks.archive.rename_files")
 def rename_files(vdp, path, regex, output):
     """Rename files based on regexs"""
+
+    log = get_run_logger()
 
     for path, file, kwargs in get_files_from_regex(vdp, path, regex):
 
@@ -53,8 +57,11 @@ def rename_files(vdp, path, regex, output):
         vdp.mv(origin, dest)
 
 
+@task(name="vtasks.archive.extract_files")
 def extract_files(vdp, path, regex, output, pwd, kwargs):
     """Extract files based on regexs"""
+
+    log = get_run_logger()
 
     # Evaluate as python expresions
     kwargs = {key: eval(val) for key, val in kwargs.items()}
@@ -75,10 +82,11 @@ def extract_files(vdp, path, regex, output, pwd, kwargs):
         vdp.delete(origin)
 
 
-@vtask
+@flow(name="vtasks.archive")
 def archive():
 
     vdp = get_vdropbox()
+    log = get_run_logger()
 
     # Rename some files
     for name, kwargs in OPERATIONS["renames"].items():
