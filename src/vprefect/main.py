@@ -8,6 +8,8 @@ from prefect import flow, task, get_run_logger
 
 import utils as u
 
+from .models import Flow, Task
+
 COL_EXPORTED_AT = "exported_at"
 COL_CREATED = "created"
 
@@ -28,11 +30,9 @@ async def read_task_runs():
     return await client.read_task_runs()
 
 
-def parse_prefect(prefect_list):
-    data = [x.dict() for x in prefect_list]
-    df = pd.DataFrame(data).set_index("id")
-    df["exported_at"] = datetime.now()
-    return df
+def parse_prefect(prefect_list, Model):
+    data = [Model(**x.dict()).dict() for x in prefect_list]
+    return pd.DataFrame(data).set_index("id")
 
 
 def deduplicate(df_in):
@@ -59,7 +59,7 @@ def update_parquet(df_new, parquet_path):
 def process_flows():
     flows = asyncio.run(read_flow_runs())
 
-    df_new = parse_prefect(flows)
+    df_new = parse_prefect(flows, Flow)
     update_parquet(df_new, PATH_FLOWS)
 
 
@@ -67,7 +67,7 @@ def process_flows():
 def process_tasks():
     tasks = asyncio.run(read_task_runs())
 
-    df_new = parse_prefect(tasks)
+    df_new = parse_prefect(tasks, Task)
     update_parquet(df_new, PATH_TASKS)
 
 
