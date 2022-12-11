@@ -1,11 +1,11 @@
+from prefect import task, get_run_logger
+
 from utils import get_vdropbox
-from utils import log
 
-from .gcal import PATH_GCAL_DATA
+from .export import PATH_GCAL_DATA
 
-from prefect_task import vtask
 
-PATH_GCAL = "/Aplicaciones/gcalendar"
+PATH_GCAL = "/Aplicaciones/gcal"
 PATH_CONFUSIONS = f"{PATH_GCAL}/confusions.xlsx"
 
 
@@ -49,8 +49,9 @@ def filter_confusions(df, min_alpha=0.1):
     return df_confusions[confusions > 0].dropna(axis=1, how="all")
 
 
-@vtask
+@task(name="vtasks.gcal.confusions")
 def extract_gcal_confusions(exclude_other=True, merge_study=True, min_alpha=0.1):
+    log = get_run_logger()
     vdp = get_vdropbox()
 
     dfg = vdp.read_parquet(PATH_GCAL_DATA)
@@ -65,4 +66,4 @@ def extract_gcal_confusions(exclude_other=True, merge_study=True, min_alpha=0.1)
         log.warning(f"There are {num_confusions} in google calendar. Exporting them")
         vdp.write_excel(df_confusions, PATH_CONFUSIONS)
     else:
-        log.success("There are no confusions in google calendar")
+        log.info("There are no confusions in google calendar")

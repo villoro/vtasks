@@ -1,21 +1,15 @@
-import functools
-import os
 import re
-import sys
 import yaml
 
-from argparse import ArgumentParser
-from datetime import date
-from datetime import timedelta
+from collections import OrderedDict
 from os import path
 from pathlib import Path
-from time import time
 
 import jinja2
+import numpy as np
 import pandas as pd
 
-from loguru import logger as log
-
+from prefect import get_run_logger
 from vcrypto import Cipher
 from vdropbox import Vdropbox
 
@@ -24,9 +18,6 @@ from vdropbox import Vdropbox
 # It need to go 2 times up since this file has the following relative path:
 #   /src/utils.py
 PATH_ROOT = Path(__file__).parent.parent
-
-LOG_PATH = f"logs/{date.today():%Y_%m}/{date.today():%Y_%m_%d}.log"
-LOG_PATH_DROPBOX = f"/Aplicaciones/vtasks/{LOG_PATH}"
 
 
 def get_path(path_relative):
@@ -42,40 +33,6 @@ def get_path(path_relative):
 
 CIPHER = None
 CIPHER_KWARGS = {"secrets_file": get_path("secrets.yaml"), "environ_var_name": "VTASKS_TOKEN"}
-
-
-CONFIG = {
-    "handlers": [
-        {"sink": sys.stdout, "level": "INFO"},
-        {"sink": get_path(LOG_PATH), "level": "INFO"},
-    ]
-}
-
-
-log.configure(**CONFIG)
-log.enable("vtasks")
-
-
-def is_pro():
-    """Check if working in PRO"""
-
-    return os.environ.get("VTASKS_ENV", "False") == "True"
-
-
-def detect_env():
-    """Detect if it is PRO environment"""
-
-    parser = ArgumentParser()
-    parser.add_argument("--pro", help="Wether it is PRO or not (DEV)", default=False, type=bool)
-
-    args = parser.parse_args()
-
-    os.environ["VTASKS_ENV"] = str(args.pro)
-
-    if args.pro:
-        log.info("Working on PRO")
-    else:
-        log.info("Working on DEV")
 
 
 def get_secret(key, encoding="utf8"):
@@ -111,8 +68,6 @@ def export_secret(uri, secret_name, binary=False):
 
     if not path.exists(uri):
 
-        log.info(f"Exporting '{uri}'")
-
         with open(uri, mode) as file:
             file.write(get_secret(secret_name, encoding=encoding))
 
@@ -125,7 +80,7 @@ def get_vdropbox():
 
     global VDROPBOX
     if VDROPBOX is None:
-        VDROPBOX = Vdropbox(get_secret("DROPBOX_TOKEN"), log=log)
+        VDROPBOX = Vdropbox(get_secret("DROPBOX_TOKEN"), log=get_run_logger())
 
     return VDROPBOX
 
@@ -162,27 +117,6 @@ def get_files_from_regex(vdp, path, regex):
     return out
 
 
-def timeit(func):
-    """Timing decorator"""
-
-    @functools.wraps(func)
-    def timed_execution(*args, **kwa):
-        """Outputs the execution time of a function"""
-        t0 = time()
-        result = func(*args, **kwa)
-
-        total_time = time() - t0
-
-        if total_time < 60:
-            log.info(f"{func.__name__} done in {total_time:.2f} seconds")
-        else:
-            log.info(f"{func.__name__} done in {total_time/60:.2f} minutes")
-
-        return result
-
-    return timed_execution
-
-
 def render_jinja_template(template_name, data):
     """Render a jinja2 template"""
 
@@ -199,3 +133,58 @@ def read_yaml(filename, encoding="utf8"):
 
     with open(filename, "r", encoding=encoding) as file:
         return yaml.safe_load(file)
+
+
+def serie_to_dict(serie):
+    """Transform a serie to a dict"""
+
+    # If index is datetime transform to string
+    if np.issubdtype(serie.index, np.datetime64):
+        serie.index = serie.index.strftime("%Y-%m-%d")
+
+    return serie.apply(lambda x: round(x, 2)).to_dict()
+
+
+def series_to_dicts(series):
+    """Transform a dict with series to a dict of dicts"""
+
+    out = OrderedDict()
+
+    for name, x in series.items():
+        out[name] = serie_to_dict(x)
+
+    return out
+
+
+def time_average(dfi, months=12, exponential=False, center=False):
+    """
+    Do some time average
+
+    Args:
+        dfi:            input dataframe (or series)
+        months:         num of months for the average
+        exponential:    whether to use EWM or simple rolling
+    """
+
+    # Exponential moving average
+    if exponential:
+        # No negative values
+        months = max(0, months)
+
+        df = dfi.ewm(span=months, min_periods=0, adjust=False, ignore_na=False)
+
+    # Regular moving average
+    else:
+        # One month at least
+        months = max(1, months)
+
+        df = dfi.rolling(months, min_periods=1, center=center)
+
+    return df.mean().apply(lambda x: round(x, 2))
+
+
+def smooth_serie(dfi):
+    """Smooth a serie by doing a time_average 2 times"""
+
+    df = time_average(dfi, months=12, center=True)
+    return time_average(df, months=6, center=True)

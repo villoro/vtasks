@@ -1,1 +1,1 @@
-from .process import update_cryptos
+from .main import crypto

@@ -50,5 +50,4 @@ jobs:
         poetry install --without dev
     - if: steps.changes.outputs.code == 'true'
       name: Tests
-      run: |
-        poetry run python src/master.py
+      run: poetry run python src/main.py

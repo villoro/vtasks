@@ -3,7 +3,7 @@ line-length = 100
 
 [tool.poetry]
 name = "vtasks"
-version = "4.0.0"
+version = "5.0.0"
 description = "Personal tasks scheduled with Luigi"
 authors = ["Arnau Villoro <arnau@villoro.com>"]
 maintainers = ["Arnau Villoro <arnau@villoro.com>"]
@@ -18,19 +18,17 @@ dropbox = "^11.36.0"
 gcsa = "^2.0.1"
 gspread = "^5.7.2"
 jinja2 = "^3.1.2"
-loguru = "^0.6.0"
 numpy = "^1.23.5"
 openpyxl = "^3.0.10"
 oyaml = "^1.0"
 pandas = "^1.5.2"
-prefect = "^1.1.0"
+prefect = "^2.7.1"
 pyarrow = "^10.0.1"
 pykrakenapi = "^0.3.1"
 regex = "^2022.10.31"
 vcrypto = "^3.0.0"
 vdropbox = "^0.2.7"
 vpalette = "^2.0.1"
-vtime = "^2.0.0"
 xlrd = "^2.0.1"
 
 [tool.poetry.group.dev.dependencies]

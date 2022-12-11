@@ -1,1 +1,1 @@
-from .process import update_indexa
+from .main import indexa

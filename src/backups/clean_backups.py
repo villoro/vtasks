@@ -4,15 +4,16 @@ from datetime import datetime
 from datetime import timedelta
 
 import pandas as pd
+from prefect import task, get_run_logger
 
 from .files import files_regexs
-from prefect_task import vtask
 from utils import get_vdropbox
-from utils import log
 
 
 def get_backup_data(vdp, path, regex):
     """Get info about the backups"""
+
+    log = get_run_logger()
 
     base_path = f"{path}/Backups"
 
@@ -56,6 +57,8 @@ def get_backup_data(vdp, path, regex):
 def get_all_backups(vdp):
     """Get all backups"""
 
+    log = get_run_logger()
+
     dfs = []
 
     for kwargs in files_regexs:
@@ -91,7 +94,7 @@ def tag_duplicates(df_in):
     return df
 
 
-@vtask
+@task(name="vtasks.backup.clean_backups")
 def clean_backups():
     """Delete backups so that only one per month remain (except if newer than 30d)"""
 

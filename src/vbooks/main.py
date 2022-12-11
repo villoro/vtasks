@@ -2,14 +2,12 @@ import jinja2
 import pandas as pd
 
 from vpalette import get_colors
+from prefect import flow, task
 
 import utils as u
 
 from . import constants as c
-from expensor.functions import serie_to_dict
-from expensor.functions import smooth_serie
 from gspreadsheets import read_df_gdrive
-from prefect_task import vtask
 
 
 def get_books():
@@ -34,7 +32,7 @@ def get_todo():
 
 def get_dashboard(dfi):
 
-    out = serie_to_dict(dfi.groupby(c.COL_LANGUAGE)[c.COL_PAGES].sum())
+    out = u.serie_to_dict(dfi.groupby(c.COL_LANGUAGE)[c.COL_PAGES].sum())
     out["Total"] = int(dfi[c.COL_PAGES].sum())
     out["Years"] = int(dfi[c.COL_DATE].dt.year.nunique())
 
@@ -65,9 +63,9 @@ def get_year_data(dfi):
     )
     df = to_year_start(df)
 
-    out = {x: serie_to_dict(df[x]) for x in df.columns}
+    out = {x: u.serie_to_dict(df[x]) for x in df.columns}
 
-    out["Total"] = serie_to_dict(to_year_start(dfi)[c.COL_PAGES])
+    out["Total"] = u.serie_to_dict(to_year_start(dfi)[c.COL_PAGES])
 
     return out
 
@@ -75,14 +73,14 @@ def get_year_data(dfi):
 def get_month_data(dfi):
 
     out = {
-        i: serie_to_dict(dfa.resample("MS")[c.COL_PAGES].sum())
+        i: u.serie_to_dict(dfa.resample("MS")[c.COL_PAGES].sum())
         for i, dfa in dfi.set_index(c.COL_DATE).groupby(c.COL_LANGUAGE)
     }
-    out["Total"] = serie_to_dict(dfi.set_index(c.COL_DATE).resample("MS")[c.COL_PAGES].sum())
+    out["Total"] = u.serie_to_dict(dfi.set_index(c.COL_DATE).resample("MS")[c.COL_PAGES].sum())
 
     for name, data in {**out}.items():  # The ** is to avoid problems while mutating the dict
-        serie = smooth_serie(pd.Series(data))
-        out[f"{name}_trend"] = serie_to_dict(serie[6:])
+        serie = u.smooth_serie(pd.Series(data))
+        out[f"{name}_trend"] = u.serie_to_dict(serie[6:])
 
     return out
 
@@ -97,7 +95,7 @@ def get_year_percent(data, cumsum=True):
     # Get percentatges
     df = 100 * df.div(df["Total"], axis=0).fillna(0)
 
-    return {x: serie_to_dict(df[x]) for x in df.columns if x != "Total"}
+    return {x: u.serie_to_dict(df[x]) for x in df.columns if x != "Total"}
 
 
 def get_top(dfi, groupby, top_n=20):
@@ -108,9 +106,10 @@ def get_top(dfi, groupby, top_n=20):
         .sort_values(c.COL_PAGES, ascending=False)[:top_n]
     )
 
-    return serie_to_dict(df[c.COL_PAGES])
+    return u.serie_to_dict(df[c.COL_PAGES])
 
 
+@task(name="vtasks.vbooks.extract")
 def extract_data(export=False):
 
     df = get_books()
@@ -146,11 +145,8 @@ def extract_data(export=False):
     return out
 
 
-@vtask
-def vbooks():
-    """Creates the report"""
-
-    data = extract_data()
+@task(name="vtasks.vbooks.report")
+def create_report(data):
 
     # Add title
     data["title"] = "VBooks"
@@ -164,3 +160,9 @@ def vbooks():
     # Create report
     report = u.render_jinja_template("vbooks.html", data)
     u.get_vdropbox().write_file(report, f"{c.PATH_VBOOKS}/vbooks.html")
+
+
+@flow(name="vtasks.vbooks")
+def vbooks():
+    data = extract_data()
+    create_report(data)

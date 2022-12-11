@@ -1,14 +1,9 @@
-"""
-    Extract transactions from money lover file
-"""
-
 import pandas as pd
 import re
 
 from . import constants as c
-from prefect_task import vtask
+from prefect import flow, task, get_run_logger
 from utils import get_vdropbox
-from utils import log
 
 REGEX_MONEY_LOVER = r"^(MoneyLover-)?(?P<date>\d{4}-\d{2}-\d{2})( \((?P<num>\d+)\))?(.xls|.csv)$"
 
@@ -37,8 +32,11 @@ def get_files(vdp):
     return files
 
 
+@task(name="vtasks.money_lover.read")
 def get_money_lover_df(vdp):
     """gets the money lover file as a dataframe"""
+
+    log = get_run_logger()
 
     files = get_files(vdp)
 
@@ -73,7 +71,8 @@ def get_money_lover_df(vdp):
         vdp.delete(uri_in)
 
 
-def transform_transactions(df_in):
+@task(name="vtasks.money_lover.process")
+def process_transtactions(vdp, df_in):
     """
     It does all required transformations in order to use the transaction dataframe
 
@@ -94,20 +93,15 @@ def transform_transactions(df_in):
     # Amount as positve number
     df[c.COL_AMOUNT] = df[c.COL_AMOUNT].apply(abs)
 
-    return df[c.COLS_DF_TRANS]
+    # Export
+    vdp.write_excel(df[c.COLS_DF_TRANS], c.FILE_TRANSACTIONS)
 
 
-@vtask
+@flow(name="vtasks.money_lover")
 def money_lover():
     """Retrives all dataframes and update DFS global var"""
 
     vdp = get_vdropbox()
 
-    # Read
     df = get_money_lover_df(vdp)
-
-    # Transform
-    df = transform_transactions(df)
-
-    # Export
-    vdp.write_excel(df, c.FILE_TRANSACTIONS)
+    process_transtactions(vdp, df)
