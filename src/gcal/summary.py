@@ -3,7 +3,7 @@ from datetime import date
 from prefect import task, get_run_logger
 
 from slack import send_slack
-from utils import get_vdropbox, is_pro
+from utils import get_vdropbox
 
 from .report import get_daily_data
 
@@ -57,10 +57,6 @@ def do_summary(mdate: date):
 
         log.info("Sending gcalendar weekly report")
         send_summary(mdate, "general")
-
-    elif not is_pro():
-        log.info("Sending gcalendar weekly report for testing")
-        send_summary(mdate, "test")
 
     else:
         log.info("Gcalendar weekly report skipped")
