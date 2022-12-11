@@ -6,11 +6,9 @@ from datetime import date
 
 import gspreadsheets as gsh
 
-from expensor.constants import DF_INVEST
-from expensor.constants import DF_WORTH
-from expensor.constants import FILE_DATA
-from prefect_task import vtask
-from utils import log
+from prefect import flow, task, get_run_logger
+
+from expensor.constants import DF_INVEST, DF_WORTH, FILE_DATA
 
 BASE_URL = "https://api.indexacapital.com"
 TOKEN_NAME = "INDEXA_TOKEN"
@@ -21,8 +19,10 @@ ACCOUNTS = {"indexa": "HVGLMEL8", "indexa_pp": "PYDTR6X6"}
 def query_indexa(endpoint):
     """Raw function for querying indexa"""
 
+    # log = get_run_logger()
+
     url = f"{BASE_URL}/{endpoint}"
-    log.info(f"Querying '{url}'")
+    # log.info(f"Querying '{url}'")
 
     token = u.get_secret(TOKEN_NAME)
 
@@ -39,7 +39,7 @@ def get_accounts():
     return [x["account_number"] for x in accounts]
 
 
-def get_invested_and_worth(account):
+def query_invested_and_worth(account):
     """Gets the money invested and the actual worth of an account"""
 
     data = query_indexa(f"accounts/{account}/performance")
@@ -50,19 +50,31 @@ def get_invested_and_worth(account):
     return {"invested": round(invested, 2), "worth": round(worth, 2)}
 
 
-@vtask
-def update_indexa(mdate):
-
-    mfilter = mdate.strftime("%Y-%m-01")
-
-    # Get indexa info
+@task(name="vtasks.indexa.query")
+def query_portfolio():
+    """query portfolio info form indexa"""
     portfolio = {}
     for name, account in ACCOUNTS.items():
-        portfolio[name] = get_invested_and_worth(account)
+        portfolio[name] = query_invested_and_worth(account)
 
-    # Get dataframes from gdrive
+    return portfolio
+
+
+@task(name="vtasks.indexa.read")
+def read_invested_and_worth():
+    """get dataframes from gdrive"""
     df_invest = gsh.read_df_gdrive(FILE_DATA, DF_INVEST, "all")
     df_worth = gsh.read_df_gdrive(FILE_DATA, DF_WORTH, "all")
+
+    return df_invest, df_worth
+
+
+@task(name="vtasks.indexa.update")
+def update_invested_and_worth(mfilter, portfolio, df_invest_in, df_worth_in):
+    """update data"""
+
+    df_invest = df_invest_in.copy()
+    df_worth = df_worth_in.copy()
 
     # Update dataframes
     for name, data in portfolio.items():
@@ -73,3 +85,13 @@ def update_indexa(mdate):
     cols = [*portfolio.keys()]
     gsh.df_to_gspread(FILE_DATA, DF_INVEST, df_invest, mfilter, cols)
     gsh.df_to_gspread(FILE_DATA, DF_WORTH, df_worth, mfilter, cols)
+
+
+@flow(name="vtasks.indexa")
+def indexa(mdate):
+
+    mfilter = mdate.strftime("%Y-%m-01")
+
+    portfolio = query_portfolio()
+    df_invest, df_worth = read_invested_and_worth()
+    update_invested_and_worth(mfilter, portfolio, df_invest, df_worth)
