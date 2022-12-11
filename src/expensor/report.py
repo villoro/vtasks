@@ -1,18 +1,17 @@
-"""
-    Create the raw data for the reprot
-"""
-
 from datetime import datetime
+
+from prefect import task, get_run_logger
 
 import utils as u
 
 from . import constants as c
-from utils import log
 
 
-def main(mdate=datetime.now(), data=None):
+@task(name="vtasks.expensor.report")
+def create_report(mdate, data=None):
     """Creates the report"""
 
+    log = get_run_logger()
     mdate = mdate.replace(day=1)
 
     vdp = u.get_vdropbox()

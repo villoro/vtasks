@@ -7,17 +7,20 @@ from backups import backup
 from vbooks import vbooks
 from gcal import gcal
 from money_lover import money_lover
+from expensor import expensor
 
 
 @flow(name="vtasks")
 def main(mdate: date):
-    archive()
-    vbooks()
+    # archive()
+    # vbooks()
 
-    _gcal = gcal(mdate)
-    backup(wait_for=[_gcal])
+    # _gcal = gcal(mdate)
+    # backup(wait_for=[_gcal])
 
     _money_lover = money_lover()
+
+    expensor(mdate, wait_for=[_money_lover])  # _cryptos, _indexa
 
 
 if __name__ == "__main__":

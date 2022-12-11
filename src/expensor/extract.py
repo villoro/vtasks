@@ -1,24 +1,53 @@
-"""
-    Create the raw data for the reprot
-"""
-
 from datetime import date
+from collections import OrderedDict
 
 import numpy as np
 import pandas as pd
 
-from collections import OrderedDict
-from datetime import datetime
 from vpalette import get_colors
+from prefect import task, get_run_logger
+
+import utils as u
 
 from . import constants as c
-from .functions import filter_by_date
-from .functions import resample
-from .functions import serie_to_dict
-from .functions import series_to_dicts
-from .functions import smooth_serie
-from utils import get_vdropbox
-from utils import log
+
+
+def resample(df, period, mdate):
+    """Resample and fill missing periods"""
+
+    index = pd.date_range(df.index.min(), mdate, freq=period)
+    df = df.resample(period).sum().reindex(index).fillna(0)
+
+    # If working with years, cast the index to integer
+    if period == "YS":
+        df.index = df.index.year
+
+    return df
+
+
+def filter_by_date(dfs_in, mdate):
+    """
+    No data greater than mdate and complete missing months
+
+    Args:
+        dfs_in: dict with dataframes
+        mdate:  date of the report
+    """
+
+    dfs = dfs_in.copy()
+
+    # Get last date of month
+    mdate = pd.to_datetime(mdate) + pd.tseries.offsets.MonthEnd(1)
+
+    for name, df in dfs.items():
+
+        # Filter out future data
+        if df.index.name == c.COL_DATE:
+            df = df[df.index <= mdate]
+
+        dfs[name] = df
+
+    return dfs
 
 
 def get_categories(dfs, mtype):
@@ -55,12 +84,12 @@ def get_basic_traces(dfs, period, mdate):
     # Add savings ratio
     series[c.SAVINGS] = (100 * series[c.RESULT] / series[c.INCOMES]).apply(lambda x: max(0, x))
 
-    out = series_to_dicts(series)
+    out = u.series_to_dicts(series)
 
     # Append time averaged data
     if period == "MS":
         for name, serie in series.items():
-            out[f"{name}_trend"] = serie_to_dict(smooth_serie(serie))
+            out[f"{name}_trend"] = u.serie_to_dict(u.smooth_serie(serie))
 
     # Get by groups
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
@@ -73,7 +102,7 @@ def get_basic_traces(dfs, period, mdate):
             if x in df.columns:
                 aux[x] = df[x]
 
-        out[f"{name}_by_groups"] = series_to_dicts(aux)
+        out[f"{name}_by_groups"] = u.series_to_dicts(aux)
 
     return out
 
@@ -93,8 +122,8 @@ def get_investment_or_liquid(dfs, yml, entity):
     entity = entity.split("_")[0].title()
 
     out = {
-        entity: serie_to_dict(dfg["Total"]),
-        f"{entity}_trend": serie_to_dict(smooth_serie(dfg)["Total"]),
+        entity: u.serie_to_dict(dfg["Total"]),
+        f"{entity}_trend": u.serie_to_dict(u.smooth_serie(dfg)["Total"]),
     }
 
     aux = OrderedDict()
@@ -105,7 +134,7 @@ def get_investment_or_liquid(dfs, yml, entity):
 
         aux[name] = dfg[mlist].sum(axis=1)
 
-    out[f"{entity}_by_groups"] = series_to_dicts(aux)
+    out[f"{entity}_by_groups"] = u.series_to_dicts(aux)
 
     return out
 
@@ -124,9 +153,9 @@ def get_total_investments(data):
     income = pd.Series(data["month"][c.INCOMES])
 
     return {
-        "Total_Worth": serie_to_dict((liquid + worth).dropna()),
-        "Total_Invest": serie_to_dict((liquid + invest).dropna()),
-        "Total_Income": serie_to_dict(income.cumsum()),
+        "Total_Worth": u.serie_to_dict((liquid + worth).dropna()),
+        "Total_Invest": u.serie_to_dict((liquid + invest).dropna()),
+        "Total_Income": u.serie_to_dict(income.cumsum()),
     }
 
 
@@ -146,9 +175,9 @@ def get_salaries(dfs, mdate):
 
     return {
         "salary": {
-            "real": serie_to_dict(df["Total"]),
-            "full_time": serie_to_dict(df["EAGI"]),
-            "fixed": serie_to_dict(df["Fixed"]),
+            "real": u.serie_to_dict(df["Total"]),
+            "full_time": u.serie_to_dict(df["EAGI"]),
+            "fixed": u.serie_to_dict(df["Fixed"]),
         }
     }
 
@@ -161,12 +190,14 @@ def get_comparison_traces(dfs):
         dfs:    dict with dataframes
     """
 
+    log = get_run_logger()
+
     out = {}
 
     def get_one_trace(df, col=c.COL_AMOUNT):
         """Create the comparison trace"""
 
-        df = smooth_serie(df[[col]].resample("MS").sum())
+        df = u.smooth_serie(df[[col]].resample("MS").sum())
         df["Month"] = df.index.month
         df["Year"] = df.index.year
 
@@ -205,6 +236,8 @@ def get_pie_traces(dfs, mdate):
         dfs:    dict with dataframes
     """
 
+    log = get_run_logger()
+
     out = {}
     for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
 
@@ -215,7 +248,7 @@ def get_pie_traces(dfs, mdate):
 
             # Keep only present categories
             indexs = [x for x in get_categories(dfs, name) if x in serie.index]
-            return serie_to_dict(serie[indexs])
+            return u.serie_to_dict(serie[indexs])
 
         out[name] = {
             "month": export_trace(resample(df, "MS", mdate).iloc[-1, :]),
@@ -236,6 +269,8 @@ def get_dashboard(data, mdate):
         data:   dict with data
         mdate:  date of the report
     """
+
+    log = get_run_logger()
 
     traces = [c.EXPENSES, c.INCOMES, c.RESULT, c.LIQUID]
     traces += [x + "_trend" for x in traces] + ["Worth", "Invest"]
@@ -292,6 +327,8 @@ def get_dashboard(data, mdate):
 def get_ratios(data):
     """Calculate ratios"""
 
+    log = get_run_logger()
+
     aux = {}
     names = [
         c.INCOMES,
@@ -320,11 +357,11 @@ def get_ratios(data):
     # Drop nans and round values
     for name, serie in out.items():
         serie = serie.replace([np.inf, -np.inf], np.nan)
-        out[name] = serie_to_dict(serie.dropna())
+        out[name] = u.serie_to_dict(serie.dropna())
 
     out["Worth_by_groups"] = {}
     for name, values in data["month"]["Worth_by_groups"].items():
-        out["Worth_by_groups"][name] = serie_to_dict(
+        out["Worth_by_groups"][name] = u.serie_to_dict(
             100 * pd.Series(values) / pd.Series(data["month"]["Worth"])
         )
 
@@ -375,6 +412,8 @@ def get_bubbles(dfs, mdate, min_year=2011):
 
 def extract_sankey(data):
     """Calculate Sankey flows"""
+
+    log = get_run_logger()
 
     out = {}
     for tw in ["month", "year"]:
@@ -468,6 +507,7 @@ def add_colors(dfs, yml):
     It can't be named get_colors since that function already exists
     """
 
+    log = get_run_logger()
     out = {name: get_colors(data) for name, data in c.DEFAULT_COLORS.items()}
 
     # Liquid and investments colors
@@ -490,16 +530,18 @@ def add_colors(dfs, yml):
     return out
 
 
-def main(dfs, mdate=datetime.now(), export_data=False):
+@task(name="vtasks.expensor.extract")
+def extract_data(dfs, mdate, export_data=False):
     """Create the report"""
 
+    log = get_run_logger()
     mdate = mdate.replace(day=1)
 
     # Filter dates
     dfs = filter_by_date(dfs, mdate)
 
     # Get config info
-    vdp = get_vdropbox()
+    vdp = u.get_vdropbox()
     yml = vdp.read_yaml(c.FILE_CONFIG)
 
     out = {}

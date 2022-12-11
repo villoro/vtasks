@@ -1,7 +1,3 @@
-"""
-    Constants and config vars
-"""
-
 FILE_DATA = "expensor_data"
 
 PATH_EXPENSOR = "/Aplicaciones/expensor"

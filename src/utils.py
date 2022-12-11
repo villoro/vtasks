@@ -4,10 +4,9 @@ import re
 import sys
 import yaml
 
-from collections import OrderedDict
 from argparse import ArgumentParser
-from datetime import date
-from datetime import timedelta
+from collections import OrderedDict
+from datetime import date, timedelta
 from os import path
 from pathlib import Path
 from time import time

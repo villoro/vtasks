@@ -1,26 +1,24 @@
-"""
-    Create the raw data for the reprot
-"""
-
 from multiprocessing import Pool
 
 import pandas as pd
 
+from prefect import flow, task, get_run_logger
 
 from . import constants as c
-from . import create_report
-from . import extract_data
+from .extract import extract_data
+from .report import create_report
 from gspreadsheets import read_df_gdrive
-from prefect_task import vtask
 from utils import get_vdropbox
-from utils import log
 
 MIN_DATE = "2015-12-01"
 NUM_OF_JOBS_DEFAULT = 1  # If 1 or lower no multiprocessing
 
 
+@task(name="vtasks.expensor.read")
 def get_data():
     """Retrive dataframes"""
+
+    log = get_run_logger()
 
     # Get dfs
     log.debug("Reading excels from gdrive")
@@ -37,14 +35,18 @@ def get_data():
 def create_one_report(dfs, mdate):
     """Creates a report for one month"""
 
-    data = extract_data.main(dfs, mdate, export_data=False)
-    create_report.main(mdate, data=data)
+    log = get_run_logger()
 
-    log.success(f"Report {mdate:%Y-%m} created")
+    data = extract_data(dfs, mdate, export_data=False)
+    create_report(mdate, data=data)
+
+    log.info(f"Report {mdate:%Y-%m} created")
 
 
-@vtask
+@flow(name="vtasks.expensor")
 def expensor(mdate, n_jobs=NUM_OF_JOBS_DEFAULT):
+
+    log = get_run_logger()
 
     mdate = pd.to_datetime(mdate)
     # Reversed since first we want the latest month
