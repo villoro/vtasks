@@ -3,7 +3,7 @@ line-length = 100
 
 [tool.poetry]
 name = "vtasks"
-version = "4.0.0"
+version = "5.0.0"
 description = "Personal tasks scheduled with Luigi"
 authors = ["Arnau Villoro <arnau@villoro.com>"]
 maintainers = ["Arnau Villoro <arnau@villoro.com>"]
@@ -23,7 +23,7 @@ numpy = "^1.23.5"
 openpyxl = "^3.0.10"
 oyaml = "^1.0"
 pandas = "^1.5.2"
-prefect = "^1.1.0"
+prefect = "^2.7.1"
 pyarrow = "^10.0.1"
 pykrakenapi = "^0.3.1"
 regex = "^2022.10.31"
