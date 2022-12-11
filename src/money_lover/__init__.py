@@ -1,4 +1,1 @@
-from . import constants
-from . import process
-
-from .process import money_lover
+from .main import money_lover
