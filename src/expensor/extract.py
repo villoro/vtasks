@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 from vpalette import get_colors
-from prefect import task, get_run_logger
+from prefect import get_run_logger
 
 import utils as u
 
@@ -530,7 +530,6 @@ def add_colors(dfs, yml):
     return out
 
 
-@task(name="vtasks.expensor.extract")
 def extract_data(dfs, mdate, export_data=False):
     """Create the report"""
 

@@ -11,7 +11,6 @@ from gspreadsheets import read_df_gdrive
 from utils import get_vdropbox
 
 MIN_DATE = "2015-12-01"
-NUM_OF_JOBS_DEFAULT = 1  # If 1 or lower no multiprocessing
 
 
 @task(name="vtasks.expensor.read")
@@ -32,6 +31,7 @@ def get_data():
     return dfs
 
 
+@task(name="vtasks.expensor.report")
 def create_one_report(dfs, mdate):
     """Creates a report for one month"""
 
@@ -44,7 +44,7 @@ def create_one_report(dfs, mdate):
 
 
 @flow(name="vtasks.expensor")
-def expensor(mdate, n_jobs=NUM_OF_JOBS_DEFAULT):
+def expensor(mdate):
 
     log = get_run_logger()
 
@@ -54,18 +54,6 @@ def expensor(mdate, n_jobs=NUM_OF_JOBS_DEFAULT):
 
     dfs = get_data()
 
-    # Do n_jobs in parallel
-    if n_jobs > 1:
-        log.info(f"Doing reports in parallel with {n_jobs} jobs")
-
-        # Create tuples with arguments
-        args = [(dfs, x) for x in all_dates]
-
-        with Pool(n_jobs) as p:
-            p.starmap(create_one_report, args)
-
-    # No parallelization
-    else:
-        log.info(f"Doing reports without parallelization")
-        for x in all_dates:
-            create_one_report(dfs, x)
+    log.info(f"Doing reports without parallelization")
+    for x in all_dates:
+        create_one_report(dfs, x)

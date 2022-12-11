@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 
 from loguru import logger as log
-
+from prefect import get_run_logger
 from vcrypto import Cipher
 from vdropbox import Vdropbox
 
@@ -126,7 +126,7 @@ def get_vdropbox():
 
     global VDROPBOX
     if VDROPBOX is None:
-        VDROPBOX = Vdropbox(get_secret("DROPBOX_TOKEN"), log=log)
+        VDROPBOX = Vdropbox(get_secret("DROPBOX_TOKEN"), log=get_run_logger())
 
     return VDROPBOX
 

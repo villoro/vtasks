@@ -1,13 +1,12 @@
 from datetime import datetime
 
-from prefect import task, get_run_logger
+from prefect import get_run_logger
 
 import utils as u
 
 from . import constants as c
 
 
-@task(name="vtasks.expensor.report")
 def create_report(mdate, data=None):
     """Creates the report"""
 
