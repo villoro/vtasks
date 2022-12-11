@@ -3,13 +3,12 @@ import re
 from datetime import date
 from datetime import timedelta
 
+from prefect import task, get_run_logger
 
 from .files import files_regexs
-from prefect_task import vtask
 from utils import get_files_from_regex
 from utils import get_path
 from utils import get_vdropbox
-from utils import log
 
 YEAR = f"{date.today():%Y}"
 DAY = f"{date.today():%Y_%m_%d}"
@@ -24,6 +23,8 @@ def get_update_at(vdp, filename):
 
 def one_backup(vdp, path, regex):
     """Back up a list of files from a folder"""
+
+    log = get_run_logger()
 
     # Backup all files
     for path, filename, _ in get_files_from_regex(vdp, path, regex):
@@ -48,10 +49,11 @@ def one_backup(vdp, path, regex):
             log.debug(f"Skipping '{origin}' since has not been updated")
 
 
-@vtask
+@task(name="vtasks.backup.backup_files")
 def backup_files():
     """Back up all files from URIS"""
 
+    log = get_run_logger()
     vdp = get_vdropbox()
 
     for kwargs in files_regexs:

@@ -3,13 +3,7 @@ from datetime import timedelta
 
 from prefect import flow, task, get_run_logger
 
-from utils import (
-    get_files_from_regex,
-    get_path,
-    get_secret,
-    get_vdropbox,
-    read_yaml,
-)
+from utils import get_files_from_regex, get_path, get_secret, get_vdropbox, read_yaml
 
 PATH_OPERATIONS = get_path("src/archive/operations.yaml")
 OPERATIONS = read_yaml(PATH_OPERATIONS)
@@ -85,8 +79,8 @@ def extract_files(vdp, path, regex, output, pwd, kwargs):
 @flow(name="vtasks.archive")
 def archive():
 
-    vdp = get_vdropbox()
     log = get_run_logger()
+    vdp = get_vdropbox()
 
     # Rename some files
     for name, kwargs in OPERATIONS["renames"].items():
