@@ -10,6 +10,7 @@ from gcal import gcal
 from indexa import indexa
 from money_lover import money_lover
 from vbooks import vbooks
+from vprefect import vprefect
 
 
 @flow(name="vtasks")
@@ -25,6 +26,8 @@ def main(mdate: date):
     _indexa = indexa(mdate)
 
     expensor(mdate, wait_for=[_money_lover, _crypto, indexa])
+
+    vprefect()
 
 
 if __name__ == "__main__":
