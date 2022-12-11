@@ -3,12 +3,10 @@ import pandas as pd
 
 from requests.exceptions import ConnectionError
 from time import sleep
+from prefect import get_run_logger
 
-from utils import PATH_ROOT
-from utils import export_secret
-from utils import get_path
-from utils import get_secret
-from utils import log
+from utils import PATH_ROOT, export_secret, get_path, get_secret
+
 
 PATH_GSPREADSHEET_KEY = get_path("auth/gspreadsheets.json")
 
@@ -36,6 +34,7 @@ def get_gdrive_sheet(spreadsheet_name, sheet_name, retries=3):
         sheet_name:         name of the sheet inside the document
     """
 
+    log = get_run_logger()
     init_gdrive()
 
     msg_error = "ConnectionError ({}) when trying to get '{}/{}'. Details: {}"
@@ -138,6 +137,8 @@ def df_to_gspread(spreadsheet_name, sheet_name, df, mfilter, columns=None):
         columns:            which columns to update
     """
 
+    log = get_run_logger()
+
     # Get worksheet
     wks = get_gdrive_sheet(spreadsheet_name, sheet_name)
 
@@ -179,6 +180,7 @@ def update_cell(spreadsheet_name, sheet_name, cell, value):
         cell:               cell index
         value:              what to write
     """
+    log = get_run_logger()
 
     sheet = get_gdrive_sheet(spreadsheet_name, sheet_name)
 

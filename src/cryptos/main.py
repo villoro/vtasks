@@ -5,11 +5,12 @@ from datetime import date
 
 import gspreadsheets as gsh
 
+from prefect import flow, task
+
 from cryptos.kraken import get_balances
 from expensor.constants import DF_WORTH
 from expensor.constants import FILE_DATA
-from prefect_task import vtask
-from utils import log
+
 
 SPREADSHEET_CRYPTO = "crypto_data"
 SHEET_PRICES = "prices"
@@ -29,6 +30,7 @@ def get_market_cap(cryptos, order_magnitude=10**9):
     return {key: values["EUR"]["MKTCAP"] / order_magnitude for key, values in data["RAW"].items()}
 
 
+@task(name="vtasks.crypto.market_cap")
 def update_market_cap():
     """Update market capitalization in google spreadsheet"""
     volumes = get_market_cap(list(MAIN_CRYPTOS))
@@ -40,8 +42,6 @@ def update_market_cap():
 def get_crypto_prices(cryptos):
     """Get latest prices of a list of cryptos"""
 
-    log.info("Retriving crypto prices")
-
     # Query cryptos
     data = cryptocompare.get_price([*cryptos])
 
@@ -49,6 +49,7 @@ def get_crypto_prices(cryptos):
     return {i: x["EUR"] for i, x in data.items()}
 
 
+@task(name="vtasks.crypto.prices")
 def update_crypto_prices(mfilter):
     """Update latest cryptos prices"""
 
@@ -62,6 +63,7 @@ def update_crypto_prices(mfilter):
     gsh.df_to_gspread(SPREADSHEET_CRYPTO, SHEET_PRICES, df, mfilter)
 
 
+@task(name="vtasks.crypto.kraken_balances")
 def update_kraken_balances(mfilter):
     """Update balances from kraken"""
 
@@ -74,6 +76,7 @@ def update_kraken_balances(mfilter):
     gsh.df_to_gspread(SPREADSHEET_CRYPTO, SHEET_VOL_KRAKEN, df, mfilter)
 
 
+@task(name="vtasks.crypto.expensor")
 def update_expensor(mfilter):
     """Update expensor cryptos worth based on crypto values"""
 
@@ -91,8 +94,8 @@ def update_expensor(mfilter):
     gsh.df_to_gspread(FILE_DATA, DF_WORTH, df, mfilter, col_crypto)
 
 
-@vtask
-def update_cryptos(mdate):
+@flow(name="vtasks.crypto")
+def crypto(mdate):
 
     mfilter = mdate.strftime("%Y-%m-01")
 
