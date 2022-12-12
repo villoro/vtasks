@@ -36,6 +36,7 @@ black = "^22.10.0"
 jupyter = "^1.0.0"
 notebook = "^6.5.2"
 pre-commit = "^2.20.0"
+tqdm = "^4.64.1"
 
 [build-system]
 requires = ["poetry-core"]
