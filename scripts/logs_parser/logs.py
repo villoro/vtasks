@@ -6,6 +6,7 @@ from datetime import timedelta, datetime
 import pandas as pd
 
 from tqdm import tqdm
+from pydantic import BaseModel
 
 PATH_LOGS = "C:/GIT/vtasks/logs"
 REGEX_CLEAN_TIME = re.compile(
@@ -16,8 +17,17 @@ REGEX_LUIGI_END = re.compile(
     r"-\s(?P<task>[\w_]*)\s(ended)\s(in)\s(?P<time>\d*\.\d*)\s(?P<unit>(min|s))"
 )
 REGEX_LUIGI_END_VTASKS = re.compile(r"- End of (?P<task>vtasks)")
-REGEX_PREFECT_START = re.compile(r"- Task '(?P<task>[\w_]*)': Starting task run")
-REGEX_PREFECT_END = re.compile(r"- Task '(?P<task>[\w_]*)': finished task run")
+REGEX_PREFECT_START = re.compile(r"- Task '(?P<task>[\w_]*)': [Ss]tarting task run")
+REGEX_PREFECT_END = re.compile(
+    r"- Task '(?P<task>[\w_]*)': [Ff]inished task run for task with final state: '(?P<state>\w*)'"
+)
+
+
+class Task(BaseModel):
+    name: str
+    start: datetime
+    end: datetime = None
+    status: str = "Unfinished"
 
 
 def get_log_paths():
@@ -50,10 +60,43 @@ def extract_times(lines):
     return data
 
 
-def parse_all_logs(tqdm_f=tqdm):
+def extract_tasks_smart(lines):
+    completed = []
+    started = {}
+
+    for x in lines:
+
+        # Starts
+        for regex in REGEX_LUIGI_START, REGEX_PREFECT_START:
+            out = regex.search(x)
+            if out:
+                name = out.groupdict()["task"]
+                started[name] = Task(name=name, start=x[:23])
+
+        for regex in REGEX_LUIGI_END, REGEX_LUIGI_END_VTASKS, REGEX_PREFECT_END:
+            out = regex.search(x)
+            if out:
+                data = out.groupdict()
+                name = data["task"]
+
+                if not name in started:
+                    continue
+
+                task = started.pop(name)
+                task.end = x[:23]
+                if "state" in data:
+                    task.status = data["state"]
+
+                completed.append(Task(**task.dict()))
+
+    completed += list(started.values())
+    return [x.dict() for x in completed]
+
+
+def parse_all_logs(extract_func, tqdm_f=tqdm):
     data = []
     for path in tqdm_f(get_log_paths()):
-        data += extract_times(read_lines(path))
+        data += extract_func(read_lines(path))
 
     return pd.DataFrame(data)
 
