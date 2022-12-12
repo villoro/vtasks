@@ -27,7 +27,7 @@ class Task(BaseModel):
     name: str
     start: datetime
     end: datetime = None
-    status: str = "Unfinished"
+    state: str = "Unfinished"
 
 
 def get_log_paths():
@@ -85,7 +85,7 @@ def extract_tasks_smart(lines):
                 task = started.pop(name)
                 task.end = x[:23]
                 if "state" in data:
-                    task.status = data["state"]
+                    task.state = data["state"]
 
                 completed.append(Task(**task.dict()))
 
