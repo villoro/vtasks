@@ -15,6 +15,7 @@ COL_CREATED = "created"
 COL_NAME = "name"
 COL_FLOW_ID = "flow_id"
 COL_FLOW_NAME = "flow_name"
+COL_STATE_NAME = "state_name"
 
 PATH_VTASKS = "/Aplicaciones/vtasks"
 PATH_FLOW_RUNS = f"{PATH_VTASKS}/flows.parquet"
@@ -80,6 +81,9 @@ def process_flow_runs():
     flow_runs = asyncio.run(read_flow_runs())
 
     df_new = parse_prefect(flow_runs, FlowRun)
+
+    # Exclude running flows
+    df_new = df_new[~(df_new[COL_STATE_NAME] == "Running")]
 
     # Retrive flow_name from flows
     df_new = add_flow_name(df_new, flows)
