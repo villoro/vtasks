@@ -1,7 +1,7 @@
 import re
 import os
 
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 
 import pandas as pd
 
@@ -127,3 +127,17 @@ def to_prefect_data(df_in):
     cols = [x for x in df.columns if x not in df_in.columns]
 
     return df[cols]
+
+
+def assing_state(df_in):
+
+    df = df_in.copy()
+
+    mask = (
+        (df["start"].dt.date > date(2020, 11, 15))
+        & (df["name"] == "vtasks")
+        & (df["state"] == "Unfinished")
+    )
+
+    df.loc[mask, "state"] = "Completed"
+    return df
