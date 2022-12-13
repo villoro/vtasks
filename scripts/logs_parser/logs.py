@@ -12,7 +12,7 @@ PATH_LOGS = "C:/GIT/vtasks/logs"
 REGEX_CLEAN_TIME = re.compile(
     r"(?P<task>[\w_]*)\s(ended|done)\s(in)\s(?P<time>\d*\.\d*)\s(?P<unit>(min|s))"
 )
-REGEX_LUIGI_START = re.compile(r"-\sStarting\s(?P<task>\w*)")
+REGEX_LUIGI_SATRT = re.compile(r"-\sStarting\s(?P<task>\w*)")
 REGEX_LUIGI_END = re.compile(
     r"-\s(?P<task>[\w_]*)\s(ended)\s(in)\s(?P<time>\d*\.\d*)\s(?P<unit>(min|s))"
 )
@@ -27,7 +27,8 @@ class Task(BaseModel):
     name: str
     start: datetime
     end: datetime = None
-    state: str = "Unfinished"
+    state: str = "Unknown"
+    run: int
 
 
 def get_log_paths():
@@ -61,8 +62,10 @@ def extract_times(lines):
 
 
 def extract_tasks_smart(lines):
-    completed = []
+    terminal = []
     started = {}
+
+    run = 0
 
     for x in lines:
 
@@ -71,7 +74,17 @@ def extract_tasks_smart(lines):
             out = regex.search(x)
             if out:
                 name = out.groupdict()["task"]
-                started[name] = Task(name=name, start=x[:23])
+
+                if name in ["vtasks", "run"]:
+                    run += 1
+
+                if name in started:
+                    failed = started[name]
+                    failed.state = "Failed"
+
+                    terminal.append(failed)
+
+                started[name] = Task(name=name, start=x[:23], run=run)
 
         for regex in REGEX_LUIGI_END, REGEX_LUIGI_END_VTASKS, REGEX_PREFECT_END:
             out = regex.search(x)
@@ -87,10 +100,10 @@ def extract_tasks_smart(lines):
                 if "state" in data:
                     task.state = data["state"]
 
-                completed.append(Task(**task.dict()))
+                terminal.append(Task(**task.dict()))
 
-    completed += list(started.values())
-    return [x.dict() for x in completed]
+    terminal += list(started.values())
+    return [x.dict() for x in terminal]
 
 
 def parse_all_logs(extract_func, tqdm_f=tqdm):
@@ -98,7 +111,7 @@ def parse_all_logs(extract_func, tqdm_f=tqdm):
     for path in tqdm_f(get_log_paths()):
         data += extract_func(read_lines(path))
 
-    return pd.DataFrame(data)
+    return pd.DataFrame(data).sort_values("start")
 
 
 def cast_columns(df_in):
@@ -136,7 +149,7 @@ def assing_state(df_in):
     mask = (
         (df["start"].dt.date > date(2020, 11, 15))
         & (df["name"] == "vtasks")
-        & (df["state"] == "Unfinished")
+        & (df["state"] == "Unknown")
     )
 
     df.loc[mask, "state"] = "Completed"
