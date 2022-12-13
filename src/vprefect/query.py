@@ -73,7 +73,7 @@ def process_flow_runs():
     df_new = parse_prefect(flow_runs, FlowRun)
 
     # Exclude running flows
-    df_new = df_new[~(df_new[c.COL_STATE] == c.STATE_RUNNING)]
+    df_new = df_new[df_new[c.COL_STATE] != c.STATE_RUNNING]
 
     # Retrive flow_name from flows
     df_new = add_flow_name(df_new, flows)
