@@ -2,7 +2,9 @@ import re
 import os
 
 from datetime import timedelta, datetime, date
+from pathlib import Path
 
+import yaml
 import pandas as pd
 
 from tqdm import tqdm
@@ -23,6 +25,8 @@ REGEX_PREFECT_END = re.compile(
 )
 
 LAST_LUIGI_AT = datetime(2020, 10, 18, 11, 57, 0)
+
+PATH_MAPPINGS = Path(__file__).parent / "mappings.yaml"
 
 
 class Task(BaseModel):
@@ -165,6 +169,11 @@ def mark_failed_runs(df_in, tqdm_f=tqdm):
     return df
 
 
+def get_maps():
+    with open(PATH_MAPPINGS, "r") as file:
+        return yaml.safe_load(file)
+
+
 def clean_results(df_in, tqdm_f=tqdm):
     df = df_in.copy()
 
@@ -192,5 +201,8 @@ def clean_results(df_in, tqdm_f=tqdm):
     df["time"] = None
     mask = df["end"].notna()
     df.loc[mask, "time"] = (df.loc[mask, "end"] - df.loc[mask, "start"]) / timedelta(seconds=1)
+
+    # Map task names
+    df["name"] = df["name"].map(get_maps())
 
     return df
