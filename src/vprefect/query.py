@@ -9,16 +9,7 @@ from prefect import task, get_run_logger
 import utils as u
 
 from .models import FlowRun, TaskRun, Flow
-
-COL_EXPORTED_AT = "exported_at"
-COL_CREATED = "created"
-COL_NAME = "name"
-COL_FLOW_ID = "flow_id"
-COL_FLOW_NAME = "flow_name"
-
-PATH_VTASKS = "/Aplicaciones/vtasks"
-PATH_FLOW_RUNS = f"{PATH_VTASKS}/flows.parquet"
-PATH_TASK_RUNS = f"{PATH_VTASKS}/tasks.parquet"
+from . import constants as c
 
 
 async def read_flows():
@@ -45,7 +36,7 @@ def parse_prefect(prefect_list, Model):
 
 
 def deduplicate(df_in):
-    df = df_in.sort_values([COL_EXPORTED_AT, COL_CREATED]).copy()
+    df = df_in.sort_values([c.COL_EXPORTED_AT, c.COL_CREATED]).copy()
     return df[~df.index.duplicated(keep="first")]
 
 
@@ -68,8 +59,8 @@ def add_flow_name(df_in, flows):
 
     df = df_in.copy()
 
-    flow_map = parse_prefect(flows, Flow)[COL_NAME].to_dict()
-    df[COL_FLOW_NAME] = df[COL_FLOW_ID].map(flow_map)
+    flow_map = parse_prefect(flows, Flow)[c.COL_NAME].to_dict()
+    df[c.COL_FLOW_NAME] = df[c.COL_FLOW_ID].map(flow_map)
 
     return df
 
@@ -84,7 +75,7 @@ def process_flow_runs():
     # Retrive flow_name from flows
     df_new = add_flow_name(df_new, flows)
 
-    update_parquet(df_new, PATH_FLOW_RUNS)
+    update_parquet(df_new, c.PATH_FLOW_RUNS)
 
 
 @task(name="vtasks.vprefect.task_runs")
@@ -92,4 +83,4 @@ def process_task_runs():
     task_runs = asyncio.run(read_task_runs())
 
     df_new = parse_prefect(task_runs, TaskRun)
-    update_parquet(df_new, PATH_TASK_RUNS)
+    update_parquet(df_new, c.PATH_TASK_RUNS)
