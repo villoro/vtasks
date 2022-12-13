@@ -1,5 +1,6 @@
-run: vtasks
+vtasks: vtasks
 vbooks: vtasks.vbooks
+VbooksTask: vtasks.vbooks
 expensor: vtasks.expensor
 ReportsTask: vtasks.expensor
 reports: vtasks.expensor
@@ -10,10 +11,11 @@ flights: vtasks.flights
 FlightsTask: vtasks.flights
 merge_flights_history: vtasks.flights_history
 update_cryptos: vtasks.crypto
-backup_files: vtasks.archive-1
-clean_backups: vtasks.archive-2
-archive: vtasks.archive-3
-gcal_report: vtasks.gcal-1
-do_summary: vtasks.gcal-2
-extract_gcal_confusions: vtasks.gcal-3
-export_calendar_events: vtasks.gcal-4
+backup_files: vtasks.archive
+clean_backups: vtasks.archive
+archive: vtasks.archive
+gcal_report: vtasks.gcal
+do_summary: vtasks.gcal
+extract_gcal_confusions: vtasks.gcal
+export_calendar_events: vtasks.gcal
+ExportCalendarEventsTask: vtasks.gcal

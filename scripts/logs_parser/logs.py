@@ -12,7 +12,7 @@ PATH_LOGS = "C:/GIT/vtasks/logs"
 REGEX_CLEAN_TIME = re.compile(
     r"(?P<task>[\w_]*)\s(ended|done)\s(in)\s(?P<time>\d*\.\d*)\s(?P<unit>(min|s))"
 )
-REGEX_LUIGI_SATRT = re.compile(r"-\sStarting\s(?P<task>\w*)")
+REGEX_LUIGI_START = re.compile(r"-\sStarting\s(?P<task>\w*)")
 REGEX_LUIGI_END = re.compile(
     r"-\s(?P<task>[\w_]*)\s(ended)\s(in)\s(?P<time>\d*\.\d*)\s(?P<unit>(min|s))"
 )
@@ -21,6 +21,8 @@ REGEX_PREFECT_START = re.compile(r"- Task '(?P<task>[\w_]*)': [Ss]tarting task r
 REGEX_PREFECT_END = re.compile(
     r"- Task '(?P<task>[\w_]*)': [Ff]inished task run for task with final state: '(?P<state>\w*)'"
 )
+
+LAST_DAY_LUIGI = date(2020, 11, 15)
 
 
 class Task(BaseModel):
@@ -147,7 +149,7 @@ def assing_state(df_in):
     df = df_in.copy()
 
     mask = (
-        (df["start"].dt.date > date(2020, 11, 15))
+        (df["start"].dt.date > LAST_DAY_LUIGI)
         & (df["name"] == "vtasks")
         & (df["state"] == "Unknown")
     )
