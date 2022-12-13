@@ -1,7 +1,7 @@
 import re
 import os
 
-from datetime import timedelta, datetime, date
+from datetime import timedelta, datetime, date, timezone
 from pathlib import Path
 
 import yaml
@@ -241,10 +241,10 @@ def to_prefect_data(df_in):
     df = df_in.copy()
 
     df["state_name"] = df["state"].map({0: "Failed", 1: "Completed"})
-    df["created"] = df["start"]
-    df["exported_at"] = datetime.now()
-    df["start_time"] = df["start"]
-    df["end_time"] = df["end"]
+    df["created"] = df["start"].dt.tz_localize(timezone.utc)
+    df["exported_at"] = datetime.now(timezone.utc)
+    df["start_time"] = df["start"].dt.tz_localize(timezone.utc)
+    df["end_time"] = df["end"].dt.tz_localize(timezone.utc)
     df["total_run_time"] = df["time"]
     df["flow_name"] = df["name"]
     df["run_count"] = df["run"]

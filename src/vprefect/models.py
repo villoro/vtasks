@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from uuid import UUID
 from typing import Optional
@@ -26,7 +26,7 @@ class BasePrefect(BaseModel):
 
     # Dates
     created: datetime
-    exported_at: datetime = datetime.now()
+    exported_at: datetime = datetime.now(timezone.utc)
     start_time: datetime
     end_time: Optional[datetime] = None
 

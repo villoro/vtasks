@@ -1,0 +1,108 @@
+from datetime import datetime, timezone
+
+import asyncio
+import pandas as pd
+
+from prefect.client import get_client
+from prefect import task, get_run_logger
+
+import utils as u
+
+from .models import FlowRun, TaskRun, Flow
+from . import constants as c
+
+
+async def read_flows():
+    """extract task runs"""
+    client = get_client()
+    return await client.read_flows()
+
+
+async def read_flow_runs():
+    """extract flow runs"""
+    client = get_client()
+    return await client.read_flow_runs()
+
+
+async def read_task_runs():
+    """extract task runs"""
+    client = get_client()
+    return await client.read_task_runs()
+
+
+def handle_localization(df_in):
+    df = df_in.copy()
+
+    # There has been some problems with timezones,
+    # make sure to remove them everywhere
+    for col in [c.COL_CREATED, c.COL_EXPORTED_AT, c.COL_START, c.COL_END]:
+
+        # Skip columns that are not present in some models
+        if col not in df.columns:
+            continue
+
+        df[col] = df[col].dt.tz_localize(None)
+
+    return df
+
+
+def parse_prefect(prefect_list, Model):
+    data = [Model(**x.dict()).dict() for x in prefect_list]
+    df = pd.DataFrame(data).set_index("id")
+    return handle_localization(df)
+
+
+def deduplicate(df_in):
+    df = df_in.copy()
+    df = df.sort_values([c.COL_CREATED, c.COL_EXPORTED_AT])
+    return df[~df.index.duplicated(keep="first")]
+
+
+def update_parquet(df_new, parquet_path):
+
+    vdp = u.get_vdropbox()
+
+    if vdp.file_exists(parquet_path):
+        df_history = vdp.read_parquet(parquet_path)
+        df_history = handle_localization(df_history)
+
+        df = pd.concat([df_new, df_history])
+        df = deduplicate(df)
+    else:
+        df = df_new.copy()
+
+    vdp.write_parquet(df, parquet_path)
+
+
+def add_flow_name(df_in, flows):
+
+    df = df_in.copy()
+
+    flow_map = parse_prefect(flows, Flow)[c.COL_NAME].to_dict()
+    df[c.COL_FLOW_NAME] = df[c.COL_FLOW_ID].map(flow_map)
+
+    return df
+
+
+@task(name="vtasks.vprefect.flow_runs")
+def process_flow_runs():
+    flows = asyncio.run(read_flows())
+    flow_runs = asyncio.run(read_flow_runs())
+
+    df_new = parse_prefect(flow_runs, FlowRun)
+
+    # Exclude running flows
+    df_new = df_new[df_new[c.COL_STATE] != c.STATE_RUNNING]
+
+    # Retrive flow_name from flows
+    df_new = add_flow_name(df_new, flows)
+
+    update_parquet(df_new, c.PATH_FLOW_RUNS)
+
+
+@task(name="vtasks.vprefect.task_runs")
+def process_task_runs():
+    task_runs = asyncio.run(read_task_runs())
+
+    df_new = parse_prefect(task_runs, TaskRun)
+    update_parquet(df_new, c.PATH_TASK_RUNS)
