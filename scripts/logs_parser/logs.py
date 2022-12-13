@@ -205,4 +205,30 @@ def clean_results(df_in, tqdm_f=tqdm):
     # Map task names
     df["name"] = df["name"].map(get_maps())
 
+    # Drop unwanted states
+    df = df[df["state"].isin(["Failed", "Success", "Stopped", "TriggerFailed"])]
+
     return df
+
+
+def merge_task_into_flows(df_in):
+    df = df_in.copy()
+
+    df.loc[:, "state_code"] = 0
+    df.loc[df["state"] == "Success", "state_code"] = 1
+
+    return (
+        df.groupby(["name", "day", "run"])
+        .agg(
+            **{
+                "start": pd.NamedAgg(column="start", aggfunc="min"),
+                "end": pd.NamedAgg(column="end", aggfunc="max"),
+                "time": pd.NamedAgg(column="time", aggfunc="sum"),
+                "state": pd.NamedAgg(column="state_code", aggfunc="prod"),
+            }
+        )
+        .reset_index()
+        .sort_values("start")
+        .reset_index(drop=True)
+    )
+    # df.loc[df["end"].isna(), "time"] = None
