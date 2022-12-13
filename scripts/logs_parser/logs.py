@@ -22,7 +22,7 @@ REGEX_PREFECT_END = re.compile(
     r"- Task '(?P<task>[\w_]*)': [Ff]inished task run for task with final state: '(?P<state>\w*)'"
 )
 
-LAST_DAY_LUIGI = date(2020, 11, 15)
+LAST_LUIGI_AT = datetime(2020, 10, 18, 11, 57, 0)
 
 
 class Task(BaseModel):
@@ -48,6 +48,7 @@ def read_lines(path):
     return data.split("\n")
 
 
+# deprecated
 def extract_times(lines):
     data = []
     for x in lines:
@@ -110,12 +111,13 @@ def extract_tasks_smart(lines):
 
 def parse_all_logs(extract_func, tqdm_f=tqdm):
     data = []
-    for path in tqdm_f(get_log_paths()):
+    for path in tqdm_f(get_log_paths(), desc="Parsing logs"):
         data += extract_func(read_lines(path))
 
     return pd.DataFrame(data).sort_values("start")
 
 
+# deprecated
 def cast_columns(df_in):
     df = df_in.copy()
 
@@ -128,6 +130,7 @@ def cast_columns(df_in):
     return df[["timestamp", "task", "time"]]
 
 
+# deprecated
 def to_prefect_data(df_in):
     df = df_in.copy()
 
@@ -144,15 +147,50 @@ def to_prefect_data(df_in):
     return df[cols]
 
 
-def assing_state(df_in):
-
+def mark_failed_runs(df_in, tqdm_f=tqdm):
     df = df_in.copy()
 
     mask = (
-        (df["start"].dt.date > LAST_DAY_LUIGI)
-        & (df["name"] == "vtasks")
-        & (df["state"] == "Unknown")
+        df["state"].isin(["Failed", "TriggerFailed"])
+        & (df["name"] != "vtasks")
+        & (df["name"] != "vtasks")
     )
+    df_failed_runs = df[mask].groupby(["day", "run"])["name"].count().to_frame().reset_index()
 
-    df.loc[mask, "state"] = "Completed"
+    rows = [row for _, row in df_failed_runs.iterrows()]
+    for row in tqdm_f(rows, desc="Marking failed"):
+        mask = (df["day"] == row["day"]) & (df["run"] == row["run"]) & (df["name"] == "vtasks")
+        df.loc[mask, "state"] = "Failed"
+
+    return df
+
+
+def clean_results(df_in, tqdm_f=tqdm):
+    df = df_in.copy()
+
+    # Remove prefect params since they are not real tasks
+    df = df[~df["name"].isin(["pro", "mdate"])]
+
+    df["day"] = df["start"].dt.date
+
+    # Fix Luigi States
+    mask = (df["start"] < LAST_LUIGI_AT) & df["end"].notna() & (df["state"] == "Unknown")
+    df.loc[mask, "state"] = "Success"
+
+    # Mark failed
+    df = mark_failed_runs(df, tqdm_f)
+
+    # Mark prefect correct runs
+    mask = (df["start"] > LAST_LUIGI_AT) & df["end"].notna() & (df["state"] == "Unknown")
+    df.loc[mask, "state"] = "Success"
+
+    # Mark stopped runs
+    mask = df["end"].isna() & (df["state"] == "Unknown")
+    df.loc[mask, "state"] = "Stopped"
+
+    # Add time spent
+    df["time"] = None
+    mask = df["end"].notna()
+    df.loc[mask, "time"] = (df.loc[mask, "end"] - df.loc[mask, "start"]) / timedelta(seconds=1)
+
     return df
