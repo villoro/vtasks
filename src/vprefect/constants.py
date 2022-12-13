@@ -8,6 +8,7 @@ COL_START = "start_time"
 COL_DAY = "day"
 
 STATE_COMPLETED = "Completed"
+STATE_RUNNING = "Running"
 
 PATH_VTASKS = "/Aplicaciones/vtasks"
 PATH_FLOW_RUNS = f"{PATH_VTASKS}/flows.parquet"
