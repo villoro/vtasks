@@ -113,9 +113,9 @@ def extract_tasks_smart(lines):
     return [x.dict() for x in terminal]
 
 
-def parse_all_logs(extract_func, tqdm_f=tqdm):
+def parse_all_logs(extract_func):
     data = []
-    for path in tqdm_f(get_log_paths(), desc="Parsing logs"):
+    for path in tqdm(get_log_paths(), desc="Parsing logs"):
         data += extract_func(read_lines(path))
 
     return pd.DataFrame(data).sort_values("start")
@@ -134,24 +134,7 @@ def cast_columns(df_in):
     return df[["timestamp", "task", "time"]]
 
 
-# deprecated
-def to_prefect_data(df_in):
-    df = df_in.copy()
-
-    df["state_name"] = "Completed"
-    df["created"] = df["timestamp"]
-    df["exported_at"] = datetime.now()
-    df["start_time"] = df["timestamp"] - df["time"].apply(lambda x: timedelta(seconds=x))
-    df["end_time"] = df["timestamp"]
-    df["total_run_time"] = df["time"]
-    df["flow_name"] = df["task"]
-
-    cols = [x for x in df.columns if x not in df_in.columns]
-
-    return df[cols]
-
-
-def mark_failed_runs(df_in, tqdm_f=tqdm):
+def mark_failed_runs(df_in):
     df = df_in.copy()
 
     mask = (
@@ -162,7 +145,7 @@ def mark_failed_runs(df_in, tqdm_f=tqdm):
     df_failed_runs = df[mask].groupby(["day", "run"])["name"].count().to_frame().reset_index()
 
     rows = [row for _, row in df_failed_runs.iterrows()]
-    for row in tqdm_f(rows, desc="Marking failed"):
+    for row in tqdm(rows, desc="Marking failed"):
         mask = (df["day"] == row["day"]) & (df["run"] == row["run"]) & (df["name"] == "vtasks")
         df.loc[mask, "state"] = "Failed"
 
@@ -174,7 +157,7 @@ def get_maps():
         return yaml.safe_load(file)
 
 
-def clean_results(df_in, tqdm_f=tqdm):
+def clean_results(df_in):
     df = df_in.copy()
 
     # Remove prefect params since they are not real tasks
@@ -187,7 +170,7 @@ def clean_results(df_in, tqdm_f=tqdm):
     df.loc[mask, "state"] = "Success"
 
     # Mark failed
-    df = mark_failed_runs(df, tqdm_f)
+    df = mark_failed_runs(df)
 
     # Mark prefect correct runs
     mask = (df["start"] > LAST_LUIGI_AT) & df["end"].notna() & (df["state"] == "Unknown")
@@ -217,7 +200,7 @@ def merge_task_into_flows(df_in):
     df.loc[:, "state_code"] = 0
     df.loc[df["state"] == "Success", "state_code"] = 1
 
-    return (
+    df = (
         df.groupby(["name", "day", "run"])
         .agg(
             **{
@@ -231,4 +214,52 @@ def merge_task_into_flows(df_in):
         .sort_values("start")
         .reset_index(drop=True)
     )
-    # df.loc[df["end"].isna(), "time"] = None
+    df.loc[df["end"].isna(), "time"] = None
+    mask = (df["end"] - df["start"]) / timedelta(seconds=1) / df["time"] > 1.0
+    df.loc[mask, "start"] = df.loc[mask, "end"] - df.loc[mask, "time"].apply(
+        lambda x: timedelta(seconds=x)
+    )
+    return df
+
+
+def proper_index(df_in):
+    df = df_in.copy()
+
+    df["id"] = ""
+    df.loc[df["start"] < LAST_LUIGI_AT, "id"] = "luigi-"
+    df.loc[df["start"] > LAST_LUIGI_AT, "id"] = "prefect-"
+
+    df["id"] = df["id"] + df.index.astype(str)
+
+    df = df.set_index("id", drop=True)
+    df.index.name = ""
+
+    return df
+
+
+def to_prefect_data(df_in):
+    df = df_in.copy()
+
+    df["state_name"] = df["state"].map({0: "Failed", 1: "Completed"})
+    df["created"] = df["start"]
+    df["exported_at"] = datetime.now()
+    df["start_time"] = df["start"]
+    df["end_time"] = df["end"]
+    df["total_run_time"] = df["time"]
+    df["flow_name"] = df["name"]
+    df["run_count"] = df["run"]
+
+    cols = [x for x in df.columns if x not in df_in.columns]
+    return df[cols]
+
+
+def main():
+    dfg = parse_all_logs(extract_tasks_smart)
+    dfg = clean_results(dfg)
+    dfg.to_parquet("old_tasks.parquet")
+
+    df = merge_task_into_flows(dfg)
+    df = proper_index(df)
+    df = to_prefect_data(df)
+    df.to_parquet("flows.parquet")
+    return dfg, df
