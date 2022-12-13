@@ -5,6 +5,7 @@ COL_FLOW_ID = "flow_id"
 COL_FLOW_NAME = "flow_name"
 COL_STATE = "state_name"
 COL_START = "start_time"
+COL_END = "end_time"
 COL_DAY = "day"
 
 STATE_COMPLETED = "Completed"

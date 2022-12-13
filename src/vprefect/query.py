@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import asyncio
 import pandas as pd
@@ -30,13 +30,31 @@ async def read_task_runs():
     return await client.read_task_runs()
 
 
+def handle_localization(df_in):
+    df = df_in.copy()
+
+    # There has been some problems with timezones,
+    # make sure to remove them everywhere
+    for col in [c.COL_CREATED, c.COL_EXPORTED_AT, c.COL_START, c.COL_END]:
+
+        # Skip columns that are not present in some models
+        if col not in df.columns:
+            continue
+
+        df[col] = df[col].dt.tz_localize(None)
+
+    return df
+
+
 def parse_prefect(prefect_list, Model):
     data = [Model(**x.dict()).dict() for x in prefect_list]
-    return pd.DataFrame(data).set_index("id")
+    df = pd.DataFrame(data).set_index("id")
+    return handle_localization(df)
 
 
 def deduplicate(df_in):
-    df = df_in.sort_values([c.COL_EXPORTED_AT, c.COL_CREATED]).copy()
+    df = df_in.copy()
+    df = df.sort_values([c.COL_CREATED, c.COL_EXPORTED_AT])
     return df[~df.index.duplicated(keep="first")]
 
 
@@ -46,6 +64,7 @@ def update_parquet(df_new, parquet_path):
 
     if vdp.file_exists(parquet_path):
         df_history = vdp.read_parquet(parquet_path)
+        df_history = handle_localization(df_history)
 
         df = pd.concat([df_new, df_history])
         df = deduplicate(df)
