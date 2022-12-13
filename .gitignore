@@ -45,8 +45,9 @@ dist/
 runs/
 logs/
 
-# Notebooks at src
+# Notebooks at src/scripts
 src/*.ipynb
+scripts/**/*.ipynb
 
 # Auth jsons
 auth/*
