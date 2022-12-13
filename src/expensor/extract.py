@@ -501,7 +501,7 @@ def get_colors_comparisons(dfs):
     return out
 
 
-def add_colors(dfs, yml):
+def extract_colors(dfs, yml):
     """
     Get colors from config file.
     It can't be named get_colors since that function already exists
@@ -566,7 +566,7 @@ def extract_data(dfs, mdate, export_data=False):
     out["bubbles"] = get_bubbles(dfs, mdate)
     out["sankey"] = extract_sankey(out)
 
-    out["colors"] = add_colors(dfs, yml)
+    out["colors"] = extract_colors(dfs, yml)
 
     if export_data:
         vdp.write_yaml(out, f"{c.PATH_EXPENSOR}/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")

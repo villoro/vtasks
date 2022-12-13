@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {{ title }}
+{% endblock %}
+
+{% block body %}
+<!-- DASH -->
+<div id="dashboard" class="section w3-center">
+  <h1>Vtasks Report</h1>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="DASH_avg_time_trend" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="DASH_avg_time" class="plot" style="height: 450px"></div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block plots %}
+<script>
+
+  // DEFAULT OPTIONS
+  Highcharts.setOptions({
+    credits: false,
+    yAxis: {
+      title: {text: null}
+    },
+    plotOptions: {
+      series: {
+        marker: {enabled: false},
+        stickyTracking: false
+      }
+    }
+  });
+
+  // PLOT SHARED CONFIGURATIONS
+  const plot_datetime = {
+    xAxis: {type: 'datetime'},
+    chart: {zoomType: "x"},
+  }
+
+  // DASHBOARD SECTION
+  Highcharts.chart('DASH_avg_time_trend', {
+    ...plot_datetime,
+    title: {text: 'Flow average time trend'},
+    series: [
+      {% for name, values in times_trend.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{% for mdate, value in values.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('DASH_avg_time', {
+    ...plot_datetime,
+    title: {text: 'Flow average time'},
+    series: [
+      {% for name, values in times.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{% for mdate, value in values.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+
+</script>
+{% endblock %}
