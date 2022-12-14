@@ -1,4 +1,4 @@
-import os
+import subprocess
 
 from argparse import ArgumentParser
 from datetime import date
@@ -22,7 +22,7 @@ PREFECT_LOGIN = "prefect cloud login --key {}"
 
 def prefect_login():
     login = PREFECT_LOGIN.format(get_secret("PREFECT_TOKEN"))
-    os.system(login)
+    subprocess.run(login, shell=True)
 
 
 def detect_env():
