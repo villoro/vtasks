@@ -26,8 +26,8 @@ t/flights:
 - src/flights/**/*
 
 t/gcalendar:
-- src/gcalendar/*
-- src/gcalendar/**/*
+- src/gcal/*
+- src/gcal/**/*
 - templates/base.html
 - templates/gcalendar.html
 
@@ -44,3 +44,11 @@ t/vbooks:
 - src/vbooks/**/*
 - templates/base.html
 - templates/vbooks.html
+
+t/vprefect:
+- scripts/logs_parser/*
+- scripts/logs_parser/**/*
+- src/vprefect/*
+- src/vprefect/**/*
+- templates/base.html
+- templates/vtasks.html
