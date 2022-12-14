@@ -28,27 +28,24 @@ def detect_env():
     return "dev"
 
 
-ENV = detect_env()
-
-
-@flow(name="vtasks", tags=f"env:{ENV}")
+@flow(name="vtasks")
 def main(mdate: date):
 
-    with tags(f"env:{ENV}"):
-        archive()
-        vbooks()
+    archive()
+    vbooks()
 
-        _gcal = gcal(mdate)
-        backup(wait_for=[_gcal])
+    _gcal = gcal(mdate)
+    backup(wait_for=[_gcal])
 
-        _money_lover = money_lover()
-        _crypto = crypto(mdate)
-        _indexa = indexa(mdate)
+    _money_lover = money_lover()
+    _crypto = crypto(mdate)
+    _indexa = indexa(mdate)
 
-        expensor(mdate, wait_for=[_money_lover, _crypto, indexa])
+    expensor(mdate, wait_for=[_money_lover, _crypto, indexa])
 
-        vprefect()
+    vprefect()
 
 
 if __name__ == "__main__":
-    main(mdate=date.today())
+    with tags(f"env:{detect_env()}"):
+        main(mdate=date.today())
