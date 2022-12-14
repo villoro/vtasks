@@ -17,7 +17,7 @@ from utils import get_secret
 from vbooks import vbooks
 from vprefect import vprefect
 
-PREFECT_LOGIN = "prefect cloud login --key {}"
+PREFECT_LOGIN = "prefect cloud login --key {} --workspace villoro/vtasks"
 
 
 def prefect_login():
@@ -41,8 +41,8 @@ def detect_env():
 @flow(name="vtasks")
 def main(mdate: date):
 
-    archive()
     vbooks()
+    archive()
 
     _gcal = gcal(mdate)
     backup(wait_for=[_gcal])
