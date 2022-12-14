@@ -41,8 +41,8 @@ def detect_env():
 @flow(name="vtasks")
 def main(mdate: date):
 
-    archive()
     vbooks()
+    archive()
 
     _gcal = gcal(mdate)
     backup(wait_for=[_gcal])
