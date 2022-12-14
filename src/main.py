@@ -1,6 +1,8 @@
+from argparse import ArgumentParser
 from datetime import date
 
 from prefect import flow
+from prefect import tags
 
 from archive import archive
 from backups import backup
@@ -13,8 +15,22 @@ from vbooks import vbooks
 from vprefect import vprefect
 
 
+def detect_env():
+    """Detect if it is PRO environment"""
+
+    parser = ArgumentParser()
+    parser.add_argument("--pro", help="Wether it is PRO or not (DEV)", default=False, type=bool)
+
+    args = parser.parse_args()
+
+    if args.pro:
+        return "prod"
+    return "dev"
+
+
 @flow(name="vtasks")
 def main(mdate: date):
+
     archive()
     vbooks()
 
@@ -31,4 +47,5 @@ def main(mdate: date):
 
 
 if __name__ == "__main__":
-    main(date.today())
+    with tags(f"env:{detect_env()}"):
+        main(mdate=date.today())

@@ -1,15 +1,20 @@
-from datetime import datetime, timezone
+from datetime import datetime
+from datetime import timezone
 
 import asyncio
 import pandas as pd
 
+from pandas.api.types import is_datetime64_any_dtype
+from prefect import get_run_logger
+from prefect import task
 from prefect.client import get_client
-from prefect import task, get_run_logger
 
 import utils as u
 
-from .models import FlowRun, TaskRun, Flow
 from . import constants as c
+from .models import Flow
+from .models import FlowRun
+from .models import TaskRun
 
 
 async def read_flows():
@@ -41,7 +46,13 @@ def handle_localization(df_in):
         if col not in df.columns:
             continue
 
-        df[col] = df[col].dt.tz_localize(None)
+        # Cast to datetime when needed
+        if not is_datetime64_any_dtype(df[col]):
+            df[col] = pd.to_datetime(df[col], utc=True)
+
+        # If missing timezone tag it as UTC
+        if df[col].dt.tz is None:
+            df[col] = df[col].dt.tz_localize(timezone.utc)
 
     return df
 
