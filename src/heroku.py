@@ -2,8 +2,10 @@ import subprocess
 
 from utils import get_secret
 
+from main import detect_env
+
 PREFECT_LOGIN = "prefect cloud login --key {} --workspace villoro/vtasks"
-VTASKS_RUN = "python src/main.py --pro true"
+VTASKS_RUN = f"python src/main.py --env {detect_env()}"
 
 
 def prefect_login():
