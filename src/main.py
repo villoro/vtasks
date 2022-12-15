@@ -19,13 +19,11 @@ def detect_env():
     """Detect if it is PRO environment"""
 
     parser = ArgumentParser()
-    parser.add_argument("--pro", help="Wether it is PRO or not (DEV)", default=False, type=bool)
+    parser.add_argument("--env", help="Wether it is PRO or not (DEV)", default="dev", type=str)
 
     args = parser.parse_args()
 
-    if args.pro:
-        return "prod"
-    return "dev"
+    return args.env
 
 
 @flow(name="vtasks")
