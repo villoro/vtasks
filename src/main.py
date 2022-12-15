@@ -1,5 +1,3 @@
-import subprocess
-
 from argparse import ArgumentParser
 from datetime import date
 
@@ -13,16 +11,8 @@ from expensor import expensor
 from gcal import gcal
 from indexa import indexa
 from money_lover import money_lover
-from utils import get_secret
 from vbooks import vbooks
 from vprefect import vprefect
-
-PREFECT_LOGIN = "prefect cloud login --key {} --workspace villoro/vtasks"
-
-
-def prefect_login():
-    login = PREFECT_LOGIN.format(get_secret("PREFECT_TOKEN"))
-    subprocess.run(login, shell=True)
 
 
 def detect_env():
@@ -57,8 +47,6 @@ def main(mdate: date):
 
 
 if __name__ == "__main__":
-
-    prefect_login()
 
     with tags(f"env:{detect_env()}"):
         main(mdate=date.today())
