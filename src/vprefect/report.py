@@ -76,7 +76,13 @@ def extract_results(df_in):
 
     df_agg = aggregate_results(df_in)
     df_res = get_results_by_flow_name(df_agg, "vtasks")
+
+    # Extract cards
     data["dashboard"] = df_res["result"].value_counts().to_dict()
+    data["dashboard"]["total_runs"] = len(df_res[df_res["result"] != "missing"])
+    data["dashboard"]["last_run"] = df_in[c.COL_START].max().strftime("%Y-%m-%d %H:%M")
+
+    # Extract vtasks results
     data["vtasks_results"] = {
         x: u.serie_to_dict(df_res.loc[df_res["result"] == x, "count"])
         for x in df_res["result"].unique()

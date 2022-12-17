@@ -9,6 +9,33 @@
 <div id="dashboard" class="section w3-center">
   <h1>Vtasks Report</h1>
 
+  <div class="mgrid">
+    <div class="w3-card w3-round" style="background-color: {{ colors["total_runs"] }}; color:white;">
+      <h3 style="margin-bottom: -16px;">Total runs</h3>
+      <h2>{{ dashboard["total_runs"] }}</h2>
+    </div>
+    <div class="w3-card w3-round" style="background-color: {{ colors["success"] }}; color:white;">
+      <h3 style="margin-bottom: -16px;">Success</h3>
+      <h2>{{ dashboard["success"] }}</h2>
+    </div>
+    <div class="w3-card w3-round" style="background-color: {{ colors["recovered"] }}; color:white;">
+      <h3 style="margin-bottom: -16px;">Recovered</h3>
+      <h2>{{ dashboard["recovered"] }}</h2>
+    </div>
+    <div class="w3-card w3-round" style="background-color: {{ colors["missing"] }}; color:white;">
+      <h3 style="margin-bottom: -16px;">Missing</h3>
+      <h2>{{ dashboard["missing"] }}</h2>
+    </div>
+    <div class="w3-card w3-round" style="background-color: {{ colors["failed"] }}; color:white;">
+      <h3 style="margin-bottom: -16px;">Failed</h3>
+      <h2>{{ dashboard["failed"] }}</h2>
+    </div>
+    <div class="w3-card w3-round" style="background-color: {{ colors["last_run"] }}; color:white;">
+      <h3 style="margin-bottom: -16px;">Last run (UTC)</h3>
+      <h2>{{ dashboard["last_run"] }}</h2>
+    </div>
+  </div>
+
   <div class="w3-card w3-round w3-center w3-white elem">
     <div id="DASH_avg_time_trend" class="plot" style="height: 450px"></div>
   </div>
