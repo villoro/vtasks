@@ -9,6 +9,7 @@ COL_END = "end_time"
 COL_DAY = "day"
 COL_TAGS = "tags"
 COL_ENV = "environment"
+COL_TIME = "total_run_time"
 
 STATE_COMPLETED = "Completed"
 STATE_RUNNING = "Running"
@@ -37,6 +38,8 @@ COLORS = {
     "failed": ("red", 500),
     "missing": ("orange", 500),
     "last_run": ("grey", 600),
+    "times": ("grey", 500),
+    "anomalies": ("red", 500),
 }
 
 STATES_MAP = {"Completed": 1, "Failed": 0, "Crashed": 0}
