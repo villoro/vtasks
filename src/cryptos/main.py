@@ -94,7 +94,7 @@ def update_expensor(mfilter):
     gsh.df_to_gspread(FILE_DATA, DF_WORTH, df, mfilter, col_crypto)
 
 
-@flow(name="vtasks.crypto")
+@flow(name="vtasks.crypto", retries=3, retry_delay_seconds=30)
 def crypto(mdate):
 
     mfilter = mdate.strftime("%Y-%m-01")
