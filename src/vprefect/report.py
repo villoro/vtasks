@@ -1,7 +1,9 @@
+import pandas as pd
+
 from prefect import task
 from vpalette import get_colors
-
-import pandas as pd
+from adtk.detector import OutlierDetector
+from sklearn.neighbors import LocalOutlierFactor
 
 import utils as u
 
@@ -108,6 +110,46 @@ def extract_results(df_in):
     return data
 
 
+def get_vtasks_times(df_in):
+    df = df_in.copy()
+
+    mask = (
+        (df[c.COL_ENV] == "prod")
+        & (df[c.COL_STATE] == c.STATE_COMPLETED)
+        & (df[c.COL_FLOW_NAME] == "vtasks")
+    )
+    df = df.loc[mask]
+
+    times = df.set_index(c.COL_START)[c.COL_TIME].resample("D").mean()
+
+    # Fill missing with 30d MA
+    mask = times.isna()
+    times.loc[mask] = times.rolling("30D").mean().loc[mask]
+
+    return times
+
+
+def datetime_index_to_date(serie_in):
+    serie = serie_in.copy()
+    ranges = pd.date_range(start=serie.index.min().date(), end=serie.index.max().date())
+    serie.index = ranges
+    return serie
+
+
+def extract_anomalies(df_in):
+
+    times = get_vtasks_times(df_in)
+
+    outlier_detector = OutlierDetector(LocalOutlierFactor())
+    anomalies = outlier_detector.fit_detect(times.to_frame())
+
+    # For plotting, transform datetime index to date
+    times = datetime_index_to_date(times)
+    anomalies = datetime_index_to_date(anomalies)
+
+    return {"times": u.serie_to_dict(times), "anomalies": u.serie_to_dict(times[anomalies])}
+
+
 @task(name="vtasks.vprefect.report")
 def create_report():
 
@@ -116,6 +158,7 @@ def create_report():
 
     data = get_average_times(df)
     data.update(extract_results(df))
+    data["anomalies"] = extract_anomalies(df)
 
     data["colors"] = extract_colors()
 

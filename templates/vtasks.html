@@ -41,7 +41,7 @@
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="DASH_avg_time_trend" class="plot" style="height: 450px"></div>
+    <div id="DASH_anomalies" class="plot" style="height: 450px"></div>
   </div>
 </div>
 
@@ -49,6 +49,10 @@
 <div id="evolution" class="section" style="display:none;">
   <div class="w3-card w3-round w3-center w3-white elem">
     <div id="EVO_results_percent" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_avg_time_trend" class="plot" style="height: 450px"></div>
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
@@ -110,17 +114,34 @@
       }, {% endfor %}
     ],
   });
-  Highcharts.chart('DASH_avg_time_trend', {
+  Highcharts.chart('DASH_anomalies', {
     ...plot_datetime,
-    title: {text: 'Flow average time trend'},
+    title: {text: 'Vtasks times with anomalies'},
     series: [
-      {% for name, values in times_trend.items() %}{
-        name: "{{ name }}",
-        color: "{{ colors[name] }}",
-        data: [{% for mdate, value in values.items() %}
+      {
+        name: "vtasks",
+        color: "{{ colors['times'] }}",
+        data: [{% for mdate, value in anomalies["times"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
-      }, {% endfor %}
+      }, {
+        name: "vtasks (30d MA)",
+        color: "{{ colors['vtasks'] }}",
+        data: [{% for mdate, value in times_trend["vtasks"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {
+        name: "anomalies",
+        color: "{{ colors['anomalies'] }}",
+        type: 'scatter',
+        marker: {
+          enabled: true,
+          radius: 6,
+        },
+        data: [{% for mdate, value in anomalies["anomalies"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
     ],
   });
 
@@ -134,6 +155,19 @@
         name: "{{ name.title() }}",
         color: "{{ colors[name] }}",
         data: [{% for mdate, value in results_percent[name].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('EVO_avg_time_trend', {
+    ...plot_datetime,
+    title: {text: 'Flow average time trend'},
+    series: [
+      {% for name, values in times_trend.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        data: [{% for mdate, value in values.items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       }, {% endfor %}
