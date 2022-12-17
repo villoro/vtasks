@@ -13,6 +13,7 @@ repository = "https://github.com/villoro/vtasks"
 
 [tool.poetry.dependencies]
 python = "3.11.0"
+adtk = "^0.6.2"
 cryptocompare = "^0.7.6"
 dropbox = "^11.36.0"
 gcsa = "^2.0.1"
