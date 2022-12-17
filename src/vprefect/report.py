@@ -100,7 +100,7 @@ def create_report():
     data["colors"] = extract_colors()
 
     data["title"] = "Vtasks"
-    data["sections"] = {}
+    data["sections"] = {"evolution": "fa-chart-line"}
 
     # Create report
     report = u.render_jinja_template("vtasks.html", data)
