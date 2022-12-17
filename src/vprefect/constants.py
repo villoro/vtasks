@@ -31,4 +31,10 @@ COLORS = {
     "vtasks.gcal": ("green", 500),
     "vtasks.backup": ("purple", 500),
     "vtasks.vprefect": ("brown", 500),
+    "success": ("light green", 500),
+    "recovered": ("light blue", 500),
+    "failed": ("red", 500),
+    "missing": ("orange", 500),
 }
+
+STATES_MAP = {"Completed": 1, "Failed": 0, "Crashed": 0}
