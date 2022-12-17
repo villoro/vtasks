@@ -1,11 +1,15 @@
+import asyncio
+
 from datetime import date
 
 from prefect import task, get_run_logger
+from prefect.context import get_run_context
 
 from slack import send_slack
-from utils import get_vdropbox
+from utils import get_vdropbox, detect_env
 
 from .report import get_daily_data
+from vprefect.query import query_task_runs
 
 
 def get_n_week(dfi, n=1):
@@ -53,10 +57,24 @@ def do_summary(mdate: date):
 
     log = get_run_logger()
 
-    if mdate.isoweekday() == 1:
+    # This extract the name of this same task (no hardcoding)
+    task_name = get_run_context().task_run.name.split("-")[0]
 
-        log.info("Sending gcalendar weekly report")
-        send_summary(mdate, "general")
+    if mdate.isoweekday() != 1:
+        log.info(f"Skipping '{task_name}' since it only runs on Mondays")
+        return None
 
-    else:
-        log.info("Gcalendar weekly report skipped")
+    env = detect_env()
+    if env != "prod":
+        log.info(f"Skipping summary since {env=}")
+        return None
+
+    log.info(f"Checking if '{task_name}' has already run today")
+    task_runs = asyncio.run(query_task_runs(name_like=task_name, env=env))
+
+    if task_runs:
+        log.warning("Summary already send")
+        return None
+
+    log.info("Sending gcalendar weekly report since it's the first run of the week")
+    send_summary(mdate, "general")

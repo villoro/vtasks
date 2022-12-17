@@ -38,6 +38,7 @@ async def read_task_runs(task_run_filter=None):
 
 async def query_task_runs(
     name_like,
+    env,
     state_names=["Completed"],
     start_time_min=datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0),
 ):
@@ -46,6 +47,9 @@ async def query_task_runs(
 
     if name_like:
         filter_params["name"] = filters.TaskRunFilterName(like_=name_like)
+
+    if env:
+        filter_params["tags"] = filters.TaskRunFilterTags(all_=[f"env:{env}"])
 
     if state_names:
         filter_params["state"] = filters.TaskRunFilterState(
