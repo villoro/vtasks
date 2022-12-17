@@ -4,6 +4,10 @@ files_regexs = [
         "regex": r"[\w\s]+\.kdbx",
     },
     {
+        "path": "/Casa/KeePass",
+        "regex": r"[\w\s]+\.kdbx",
+    },
+    {
         "path": "/Aplicaciones/expensor",
         "regex": r"[\w\s]+\.(yaml|yml)",
     },
