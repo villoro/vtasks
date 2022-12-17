@@ -9,12 +9,46 @@
 <div id="dashboard" class="section w3-center">
   <h1>Vtasks Report</h1>
 
-  <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="DASH_avg_time_trend" class="plot" style="height: 450px"></div>
+  <div class="mgrid">
+    <div class="w3-card w3-round" style="background-color: {{ colors["total_runs"] }}; color:white;">
+      <h3 style="margin-bottom: -16px;">Total runs</h3>
+      <h2>{{ dashboard["total_runs"] }}</h2>
+    </div>
+    <div class="w3-card w3-round" style="background-color: {{ colors["success"] }}; color:white;">
+      <h3 style="margin-bottom: -16px;">Success</h3>
+      <h2>{{ dashboard["success"] }}</h2>
+    </div>
+    <div class="w3-card w3-round" style="background-color: {{ colors["recovered"] }}; color:white;">
+      <h3 style="margin-bottom: -16px;">Recovered</h3>
+      <h2>{{ dashboard["recovered"] }}</h2>
+    </div>
+    <div class="w3-card w3-round" style="background-color: {{ colors["missing"] }}; color:white;">
+      <h3 style="margin-bottom: -16px;">Missing</h3>
+      <h2>{{ dashboard["missing"] }}</h2>
+    </div>
+    <div class="w3-card w3-round" style="background-color: {{ colors["failed"] }}; color:white;">
+      <h3 style="margin-bottom: -16px;">Failed</h3>
+      <h2>{{ dashboard["failed"] }}</h2>
+    </div>
+    <div class="w3-card w3-round" style="background-color: {{ colors["last_run"] }}; color:white;">
+      <h3 style="margin-bottom: -16px;">Last run (UTC)</h3>
+      <h2>{{ dashboard["last_run"] }}</h2>
+    </div>
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="DASH_avg_time" class="plot" style="height: 450px"></div>
+    <div id="DASH_results" class="plot" style="height: 300px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="DASH_avg_time_trend" class="plot" style="height: 450px"></div>
+  </div>
+</div>
+
+<!-- EVO -->
+<div id="evolution" class="section" style="display:none;">
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_avg_time" class="plot" style="height: 450px"></div>
   </div>
 </div>
 {% endblock %}
@@ -44,6 +78,23 @@
   }
 
   // DASHBOARD SECTION
+  Highcharts.chart('DASH_results', {
+    xAxis: {type: 'datetime'},
+    chart: {
+      type: 'area',
+      zoomType: "x"
+    },
+    title: {text: 'Vtasks results'},
+    series: [
+      {% for name in ["success", "recovered", "failed", "missing"] %}{
+        name: "{{ name.title() }}",
+        color: "{{ colors[name] }}",
+        data: [{% for mdate, value in vtasks_results[name].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
   Highcharts.chart('DASH_avg_time_trend', {
     ...plot_datetime,
     title: {text: 'Flow average time trend'},
@@ -57,7 +108,7 @@
       }, {% endfor %}
     ],
   });
-  Highcharts.chart('DASH_avg_time', {
+  Highcharts.chart('EVO_avg_time', {
     ...plot_datetime,
     title: {text: 'Flow average time'},
     series: [

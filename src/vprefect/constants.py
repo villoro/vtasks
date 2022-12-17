@@ -7,6 +7,8 @@ COL_STATE = "state_name"
 COL_START = "start_time"
 COL_END = "end_time"
 COL_DAY = "day"
+COL_TAGS = "tags"
+COL_ENV = "environment"
 
 STATE_COMPLETED = "Completed"
 STATE_RUNNING = "Running"
@@ -29,4 +31,12 @@ COLORS = {
     "vtasks.gcal": ("green", 500),
     "vtasks.backup": ("purple", 500),
     "vtasks.vprefect": ("brown", 500),
+    "total_runs": ("black", 500),
+    "success": ("light green", 500),
+    "recovered": ("light blue", 500),
+    "failed": ("red", 500),
+    "missing": ("orange", 500),
+    "last_run": ("grey", 600),
 }
+
+STATES_MAP = {"Completed": 1, "Failed": 0, "Crashed": 0}

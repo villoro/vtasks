@@ -63,6 +63,28 @@ def parse_prefect(prefect_list, Model):
     return handle_localization(df)
 
 
+def _extract_env(tags):
+    for x in tags:
+        k, v = x.split(":")
+        if k == "env":
+            return v
+
+
+def extract_tags(df_in):
+    df = df_in.copy()
+
+    # Tags to proper list
+    mask = df[c.COL_TAGS].notna()
+    df.loc[mask, c.COL_TAGS] = df.loc[mask, c.COL_TAGS].apply(eval)
+
+    # Extract env
+    if c.COL_ENV not in df.columns:
+        df[c.COL_ENV] = None
+    df.loc[mask, c.COL_ENV] = df.loc[mask, c.COL_TAGS].apply(_extract_env)
+
+    return df
+
+
 def deduplicate(df_in):
     df = df_in.copy()
     df = df.sort_values([c.COL_CREATED, c.COL_EXPORTED_AT])
@@ -101,6 +123,7 @@ def process_flow_runs():
     flow_runs = asyncio.run(read_flow_runs())
 
     df_new = parse_prefect(flow_runs, FlowRun)
+    df_new = extract_tags(df_new)
 
     # Exclude running flows
     df_new = df_new[df_new[c.COL_STATE] != c.STATE_RUNNING]
@@ -116,4 +139,6 @@ def process_task_runs():
     task_runs = asyncio.run(read_task_runs())
 
     df_new = parse_prefect(task_runs, TaskRun)
+    df_new = extract_tags(df_new)
+
     update_parquet(df_new, c.PATH_TASK_RUNS)
