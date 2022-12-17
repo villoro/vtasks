@@ -48,6 +48,10 @@
 <!-- EVO -->
 <div id="evolution" class="section" style="display:none;">
   <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_results_percent" class="plot" style="height: 450px"></div>
+  </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
     <div id="EVO_avg_time" class="plot" style="height: 450px"></div>
   </div>
 </div>
@@ -76,6 +80,17 @@
     xAxis: {type: 'datetime'},
     chart: {zoomType: "x"},
   }
+  const labels_percent = {
+    title: {text: null},
+    labels: {
+      formatter: function() {return this.value + " %";}
+    },
+  }
+  const y_percent = {
+    yAxis : {
+      ...labels_percent,
+    },
+  }
 
   // DASHBOARD SECTION
   Highcharts.chart('DASH_results', {
@@ -103,6 +118,22 @@
         name: "{{ name }}",
         color: "{{ colors[name] }}",
         data: [{% for mdate, value in values.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+
+  // EVOLUTION SECTION
+  Highcharts.chart('EVO_results_percent', {
+    ...plot_datetime,
+    ...y_percent,
+    title: {text: 'Vtasks results percent (30d MA)'},
+    series: [
+      {% for name in ["success", "recovered", "failed", "missing"] %}{
+        name: "{{ name.title() }}",
+        color: "{{ colors[name] }}",
+        data: [{% for mdate, value in results_percent[name].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       }, {% endfor %}
