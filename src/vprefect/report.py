@@ -69,6 +69,20 @@ def get_results_by_flow_name(df_in, flow_name):
     return df[["result"]]
 
 
+def get_results_percent(df_in):
+    df = df_in.copy()
+    results = df["result"].unique()
+
+    total = df["result"].notna().rolling("30D").sum()
+
+    for x in results:
+
+        counts = (df["result"] == x).rolling("30D").sum()
+        df[x] = (100 * counts / total).apply(lambda x: round(x, 2))
+
+    return df[results]
+
+
 def extract_results(df_in):
     data = {}
 
@@ -83,6 +97,12 @@ def extract_results(df_in):
     # Extract vtasks results
     data["vtasks_results"] = {
         x: u.serie_to_dict((df_res["result"] == x).apply(int)) for x in df_res["result"].unique()
+    }
+
+    # Results percent
+    df_res_percent = get_results_percent(df_res)
+    data["results_percent"] = {
+        x: u.serie_to_dict(df_res_percent[x]) for x in df_res_percent.columns
     }
 
     return data
