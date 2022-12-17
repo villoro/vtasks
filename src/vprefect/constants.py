@@ -7,6 +7,8 @@ COL_STATE = "state_name"
 COL_START = "start_time"
 COL_END = "end_time"
 COL_DAY = "day"
+COL_TAGS = "tags"
+COL_ENV = "environment"
 
 STATE_COMPLETED = "Completed"
 STATE_RUNNING = "Running"
