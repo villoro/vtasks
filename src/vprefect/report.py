@@ -66,9 +66,7 @@ def get_results_by_flow_name(df_in, flow_name):
     df.loc[(df["result_max"] == 0) & (df["result_min"] == 0), "result"] = "failed"
     df.loc[df["result_max"].isna() & df["result_min"].isna(), "result"] = "missing"
 
-    df["count"] = 1
-
-    return df[["result", "count"]]
+    return df[["result"]]
 
 
 def extract_results(df_in):
@@ -84,8 +82,7 @@ def extract_results(df_in):
 
     # Extract vtasks results
     data["vtasks_results"] = {
-        x: u.serie_to_dict(df_res.loc[df_res["result"] == x, "count"])
-        for x in df_res["result"].unique()
+        x: u.serie_to_dict((df_res["result"] == x).apply(int)) for x in df_res["result"].unique()
     }
 
     return data
