@@ -8,6 +8,7 @@ from pandas.api.types import is_datetime64_any_dtype
 from prefect import get_run_logger
 from prefect import task
 from prefect.client import get_client
+from prefect.orion.schemas import filters
 
 import utils as u
 
@@ -29,10 +30,33 @@ async def read_flow_runs():
     return await client.read_flow_runs()
 
 
-async def read_task_runs():
+async def read_task_runs(task_run_filter=None):
     """extract task runs"""
     client = get_client()
-    return await client.read_task_runs()
+    return await client.read_task_runs(task_run_filter=task_run_filter)
+
+
+async def query_task_runs(
+    name_like,
+    state_names=["Completed"],
+    start_time_min=datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0),
+):
+    client = get_client()
+    filter_params = {}
+
+    if name_like:
+        filter_params["name"] = filters.TaskRunFilterName(like_=name_like)
+
+    if state_names:
+        filter_params["state"] = filters.TaskRunFilterState(
+            name=filters.TaskRunFilterStateName(any_=state_names)
+        )
+
+    if start_time_min:
+        filter_params["start_time"] = filters.TaskRunFilterStartTime(after_=start_time_min)
+
+    task_run_filter = filters.TaskRunFilter(**filter_params)
+    return await read_task_runs(task_run_filter)
 
 
 def handle_localization(df_in):
