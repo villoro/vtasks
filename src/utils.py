@@ -1,6 +1,7 @@
 import re
 import yaml
 
+from argparse import ArgumentParser
 from collections import OrderedDict
 from os import path
 from pathlib import Path
@@ -83,6 +84,17 @@ def get_vdropbox():
         VDROPBOX = Vdropbox(get_secret("DROPBOX_TOKEN"), log=get_run_logger())
 
     return VDROPBOX
+
+
+def detect_env():
+    """Detect if it is PRO environment"""
+
+    parser = ArgumentParser()
+    parser.add_argument("--env", help="Wether it is PRO or not (DEV)", default="dev", type=str)
+
+    args = parser.parse_args()
+
+    return args.env
 
 
 def get_files_that_match(vdp, folder, regex):

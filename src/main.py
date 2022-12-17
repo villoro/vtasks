@@ -1,4 +1,3 @@
-from argparse import ArgumentParser
 from datetime import date
 
 from prefect import flow
@@ -13,17 +12,7 @@ from indexa import indexa
 from money_lover import money_lover
 from vbooks import vbooks
 from vprefect import vprefect
-
-
-def detect_env():
-    """Detect if it is PRO environment"""
-
-    parser = ArgumentParser()
-    parser.add_argument("--env", help="Wether it is PRO or not (DEV)", default="dev", type=str)
-
-    args = parser.parse_args()
-
-    return args.env
+from utils import detect_env
 
 
 @flow(name="vtasks")
