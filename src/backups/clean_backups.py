@@ -6,7 +6,7 @@ from datetime import timedelta
 import pandas as pd
 from prefect import task, get_run_logger
 
-from .files import files_regexs
+from .tasks import BACKUP_TASKS
 from utils import get_vdropbox
 
 
@@ -61,11 +61,10 @@ def get_all_backups(vdp):
 
     dfs = []
 
-    for kwargs in files_regexs:
+    for task in BACKUP_TASKS:
+        log.info("Scanning '{path}'".format(**task.dict()))
 
-        log.info("Scanning '{path}'".format(**kwargs))
-
-        df = get_backup_data(vdp, **kwargs)
+        df = get_backup_data(vdp, **task.dict())
 
         if df is not None:
             dfs.append(df)

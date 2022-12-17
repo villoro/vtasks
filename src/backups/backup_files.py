@@ -5,10 +5,10 @@ from datetime import timedelta
 
 from prefect import task, get_run_logger
 
-from .files import files_regexs
 from utils import get_files_from_regex
 from utils import get_path
 from utils import get_vdropbox
+from .tasks import BACKUP_TASKS
 
 YEAR = f"{date.today():%Y}"
 DAY = f"{date.today():%Y_%m_%d}"
@@ -56,6 +56,6 @@ def backup_files():
     log = get_run_logger()
     vdp = get_vdropbox()
 
-    for kwargs in files_regexs:
-        log.info("Scanning '{path}/{regex}'".format(**kwargs))
-        one_backup(vdp, **kwargs)
+    for task in BACKUP_TASKS:
+        log.info(f"Backing up '{task.dict()}'")
+        one_backup(vdp, **task.dict())
