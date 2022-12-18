@@ -3,7 +3,7 @@ import re
 from pydantic import BaseModel, validator
 
 REGEX_YEAR = re.compile(r"\((?P<year>\d{4})\)")
-REGEX_QUALITY = re.compile(r"[\s\.](?P<quality>\d{3,4})p[\s\.]")
+REGEX_QUALITY = re.compile(r"[\s\.\[](?P<quality>\d{3,4})p[\s\.\]]")
 
 
 class Sub(BaseModel):
@@ -95,14 +95,14 @@ class Movie(BaseModel):
         return len(values["subs"])
 
     @validator("sub_ca", pre=True, always=True)
-    def check_sub_es(cls, v, values):
+    def check_sub_ca(cls, v, values):
         for x in values["subs"]:
             if x.language in ("ca", "cat"):
                 return True
         return False
 
     @validator("sub_en", pre=True, always=True)
-    def check_sub_es(cls, v, values):
+    def check_sub_en(cls, v, values):
         for x in values["subs"]:
             if x.language in ("en", "eng"):
                 return True
@@ -116,7 +116,7 @@ class Movie(BaseModel):
         return False
 
     @validator("sub_it", pre=True, always=True)
-    def check_sub_es(cls, v, values):
+    def check_sub_it(cls, v, values):
         for x in values["subs"]:
             if x.language in ("it", "ita"):
                 return True
