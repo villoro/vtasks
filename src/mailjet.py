@@ -22,7 +22,7 @@ def create_attachment(etype, filename, content):
 
 
 def plotly_to_attachment(fig, filename):
-    data = fig.to_image(format="jpg", width=1920, height=1080, scale=2)
+    data = fig.to_image(format="jpg", width=1920, height=1080, scale=3)
     content = base64.b64encode(data).decode("ascii")
     return create_attachment("image/jpg", filename, content)
 
