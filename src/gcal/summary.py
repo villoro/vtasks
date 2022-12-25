@@ -10,7 +10,6 @@ from prefect.context import get_run_context
 import mailjet as mj
 import utils as u
 
-from slack import send_slack
 from .report import get_daily_data
 from .export import read_calendars
 from vprefect.query import query_task_runs
