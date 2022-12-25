@@ -1696,7 +1696,7 @@ test = ["appdirs (==1.4.4)", "pytest (>=7.2)", "pytest-cov (>=4)", "pytest-mock 
 name = "plotly"
 version = "5.11.0"
 description = "An open-source, interactive data visualization library for Python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -2391,7 +2391,7 @@ widechars = ["wcwidth"]
 name = "tenacity"
 version = "8.1.0"
 description = "Retry code until it succeeds"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -2699,7 +2699,7 @@ test = ["pytest", "pytest-cov"]
 [metadata]
 lock-version = "1.1"
 python-versions = "3.11.0"
-content-hash = "3d925aef4cb875de2a1279eaf137c8f797d957a97ed4ca7569a4a2bf71083b84"
+content-hash = "c6ce5c4ca4085ac0bd0d1344a4ea443ffd427896c321dc6c52b58181a8b498ed"
 
 [metadata.files]
 adtk = [
