@@ -16,25 +16,23 @@ def get_n_week(dfi, n=1):
     """Get data for the week -N"""
 
     df = dfi.resample("W-MON", closed="left").sum().iloc[-n].T
-    return df[df > 0].sort_values(ascending=False).to_dict()
+    return df.sort_index()
 
 
-def create_slack_block(data):
-
-    options = []
-    for i, (name, value) in enumerate(data.items()):
-        options.append(
-            {
-                "text": {"type": "mrkdwn", "text": f"*{name}:* {round(value, 2)} h"},
-                "value": f"value-{i}",
-            }
+def create_plot(dfi, calendars, mdate):
+    data = []
+    for name, value in df.items():
+        data.append(
+            go.Bar(
+                x=[name],
+                y=[value],
+                text=f"{value:.2f}",
+                textposition="outside",
+                name=name,
+                marker_color=calendars[name]["color"],
+            )
         )
-
-    return {
-        "type": "section",
-        "text": {"type": "mrkdwn", "text": "Summary of the week"},
-        "accessory": {"type": "checkboxes", "options": options, "action_id": "checkboxes-action"},
-    }
+    return go.Figure(data=data, layout=go.Layout(title=f"Week {mdate}"))
 
 
 def send_summary(mdate, channel):
