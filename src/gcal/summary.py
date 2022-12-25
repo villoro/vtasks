@@ -2,13 +2,16 @@ import asyncio
 
 from datetime import date
 
+import plotly.graph_objects as go
+
 from prefect import task, get_run_logger
 from prefect.context import get_run_context
 
-from slack import send_slack
-from utils import get_vdropbox, detect_env
+import mailjet as mj
+import utils as u
 
 from .report import get_daily_data
+from .export import read_calendars
 from vprefect.query import query_task_runs
 
 
@@ -16,39 +19,45 @@ def get_n_week(dfi, n=1):
     """Get data for the week -N"""
 
     df = dfi.resample("W-MON", closed="left").sum().iloc[-n].T
-    return df[df > 0].sort_values(ascending=False).to_dict()
+    return df.sort_index()
 
 
-def create_slack_block(data):
-
-    options = []
-    for i, (name, value) in enumerate(data.items()):
-        options.append(
-            {
-                "text": {"type": "mrkdwn", "text": f"*{name}:* {round(value, 2)} h"},
-                "value": f"value-{i}",
-            }
+def create_plot(dfi, calendars, mdate):
+    data = []
+    for name, value in dfi.items():
+        data.append(
+            go.Bar(
+                x=[name],
+                y=[value],
+                text=f"{value:.2f}",
+                textposition="outside",
+                name=name,
+                marker_color=calendars[name]["color"],
+            )
         )
-
-    return {
-        "type": "section",
-        "text": {"type": "mrkdwn", "text": "Summary of the week"},
-        "accessory": {"type": "checkboxes", "options": options, "action_id": "checkboxes-action"},
-    }
+    return go.Figure(data=data, layout=go.Layout(title=f"Week {mdate}"))
 
 
-def send_summary(mdate, channel):
+def send_summary(mdate):
     """Send gcalendar report"""
 
-    vdp = get_vdropbox()
+    log = get_run_logger()
+
+    vdp = u.get_vdropbox()
     df = get_daily_data(vdp, mdate)
+    calendars = read_calendars()
 
     # Prepare slack message
-    data = get_n_week(df)
-    block = create_slack_block(data)
+    log.info("Preparing summary")
+    df = get_n_week(df)
+    fig = create_plot(df, calendars, mdate)
 
-    # Send slack
-    send_slack(channel=channel, blocks=[block])
+    # Send email
+    log.info("Sending summary")
+    mailjet = mj.get_mailjet_client()
+    attachments = [mj.plotly_to_attachment(fig, f"plot_{mdate}.jpg")]
+    data = mj.create_email(f"Gcal summary [{mdate}]", f"<h1>Report {mdate}</h1>", attachments)
+    mailjet.send.create(data=data)
 
 
 @task(name="vtasks.gcal.summary")
@@ -64,7 +73,7 @@ def do_summary(mdate: date):
         log.info(f"Skipping '{task_name}' since it only runs on Mondays")
         return None
 
-    env = detect_env()
+    env = u.detect_env()
     if env != "prod":
         log.info(f"Skipping summary since {env=}")
         return None
@@ -77,4 +86,4 @@ def do_summary(mdate: date):
         return None
 
     log.info("Sending gcalendar weekly report since it's the first run of the week")
-    send_summary(mdate, "general")
+    send_summary(mdate)
