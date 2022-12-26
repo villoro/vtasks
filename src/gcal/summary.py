@@ -7,12 +7,23 @@ import plotly.graph_objects as go
 from prefect import task, get_run_logger
 from prefect.context import get_run_context
 
-import mailjet as mj
 import utils as u
 
+from mailjet import Attachment, InlineAttachment, Email
 from .report import get_daily_data
 from .export import read_calendars
 from vprefect.query import query_task_runs
+
+MAIN_CALS = [
+    "05_Sport",
+    "11_Paid work",
+    "12_Work",
+    "23_Study",
+    "31_Leisure",
+    "32_Videogames",
+    "33_TV",
+    "34_Books",
+]
 
 
 def get_n_week(dfi, n=1):
@@ -22,9 +33,9 @@ def get_n_week(dfi, n=1):
     return df.sort_index()
 
 
-def create_plot(dfi, calendars, mdate):
+def create_plot(df, calendars, mdate):
     data = []
-    for name, value in dfi.items():
+    for name, value in df.items():
         data.append(
             go.Bar(
                 x=[name],
@@ -35,10 +46,49 @@ def create_plot(dfi, calendars, mdate):
                 marker_color=calendars[name]["color"],
             )
         )
-    return go.Figure(data=data, layout=go.Layout(title=f"Week {mdate}"))
+    return go.Figure(data=data)
 
 
-def send_summary(mdate):
+def create_main_list(df, calendars):
+    out = "<ul>"
+
+    for name in MAIN_CALS:
+        value = round(df[name], 2)
+        color = calendars[name]["color"]
+
+        out += f'<li style="color:{color}";><b>{name}</b>: {value} h</li>'
+
+    out += "</ul>"
+
+    return out
+
+
+def prepare_email(mdate, fig, main_list):
+
+    filename = f"plot_{mdate}.jpg"
+    cid = "plot_gcal"
+
+    fig_content = fig.to_image(format="jpg", width=1280, height=720, scale=2)
+
+    html = f"""
+    <h1>Report {mdate}</h1>
+    {main_list}
+    <img src=\"cid:{cid}\" max-width="1200" width="100%">
+    """
+
+    inline_attachments = [
+        InlineAttachment(
+            cid=cid,
+            filename=filename,
+            content=Attachment.to_b64(fig_content),
+        )
+    ]
+    return Email(
+        subject=f"Gcal summary [{mdate}]", html=html, inline_attachments=inline_attachments
+    )
+
+
+def process_summary(mdate):
     """Send gcalendar report"""
 
     log = get_run_logger()
@@ -47,21 +97,18 @@ def send_summary(mdate):
     df = get_daily_data(vdp, mdate)
     calendars = read_calendars()
 
-    # Prepare slack message
-    log.info("Preparing summary")
+    # Prepare email
     df = get_n_week(df)
     fig = create_plot(df, calendars, mdate)
+    main_list = create_main_list(df, calendars)
 
     # Send email
-    log.info("Sending summary")
-    mailjet = mj.get_mailjet_client()
-    attachments = [mj.plotly_to_attachment(fig, f"plot_{mdate}.jpg")]
-    data = mj.create_email(f"Gcal summary [{mdate}]", f"<h1>Report {mdate}</h1>", attachments)
-    mailjet.send.create(data=data)
+    email = prepare_email(mdate, fig, main_list)
+    email.send()
 
 
 @task(name="vtasks.gcal.summary")
-def do_summary(mdate: date):
+def summary(mdate: date):
     """Creates the report"""
 
     log = get_run_logger()
@@ -86,4 +133,4 @@ def do_summary(mdate: date):
         return None
 
     log.info("Sending gcalendar weekly report since it's the first run of the week")
-    send_summary(mdate)
+    process_summary(mdate)
