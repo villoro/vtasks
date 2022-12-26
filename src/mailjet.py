@@ -1,42 +1,95 @@
 import base64
 
+from pydantic import BaseModel, validator
 from mailjet_rest import Client
 
 import utils as u
 
 
-def get_mailjet_client():
-    auth = (u.get_secret("MAILJET_API_KEY"), u.get_secret("MAILJET_API_TOKEN"))
-    return Client(auth=auth, version="v3.1")
+class Attachment(BaseModel):
+    filename: str
+    content: str
+    content_type: str = None
+
+    @staticmethod
+    def to_b64(x):
+        return base64.b64encode(x).decode("ascii")
+
+    @validator("content_type", pre=True, always=True)
+    def check_content_type(cls, v, values):
+        filename = values["filename"]
+        extension = filename.split(".")[-1]
+
+        if extension in ["jpg", "jpeg"]:
+            return "image/jpg"
+
+        raise ValueError(f"'content_type' can't be infered from {filename=}")
+
+    def export(self):
+        return {
+            "Filename": self.filename,
+            "Base64Content": self.content,
+            "ContentType": self.content_type,
+        }
 
 
-def create_attachment(etype, filename, content):
+class InlineAttachment(Attachment):
+    cid: str
 
-    assert etype in ["image/jpg"]
-
-    return {
-        "ContentType": etype,
-        "Filename": filename,
-        "Base64Content": content,
-    }
-
-
-def plotly_to_attachment(fig, filename):
-    data = fig.to_image(format="jpg", width=1920, height=1080, scale=3)
-    content = base64.b64encode(data).decode("ascii")
-    return create_attachment("image/jpg", filename, content)
+    def export(self):
+        return {
+            "Filename": self.filename,
+            "Base64Content": self.content,
+            "ContentType": self.content_type,
+            "ContentID": self.cid,
+        }
 
 
-def create_email(subject, html, attachments=None):
+class Person(BaseModel):
+    name: str
 
-    message = {
-        "From": {"Email": "villoro7@gmail.com", "Name": "Vtasks"},
-        "To": [{"Email": "villoro7@gmail.com", "Name": "Villoro"}],
-        "Subject": subject,
-        "HTMLPart": html,
-    }
+    # Needs to be registed in mailjet before changing this
+    email: str = "villoro7@gmail.com"
 
-    if attachments:
-        message["Attachments"] = attachments
+    def export(self):
+        return {"Email": self.email, "Name": self.name}
 
-    return {"Messages": [message]}
+
+class Email(BaseModel):
+    from_email: Person = Person(name="Vtasks")
+    to_email: list[Person] = [Person(name="Villoro")]
+    subject: str
+    html: str
+
+    attachments: list[Attachment] = None
+    inline_attachments: list[InlineAttachment] = None
+
+    def export(self):
+        message = {
+            "From": self.from_email.export(),
+            "To": [x.export() for x in self.to_email],
+            "Subject": self.subject,
+            "HTMLPart": self.html,
+        }
+
+        if self.attachments:
+            message["Attachments"] = [x.export() for x in self.attachments]
+
+        if self.inline_attachments:
+            message["InlinedAttachments"] = [x.export() for x in self.inline_attachments]
+
+        return {"Messages": [message]}
+
+    @staticmethod
+    def get_mailjet_client():
+        auth = (u.get_secret("MAILJET_API_KEY"), u.get_secret("MAILJET_API_TOKEN"))
+        return Client(auth=auth, version="v3.1")
+
+    def send(self):
+        client = self.get_mailjet_client()
+        data = self.export()
+
+        result = client.send.create(data=data)
+
+        assert result.status_code == 200
+        return result.json()
