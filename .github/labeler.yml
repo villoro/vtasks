@@ -52,3 +52,6 @@ t/vprefect:
 - src/vprefect/**/*
 - templates/base.html
 - templates/vtasks.html
+
+dependencies:
+- poetry.lock

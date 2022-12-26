@@ -1,6 +1,7 @@
 from prefect import task, get_run_logger
 
 from utils import get_vdropbox
+from mailjet import Email
 
 from .export import PATH_GCAL_DATA
 
@@ -49,6 +50,16 @@ def filter_confusions(df, min_alpha=0.1):
     return df_confusions[confusions > 0].dropna(axis=1, how="all")
 
 
+def email_confusions(df_confusions):
+    html = f"""
+    <h3>Gcal confusions</h3>
+    {df_confusions.to_html()}
+    """
+
+    email = Email(subject="Gcal confusions", html=html)
+    email.send()
+
+
 @task(name="vtasks.gcal.confusions")
 def extract_gcal_confusions(exclude_other=True, merge_study=True, min_alpha=0.1):
     log = get_run_logger()
@@ -65,5 +76,6 @@ def extract_gcal_confusions(exclude_other=True, merge_study=True, min_alpha=0.1)
     if num_confusions > 0:
         log.warning(f"There are {num_confusions} in google calendar. Exporting them")
         vdp.write_excel(df_confusions, PATH_CONFUSIONS)
+        email_confusions(df_confusions)
     else:
         log.info("There are no confusions in google calendar")
