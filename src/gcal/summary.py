@@ -71,7 +71,7 @@ def prepare_email(mdate, fig, main_list):
     fig_content = fig.to_image(format="jpg", width=1280, height=720, scale=2)
 
     html = f"""
-    <h1>Report {mdate}</h1>
+    <h3>Report {mdate}</h3>
     {main_list}
     <img src=\"cid:{cid}\" max-width="1200" width="100%">
     """
