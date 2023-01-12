@@ -1,6 +1,7 @@
 from prefect import flow
 
-from .query import process_flow_runs, process_task_runs
+from .query import process_flow_runs
+from .query import process_task_runs
 from .report import create_report
 
 

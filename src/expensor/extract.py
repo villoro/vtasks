@@ -1,11 +1,11 @@
-from datetime import date
 from collections import OrderedDict
+from datetime import date
 
 import numpy as np
 import pandas as pd
 
-from vpalette import get_colors
 from prefect import get_run_logger
+from vpalette import get_colors
 
 import utils as u
 

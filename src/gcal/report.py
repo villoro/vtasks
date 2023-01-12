@@ -4,7 +4,9 @@ from prefect import task
 
 import utils as u
 
-from .export import PATH_GCAL, PATH_GCAL_DATA, read_calendars
+from .export import PATH_GCAL
+from .export import PATH_GCAL_DATA
+from .export import read_calendars
 
 
 def get_daily_data(vdp, mdate):

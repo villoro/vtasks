@@ -5,7 +5,8 @@ from datetime import date
 
 import gspreadsheets as gsh
 
-from prefect import flow, task
+from prefect import flow
+from prefect import task
 
 from cryptos.kraken import get_balances
 from expensor.constants import DF_WORTH

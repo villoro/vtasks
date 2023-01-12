@@ -1,9 +1,9 @@
 import pandas as pd
 
-from prefect import task
-from vpalette import get_colors
 from adtk.detector import OutlierDetector
+from prefect import task
 from sklearn.neighbors import LocalOutlierFactor
+from vpalette import get_colors
 
 import utils as u
 

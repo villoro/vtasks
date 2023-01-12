@@ -3,12 +3,13 @@ import re
 from datetime import date
 from datetime import timedelta
 
-from prefect import task, get_run_logger
+from prefect import get_run_logger
+from prefect import task
 
+from .tasks import BACKUP_TASKS
 from utils import get_files_from_regex
 from utils import get_path
 from utils import get_vdropbox
-from .tasks import BACKUP_TASKS
 
 YEAR = f"{date.today():%Y}"
 DAY = f"{date.today():%Y_%m_%d}"

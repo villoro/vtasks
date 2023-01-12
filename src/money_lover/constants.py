@@ -1,7 +1,3 @@
-"""
-    Constants and config vars
-"""
-
 PATH_EXPENSOR = "/Aplicaciones/expensor"
 
 PATH_MONEY_LOVER = f"{PATH_EXPENSOR}/Money Lover"

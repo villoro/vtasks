@@ -6,9 +6,13 @@ from datetime import date
 
 import gspreadsheets as gsh
 
-from prefect import flow, task, get_run_logger
+from prefect import flow
+from prefect import get_run_logger
+from prefect import task
 
-from expensor.constants import DF_INVEST, DF_WORTH, FILE_DATA
+from expensor.constants import DF_INVEST
+from expensor.constants import DF_WORTH
+from expensor.constants import FILE_DATA
 
 BASE_URL = "https://api.indexacapital.com"
 TOKEN_NAME = "INDEXA_TOKEN"

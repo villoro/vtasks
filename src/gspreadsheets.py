@@ -1,11 +1,15 @@
+from requests.exceptions import ConnectionError
+from time import sleep
+
 import gspread
 import pandas as pd
 
-from requests.exceptions import ConnectionError
-from time import sleep
 from prefect import get_run_logger
 
-from utils import PATH_ROOT, export_secret, get_path, get_secret
+from utils import PATH_ROOT
+from utils import export_secret
+from utils import get_path
+from utils import get_secret
 
 
 PATH_GSPREADSHEET_KEY = get_path("auth/gspreadsheets.json")
