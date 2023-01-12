@@ -1,7 +1,7 @@
 from prefect import task
 
-from utils import get_vdropbox
 from .tasks import COPY_TASKS
+from utils import get_vdropbox
 
 
 @task(name="vtasks.backup.copy")

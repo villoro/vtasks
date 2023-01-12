@@ -1,8 +1,9 @@
 import jinja2
 import pandas as pd
 
+from prefect import flow
+from prefect import task
 from vpalette import get_colors
-from prefect import flow, task
 
 import utils as u
 

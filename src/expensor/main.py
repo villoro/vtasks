@@ -2,7 +2,9 @@ from multiprocessing import Pool
 
 import pandas as pd
 
-from prefect import flow, task, get_run_logger
+from prefect import flow
+from prefect import get_run_logger
+from prefect import task
 
 from . import constants as c
 from .extract import extract_data

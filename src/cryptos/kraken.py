@@ -1,7 +1,7 @@
 import krakenex
 
-from pykrakenapi import KrakenAPI
 from prefect import get_run_logger
+from pykrakenapi import KrakenAPI
 
 from utils import get_secret
 

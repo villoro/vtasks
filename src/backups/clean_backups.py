@@ -4,7 +4,9 @@ from datetime import datetime
 from datetime import timedelta
 
 import pandas as pd
-from prefect import task, get_run_logger
+
+from prefect import get_run_logger
+from prefect import task
 
 from .tasks import BACKUP_TASKS
 from utils import get_vdropbox

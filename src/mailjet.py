@@ -1,7 +1,8 @@
 import base64
 
-from pydantic import BaseModel, validator
 from mailjet_rest import Client
+from pydantic import BaseModel
+from pydantic import validator
 
 import utils as u
 
