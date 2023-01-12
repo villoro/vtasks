@@ -10,9 +10,9 @@ from expensor import expensor
 from gcal import gcal
 from indexa import indexa
 from money_lover import money_lover
+from utils import detect_env
 from vbooks import vbooks
 from vprefect import vprefect
-from utils import detect_env
 
 
 @flow(name="vtasks")

@@ -4,14 +4,17 @@ from datetime import date
 
 import plotly.graph_objects as go
 
-from prefect import task, get_run_logger
+from mailjet import Attachment
+from mailjet import Email
+from mailjet import InlineAttachment
+from prefect import get_run_logger
+from prefect import task
 from prefect.context import get_run_context
 
 import utils as u
 
-from mailjet import Attachment, InlineAttachment, Email
-from .report import get_daily_data
 from .export import read_calendars
+from .report import get_daily_data
 from vprefect.query import query_task_runs
 
 MAIN_CALS = [
@@ -88,6 +91,10 @@ def prepare_email(mdate, fig, main_list):
     )
 
 
+SEND_SUMMARY_TASK_NAME = "vtasks.gcal.send_summary"
+
+
+@task(name=SEND_SUMMARY_TASK_NAME)
 def process_summary(mdate):
     """Send gcalendar report"""
 
@@ -107,30 +114,32 @@ def process_summary(mdate):
     email.send()
 
 
-@task(name="vtasks.gcal.summary")
-def summary(mdate: date):
+@task(name="vtasks.gcal.needs_summary")
+def needs_summary(mdate: date):
     """Creates the report"""
 
     log = get_run_logger()
 
     # This extract the name of this same task (no hardcoding)
-    task_name = get_run_context().task_run.name.split("-")[0]
+    # task_name = get_run_context().task_run.name.split("-")[0]
+    # Hardcoding it since it's a different task
+    task_name = SEND_SUMMARY_TASK_NAME
 
     if mdate.isoweekday() != 1:
         log.info(f"Skipping '{task_name}' since it only runs on Mondays")
-        return None
+        return False
 
     env = u.detect_env()
     if env != "prod":
         log.info(f"Skipping summary since {env=}")
-        return None
+        return False
 
     log.info(f"Checking if '{task_name}' has already run today")
     task_runs = asyncio.run(query_task_runs(name_like=task_name, env=env))
 
     if task_runs:
         log.warning("Summary already send")
-        return None
+        return False
 
     log.info("Sending gcalendar weekly report since it's the first run of the week")
-    process_summary(mdate)
+    return True
