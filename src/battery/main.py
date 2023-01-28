@@ -66,8 +66,11 @@ def update_parquet(vdp, df_new, parquet_path=PATH_BATTERY):
 @task(name="vtasks.battery.extract")
 def extract_battery_data():
     vdp = u.get_vdropbox()
-    df = read_bmw_history(vdp)
-    update_parquet(vdp, df)
+
+    if vdp.file_exists(PATH_CSV):
+        df = read_bmw_history(vdp)
+        update_parquet(vdp, df)
+        vdp.delete(PATH_CSV)
 
 
 def check_last_day_battery():
@@ -115,7 +118,7 @@ def send_alert():
 
 
 @flow(name="vtasks.battery")
-def battery(mdate: date):
+def battery():
     extract_battery_data()
     if needs_alert():
         send_alert()
