@@ -5,6 +5,7 @@ from prefect import tags
 
 from archive import archive
 from backups import backup
+from battery import battery
 from cryptos import crypto
 from expensor import expensor
 from gcal import gcal
@@ -20,6 +21,7 @@ def main(mdate: date):
 
     vbooks()
     archive()
+    battery()
 
     _gcal = gcal(mdate)
     backup(wait_for=[_gcal])

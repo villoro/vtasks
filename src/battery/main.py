@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pandas as pd
 
@@ -8,11 +8,13 @@ from prefect import task
 
 import utils as u
 
+from mailjet import Email
+
 PATH_PHONE = "/Aplicaciones/pixel"
 PATH_CSV = f"{PATH_PHONE}/bmw_history.txt"
 PATH_BATTERY = f"{PATH_PHONE}/battery.parquet"
 
-SEND_ALERT_TASK_NAME = "vtasks.phone.alert"
+SEND_ALERT_TASK_NAME = "vtasks.battery.alert"
 
 COL_MAP = {
     9: "time",
@@ -25,6 +27,8 @@ COL_MAP = {
     3: "change",
     8: "restart",
 }
+
+MAX_DAYS = 20
 
 
 def read_bmw_history(vdp):
@@ -59,16 +63,20 @@ def update_parquet(vdp, df_new, parquet_path=PATH_BATTERY):
     vdp.write_parquet(df, parquet_path)
 
 
-@task(name="vtasks.phone.extract")
+@task(name="vtasks.battery.extract")
 def extract_battery_data():
     vdp = u.get_vdropbox()
     df = read_bmw_history(vdp)
     update_parquet(vdp, df)
 
 
-@task(name="vtasks.phone.needs_alert")
-def needs_summary(mdate: date):
-    """Creates the report"""
+def check_last_day_battery():
+    df = vdp.read_parquet(PATH_BATTERY)
+    return (datetime.now() - df["time"].max()) / timedelta(days=1)
+
+
+@task(name="vtasks.battery.needs_alert")
+def needs_alert():
 
     log = get_run_logger()
 
@@ -77,6 +85,12 @@ def needs_summary(mdate: date):
     env = u.detect_env()
     if env != "prod":
         log.info(f"Skipping summary since {env=}")
+        return False
+
+    log.info(f"Checking last days with battery info")
+    days = check_last_day_battery()
+    if days < MAX_DAYS:
+        log.info(f"Battery data is not older than {MAX_DAYS=}")
         return False
 
     log.info(f"Checking if '{task_name}' has already run today")
@@ -88,3 +102,20 @@ def needs_summary(mdate: date):
 
     log.info("Sending alert to extract battery")
     return True
+
+
+@task(name=SEND_ALERT_TASK_NAME)
+def send_alert():
+
+    html = """<h3>Missing battery data</h3>
+    Please upload the battery data from the phone
+    """
+
+    Email(subject=f"Missing battery data", html=html).send()
+
+
+@flow(name="vtasks.battery")
+def battery(mdate: date):
+    extract_battery_data()
+    if needs_alert():
+        send_alert()
