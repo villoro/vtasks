@@ -11,6 +11,10 @@ t/backups:
 - src/backups/*
 - src/backups/**/*
 
+t/battery:
+- src/battery/*
+- src/battery/**/*
+
 t/cryptos:
 - src/cryptos/*
 - src/cryptos/**/*
@@ -52,6 +56,10 @@ t/vprefect:
 - src/vprefect/**/*
 - templates/base.html
 - templates/vtasks.html
+
+scripts:
+- scripts/*
+- scripts/**/*
 
 dependencies:
 - poetry.lock

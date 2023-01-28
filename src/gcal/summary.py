@@ -116,7 +116,7 @@ def process_summary(mdate):
 
 @task(name="vtasks.gcal.needs_summary")
 def needs_summary(mdate: date):
-    """Creates the report"""
+    """Checks if it needs the summary"""
 
     log = get_run_logger()
 
