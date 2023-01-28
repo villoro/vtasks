@@ -111,7 +111,14 @@ def needs_alert():
 def send_alert():
 
     html = """<h3>Missing battery data</h3>
-    Please upload the battery data from the phone
+    Please upload the battery data from the phone.
+    You can do it by going to:
+    <ol>
+      <li>Burger menu</li>
+      <li>Settings</li>
+      <li>Battery</li>
+      <li>Export battery history</li>
+    </ol>
     """
 
     Email(subject=f"Missing battery data", html=html).send()
