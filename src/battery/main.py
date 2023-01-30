@@ -74,6 +74,7 @@ def extract_battery_data():
 
 
 def check_last_day_battery():
+    vdp = u.get_vdropbox() 
     df = vdp.read_parquet(PATH_BATTERY)
     return (datetime.now() - df["time"].max()) / timedelta(days=1)
 
