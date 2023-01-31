@@ -1,9 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import datetime
+from datetime import timedelta
 
 import pandas as pd
 
-from prefect import get_run_logger
 from prefect import flow
+from prefect import get_run_logger
 from prefect import task
 
 import utils as u
@@ -74,6 +75,7 @@ def extract_battery_data():
 
 
 def check_last_day_battery():
+    vdp = u.get_vdropbox()
     df = vdp.read_parquet(PATH_BATTERY)
     return (datetime.now() - df["time"].max()) / timedelta(days=1)
 
