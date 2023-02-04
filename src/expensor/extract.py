@@ -436,15 +436,13 @@ def extract_sankey(data):
         savings_to_expenses = -min(result + invest_to_expenses, 0)
         savings_to_invest = max(invest - incomes_to_invest, 0)
 
-        # Create flows
+        # Create flows. The order is important
         aux = [
             [c.INCOMES, c.EXPENSES, min(incomes, expenses)],
-            [c.INCOMES, "Investments", incomes_to_invest],
-            [c.INCOMES, "Savings", incomes_to_savings],
+            [c.INCOMES, c.SAVINGS, incomes_to_savings],
             ["Investments", c.EXPENSES, invest_to_expenses],
-            ["Investments", "Savings", invest_to_savings],
-            ["Savings", c.EXPENSES, savings_to_expenses],
-            ["Savings", "Investments", savings_to_invest],
+            ["Investments", c.SAVINGS, invest_to_savings],
+            [c.SAVINGS, c.EXPENSES, savings_to_expenses],
         ]
 
         # Add Incomes
@@ -454,6 +452,12 @@ def extract_sankey(data):
         # Add Expenes
         for name, value in mdict[f"{c.EXPENSES}_by_groups"].items():
             aux.append([c.EXPENSES, name, value])
+
+        # Last general flows listed here to create a good looking Sankey
+        aux += [
+            [c.INCOMES, "Investments", incomes_to_invest],
+            [c.SAVINGS, "Investments", savings_to_invest],
+        ]
 
         # Prune flows = 0 and round the others
         out[tw] = [f'"{x}", "{y}", {value:.2f}' for x, y, value in aux if value > 0]
