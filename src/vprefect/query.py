@@ -1,5 +1,6 @@
 from datetime import datetime
 from datetime import timezone
+from time import sleep
 
 import asyncio
 import pandas as pd
@@ -9,6 +10,7 @@ from prefect import get_run_logger
 from prefect import task
 from prefect.client import get_client
 from prefect.orion.schemas import filters
+from httpx import HTTPStatusError
 
 import utils as u
 
@@ -18,22 +20,49 @@ from .models import FlowRun
 from .models import TaskRun
 
 
-async def read_flows():
+async def read_flows(retries=3):
     """extract task runs"""
+
+    log = get_run_logger()
     client = get_client()
-    return await client.read_flows()
+
+    for i in range(retries):
+        log.info(f"Querying flows (iteration {i+1}/{retries})")
+
+        try:
+            return await client.read_flows()
+        except HTTPStatusError as error:
+            log.error(f"Unable to query flows. {error=}")
 
 
-async def read_flow_runs():
+async def read_flow_runs(retries=3):
     """extract flow runs"""
+
+    log = get_run_logger()
     client = get_client()
-    return await client.read_flow_runs()
+
+    for i in range(retries):
+        log.info(f"Querying flow_runs (iteration {i+1}/{retries})")
+
+        try:
+            return await client.read_flow_runs()
+        except HTTPStatusError as error:
+            log.error(f"Unable to query flow_runs. {error=}")
 
 
-async def read_task_runs(task_run_filter=None):
+async def read_task_runs(task_run_filter=None, retries=3):
     """extract task runs"""
+
+    log = get_run_logger()
     client = get_client()
-    return await client.read_task_runs(task_run_filter=task_run_filter)
+
+    for i in range(retries):
+        log.info(f"Querying task_runs (iteration {i+1}/{retries})")
+
+        try:
+            return await client.read_task_runs(task_run_filter=task_run_filter)
+        except HTTPStatusError as error:
+            log.error(f"Unable to query task_runs. {error=}")
 
 
 async def query_task_runs(
@@ -152,14 +181,10 @@ def add_flow_name(df_in, flows):
 
 @task(name="vtasks.vprefect.flow_runs")
 def process_flow_runs():
-    log = get_run_logger()
 
-    log.info("Querying flows")
     flows = asyncio.run(read_flows())
-    log.info("Querying flow_runs")
     flow_runs = asyncio.run(read_flow_runs())
 
-    log.info("Processing flows")
     df_new = parse_prefect(flow_runs, FlowRun)
     df_new = extract_tags(df_new)
 
@@ -174,12 +199,9 @@ def process_flow_runs():
 
 @task(name="vtasks.vprefect.task_runs")
 def process_task_runs():
-    log = get_run_logger()
 
-    log.info("Querying task_runs")
     task_runs = asyncio.run(read_task_runs())
 
-    log.info("Processing task_runs")
     df_new = parse_prefect(task_runs, TaskRun)
     df_new = extract_tags(df_new)
 
