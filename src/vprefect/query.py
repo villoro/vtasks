@@ -32,7 +32,8 @@ async def read_flows(retries=3):
         try:
             return await client.read_flows()
         except HTTPStatusError as error:
-            log.error(f"Unable to query flows. {error=}")
+            log.error(f"Unable to query flows, sleeping for just a second. {error=}")
+            sleep(1)
 
 
 async def read_flow_runs(retries=3):
@@ -47,7 +48,8 @@ async def read_flow_runs(retries=3):
         try:
             return await client.read_flow_runs()
         except HTTPStatusError as error:
-            log.error(f"Unable to query flow_runs. {error=}")
+            log.error(f"Unable to query flow_runs, sleeping for just a second. {error=}")
+            sleep(1)
 
 
 async def read_task_runs(task_run_filter=None, retries=3):
@@ -62,7 +64,8 @@ async def read_task_runs(task_run_filter=None, retries=3):
         try:
             return await client.read_task_runs(task_run_filter=task_run_filter)
         except HTTPStatusError as error:
-            log.error(f"Unable to query task_runs. {error=}")
+            log.error(f"Unable to query task_runs, sleeping for just a second. {error=}")
+            sleep(1)
 
 
 async def query_task_runs(
