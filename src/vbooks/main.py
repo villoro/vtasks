@@ -163,7 +163,7 @@ def create_report(data):
     u.get_vdropbox().write_file(report, f"{c.PATH_VBOOKS}/vbooks.html")
 
 
-@flow(name="vtasks.vbooks")
+@flow(**u.get_prefect_args("vtasks.vbooks"))
 def vbooks():
     data = extract_data()
     create_report(data)

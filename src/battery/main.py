@@ -126,7 +126,7 @@ def send_alert():
     Email(subject=f"Missing battery data", html=html).send()
 
 
-@flow(name="vtasks.battery")
+@flow(**u.get_prefect_args("vtasks.battery"))
 def battery():
     extract_battery_data()
     if needs_alert():

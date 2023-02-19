@@ -1,7 +1,10 @@
 from datetime import date
+from datetime import datetime
 
 from prefect import flow
 from prefect import tags
+
+import utils as u
 
 from archive import archive
 from backups import backup
@@ -11,12 +14,11 @@ from expensor import expensor
 from gcal import gcal
 from indexa import indexa
 from money_lover import money_lover
-from utils import detect_env
 from vbooks import vbooks
 from vprefect import vprefect
 
 
-@flow(name="vtasks")
+@flow(**u.get_prefect_args("vtasks"))
 def main(mdate: date):
 
     vbooks()
@@ -37,5 +39,5 @@ def main(mdate: date):
 
 if __name__ == "__main__":
 
-    with tags(f"env:{detect_env()}"):
+    with tags(f"env:{u.detect_env()}"):
         main(mdate=date.today())
