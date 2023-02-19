@@ -121,18 +121,23 @@ def deduplicate(df_in):
 
 def update_parquet(df_new, parquet_path):
 
+    log = get_run_logger()
+
     vdp = u.get_vdropbox()
 
     if vdp.file_exists(parquet_path):
+        log.info(f"Updating {parquet_path=}")
         df_history = vdp.read_parquet(parquet_path)
         df_history = handle_localization(df_history)
 
         df = pd.concat([df_new, df_history])
         df = deduplicate(df)
     else:
+        log.info(f"Exporting {parquet_path=}")
         df = df_new.copy()
 
     vdp.write_parquet(df, parquet_path)
+    log.info(f"{parquet_path=} exported")
 
 
 def add_flow_name(df_in, flows):
@@ -147,9 +152,14 @@ def add_flow_name(df_in, flows):
 
 @task(name="vtasks.vprefect.flow_runs")
 def process_flow_runs():
+    log = get_run_logger()
+
+    log.info("Querying flows")
     flows = asyncio.run(read_flows())
+    log.info("Querying flow_runs")
     flow_runs = asyncio.run(read_flow_runs())
 
+    log.info("Processing flows")
     df_new = parse_prefect(flow_runs, FlowRun)
     df_new = extract_tags(df_new)
 
@@ -164,8 +174,12 @@ def process_flow_runs():
 
 @task(name="vtasks.vprefect.task_runs")
 def process_task_runs():
+    log = get_run_logger()
+
+    log.info("Querying task_runs")
     task_runs = asyncio.run(read_task_runs())
 
+    log.info("Processing task_runs")
     df_new = parse_prefect(task_runs, TaskRun)
     df_new = extract_tags(df_new)
 
