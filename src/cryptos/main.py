@@ -8,6 +8,8 @@ import gspreadsheets as gsh
 from prefect import flow
 from prefect import task
 
+import utils as u
+
 from cryptos.kraken import get_balances
 from expensor.constants import DF_WORTH
 from expensor.constants import FILE_DATA
@@ -95,7 +97,7 @@ def update_expensor(mfilter):
     gsh.df_to_gspread(FILE_DATA, DF_WORTH, df, mfilter, col_crypto)
 
 
-@flow(name="vtasks.crypto", retries=3, retry_delay_seconds=30)
+@flow(retries=3, retry_delay_seconds=30, **u.get_prefect_args("vtasks.crypto"))
 def crypto(mdate):
 
     mfilter = mdate.strftime("%Y-%m-01")

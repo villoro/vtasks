@@ -76,7 +76,7 @@ def extract_files(vdp, path, regex, output, pwd, kwargs):
         vdp.delete(origin)
 
 
-@flow(name="vtasks.archive")
+@flow(**u.get_prefect_args("vtasks.archive"))
 def archive():
 
     log = get_run_logger()
