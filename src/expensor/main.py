@@ -6,11 +6,13 @@ from prefect import flow
 from prefect import get_run_logger
 from prefect import task
 
+import utils as u
+
 from . import constants as c
 from .extract import extract_data
 from .report import create_report
 from gspreadsheets import read_df_gdrive
-from utils import get_vdropbox
+
 
 MIN_DATE = "2015-12-01"
 
@@ -27,7 +29,7 @@ def get_data():
 
     # Add transactions
     log.debug("Reading data from dropbox")
-    vdp = get_vdropbox()
+    vdp = u.get_vdropbox()
     dfs[c.DF_TRANS] = vdp.read_excel(c.FILE_TRANSACTIONS).set_index(c.COL_DATE)
 
     return dfs
@@ -45,7 +47,7 @@ def create_one_report(dfs, mdate):
     log.info(f"Report {mdate:%Y-%m} created")
 
 
-@flow(name="vtasks.expensor")
+@flow(**u.get_prefect_args("vtasks.expensor"))
 def expensor(mdate):
 
     log = get_run_logger()

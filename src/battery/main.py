@@ -95,7 +95,7 @@ def needs_alert():
     log.info(f"Checking last days with battery info")
     days = check_last_day_battery()
     if days < MAX_DAYS:
-        log.info(f"Battery data is not older than {MAX_DAYS=}")
+        log.info(f"Battery data is {int(days)=} old (not older than {MAX_DAYS=})")
         return False
 
     log.info(f"Checking if '{task_name}' has already run today")
@@ -126,7 +126,7 @@ def send_alert():
     Email(subject=f"Missing battery data", html=html).send()
 
 
-@flow(name="vtasks.battery")
+@flow(**u.get_prefect_args("vtasks.battery"))
 def battery():
     extract_battery_data()
     if needs_alert():

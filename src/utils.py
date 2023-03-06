@@ -3,6 +3,7 @@ import yaml
 
 from argparse import ArgumentParser
 from collections import OrderedDict
+from datetime import datetime
 from os import path
 from pathlib import Path
 
@@ -200,3 +201,7 @@ def smooth_serie(dfi):
 
     df = time_average(dfi, months=12, center=True)
     return time_average(df, months=6, center=True)
+
+
+def get_prefect_args(name):
+    return dict(name=name, flow_run_name=f"{name}-{datetime.now():%Y-%m-%d %H:%M}")

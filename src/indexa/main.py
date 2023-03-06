@@ -10,6 +10,8 @@ from prefect import flow
 from prefect import get_run_logger
 from prefect import task
 
+import utils as u
+
 from expensor.constants import DF_INVEST
 from expensor.constants import DF_WORTH
 from expensor.constants import FILE_DATA
@@ -91,7 +93,7 @@ def update_invested_and_worth(mfilter, portfolio, df_invest_in, df_worth_in):
     gsh.df_to_gspread(FILE_DATA, DF_WORTH, df_worth, mfilter, cols)
 
 
-@flow(name="vtasks.indexa")
+@flow(**u.get_prefect_args("vtasks.indexa"))
 def indexa(mdate):
 
     mfilter = mdate.strftime("%Y-%m-01")

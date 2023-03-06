@@ -5,8 +5,9 @@ from prefect import flow
 from prefect import get_run_logger
 from prefect import task
 
+import utils as u
+
 from . import constants as c
-from utils import get_vdropbox
 
 REGEX_MONEY_LOVER = r"^(MoneyLover-)?(?P<date>\d{4}-\d{2}-\d{2})( \((?P<num>\d+)\))?(.xls|.csv)$"
 
@@ -100,11 +101,11 @@ def process_transtactions(vdp, df_in):
     vdp.write_excel(df[c.COLS_DF_TRANS], c.FILE_TRANSACTIONS)
 
 
-@flow(name="vtasks.money_lover")
+@flow(**u.get_prefect_args("vtasks.money_lover"))
 def money_lover():
     """Retrives all dataframes and update DFS global var"""
 
-    vdp = get_vdropbox()
+    vdp = u.get_vdropbox()
 
     df = get_money_lover_df(vdp)
     process_transtactions(vdp, df)

@@ -1,15 +1,15 @@
 import subprocess
 
-from main import detect_env
-from utils import get_secret
+import utils as u
+
 
 PREFECT_LOGIN = "prefect cloud login --key {} --workspace villoro/vtasks"
-VTASKS_RUN = f"python src/main.py --env {detect_env()}"
+VTASKS_RUN = f"python src/main.py --env {u.detect_env()}"
 
 
 def prefect_login():
     """ugly way to login in heroku machine"""
-    login = PREFECT_LOGIN.format(get_secret("PREFECT_TOKEN"))
+    login = PREFECT_LOGIN.format(u.get_secret("PREFECT_TOKEN"))
     subprocess.run(login, shell=True)
 
 
