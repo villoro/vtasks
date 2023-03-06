@@ -1,12 +1,13 @@
-from prefect import task, get_run_logger
+from prefect import get_run_logger
+from prefect import task
 
-from utils import get_vdropbox
 from mailjet import Email
+from utils import get_vdropbox
 
 from .export import PATH_GCAL_DATA
 
 
-PATH_GCAL = "/Aplicaciones/gcal"
+PATH_GCAL = "/Aplicaciones/gcalendar"
 PATH_CONFUSIONS = f"{PATH_GCAL}/confusions.xlsx"
 
 
