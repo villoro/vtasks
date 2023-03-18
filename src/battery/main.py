@@ -8,10 +8,11 @@ import pandas as pd
 from prefect import flow
 from prefect import get_run_logger
 from prefect import task
+from mailjet import Email
 
 import utils as u
 
-from mailjet import Email
+from vprefect.query import query_task_runs
 
 PATH_PHONE = "/Aplicaciones/pixel"
 PATH_CSV = f"{PATH_PHONE}/bmw_history.txt"
