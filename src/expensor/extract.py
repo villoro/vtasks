@@ -40,7 +40,6 @@ def filter_by_date(dfs_in, mdate):
     mdate = pd.to_datetime(mdate) + pd.tseries.offsets.MonthEnd(1)
 
     for name, df in dfs.items():
-
         # Filter out future data
         if df.index.name == c.COL_DATE:
             df = df[df.index <= mdate]
@@ -93,7 +92,6 @@ def get_basic_traces(dfs, period, mdate):
 
     # Get by groups
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
-
         df = dfg.pivot_table(c.COL_AMOUNT, c.COL_DATE, c.COL_CATEGORY, "sum")
         df = resample(df, period, mdate)
 
@@ -128,7 +126,6 @@ def get_investment_or_liquid(dfs, yml, entity):
 
     aux = OrderedDict()
     for name in reversed(list(yml.keys())):
-
         # Check that accounts are in the yml
         mlist = [x for x in yml[name][c.ACCOUNTS] if x in dfg.columns]
 
@@ -240,7 +237,6 @@ def get_pie_traces(dfs, mdate):
 
     out = {}
     for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
-
         df = df.pivot_table(c.COL_AMOUNT, c.COL_DATE, c.COL_CATEGORY, "sum").fillna(0)
 
         def export_trace(serie):
@@ -278,7 +274,6 @@ def get_dashboard(data, mdate):
     out = {}
 
     for tw, date_index in [("month", f"{mdate:%Y-%m-01}"), ("year", mdate.year)]:
-
         out[tw] = {}
 
         # Basic traces
@@ -291,7 +286,6 @@ def get_dashboard(data, mdate):
 
         # Traces by groups
         for name in [f"{c.EXPENSES}_by_groups", f"{c.INCOMES}_by_groups"]:
-
             out[tw][name] = {}
 
             for categ, mdict in data[tw][name].items():
@@ -488,7 +482,10 @@ def get_colors_comparisons(dfs):
             color_index = max(100, 900 - 200 * (max(years) - year))
             size = max(6 - (max(years) - year), 1)
 
-            out[year] = {"color": get_colors((color_name, color_index)), "size": size}
+            out[year] = {
+                "color": get_colors((color_name, color_index), palette="material"),
+                "size": size,
+            }
 
         return out
 
