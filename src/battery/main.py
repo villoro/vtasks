@@ -108,14 +108,18 @@ def needs_alert():
         log.warning("Alert already send")
         return False
 
-    log.info("Sending alert to extract battery")
+    log.info(f"Sending alert to extract battery ({int(days)=})")
     return True
 
 
 @task(name=SEND_ALERT_TASK_NAME)
 def send_alert():
 
-    html = """<h3>Missing battery data</h3>
+    days = check_last_day_battery()
+
+    html = f"""<h3>Missing battery data</h3>
+    The last battery extraction is from {days=}
+
     Please upload the battery data from the phone.
     You can do it by going to:
     <ol>

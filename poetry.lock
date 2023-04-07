@@ -2660,11 +2660,11 @@ test = ["covdefaults (>=2.2.2)", "coverage (>=7.1)", "coverage-enable-subprocess
 
 [[package]]
 name = "vpalette"
-version = "2.0.1"
+version = "3.0.0"
 description = "Utility to easily use material design colors"
 category = "main"
 optional = false
-python-versions = ">=3.6.1,<4.0.0"
+python-versions = ">=3.8.0,<4.0.0"
 
 [[package]]
 name = "wcwidth"
@@ -2735,7 +2735,7 @@ test = ["pytest", "pytest-cov"]
 [metadata]
 lock-version = "1.1"
 python-versions = "3.11.0"
-content-hash = "f71bbf1e5229ddb14589d5d964ce71428b93c76e75b94513dbb8f6b3a992a341"
+content-hash = "f4569a86f10c12de9d65d219809e3fe865a69e912a7c30658826d3c24ea735fd"
 
 [metadata.files]
 adtk = [
@@ -4663,8 +4663,8 @@ virtualenv = [
     {file = "virtualenv-20.19.0.tar.gz", hash = "sha256:37a640ba82ed40b226599c522d411e4be5edb339a0c0de030c0dc7b646d61590"},
 ]
 vpalette = [
-    {file = "vpalette-2.0.1-py3-none-any.whl", hash = "sha256:2c1fa4248ece38529e2ad9eee5524bb84005f0f3e656f7aefdbee88944aab0c5"},
-    {file = "vpalette-2.0.1.tar.gz", hash = "sha256:9a0448dec4cf7efa9e5583d629e82ecc53ac92d60f799b9f2ea924475d877952"},
+    {file = "vpalette-3.0.0-py3-none-any.whl", hash = "sha256:706457711253cf71a9a6c03553759ced5dc31b4a7cce2d5bb2704c530dc3fcf2"},
+    {file = "vpalette-3.0.0.tar.gz", hash = "sha256:7f433f7d947ecff1bf98e036143a08786964235a27729b0d5d30e8afc359186d"},
 ]
 wcwidth = [
     {file = "wcwidth-0.2.6-py2.py3-none-any.whl", hash = "sha256:795b138f6875577cd91bba52baf9e445cd5118fd32723b460e30a0af30ea230e"},
