@@ -26,13 +26,15 @@ async def read_flows():
     return await client.read_flows()
 
 
-async def _read_flow_runs(offset):
+async def _read_flow_runs(offset, flow_run_filter=None):
     """extract flow runs with query limits"""
     client = get_client()
-    return await client.read_flow_runs(sort=sorting.FlowRunSort.START_TIME_DESC, offset=offset)
+    return await client.read_flow_runs(
+        sort=sorting.FlowRunSort.START_TIME_DESC, flow_run_filter=flow_run_filter, offset=offset
+    )
 
 
-async def read_flow_runs(max_queries=100):
+async def read_flow_runs(flow_run_filter=None, max_queries=100):
     """extract flow runs iterating to avoid query limits"""
 
     log = get_run_logger()
@@ -46,15 +48,28 @@ async def read_flow_runs(max_queries=100):
         flow_runs += response
         sleep(0.5)
 
-    log.info(f"All flow_runs extracted in {x} API calls")
+    log.info(f"All flow_runs extracted in {x} API calls (out of {max_queries})")
     return flow_runs
+
+
+async def query_flow_runs(
+    start_time_min=datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0),
+):
+    client = get_client()
+    filter_params = {}
+
+    if start_time_min:
+        filter_params["start_time"] = filters.FlowRunFilterStartTime(after_=start_time_min)
+
+    flow_run_filter = filters.FlowRunFilter(**filter_params)
+    return await read_flow_runs(flow_run_filter)
 
 
 async def _read_task_runs(offset, task_run_filter=None):
     """extract task runs with query limits"""
     client = get_client()
     return await client.read_task_runs(
-        sort=sorting.TaskRunSort.END_TIME_DESC, task_run_filter=task_run_filter
+        sort=sorting.TaskRunSort.END_TIME_DESC, task_run_filter=task_run_filter, offset=offset
     )
 
 
@@ -72,13 +87,13 @@ async def read_task_runs(task_run_filter=None, max_queries=5000):
         task_runs += response
         sleep(0.5)
 
-    log.info(f"All task_runs extracted in {x} API calls")
+    log.info(f"All task_runs extracted in {x} API calls (out of {max_queries})")
     return task_runs
 
 
 async def query_task_runs(
-    name_like,
-    env,
+    name_like=None,
+    env=None,
     state_names=["Completed"],
     start_time_min=datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0),
 ):
