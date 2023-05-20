@@ -34,14 +34,19 @@ async def _read_flow_runs(offset):
 
 async def read_flow_runs(max_queries=100):
     """extract flow runs iterating to avoid query limits"""
+
+    log = get_run_logger()
     flow_runs = []
 
     for x in range(max_queries):
+        log.debug(f"    Doing iteration {x+1}/{max_queries}")
         response = await _read_flow_runs(offset=x * 200)
         if not response:
             break
         flow_runs += response
         sleep(0.5)
+
+    log.info(f"All flow_runs extracted in {x} API calls")
     return flow_runs
 
 
@@ -66,6 +71,8 @@ async def read_task_runs(task_run_filter=None, max_queries=5000):
             break
         task_runs += response
         sleep(0.5)
+
+    log.info(f"All task_runs extracted in {x} API calls")
     return task_runs
 
 
