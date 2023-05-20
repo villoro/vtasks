@@ -41,14 +41,14 @@ async def read_flow_runs(flow_run_filter=None, max_queries=100):
     flow_runs = []
 
     for x in range(max_queries):
-        log.debug(f"    Doing iteration {x+1}/{max_queries}")
+        log.info(f"    Starting iteration {x+1}/{max_queries}")
         response = await _read_flow_runs(offset=x * 200, flow_run_filter=flow_run_filter)
         if not response:
             break
         flow_runs += response
         sleep(0.5)
 
-    log.info(f"All flow_runs extracted in {x+1} API calls (out of {max_queries})")
+    log.info(f"All flow_runs ({len(flow_runs)}) extracted in {x} API calls ({max_queries=})")
     return flow_runs
 
 
@@ -80,14 +80,14 @@ async def read_task_runs(task_run_filter=None, max_queries=200):
     task_runs = []
 
     for x in range(max_queries):
-        log.debug(f"    Doing iteration {x+1}/{max_queries}")
+        log.info(f"    Starting iteration {x+1}/{max_queries}")
         response = await _read_task_runs(offset=x * 200, task_run_filter=task_run_filter)
         if not response:
             break
         task_runs += response
         sleep(0.5)
 
-    log.info(f"All task_runs extracted in {x+1} API calls (out of {max_queries})")
+    log.info(f"All task_runs ({len(task_runs)}) extracted in {x} API calls ({max_queries=})")
     return task_runs
 
 
@@ -173,30 +173,30 @@ def deduplicate(df_in):
     return df[~df.index.duplicated(keep="first")]
 
 
-def get_last_update(parquet_path):
+def get_history(vdp, parquet_path):
     log = get_run_logger()
-
-    vdp = u.get_vdropbox()
 
     if not vdp.file_exists(parquet_path):
         return None
 
+    log.info(f"Reading {parquet_path=}")
     df_history = vdp.read_parquet(parquet_path)
-    df_history = handle_localization(df_history)
+    return handle_localization(df_history)
 
+
+def get_last_update(df_history):
+    if df_history is None:
+        return None
     return df_history[c.COL_START].max()
 
 
-def update_parquet(df_new, parquet_path):
+def update_parquet(vdp, df_new, df_history, parquet_path):
     log = get_run_logger()
 
     vdp = u.get_vdropbox()
 
-    if vdp.file_exists(parquet_path):
+    if df_history is not None:
         log.info(f"Updating {parquet_path=}")
-        df_history = vdp.read_parquet(parquet_path)
-        df_history = handle_localization(df_history)
-
         df = pd.concat([df_new, df_history])
         df = deduplicate(df)
     else:
@@ -218,10 +218,12 @@ def add_flow_name(df_in, flows):
 
 @task(name="vtasks.vprefect.flow_runs", retries=3, retry_delay_seconds=5)
 def process_flow_runs():
+    vdp = u.get_vdropbox()
     log = get_run_logger()
 
     log.info("Querying last_update")
-    last_update = get_last_update(c.PATH_FLOW_RUNS)
+    df_history = get_history(vdp, c.PATH_FLOW_RUNS)
+    last_update = get_last_update(df_history)
 
     log.info("Querying flows")
     flows = asyncio.run(read_flows())
@@ -241,15 +243,17 @@ def process_flow_runs():
     # Retrive flow_name from flows
     df_new = add_flow_name(df_new, flows)
 
-    update_parquet(df_new, c.PATH_FLOW_RUNS)
+    update_parquet(vdp, df_new, df_history, c.PATH_FLOW_RUNS)
 
 
 @task(name="vtasks.vprefect.task_runs", retries=3, retry_delay_seconds=5)
 def process_task_runs():
+    vdp = u.get_vdropbox()
     log = get_run_logger()
 
     log.info("Querying last_update")
-    last_update = get_last_update(c.PATH_TASK_RUNS)
+    df_history = get_history(vdp, c.PATH_TASK_RUNS)
+    last_update = get_last_update(df_history)
 
     log.info("Querying task_runs")
     task_runs = asyncio.run(query_task_runs(start_time_min=last_update, state_names=None))
@@ -264,4 +268,4 @@ def process_task_runs():
     # Exclude running tags
     df_new = df_new[df_new[c.COL_STATE] != c.STATE_RUNNING]
 
-    update_parquet(df_new, c.PATH_TASK_RUNS)
+    update_parquet(vdp, df_new, df_history, c.PATH_TASK_RUNS)
