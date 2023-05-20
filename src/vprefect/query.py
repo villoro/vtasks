@@ -25,18 +25,42 @@ async def read_flows():
     return await client.read_flows()
 
 
-async def read_flow_runs():
-    """extract flow runs"""
+async def _read_flow_runs(offset):
+    """extract flow runs with query limits"""
     client = get_client()
-    return await client.read_flow_runs(sort=sorting.FlowRunSort.START_TIME_DESC)
+    return await client.read_flow_runs(sort=sorting.FlowRunSort.START_TIME_DESC, offset=offset)
 
 
-async def read_task_runs(task_run_filter=None):
-    """extract task runs"""
+async def read_flow_runs(max_queries=20):
+    """extract flow runs iterating to avoid query limits"""
+    flow_runs = []
+
+    for x in range(max_queries):
+        response = await _read_flow_runs(offset=x * 200)
+        if not response:
+            break
+        flow_runs += response
+    return flow_runs
+
+
+async def _read_task_runs(offset, task_run_filter=None):
+    """extract task runs with query limits"""
     client = get_client()
     return await client.read_task_runs(
         sort=sorting.TaskRunSort.END_TIME_DESC, task_run_filter=task_run_filter
     )
+
+
+async def read_task_runs(task_run_filter=None, max_queries=100):
+    """extract task runs iterating to avoid query limits"""
+    task_runs = []
+
+    for x in range(max_queries):
+        response = await _read_task_runs(offset=x * 200, task_run_filter=task_run_filter)
+        if not response:
+            break
+        task_runs += response
+    return task_runs
 
 
 async def query_task_runs(
@@ -158,6 +182,9 @@ def process_flow_runs():
     flows = asyncio.run(read_flows())
     log.info("Querying flow_runs")
     flow_runs = asyncio.run(read_flow_runs())
+
+    log.info("Removing invalid flow_runs")
+    flow_runs = [x for x in flow_runs if x.start_time is not None]
 
     log.info("Processing flow_runs")
     df_new = parse_prefect(flow_runs, FlowRun)
