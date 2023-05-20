@@ -9,6 +9,7 @@ from prefect import get_run_logger
 from prefect import task
 from prefect.client import get_client
 from prefect.orion.schemas import filters
+from prefect.orion.schemas import sorting
 
 import utils as u
 
@@ -27,13 +28,15 @@ async def read_flows():
 async def read_flow_runs():
     """extract flow runs"""
     client = get_client()
-    return await client.read_flow_runs()
+    return await client.read_flow_runs(sort=sorting.FlowRunSort.START_TIME_DESC)
 
 
 async def read_task_runs(task_run_filter=None):
     """extract task runs"""
     client = get_client()
-    return await client.read_task_runs(task_run_filter=task_run_filter)
+    return await client.read_task_runs(
+        sort=sorting.TaskRunSort.END_TIME_DESC, task_run_filter=task_run_filter
+    )
 
 
 async def query_task_runs(
@@ -69,7 +72,6 @@ def handle_localization(df_in):
     # There has been some problems with timezones,
     # make sure to remove them everywhere
     for col in [c.COL_CREATED, c.COL_EXPORTED_AT, c.COL_START, c.COL_END]:
-
         # Skip columns that are not present in some models
         if col not in df.columns:
             continue
@@ -140,7 +142,6 @@ def update_parquet(df_new, parquet_path):
 
 
 def add_flow_name(df_in, flows):
-
     df = df_in.copy()
 
     flow_map = parse_prefect(flows, Flow)[c.COL_NAME].to_dict()
@@ -181,5 +182,8 @@ def process_task_runs():
     log.info("Processing task_runs")
     df_new = parse_prefect(task_runs, TaskRun)
     df_new = extract_tags(df_new)
+
+    # Exclude running tags
+    df_new = df_new[df_new[c.COL_STATE] != c.STATE_RUNNING]
 
     update_parquet(df_new, c.PATH_TASK_RUNS)
