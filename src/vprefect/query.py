@@ -1,5 +1,6 @@
 from datetime import datetime
 from datetime import timezone
+from time import sleep
 
 import asyncio
 import pandas as pd
@@ -31,7 +32,7 @@ async def _read_flow_runs(offset):
     return await client.read_flow_runs(sort=sorting.FlowRunSort.START_TIME_DESC, offset=offset)
 
 
-async def read_flow_runs(max_queries=20):
+async def read_flow_runs(max_queries=100):
     """extract flow runs iterating to avoid query limits"""
     flow_runs = []
 
@@ -40,6 +41,7 @@ async def read_flow_runs(max_queries=20):
         if not response:
             break
         flow_runs += response
+        sleep(0.5)
     return flow_runs
 
 
@@ -51,15 +53,19 @@ async def _read_task_runs(offset, task_run_filter=None):
     )
 
 
-async def read_task_runs(task_run_filter=None, max_queries=100):
+async def read_task_runs(task_run_filter=None, max_queries=5000):
     """extract task runs iterating to avoid query limits"""
+
+    log = get_run_logger()
     task_runs = []
 
     for x in range(max_queries):
+        log.debug(f"    Doing iteration {x+1}/{max_queries}")
         response = await _read_task_runs(offset=x * 200, task_run_filter=task_run_filter)
         if not response:
             break
         task_runs += response
+        sleep(0.5)
     return task_runs
 
 
@@ -205,6 +211,9 @@ def process_task_runs():
 
     log.info("Querying task_runs")
     task_runs = asyncio.run(read_task_runs())
+
+    log.info("Removing invalid task_runs")
+    task_runs = [x for x in task_runs if x.start_time is not None]
 
     log.info("Processing task_runs")
     df_new = parse_prefect(task_runs, TaskRun)
