@@ -42,13 +42,13 @@ async def read_flow_runs(flow_run_filter=None, max_queries=100):
 
     for x in range(max_queries):
         log.debug(f"    Doing iteration {x+1}/{max_queries}")
-        response = await _read_flow_runs(offset=x * 200)
+        response = await _read_flow_runs(offset=x * 200, flow_run_filter=flow_run_filter)
         if not response:
             break
         flow_runs += response
         sleep(0.5)
 
-    log.info(f"All flow_runs extracted in {x} API calls (out of {max_queries})")
+    log.info(f"All flow_runs extracted in {x+1} API calls (out of {max_queries})")
     return flow_runs
 
 
@@ -73,7 +73,7 @@ async def _read_task_runs(offset, task_run_filter=None):
     )
 
 
-async def read_task_runs(task_run_filter=None, max_queries=5000):
+async def read_task_runs(task_run_filter=None, max_queries=200):
     """extract task runs iterating to avoid query limits"""
 
     log = get_run_logger()
@@ -87,7 +87,7 @@ async def read_task_runs(task_run_filter=None, max_queries=5000):
         task_runs += response
         sleep(0.5)
 
-    log.info(f"All task_runs extracted in {x} API calls (out of {max_queries})")
+    log.info(f"All task_runs extracted in {x+1} API calls (out of {max_queries})")
     return task_runs
 
 
@@ -173,6 +173,20 @@ def deduplicate(df_in):
     return df[~df.index.duplicated(keep="first")]
 
 
+def get_last_update(parquet_path):
+    log = get_run_logger()
+
+    vdp = u.get_vdropbox()
+
+    if not vdp.file_exists(parquet_path):
+        return None
+
+    df_history = vdp.read_parquet(parquet_path)
+    df_history = handle_localization(df_history)
+
+    return df_history[c.COL_START].max()
+
+
 def update_parquet(df_new, parquet_path):
     log = get_run_logger()
 
@@ -206,10 +220,13 @@ def add_flow_name(df_in, flows):
 def process_flow_runs():
     log = get_run_logger()
 
+    log.info("Querying last_update")
+    last_update = get_last_update(c.PATH_FLOW_RUNS)
+
     log.info("Querying flows")
     flows = asyncio.run(read_flows())
     log.info("Querying flow_runs")
-    flow_runs = asyncio.run(read_flow_runs())
+    flow_runs = asyncio.run(query_flow_runs(start_time_min=last_update))
 
     log.info("Removing invalid flow_runs")
     flow_runs = [x for x in flow_runs if x.start_time is not None]
@@ -231,8 +248,11 @@ def process_flow_runs():
 def process_task_runs():
     log = get_run_logger()
 
+    log.info("Querying last_update")
+    last_update = get_last_update(c.PATH_TASK_RUNS)
+
     log.info("Querying task_runs")
-    task_runs = asyncio.run(read_task_runs())
+    task_runs = asyncio.run(query_task_runs(start_time_min=last_update, state_names=None))
 
     log.info("Removing invalid task_runs")
     task_runs = [x for x in task_runs if x.start_time is not None]
