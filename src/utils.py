@@ -25,7 +25,7 @@ PATH_ROOT = Path(__file__).parent.parent
 
 
 def detect_env():
-    """Detect if it is PRO environment"""
+    """Detect if it is PROD environment"""
 
     parser = ArgumentParser()
     parser.add_argument("-f", help="Dummy argument not meant to be used")
@@ -37,7 +37,7 @@ def detect_env():
 
 
 def get_log():
-    if detect_env() == "pro":
+    if detect_env() in ["pro", "prod"]:
         return get_run_logger()
 
     try:
