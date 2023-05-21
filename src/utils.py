@@ -1,5 +1,6 @@
 import re
 import yaml
+import sys
 
 from argparse import ArgumentParser
 from collections import OrderedDict
@@ -13,7 +14,6 @@ import pandas as pd
 
 from prefect import get_run_logger
 from prefect.exceptions import MissingContextError
-from loguru import logger
 from vcrypto import Cipher
 from vdropbox import Vdropbox
 
@@ -43,6 +43,11 @@ def get_log():
     try:
         return get_run_logger()
     except MissingContextError:
+        from loguru import logger
+
+        logger.configure(handlers=[{"sink": sys.stdout, "level": "INFO"}])
+        logger.enable("vtasks")
+
         logger.debug("Switching to loguru")
         return logger
 
