@@ -551,10 +551,6 @@ def extract_data(dfs, mdate, export_data=False):
     # Filter dates
     dfs = filter_by_date(dfs, mdate)
 
-    # Get config info
-    vdp = u.get_vdropbox()
-    yml = vdp.read_yaml(c.FILE_CONFIG)
-
     out = {}
 
     # Expenses, incomes, result and savings ratio
@@ -580,6 +576,7 @@ def extract_data(dfs, mdate, export_data=False):
     out["colors"] = extract_colors(dfs)
 
     if export_data:
+        vdp = u.get_vdropbox()
         vdp.write_yaml(out, f"{c.PATH_EXPENSOR}/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
 
     return out

@@ -4,7 +4,6 @@ PATH_EXPENSOR = "/Aplicaciones/expensor"
 PATH_MONEY_LOVER = f"{PATH_EXPENSOR}/Money Lover"
 
 FILE_TRANSACTIONS = f"{PATH_EXPENSOR}/transactions.xlsx"
-FILE_CONFIG = f"{PATH_EXPENSOR}/config.yml"
 
 COL_DATE = "Date"
 COL_NOTES = "Note"
