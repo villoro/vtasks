@@ -3,7 +3,6 @@ from multiprocessing import Pool
 import pandas as pd
 
 from prefect import flow
-from prefect import get_run_logger
 from prefect import task
 
 import utils as u
@@ -21,7 +20,7 @@ MIN_DATE = "2015-12-01"
 def get_data():
     """Retrive dataframes"""
 
-    log = get_run_logger()
+    log = u.get_log()
 
     # Get dfs
     log.debug("Reading excels from gdrive")
@@ -39,7 +38,7 @@ def get_data():
 def create_one_report(dfs, mdate):
     """Creates a report for one month"""
 
-    log = get_run_logger()
+    log = u.get_log()
 
     data = extract_data(dfs, mdate, export_data=False)
     create_report(mdate, data=data)
@@ -49,8 +48,7 @@ def create_one_report(dfs, mdate):
 
 @flow(**u.get_prefect_args("vtasks.expensor"))
 def expensor(mdate):
-
-    log = get_run_logger()
+    log = u.get_log()
 
     mdate = pd.to_datetime(mdate)
     # Reversed since first we want the latest month

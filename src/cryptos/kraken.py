@@ -1,8 +1,8 @@
 import krakenex
 
-from prefect import get_run_logger
 from pykrakenapi import KrakenAPI
 
+from utils import get_log
 from utils import get_secret
 
 PAIRS = {
@@ -19,7 +19,7 @@ PAIRS = {
 
 def get_api():
     """Get krakenx API object"""
-    log = get_run_logger()
+    log = get_log()
     log.debug("Getting kraken API object")
 
     kx_api = krakenex.API(get_secret("KRAKEN_KEY"), get_secret("KRAKEN_SECRET"))
@@ -29,7 +29,7 @@ def get_api():
 def get_balances(api=None):
     """Retrive balances as a pandas serie"""
 
-    log = get_run_logger()
+    log = get_log()
 
     # Allow lazy loading
     if api is None:

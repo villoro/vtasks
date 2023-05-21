@@ -1,7 +1,5 @@
 from datetime import datetime
 
-from prefect import get_run_logger
-
 import utils as u
 
 from . import constants as c
@@ -10,7 +8,7 @@ from . import constants as c
 def create_report(mdate, data=None):
     """Creates the report"""
 
-    log = get_run_logger()
+    log = u.get_log()
     mdate = mdate.replace(day=1)
 
     vdp = u.get_vdropbox()

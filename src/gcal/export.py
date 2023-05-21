@@ -6,7 +6,7 @@ import pandas as pd
 
 from gcsa.google_calendar import GoogleCalendar
 from gcsa.serializers.event_serializer import EventSerializer
-from prefect import task, get_run_logger
+from prefect import task
 
 import utils as u
 
@@ -28,7 +28,7 @@ u.export_secret(PATH_GCAL_JSON, "GCAL_JSON")
 def download_token(vdp):
     """Download token from dropbox"""
 
-    log = get_run_logger()
+    log = u.get_log()
 
     if not TOKEN_FILENAME in vdp.ls(PATH_GCAL):
         log.warning("GCAL token not found in dropbox")
@@ -80,7 +80,6 @@ def query_events(calendar, end, start=MIN_DATE, drop_invalid=True):
     events = calendar.get_events(start, end, order_by="updated", single_events=True)
 
     for event in events:
-
         data.append(
             {
                 # Serialize the event
@@ -104,13 +103,12 @@ def query_events(calendar, end, start=MIN_DATE, drop_invalid=True):
 def get_all_events(calendars, mdate):
     """Get all events from all calendars"""
 
-    log = get_run_logger()
+    log = u.get_log()
     log.info("Querying all calendars")
 
     dfs = []
 
     for name, data in calendars.items():
-
         log.info(f"Querying calendar '{name}'")
 
         calendar = get_calendar(data["url"])

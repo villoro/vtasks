@@ -7,7 +7,6 @@ import plotly.graph_objects as go
 from mailjet import Attachment
 from mailjet import Email
 from mailjet import InlineAttachment
-from prefect import get_run_logger
 from prefect import task
 from prefect.context import get_run_context
 
@@ -67,7 +66,6 @@ def create_main_list(df, calendars):
 
 
 def prepare_email(mdate, fig, main_list):
-
     filename = f"plot_{mdate}.jpg"
     cid = "plot_gcal"
 
@@ -98,7 +96,7 @@ SEND_SUMMARY_TASK_NAME = "vtasks.gcal.send_summary"
 def process_summary(mdate):
     """Send gcalendar report"""
 
-    log = get_run_logger()
+    log = u.get_log()
 
     vdp = u.get_vdropbox()
     df = get_daily_data(vdp, mdate)
@@ -118,7 +116,7 @@ def process_summary(mdate):
 def needs_summary(mdate: date):
     """Checks if it needs the summary"""
 
-    log = get_run_logger()
+    log = u.get_log()
 
     # This extract the name of this same task (no hardcoding)
     # task_name = get_run_context().task_run.name.split("-")[0]

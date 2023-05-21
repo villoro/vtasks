@@ -7,7 +7,6 @@ from datetime import date
 import gspreadsheets as gsh
 
 from prefect import flow
-from prefect import get_run_logger
 from prefect import task
 
 import utils as u
@@ -25,10 +24,10 @@ ACCOUNTS = {"indexa": "HVGLMEL8", "indexa_pp": "PYDTR6X6"}
 def query_indexa(endpoint):
     """Raw function for querying indexa"""
 
-    # log = get_run_logger()
+    log = u.get_log()
 
     url = f"{BASE_URL}/{endpoint}"
-    # log.info(f"Querying '{url}'")
+    log.debug(f"Querying '{url}'")
 
     token = u.get_secret(TOKEN_NAME)
 
@@ -95,7 +94,6 @@ def update_invested_and_worth(mfilter, portfolio, df_invest_in, df_worth_in):
 
 @flow(**u.get_prefect_args("vtasks.indexa"))
 def indexa(mdate):
-
     mfilter = mdate.strftime("%Y-%m-01")
 
     portfolio = query_portfolio()

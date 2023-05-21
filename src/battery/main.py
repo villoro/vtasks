@@ -6,7 +6,6 @@ from datetime import timedelta
 import pandas as pd
 
 from prefect import flow
-from prefect import get_run_logger
 from prefect import task
 from mailjet import Email
 
@@ -36,8 +35,7 @@ MAX_DAYS = 20
 
 
 def read_bmw_history(vdp):
-
-    log = get_run_logger()
+    log = u.get_log()
     log.info(f"Reading {PATH_CSV=}")
     df = vdp.read_csv(PATH_CSV, header=None)
 
@@ -55,7 +53,6 @@ def read_bmw_history(vdp):
 
 
 def update_parquet(vdp, df_new, parquet_path=PATH_BATTERY):
-
     if vdp.file_exists(parquet_path):
         df_history = vdp.read_parquet(parquet_path)
 
@@ -85,8 +82,7 @@ def check_last_day_battery():
 
 @task(name="vtasks.battery.needs_alert")
 def needs_alert():
-
-    log = get_run_logger()
+    log = u.get_log()
 
     task_name = SEND_ALERT_TASK_NAME
 
@@ -114,7 +110,6 @@ def needs_alert():
 
 @task(name=SEND_ALERT_TASK_NAME)
 def send_alert():
-
     days = check_last_day_battery()
 
     html = f"""<h3>Missing battery data</h3>

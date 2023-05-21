@@ -2,7 +2,6 @@ import pandas as pd
 import re
 
 from prefect import flow
-from prefect import get_run_logger
 from prefect import task
 
 import utils as u
@@ -40,7 +39,7 @@ def get_files(vdp):
 def get_money_lover_df(vdp):
     """gets the money lover file as a dataframe"""
 
-    log = get_run_logger()
+    log = u.get_log()
 
     files = get_files(vdp)
 
@@ -48,7 +47,6 @@ def get_money_lover_df(vdp):
 
     # Iterate all files and transform all to parquet except the last one
     for key, filename in sorted(files.items()):
-
         uri_in = f"{c.PATH_MONEY_LOVER}/{filename}"
         uri_out = f"{c.PATH_MONEY_LOVER}/{key[:4]}/{key[:10]}.parquet"
 
