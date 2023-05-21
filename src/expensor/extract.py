@@ -104,13 +104,12 @@ def get_basic_traces(dfs, period, mdate):
     return out
 
 
-def get_investment_or_liquid(dfs, yml, entity):
+def get_investment_or_liquid(dfs, entity):
     """
     Retrives investment or liquid data
 
     Args:
         dfs:    dict with dataframes
-        yml:    dict with config info
         entity: entity to process
     """
 
@@ -118,15 +117,19 @@ def get_investment_or_liquid(dfs, yml, entity):
 
     entity = entity.split("_")[0].title()
 
+    # Filter investment/liquid
+    df_accounts = dfs[c.DF_ACCOUNTS].copy()
+    df_accounts = df_accounts[df_accounts[c.COL_TYPE] == entity]
+
     out = {
         entity: u.serie_to_dict(dfg["Total"]),
         f"{entity}_trend": u.serie_to_dict(u.smooth_serie(dfg)["Total"]),
     }
 
     aux = OrderedDict()
-    for name in reversed(list(yml.keys())):
-        # Check that accounts are in the yml
-        mlist = [x for x in yml[name][c.ACCOUNTS] if x in dfg.columns]
+    for name, df_aux in df_accounts.groupby(c.COL_SUBTYPE):
+        # Check that accounts are in the accounts definition
+        mlist = [x for x in df_aux.index if x in dfg.columns]
 
         aux[name] = dfg[mlist].sum(axis=1)
 
