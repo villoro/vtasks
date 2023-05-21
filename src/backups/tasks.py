@@ -6,7 +6,6 @@ COPY_TASKS = [
 ]
 
 BACKUP_TASKS = [
-    BackupTask(path="/Aplicaciones/expensor", regex=r"[\w\s]+\.(yaml|yml)"),
     BackupTask(path="/Aplicaciones/FreeFileSync", regex=r"[\w\s]+\.ffs_gui"),
     BackupTask(path="/Aplicaciones/gcalendar", regex=r"calendar.parquet"),
     BackupTask(path="/Aplicaciones/KeePass", regex=r"[\w\s]+\.kdbx"),
