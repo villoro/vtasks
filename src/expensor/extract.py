@@ -116,10 +116,11 @@ def get_investment_or_liquid(dfs, entity):
     dfg = dfs[entity].copy()
 
     entity = entity.split("_")[0].title()
+    invest_or_liquid = c.LIQUID if entity == c.LIQUID else c.INVEST
 
     # Filter investment/liquid
     df_accounts = dfs[c.DF_ACCOUNTS].copy()
-    df_accounts = df_accounts[df_accounts[c.COL_TYPE] == entity]
+    df_accounts = df_accounts[df_accounts[c.COL_TYPE] == invest_or_liquid]
 
     out = {
         entity: u.serie_to_dict(dfg["Total"]),
@@ -563,9 +564,8 @@ def extract_data(dfs, mdate, export_data=False):
 
     # Liquid, worth and invested
     log.debug("Adding liquid, worth and invested")
-    data = [(c.DF_LIQUID, c.LIQUID), (c.DF_WORTH, c.INVEST), (c.DF_INVEST, c.INVEST)]
-    for name, yml_name in data:
-        out["month"].update(get_investment_or_liquid(dfs, yml[yml_name], name))
+    for entity in (c.DF_LIQUID, c.DF_WORTH, c.DF_INVEST):
+        out["month"].update(get_investment_or_liquid(dfs, entity))
 
     out["month"].update(get_total_investments(out))
     out["month"].update(get_salaries(dfs, mdate))
