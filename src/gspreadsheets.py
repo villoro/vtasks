@@ -4,8 +4,7 @@ from time import sleep
 import gspread
 import pandas as pd
 
-from prefect import get_run_logger
-
+from utils import get_log
 from utils import PATH_ROOT
 from utils import export_secret
 from utils import get_path
@@ -23,7 +22,6 @@ def init_gdrive(force=False):
     # Init GDRIVE if it has not been init
     global GDRIVE
     if GDRIVE is None or force:
-
         export_secret(PATH_GSPREADSHEET_KEY, "GSPREADSHEET_JSON")
 
         GDRIVE = gspread.service_account(filename=PATH_GSPREADSHEET_KEY)
@@ -38,7 +36,7 @@ def get_gdrive_sheet(spreadsheet_name, sheet_name, retries=3):
         sheet_name:         name of the sheet inside the document
     """
 
-    log = get_run_logger()
+    log = get_log()
     init_gdrive()
 
     msg_error = "ConnectionError ({}) when trying to get '{}/{}'. Details: {}"
@@ -97,7 +95,6 @@ def read_df_gdrive(spreadsheet_name, sheet_name, cols_to_numeric=[]):
 
     # Cast cols to numeric
     for col in cols_to_numeric:
-
         if pd.api.types.is_numeric_dtype(df[col]):
             # No need to cast
             continue
@@ -141,7 +138,7 @@ def df_to_gspread(spreadsheet_name, sheet_name, df, mfilter, columns=None):
         columns:            which columns to update
     """
 
-    log = get_run_logger()
+    log = get_log()
 
     # Get worksheet
     wks = get_gdrive_sheet(spreadsheet_name, sheet_name)
@@ -184,7 +181,7 @@ def update_cell(spreadsheet_name, sheet_name, cell, value):
         cell:               cell index
         value:              what to write
     """
-    log = get_run_logger()
+    log = get_log()
 
     sheet = get_gdrive_sheet(spreadsheet_name, sheet_name)
 

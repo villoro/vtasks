@@ -6,7 +6,6 @@ import asyncio
 import pandas as pd
 
 from pandas.api.types import is_datetime64_any_dtype
-from prefect import get_run_logger
 from prefect import task
 from prefect.client import get_client
 from prefect.orion.schemas import filters
@@ -37,7 +36,7 @@ async def _read_flow_runs(offset, flow_run_filter=None):
 async def read_flow_runs(flow_run_filter=None, max_queries=100):
     """extract flow runs iterating to avoid query limits"""
 
-    log = get_run_logger()
+    log = u.get_log()
     flow_runs = []
 
     for x in range(max_queries):
@@ -76,7 +75,7 @@ async def _read_task_runs(offset, task_run_filter=None):
 async def read_task_runs(task_run_filter=None, max_queries=200):
     """extract task runs iterating to avoid query limits"""
 
-    log = get_run_logger()
+    log = u.get_log()
     task_runs = []
 
     for x in range(max_queries):
@@ -174,7 +173,7 @@ def deduplicate(df_in):
 
 
 def get_history(vdp, parquet_path):
-    log = get_run_logger()
+    log = u.get_log()
 
     if not vdp.file_exists(parquet_path):
         return None
@@ -191,7 +190,7 @@ def get_last_update(df_history):
 
 
 def update_parquet(vdp, df_new, df_history, parquet_path):
-    log = get_run_logger()
+    log = u.get_log()
 
     vdp = u.get_vdropbox()
 
@@ -219,7 +218,7 @@ def add_flow_name(df_in, flows):
 @task(name="vtasks.vprefect.flow_runs", retries=3, retry_delay_seconds=5)
 def process_flow_runs():
     vdp = u.get_vdropbox()
-    log = get_run_logger()
+    log = u.get_log()
 
     log.info("Querying last_update")
     df_history = get_history(vdp, c.PATH_FLOW_RUNS)
@@ -249,7 +248,7 @@ def process_flow_runs():
 @task(name="vtasks.vprefect.task_runs", retries=3, retry_delay_seconds=5)
 def process_task_runs():
     vdp = u.get_vdropbox()
-    log = get_run_logger()
+    log = u.get_log()
 
     log.info("Querying last_update")
     df_history = get_history(vdp, c.PATH_TASK_RUNS)

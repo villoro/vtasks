@@ -5,17 +5,17 @@ from datetime import timedelta
 
 import pandas as pd
 
-from prefect import get_run_logger
 from prefect import task
 
 from .tasks import BACKUP_TASKS
+from utils import get_log
 from utils import get_vdropbox
 
 
 def get_backup_data(vdp, path, regex):
     """Get info about the backups"""
 
-    log = get_run_logger()
+    log = get_log()
 
     base_path = f"{path}/Backups"
 
@@ -27,7 +27,6 @@ def get_backup_data(vdp, path, regex):
 
     # Retrive all backups
     for year in vdp.ls(base_path):
-
         log.debug(f"Exploring '{path}/{year}'")
 
         # Skip iteration if it's not a year
@@ -59,7 +58,7 @@ def get_backup_data(vdp, path, regex):
 def get_all_backups(vdp):
     """Get all backups"""
 
-    log = get_run_logger()
+    log = get_log()
 
     dfs = []
 

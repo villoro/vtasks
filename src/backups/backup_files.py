@@ -3,10 +3,10 @@ import re
 from datetime import date
 from datetime import timedelta
 
-from prefect import get_run_logger
 from prefect import task
 
 from .tasks import BACKUP_TASKS
+from utils import get_log
 from utils import get_files_from_regex
 from utils import get_path
 from utils import get_vdropbox
@@ -25,17 +25,15 @@ def get_update_at(vdp, filename):
 def one_backup(vdp, path, regex):
     """Back up a list of files from a folder"""
 
-    log = get_run_logger()
+    log = get_log()
 
     # Backup all files
     for path, filename, _ in get_files_from_regex(vdp, path, regex):
-
         origin = f"{path}/{filename}"
         log.debug(f"Trying to backup '{origin}")
         updated_at = get_update_at(vdp, origin)
 
         if updated_at >= date.today() - timedelta(1):
-
             dest = f"{path}/Backups/{YEAR}/{updated_at:%Y_%m_%d} {filename}"
 
             if not vdp.file_exists(dest):
@@ -54,7 +52,7 @@ def one_backup(vdp, path, regex):
 def backup_files():
     """Back up all files from URIS"""
 
-    log = get_run_logger()
+    log = get_log()
     vdp = get_vdropbox()
 
     for task in BACKUP_TASKS:

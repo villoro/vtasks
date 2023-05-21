@@ -4,7 +4,6 @@ from datetime import date
 import numpy as np
 import pandas as pd
 
-from prefect import get_run_logger
 from vpalette import get_colors
 
 import utils as u
@@ -187,7 +186,7 @@ def get_comparison_traces(dfs):
         dfs:    dict with dataframes
     """
 
-    log = get_run_logger()
+    log = u.get_log()
 
     out = {}
 
@@ -233,7 +232,7 @@ def get_pie_traces(dfs, mdate):
         dfs:    dict with dataframes
     """
 
-    log = get_run_logger()
+    log = u.get_log()
 
     out = {}
     for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
@@ -266,7 +265,7 @@ def get_dashboard(data, mdate):
         mdate:  date of the report
     """
 
-    log = get_run_logger()
+    log = u.get_log()
 
     traces = [c.EXPENSES, c.INCOMES, c.RESULT, c.LIQUID]
     traces += [x + "_trend" for x in traces] + ["Worth", "Invest"]
@@ -321,7 +320,7 @@ def get_dashboard(data, mdate):
 def get_ratios(data):
     """Calculate ratios"""
 
-    log = get_run_logger()
+    log = u.get_log()
 
     aux = {}
     names = [
@@ -407,7 +406,7 @@ def get_bubbles(dfs, mdate, min_year=2011):
 def extract_sankey(data):
     """Calculate Sankey flows"""
 
-    log = get_run_logger()
+    log = u.get_log()
 
     out = {}
     for tw in ["month", "year"]:
@@ -508,7 +507,7 @@ def extract_colors(dfs, yml):
     It can't be named get_colors since that function already exists
     """
 
-    log = get_run_logger()
+    log = u.get_log()
     out = {name: get_colors(data) for name, data in c.DEFAULT_COLORS.items()}
 
     # Liquid and investments colors
@@ -534,7 +533,7 @@ def extract_colors(dfs, yml):
 def extract_data(dfs, mdate, export_data=False):
     """Create the report"""
 
-    log = get_run_logger()
+    log = u.get_log()
     mdate = mdate.replace(day=1)
 
     # Filter dates

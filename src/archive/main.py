@@ -1,7 +1,7 @@
 from datetime import date
 from datetime import timedelta
 
-from prefect import flow, task, get_run_logger
+from prefect import flow, task
 
 import utils as u
 
@@ -30,10 +30,9 @@ MONTHS = {i: str(x).zfill(2) for i, x in MONTHS.items()}
 def rename_files(vdp, path, regex, output):
     """Rename files based on regexs"""
 
-    log = get_run_logger()
+    log = u.get_log()
 
     for path, file, kwargs in u.get_files_from_regex(vdp, path, regex):
-
         # Get month from month_text if needed
         month_text = kwargs.get("month_text")
         if month_text:
@@ -55,13 +54,12 @@ def rename_files(vdp, path, regex, output):
 def extract_files(vdp, path, regex, output, pwd, kwargs):
     """Extract files based on regexs"""
 
-    log = get_run_logger()
+    log = u.get_log()
 
     # Evaluate as python expresions
     kwargs = {key: eval(val) for key, val in kwargs.items()}
 
     for path, file, _ in u.get_files_from_regex(vdp, path, regex):
-
         origin = f"{path}/{file}"
         dest = output.format(**kwargs)
 
@@ -78,8 +76,7 @@ def extract_files(vdp, path, regex, output, pwd, kwargs):
 
 @flow(**u.get_prefect_args("vtasks.archive"))
 def archive():
-
-    log = get_run_logger()
+    log = u.get_log()
     vdp = u.get_vdropbox()
 
     # Rename some files

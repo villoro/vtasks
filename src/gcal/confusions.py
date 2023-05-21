@@ -1,7 +1,7 @@
-from prefect import get_run_logger
 from prefect import task
 
 from mailjet import Email
+from utils import get_log
 from utils import get_vdropbox
 
 from .export import PATH_GCAL_DATA
@@ -63,7 +63,7 @@ def email_confusions(df_confusions):
 
 @task(name="vtasks.gcal.confusions")
 def extract_gcal_confusions(exclude_other=True, merge_study=True, min_alpha=0.1):
-    log = get_run_logger()
+    log = get_log()
     vdp = get_vdropbox()
 
     dfg = vdp.read_parquet(PATH_GCAL_DATA)

@@ -1,5 +1,6 @@
 import re
 import yaml
+import sys
 
 from argparse import ArgumentParser
 from collections import OrderedDict
@@ -12,6 +13,7 @@ import numpy as np
 import pandas as pd
 
 from prefect import get_run_logger
+from prefect.exceptions import MissingContextError
 from vcrypto import Cipher
 from vdropbox import Vdropbox
 
@@ -20,6 +22,34 @@ from vdropbox import Vdropbox
 # It need to go 2 times up since this file has the following relative path:
 #   /src/utils.py
 PATH_ROOT = Path(__file__).parent.parent
+
+
+def detect_env():
+    """Detect if it is PRO environment"""
+
+    parser = ArgumentParser()
+    parser.add_argument("-f", help="Dummy argument not meant to be used")
+    parser.add_argument("--env", help="Wether it is PRO or not (DEV)", default="dev", type=str)
+
+    args = parser.parse_args()
+
+    return args.env
+
+
+def get_log():
+    if detect_env() == "pro":
+        return get_run_logger()
+
+    try:
+        return get_run_logger()
+    except MissingContextError:
+        from loguru import logger
+
+        logger.configure(handlers=[{"sink": sys.stdout, "level": "INFO"}])
+        logger.enable("vtasks")
+
+        logger.debug("Switching to loguru")
+        return logger
 
 
 def get_path(path_relative):
@@ -69,7 +99,6 @@ def export_secret(uri, secret_name, binary=False):
         encoding = "utf8"
 
     if not path.exists(uri):
-
         with open(uri, mode) as file:
             file.write(get_secret(secret_name, encoding=encoding))
 
@@ -82,20 +111,9 @@ def get_vdropbox():
 
     global VDROPBOX
     if VDROPBOX is None:
-        VDROPBOX = Vdropbox(get_secret("DROPBOX_TOKEN"), log=get_run_logger())
+        VDROPBOX = Vdropbox(get_secret("DROPBOX_TOKEN"), log=get_log())
 
     return VDROPBOX
-
-
-def detect_env():
-    """Detect if it is PRO environment"""
-
-    parser = ArgumentParser()
-    parser.add_argument("--env", help="Wether it is PRO or not (DEV)", default="dev", type=str)
-
-    args = parser.parse_args()
-
-    return args.env
 
 
 def get_files_that_match(vdp, folder, regex):
