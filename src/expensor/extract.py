@@ -501,7 +501,7 @@ def get_colors_comparisons(dfs):
     return out
 
 
-def extract_colors(dfs, yml):
+def extract_colors(dfs):
     """
     Get colors from config file.
     It can't be named get_colors since that function already exists
@@ -511,13 +511,15 @@ def extract_colors(dfs, yml):
     out = {name: get_colors(data) for name, data in c.DEFAULT_COLORS.items()}
 
     # Liquid and investments colors
-    for entity in [c.LIQUID, c.INVEST]:
+    for entity, df in dfs[c.DF_ACCOUNTS].groupby(c.COL_TYPE):
         out[f"{entity}_categ"] = OrderedDict()
-        for name, config in yml[entity].items():
-            out[f"{entity}_categ"][name] = get_colors((config[c.COLOR_NAME], config[c.COLOR_INDEX]))
+        for name, row in (
+            df.drop_duplicates(subset=["Color Name", "Color Index"]).set_index("Subtype").iterrows()
+        ):
+            out[f"{entity}_categ"][name] = get_colors((row["Color Name"], row["Color Index"]))
 
     # Expenses and incomes colors
-    for entity, df in dfs[c.DF_CATEG].groupby("Type"):
+    for entity, df in dfs[c.DF_CATEG].groupby(c.COL_TYPE):
         out[f"{entity}_categ"] = OrderedDict()
         for name, row in df.iterrows():
             out[f"{entity}_categ"][name] = get_colors((row["Color Name"], row["Color Index"]))
@@ -566,7 +568,7 @@ def extract_data(dfs, mdate, export_data=False):
     out["bubbles"] = get_bubbles(dfs, mdate)
     out["sankey"] = extract_sankey(out)
 
-    out["colors"] = extract_colors(dfs, yml)
+    out["colors"] = extract_colors(dfs)
 
     if export_data:
         vdp.write_yaml(out, f"{c.PATH_EXPENSOR}/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
