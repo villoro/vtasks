@@ -514,15 +514,21 @@ def extract_colors(dfs):
     for entity, df in dfs[c.DF_ACCOUNTS].groupby(c.COL_TYPE):
         out[f"{entity}_categ"] = OrderedDict()
         for name, row in (
-            df.drop_duplicates(subset=["Color Name", "Color Index"]).set_index("Subtype").iterrows()
+            df.drop_duplicates(subset=[c.COL_COLOR_NAME, c.COL_COLOR_INDEX])
+            .set_index(c.COL_SUBTYPE)
+            .iterrows()
         ):
-            out[f"{entity}_categ"][name] = get_colors((row["Color Name"], row["Color Index"]))
+            out[f"{entity}_categ"][name] = get_colors(
+                (row[c.COL_COLOR_NAME], row[c.COL_COLOR_INDEX])
+            )
 
     # Expenses and incomes colors
     for entity, df in dfs[c.DF_CATEG].groupby(c.COL_TYPE):
         out[f"{entity}_categ"] = OrderedDict()
         for name, row in df.iterrows():
-            out[f"{entity}_categ"][name] = get_colors((row["Color Name"], row["Color Index"]))
+            out[f"{entity}_categ"][name] = get_colors(
+                (row[c.COL_COLOR_NAME], row[c.COL_COLOR_INDEX])
+            )
 
     # Colors comparison plot
     out["comp"] = get_colors_comparisons(dfs)
