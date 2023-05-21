@@ -104,19 +104,23 @@ def get_basic_traces(dfs, period, mdate):
     return out
 
 
-def get_investment_or_liquid(dfs, yml, entity):
+def get_investment_or_liquid(dfs, entity):
     """
     Retrives investment or liquid data
 
     Args:
         dfs:    dict with dataframes
-        yml:    dict with config info
         entity: entity to process
     """
 
     dfg = dfs[entity].copy()
 
     entity = entity.split("_")[0].title()
+    invest_or_liquid = c.LIQUID if entity == c.LIQUID else c.INVEST
+
+    # Filter investment/liquid
+    df_accounts = dfs[c.DF_ACCOUNTS].copy()
+    df_accounts = df_accounts[df_accounts[c.COL_TYPE] == invest_or_liquid]
 
     out = {
         entity: u.serie_to_dict(dfg["Total"]),
@@ -124,9 +128,9 @@ def get_investment_or_liquid(dfs, yml, entity):
     }
 
     aux = OrderedDict()
-    for name in reversed(list(yml.keys())):
-        # Check that accounts are in the yml
-        mlist = [x for x in yml[name][c.ACCOUNTS] if x in dfg.columns]
+    for name, df_aux in df_accounts.groupby(c.COL_SUBTYPE):
+        # Check that accounts are in the accounts definition
+        mlist = [x for x in df_aux.index if x in dfg.columns]
 
         aux[name] = dfg[mlist].sum(axis=1)
 
@@ -501,7 +505,7 @@ def get_colors_comparisons(dfs):
     return out
 
 
-def extract_colors(dfs, yml):
+def extract_colors(dfs):
     """
     Get colors from config file.
     It can't be named get_colors since that function already exists
@@ -511,16 +515,24 @@ def extract_colors(dfs, yml):
     out = {name: get_colors(data) for name, data in c.DEFAULT_COLORS.items()}
 
     # Liquid and investments colors
-    for entity in [c.LIQUID, c.INVEST]:
+    for entity, df in dfs[c.DF_ACCOUNTS].groupby(c.COL_TYPE):
         out[f"{entity}_categ"] = OrderedDict()
-        for name, config in yml[entity].items():
-            out[f"{entity}_categ"][name] = get_colors((config[c.COLOR_NAME], config[c.COLOR_INDEX]))
+        for name, row in (
+            df.drop_duplicates(subset=[c.COL_COLOR_NAME, c.COL_COLOR_INDEX])
+            .set_index(c.COL_SUBTYPE)
+            .iterrows()
+        ):
+            out[f"{entity}_categ"][name] = get_colors(
+                (row[c.COL_COLOR_NAME], row[c.COL_COLOR_INDEX])
+            )
 
     # Expenses and incomes colors
-    for entity, df in dfs[c.DF_CATEG].groupby("Type"):
+    for entity, df in dfs[c.DF_CATEG].groupby(c.COL_TYPE):
         out[f"{entity}_categ"] = OrderedDict()
         for name, row in df.iterrows():
-            out[f"{entity}_categ"][name] = get_colors((row["Color Name"], row["Color Index"]))
+            out[f"{entity}_categ"][name] = get_colors(
+                (row[c.COL_COLOR_NAME], row[c.COL_COLOR_INDEX])
+            )
 
     # Colors comparison plot
     out["comp"] = get_colors_comparisons(dfs)
@@ -539,10 +551,6 @@ def extract_data(dfs, mdate, export_data=False):
     # Filter dates
     dfs = filter_by_date(dfs, mdate)
 
-    # Get config info
-    vdp = u.get_vdropbox()
-    yml = vdp.read_yaml(c.FILE_CONFIG)
-
     out = {}
 
     # Expenses, incomes, result and savings ratio
@@ -552,9 +560,8 @@ def extract_data(dfs, mdate, export_data=False):
 
     # Liquid, worth and invested
     log.debug("Adding liquid, worth and invested")
-    data = [(c.DF_LIQUID, c.LIQUID), (c.DF_WORTH, c.INVEST), (c.DF_INVEST, c.INVEST)]
-    for name, yml_name in data:
-        out["month"].update(get_investment_or_liquid(dfs, yml[yml_name], name))
+    for entity in (c.DF_LIQUID, c.DF_WORTH, c.DF_INVEST):
+        out["month"].update(get_investment_or_liquid(dfs, entity))
 
     out["month"].update(get_total_investments(out))
     out["month"].update(get_salaries(dfs, mdate))
@@ -566,9 +573,10 @@ def extract_data(dfs, mdate, export_data=False):
     out["bubbles"] = get_bubbles(dfs, mdate)
     out["sankey"] = extract_sankey(out)
 
-    out["colors"] = extract_colors(dfs, yml)
+    out["colors"] = extract_colors(dfs)
 
     if export_data:
+        vdp = u.get_vdropbox()
         vdp.write_yaml(out, f"{c.PATH_EXPENSOR}/report_data/{mdate.year}/{mdate:%Y_%m}.yaml")
 
     return out

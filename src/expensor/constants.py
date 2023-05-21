@@ -4,13 +4,15 @@ PATH_EXPENSOR = "/Aplicaciones/expensor"
 PATH_MONEY_LOVER = f"{PATH_EXPENSOR}/Money Lover"
 
 FILE_TRANSACTIONS = f"{PATH_EXPENSOR}/transactions.xlsx"
-FILE_CONFIG = f"{PATH_EXPENSOR}/config.yml"
 
 COL_DATE = "Date"
 COL_NOTES = "Note"
 COL_AMOUNT = "Amount"
 COL_CATEGORY = "Category"
 COL_TYPE = "Type"
+COL_SUBTYPE = "Subtype"
+COL_COLOR_NAME = "Color Name"
+COL_COLOR_INDEX = "Color Index"
 
 EXPENSES = "Expenses"
 INCOMES = "Incomes"
@@ -29,13 +31,15 @@ DF_CATEG = "trans_categ"
 DF_INVEST = "invest_m"
 DF_WORTH = "worth_m"
 DF_SALARY = "salary"
+DF_ACCOUNTS = "accounts"
 
 DFS_ALL_FROM_DATA = {
     DF_LIQUID: "all",
-    DF_CATEG: None,
+    DF_CATEG: ["Color Index"],
     DF_INVEST: "all",
     DF_WORTH: "all",
     DF_SALARY: ["Fixed", "Bonus", "EAGI", "Total"],
+    DF_ACCOUNTS: ["Color Index"],
 }
 DFS_ALL = [DF_TRANS] + [*DFS_ALL_FROM_DATA.keys()]
 
