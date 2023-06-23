@@ -729,14 +729,14 @@
         data: [{% for mdate, value in month["Worth"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
-      }, {% for name, data in month["Worth_by_groups"].items() %}{
+      }, {% for name, data in month["Worth_by_groups_cropped"].items() %}{
         name: "{{ name }}",
         color: "{{ colors['Investment_categ'][name] }}",
         type: 'area',
         data: [{% for mdate, value in data.items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
-      }, {% endfor %} {% for name, data in month["Liquid_by_groups"].items() %}{
+      }, {% endfor %} {% for name, data in month["Liquid_by_groups_cropped"].items() %}{
         name: "{{ name }}",
         color: "{{ colors['Liquid_categ'][name] }}",
         type: 'area',
