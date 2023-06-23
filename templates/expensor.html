@@ -122,10 +122,6 @@
   </div>
 
   <div class="w3-card w3-round w3-center w3-white elem">
-    <div id="INV_worth_by_type" class="plot" style="height: 450px"></div>
-  </div>
-
-  <div class="w3-card w3-round w3-center w3-white elem">
     <div id="INV_total_worth_by_type" class="plot" style="height: 450px"></div>
   </div>
 
@@ -715,34 +711,22 @@
       },
     ],
   });
-  Highcharts.chart('INV_worth_by_type', {
-    ...plot_datetime_stacked,
-    title: {text: 'Worth by type'},
-    series: [
-      {
-        name: "Total",
-        color: "#000000",
-        data: [{% for mdate, value in month["Worth"].items() %}
-          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
-        ]
-      }, {% for name, data in month["Worth_by_groups"].items() %}{
-        name: "{{ name }}",
-        color: "{{ colors['Investment_categ'][name] }}",
-        type: 'area',
-        data: [{% for mdate, value in data.items() %}
-          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
-        ]
-      }, {% endfor %}
-    ],
-  });
   Highcharts.chart('INV_total_worth_by_type', {
     ...plot_datetime_stacked,
     title: {text: 'Total worth by type'},
     series: [
       {
-        name: "Total",
+        name: "Total Worth",
         color: "#000000",
+        stacking: false,
         data: [{% for mdate, value in month["Total_Worth"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {
+        name: "Worth",
+        color: "{{ colors['Min_value'] }}",
+        stacking: false,
+        data: [{% for mdate, value in month["Worth"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       }, {% for name, data in month["Worth_by_groups"].items() %}{
