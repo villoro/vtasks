@@ -362,6 +362,20 @@ def get_ratios(data):
             100 * pd.Series(values) / pd.Series(data["month"]["Worth"])
         )
 
+    # Add both worth and liquid together
+    out["Total_worth_by_groups"] = {}
+    out["Total_worth_by_groups"]["Worth"] = {}
+    denominator = pd.Series(data["month"]["Worth"]) + pd.Series(data["month"]["Liquid"])
+    for name, values in data["month"]["Worth_by_groups"].items():
+        out["Total_worth_by_groups"]["Worth"][name] = u.serie_to_dict(
+            (100 * pd.Series(values) / denominator).dropna()
+        )
+    out["Total_worth_by_groups"]["Liquid"] = {}
+    for name, values in data["month"]["Liquid_by_groups"].items():
+        out["Total_worth_by_groups"]["Liquid"][name] = u.serie_to_dict(
+            (100 * pd.Series(values) / denominator).dropna()
+        )
+
     log.debug("Ratios info added")
 
     return out
