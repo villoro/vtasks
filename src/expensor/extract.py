@@ -321,6 +321,36 @@ def get_dashboard(data, mdate):
     return out
 
 
+def get_total_worth_ratios(data):
+    """Add both worth and liquid together"""
+
+    log = u.get_log()
+
+    worth = pd.Series(data["month"]["Worth"])
+    liquid = pd.Series(data["month"]["Liquid"])
+    min_index = max(worth.index.min(), liquid.index.min())
+
+    log.error(f"{min_index=}")
+
+    denominator = (worth + liquid).loc[min_index:]
+
+    out = {}
+
+    out["Worth"] = {}
+    for name, values in data["month"]["Worth_by_groups"].items():
+        out["Worth"][name] = u.serie_to_dict(
+            (100 * pd.Series(values) / denominator).loc[min_index:]
+        )
+
+    out["Liquid"] = {}
+    for name, values in data["month"]["Liquid_by_groups"].items():
+        out["Liquid"][name] = u.serie_to_dict(
+            (100 * pd.Series(values) / denominator).loc[min_index:]
+        )
+
+    return out
+
+
 def get_ratios(data):
     """Calculate ratios"""
 
@@ -362,19 +392,7 @@ def get_ratios(data):
             100 * pd.Series(values) / pd.Series(data["month"]["Worth"])
         )
 
-    # Add both worth and liquid together
-    out["Total_worth_by_groups"] = {}
-    out["Total_worth_by_groups"]["Worth"] = {}
-    denominator = pd.Series(data["month"]["Worth"]) + pd.Series(data["month"]["Liquid"])
-    for name, values in data["month"]["Worth_by_groups"].items():
-        out["Total_worth_by_groups"]["Worth"][name] = u.serie_to_dict(
-            (100 * pd.Series(values) / denominator).dropna()
-        )
-    out["Total_worth_by_groups"]["Liquid"] = {}
-    for name, values in data["month"]["Liquid_by_groups"].items():
-        out["Total_worth_by_groups"]["Liquid"][name] = u.serie_to_dict(
-            (100 * pd.Series(values) / denominator).dropna()
-        )
+    out["Total_worth_by_groups"] = get_total_worth_ratios(data)
 
     log.debug("Ratios info added")
 
