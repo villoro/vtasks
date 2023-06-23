@@ -139,6 +139,22 @@ def get_investment_or_liquid(dfs, entity):
     return out
 
 
+def get_cropped_liquid_and_investments(data):
+    """Crop to same length"""
+
+    worth = pd.Series(data["month"]["Worth"])
+    liquid = pd.Series(data["month"]["Liquid"])
+    min_index = max(worth.index.min(), liquid.index.min())
+
+    out = {}
+    for group_name in ["Worth_by_groups", "Liquid_by_groups"]:
+        out[f"{group_name}_cropped"] = {}
+        for name, values in data["month"][group_name].items():
+            out[f"{group_name}_cropped"][name] = u.serie_to_dict(pd.Series(values).loc[min_index:])
+
+    return out
+
+
 def get_total_investments(data):
     """
     Extract data for dashboard cards
@@ -321,6 +337,34 @@ def get_dashboard(data, mdate):
     return out
 
 
+def get_total_worth_ratios(data):
+    """Add both worth and liquid together"""
+
+    log = u.get_log()
+
+    worth = pd.Series(data["month"]["Worth"])
+    liquid = pd.Series(data["month"]["Liquid"])
+    min_index = max(worth.index.min(), liquid.index.min())
+
+    denominator = (worth + liquid).loc[min_index:]
+
+    out = {}
+
+    out["Worth"] = {}
+    for name, values in data["month"]["Worth_by_groups"].items():
+        out["Worth"][name] = u.serie_to_dict(
+            (100 * pd.Series(values) / denominator).loc[min_index:]
+        )
+
+    out["Liquid"] = {}
+    for name, values in data["month"]["Liquid_by_groups"].items():
+        out["Liquid"][name] = u.serie_to_dict(
+            (100 * pd.Series(values) / denominator).loc[min_index:]
+        )
+
+    return out
+
+
 def get_ratios(data):
     """Calculate ratios"""
 
@@ -361,6 +405,8 @@ def get_ratios(data):
         out["Worth_by_groups"][name] = u.serie_to_dict(
             100 * pd.Series(values) / pd.Series(data["month"]["Worth"])
         )
+
+    out["Total_worth_by_groups"] = get_total_worth_ratios(data)
 
     log.debug("Ratios info added")
 
@@ -562,6 +608,8 @@ def extract_data(dfs, mdate, export_data=False):
     log.debug("Adding liquid, worth and invested")
     for entity in (c.DF_LIQUID, c.DF_WORTH, c.DF_INVEST):
         out["month"].update(get_investment_or_liquid(dfs, entity))
+
+    out["month"].update(get_cropped_liquid_and_investments(out))
 
     out["month"].update(get_total_investments(out))
     out["month"].update(get_salaries(dfs, mdate))
