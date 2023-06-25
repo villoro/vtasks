@@ -16,6 +16,20 @@ from gspreadsheets import read_df_gdrive
 MIN_DATE = "2015-12-01"
 
 
+def get_total_worth(dfs):
+    """Append worth and liquid into total worth"""
+    df_liquid = dfs[c.DF_LIQUID].drop(columns="Total")
+    df_worth = dfs[c.DF_WORTH].drop(columns="Total")
+
+    # Crop to where both have data
+    min_index = max(df_worth.index.min(), df_liquid.index.min())
+
+    df = pd.concat([df_liquid, df_worth], axis=1).loc[min_index:]
+    df["Total"] = df.sum(axis=1)
+
+    return df
+
+
 @task(name="vtasks.expensor.read")
 def get_data():
     """Retrive dataframes"""
@@ -30,6 +44,9 @@ def get_data():
     log.debug("Reading data from dropbox")
     vdp = u.get_vdropbox()
     dfs[c.DF_TRANS] = vdp.read_excel(c.FILE_TRANSACTIONS).set_index(c.COL_DATE)
+
+    # Add total worth
+    dfs[c.DF_TOTAL_WORTH] = get_total_worth(dfs)
 
     return dfs
 

@@ -56,4 +56,5 @@ auth/*
 # Certificates
 src/certificates/
 
-
+# Data files
+scripts/subs/*.parquet
