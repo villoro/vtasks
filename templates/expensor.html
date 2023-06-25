@@ -731,7 +731,7 @@
         ]
       }, {% for name, data in month["Total_Worth_by_groups"].items() %}{
         name: "{{ name }}",
-        color: "{{ colors['Investment_categ'][name] }}",
+        color: "{{ colors['Investment_and_liquid_categ'][name] }}",
         type: 'area',
         data: [{% for mdate, value in data.items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}

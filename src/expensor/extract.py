@@ -534,7 +534,7 @@ def extract_colors(dfs):
         ):
             color = get_colors((row[c.COL_COLOR_NAME], row[c.COL_COLOR_INDEX]))
             out[f"{entity}_categ"][name] = color
-            out["Investment_and_liquid_categ"] = color
+            out["Investment_and_liquid_categ"][name] = color
 
     # Expenses and incomes colors
     for entity, df in dfs[c.DF_CATEG].groupby(c.COL_TYPE):
