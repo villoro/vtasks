@@ -115,12 +115,22 @@ def get_investment_or_liquid(dfs, entity):
 
     dfg = dfs[entity].copy()
 
-    entity = entity.split("_")[0].title()
-    invest_or_liquid = c.LIQUID if entity == c.LIQUID else c.INVEST
+    if entity in [c.DF_LIQUID]:
+        filter_accounts = [c.LIQUID]
+    elif entity in [c.DF_WORTH, c.DF_INVEST]:
+        filter_accounts = [c.INVEST]
+    elif entity in [c.DF_TOTAL_WORTH]:
+        filter_accounts = [c.LIQUID, c.INVEST]
+    else:
+        raise ValueError(f"Invalid {entity=}")
+
+    if entity.endswith("_m"):
+        entity = entity[:-2]
+    entity = entity.title()
 
     # Filter investment/liquid
     df_accounts = dfs[c.DF_ACCOUNTS].copy()
-    df_accounts = df_accounts[df_accounts[c.COL_TYPE] == invest_or_liquid]
+    df_accounts = df_accounts[df_accounts[c.COL_TYPE].isin(filter_accounts)]
 
     out = {
         entity: u.serie_to_dict(dfg["Total"]),
@@ -139,22 +149,6 @@ def get_investment_or_liquid(dfs, entity):
     return out
 
 
-def get_cropped_liquid_and_investments(data):
-    """Crop to same length"""
-
-    worth = pd.Series(data["month"]["Worth"])
-    liquid = pd.Series(data["month"]["Liquid"])
-    min_index = max(worth.index.min(), liquid.index.min())
-
-    out = {}
-    for group_name in ["Worth_by_groups", "Liquid_by_groups"]:
-        out[f"{group_name}_cropped"] = {}
-        for name, values in data["month"][group_name].items():
-            out[f"{group_name}_cropped"][name] = u.serie_to_dict(pd.Series(values).loc[min_index:])
-
-    return out
-
-
 def get_total_investments(data):
     """
     Extract data for dashboard cards
@@ -164,12 +158,10 @@ def get_total_investments(data):
     """
 
     liquid = pd.Series(data["month"][c.LIQUID])
-    worth = pd.Series(data["month"]["Worth"])
     invest = pd.Series(data["month"]["Invest"])
     income = pd.Series(data["month"][c.INCOMES])
 
     return {
-        "Total_Worth": u.serie_to_dict((liquid + worth).dropna()),
         "Total_Invest": u.serie_to_dict((liquid + invest).dropna()),
         "Total_Income": u.serie_to_dict(income.cumsum()),
     }
@@ -337,34 +329,6 @@ def get_dashboard(data, mdate):
     return out
 
 
-def get_total_worth_ratios(data):
-    """Add both worth and liquid together"""
-
-    log = u.get_log()
-
-    worth = pd.Series(data["month"]["Worth"])
-    liquid = pd.Series(data["month"]["Liquid"])
-    min_index = max(worth.index.min(), liquid.index.min())
-
-    denominator = (worth + liquid).loc[min_index:]
-
-    out = {}
-
-    out["Worth"] = {}
-    for name, values in data["month"]["Worth_by_groups"].items():
-        out["Worth"][name] = u.serie_to_dict(
-            (100 * pd.Series(values) / denominator).loc[min_index:]
-        )
-
-    out["Liquid"] = {}
-    for name, values in data["month"]["Liquid_by_groups"].items():
-        out["Liquid"][name] = u.serie_to_dict(
-            (100 * pd.Series(values) / denominator).loc[min_index:]
-        )
-
-    return out
-
-
 def get_ratios(data):
     """Calculate ratios"""
 
@@ -400,13 +364,12 @@ def get_ratios(data):
         serie = serie.replace([np.inf, -np.inf], np.nan)
         out[name] = u.serie_to_dict(serie.dropna())
 
-    out["Worth_by_groups"] = {}
-    for name, values in data["month"]["Worth_by_groups"].items():
-        out["Worth_by_groups"][name] = u.serie_to_dict(
-            100 * pd.Series(values) / pd.Series(data["month"]["Worth"])
-        )
-
-    out["Total_worth_by_groups"] = get_total_worth_ratios(data)
+    for entity in ["Worth", "Total_Worth"]:
+        out[f"{entity}_by_groups"] = {}
+        for name, values in data["month"][f"{entity}_by_groups"].items():
+            out[f"{entity}_by_groups"][name] = u.serie_to_dict(
+                100 * pd.Series(values) / pd.Series(data["month"][entity])
+            )
 
     log.debug("Ratios info added")
 
@@ -561,6 +524,7 @@ def extract_colors(dfs):
     out = {name: get_colors(data) for name, data in c.DEFAULT_COLORS.items()}
 
     # Liquid and investments colors
+    out["Investment_and_liquid_categ"] = OrderedDict()
     for entity, df in dfs[c.DF_ACCOUNTS].groupby(c.COL_TYPE):
         out[f"{entity}_categ"] = OrderedDict()
         for name, row in (
@@ -568,9 +532,9 @@ def extract_colors(dfs):
             .set_index(c.COL_SUBTYPE)
             .iterrows()
         ):
-            out[f"{entity}_categ"][name] = get_colors(
-                (row[c.COL_COLOR_NAME], row[c.COL_COLOR_INDEX])
-            )
+            color = get_colors((row[c.COL_COLOR_NAME], row[c.COL_COLOR_INDEX]))
+            out[f"{entity}_categ"][name] = color
+            out["Investment_and_liquid_categ"] = color
 
     # Expenses and incomes colors
     for entity, df in dfs[c.DF_CATEG].groupby(c.COL_TYPE):
@@ -606,10 +570,8 @@ def extract_data(dfs, mdate, export_data=False):
 
     # Liquid, worth and invested
     log.debug("Adding liquid, worth and invested")
-    for entity in (c.DF_LIQUID, c.DF_WORTH, c.DF_INVEST):
+    for entity in (c.DF_LIQUID, c.DF_WORTH, c.DF_INVEST, c.DF_TOTAL_WORTH):
         out["month"].update(get_investment_or_liquid(dfs, entity))
-
-    out["month"].update(get_cropped_liquid_and_investments(out))
 
     out["month"].update(get_total_investments(out))
     out["month"].update(get_salaries(dfs, mdate))

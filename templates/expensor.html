@@ -729,16 +729,9 @@
         data: [{% for mdate, value in month["Worth"].items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
-      }, {% for name, data in month["Worth_by_groups_cropped"].items() %}{
+      }, {% for name, data in month["Total_Worth_by_groups"].items() %}{
         name: "{{ name }}",
         color: "{{ colors['Investment_categ'][name] }}",
-        type: 'area',
-        data: [{% for mdate, value in data.items() %}
-          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
-        ]
-      }, {% endfor %} {% for name, data in month["Liquid_by_groups_cropped"].items() %}{
-        name: "{{ name }}",
-        color: "{{ colors['Liquid_categ'][name] }}",
         type: 'area',
         data: [{% for mdate, value in data.items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
@@ -756,7 +749,7 @@
     },
     series: [{% for name, data in ratios["Worth_by_groups"].items() %}{
         name: "{{ name }}",
-        color: "{{ colors['Investment_categ'][name] }}",
+        color: "{{ colors['Investment_and_liquid_categ'][name] }}",
         type: 'area',
         data: [{% for mdate, value in data.items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
@@ -772,16 +765,9 @@
       ...labels_percent,
       max: 100,
     },
-    series: [{% for name, data in ratios["Total_worth_by_groups"]["Worth"].items() %}{
+    series: [{% for name, data in ratios["Total_Worth_by_groups"].items() %}{
         name: "{{ name }}",
-        color: "{{ colors['Investment_categ'][name] }}",
-        type: 'area',
-        data: [{% for mdate, value in data.items() %}
-          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
-        ]
-      }, {% endfor %}{% for name, data in ratios["Total_worth_by_groups"]["Liquid"].items() %}{
-        name: "{{ name }}",
-        color: "{{ colors['Liquid_categ'][name] }}",
+        color: "{{ colors['Investment_and_liquid_categ'][name] }}",
         type: 'area',
         data: [{% for mdate, value in data.items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}

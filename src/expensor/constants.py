@@ -32,6 +32,7 @@ DF_INVEST = "invest_m"
 DF_WORTH = "worth_m"
 DF_SALARY = "salary"
 DF_ACCOUNTS = "accounts"
+DF_TOTAL_WORTH = "total_worth"
 
 DFS_ALL_FROM_DATA = {
     DF_LIQUID: "all",
