@@ -228,7 +228,7 @@ def process_flow_runs():
     log.info("Querying flows")
     flows = asyncio.run(read_flows())
     log.info("Querying flow_runs")
-    flow_runs = asyncio.run(query_flow_runs(start_time_min=last_update - timedelta(hours=1)))
+    flow_runs = asyncio.run(query_flow_runs(start_time_min=last_update - timedelta(hours=6)))
 
     log.info("Removing invalid flow_runs")
     flow_runs = [x for x in flow_runs if x.start_time is not None]
@@ -257,7 +257,7 @@ def process_task_runs():
 
     log.info("Querying task_runs")
     task_runs = asyncio.run(
-        query_task_runs(start_time_min=last_update - timedelta(hours=1), state_names=None)
+        query_task_runs(start_time_min=last_update - timedelta(hours=6), state_names=None)
     )
 
     log.info("Removing invalid task_runs")
