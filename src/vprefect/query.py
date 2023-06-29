@@ -1,4 +1,5 @@
 from datetime import datetime
+from datetime import timedelta
 from datetime import timezone
 from time import sleep
 
@@ -227,7 +228,7 @@ def process_flow_runs():
     log.info("Querying flows")
     flows = asyncio.run(read_flows())
     log.info("Querying flow_runs")
-    flow_runs = asyncio.run(query_flow_runs(start_time_min=last_update))
+    flow_runs = asyncio.run(query_flow_runs(start_time_min=last_update - timedelta(hours=1)))
 
     log.info("Removing invalid flow_runs")
     flow_runs = [x for x in flow_runs if x.start_time is not None]
@@ -255,7 +256,9 @@ def process_task_runs():
     last_update = get_last_update(df_history)
 
     log.info("Querying task_runs")
-    task_runs = asyncio.run(query_task_runs(start_time_min=last_update, state_names=None))
+    task_runs = asyncio.run(
+        query_task_runs(start_time_min=last_update - timedelta(hours=1), state_names=None)
+    )
 
     log.info("Removing invalid task_runs")
     task_runs = [x for x in task_runs if x.start_time is not None]
