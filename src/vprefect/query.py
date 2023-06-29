@@ -186,7 +186,8 @@ def get_history(vdp, parquet_path):
 def get_last_update(df_history):
     if df_history is None:
         return None
-    return df_history.loc[df_history[c.COL_ENV] == "prod", c.COL_START].max()
+    mask = (df_history[c.COL_ENV] == "prod") & (df_history[c.COL_FLOW_NAME] == "vtasks")
+    return df_history.loc[mask, c.COL_START].max()
 
 
 def update_parquet(vdp, df_new, df_history, parquet_path):
