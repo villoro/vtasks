@@ -138,7 +138,8 @@ def datetime_index_to_date(serie_in):
 
 def extract_anomalies(df_in):
 
-    times = get_vtasks_times(df_in)
+    # Backfill to handle possible NaNs
+    times = get_vtasks_times(df_in).backfill()
 
     outlier_detector = OutlierDetector(LocalOutlierFactor())
     anomalies = outlier_detector.fit_detect(times.to_frame())
@@ -147,7 +148,10 @@ def extract_anomalies(df_in):
     times = datetime_index_to_date(times)
     anomalies = datetime_index_to_date(anomalies)
 
-    return {"times": u.serie_to_dict(times), "anomalies": u.serie_to_dict(times[anomalies])}
+    return {
+        "times": u.serie_to_dict(times),
+        "anomalies": u.serie_to_dict(times[anomalies]),
+    }
 
 
 @task(name="vtasks.vprefect.report")
