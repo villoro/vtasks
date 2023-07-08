@@ -8,6 +8,31 @@ This repository contains my personal pipeline and serves two main purposes:
 
 ## Pipeline design with Prefect
 
+After trying different orchestrators I have settled with [Prefect](https://www.prefect.io/). Mainly because of it's simplicity and that the free tier for personal projects works perfectly for me.
+
+With Prefect you have [Flows](https://docs.prefect.io/2.10.20/tutorial/flows/) (which are commonly known as `DAG`s in other orchestrators) and [Tasks](https://docs.prefect.io/2.10.20/tutorial/tasks/). The `DAG` is created programatically by defining `Flows` (which, by the way, can have subflows) and `Tasks`.
+
+There is a main flow (called `vtasks`) which calls multiple `subflows`. In turn each `subflow` is composed by multiple tasks. Names of flows and tasks are hirearchical to simplify monitoring. As an example:
+
+```
+- vtasks
+  ├── vtasks.backup
+  │   ├── vtasks.backup.backup_files
+  │   ├── vtasks.backup.clean_backups
+  │   └── vtasks.backup.copy
+  ├── vtasks.expensor
+  │   ├── vtasks.expensor.read
+  │   └── vtasks.expensor.report
+  └── ...
+```
+
+Here you can see on overview of the `vtasks` flow:
+
+![prefect_vtasks](images/prefect_vtasks.png)
+
+And a zoom in for `vtasks.backup`:
+
+![prefect_vtasks_backups](images/prefect_vtasks_backups.png)
 
 ## Deployment
 
