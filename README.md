@@ -1,81 +1,73 @@
-# Personal Assistant with Prefect
+# vtasks: Personal Pipeline
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
-This repository contains different **Prefect** tasks that allows me to automate repetitive tasks.
+This repository contains my personal pipeline and serves two main purposes:
 
-## Tasks
+1. **Learning**: It serves as a playground for trying and learning new things. For example, I've used this repository to try different orchestrators such as [Airflow](https://airflow.apache.org/), [Luigi](https://luigi.readthedocs.io/en/stable/) and [Prefect](https://www.prefect.io/opensource/) which has allowed me to deeply understand the pros and cons of each.
+2. **Automating**: This is a real pipeline that runs hourly in production and allows me to automate certain repetitive tasks.
+## Pipeline Design with Prefect
 
-### Expenses/Incomes Report
+After trying different orchestrators, I have settled on using [Prefect](https://www.prefect.io/) as my preferred choice. This is mainly due to its simplicity and the fact that the free tier for personal projects works perfectly for my needs.
 
-Since 2010 I have been recording all expenses and incomes. For the last years I have been using [Money Lover](https://moneylover.me/) to do so.
-This app has a way to export the data as an Excel file. But the problem is that it does not have the format I want.
-So the first task is to clean that data (`clean data`).
+With Prefect, you work with [Flows](https://docs.prefect.io/2.10.20/tutorial/flows/) (commonly known as `DAG`s in other orchestrators) and [Tasks](https://docs.prefect.io/2.10.20/tutorial/tasks/). The `DAG` is created programmatically by defining `Flows`, which can also have subflows, and `Tasks`.
 
-With the data cleaned the idea is to create a custom html report using **Jinja2** templates.
+In my pipeline, there is a main flow called `vtasks`, which calls multiple subflows. Each subflow is composed of multiple tasks. The names of the flows and tasks are hierarchical to simplify monitoring. Here's an overview of the `vtasks` flow:
 
-In order to make it more flexible there are two tasks:
+```plaintext
+- vtasks
+  ├── vtasks.backup
+  │   ├── vtasks.backup.backup_files
+  │   ├── vtasks.backup.clean_backups
+  │   └── vtasks.backup.copy
+  ├── vtasks.expensor
+  │   ├── vtasks.expensor.read
+  │   └── vtasks.expensor.report
+  └── ...
+```
 
-1. `Extract info` that creates a `yaml` with the info
-2. `Create Report` that creates the `html` report with the `yaml` data
+![prefect_vtasks](/images/prefect_vtasks.png)
 
-With this approach is easy to modify the data or the template without needing to modify the other.
+And a zoomed-in view of the `vtasks.backup` subflow:
 
-So the pipeline is as follows:
-
-![reports_pipeline](images/luigi_reports.png)
-
-As you can see I use **dropbox** for storing all data this way is easy for me to access or modify it.
-
-The report itself uses [W3css](https://www.w3schools.com/w3css/) for the layout and [Highcharts](https://www.highcharts.com/) for charts.
-
-Here you can see some of the pages the report have:
-
-![report_dashboard](images/report_1_dashboard.png)
-![report_evolution](images/report_2_evolution.png)
-![report_comparison](images/report_3_comparison.png)
-![report_pies](images/report_4_pies.png)
-![report_liquid](images/report_5_liquid.png)
-![report_sankey](images/report_8_sankey.png)
-
-And of course the report is **responsive**:
-
-![report_nexus_5X](images/report_nexus_5X.png)
+![prefect_vtasks_backups](/images/prefect_vtasks_backups.png)
 
 
-### Flights tracker
+## Subflows
 
-I regularly travel to Italy and I want to do it as cheap as possible.
-So I thought the best way to do it was to let the assistant track all the prices between the airports I wanted and store that data.
-Then I could use **Data Analysis** or **Machine Learning** to minimize the price I pay for the flights.
+In general, the pipeline is designed to perform the following steps: extracting data from multiple sources, transforming the data, loading it into the cloud, and finally creating interactive plots as `html` files.
 
-To do so I used the **Rapid API** [Flight Search](https://rapidapi.com/skyscanner/api/skyscanner-flight-search) app.
-This API allowed me to query some pairs of airports daily for free.
-So right now the assistant is storing a year of data each day so that I can see prices changes and which company offers cheaper flights each day.
+1. **Extract**: This step involves integrating with various sources such as APIs, Google Spreadsheets, or app integrations.
+2. **Transform**: The transformation step mainly utilizes `pandas` due to its simplicity when handling small amounts of data.
+3. **Load**: All the data is stored in Dropbox as `parquet` files. More details about this can be found in the [post: reading and writting using Dropbox](https://villoro.com/post/dropbox_python)
+4. **Report**: In this step, static `html` files are created, which contain interactive plots using [highcharts](highcharts.com/) You can read more about this in the [post: create static web pages](https://villoro.com/post/static_webpage)
 
-![flights_pipeline](images/flights_task.png)
+You can find the definition and details of each subflow in:
 
-As you can see **Rapid API** is getting their data from **Skyscanner**.
+| **Subflow**                              | **Description**                                                                                       |
+|------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| [archive](src/archive/README.md)         | Helps in archiving files in Dropbox by renaming them and moving them to subfolders based on the year. |
+| [backups](src/backups/README.md)         | Creates dated backups of important files, such as a KeePass database.                                 |
+| [battery](src/battery/README.md)         | Processes the battery log from my phone.                                                              |
+| [cryptos](src/cryptos/README.md)         | Extracts data held in exchanges and retrives crypto currencies prices.                                |
+| [expensor](src/expensor/README.md)       | Creates reports about my personal finances.                                                           |
+| [gcal](src/gcal/README.md)               | Creates information about how I spend my time using Google Calendar data.                             |
+| [indexa](src/indexa/README.md)           | Extracts data from a robo-advisor called [indexa_capital](https://indexacapital.com/).                |
+| [money_lover](src/money_lover/README.md) | Extracts incomes and expenses from the [Money Lover app](https://moneylover.me/)                      |
+| [vbooks](src/vbooks/README.md)           | Creates a report of the books I have read and the reading list.                                       |
+| [vprefect](src/vprefect/README.md)       | Exports information for the flow runs of this pipeline, allowing me to keep a history of all runs.    |
 
-A sample of the data:
+Finally here are some examples of the reports that I end up creating (from the [expensor](/src/expensor/README.md) subflow):
 
-![flights_data](images/flights_data.jpg)
+![report_dashboard](/images/expensor_report_1_dashboard.png)
+![report_evolution](/images/expensor_report_2_evolution.png)
 
-## Getting info
+## Deployment
 
-The assistant is connected to **slack** so that is able to send messages of each task it completes.
-It will also give information about any task failure that might happen.
+For production, I'm using [Heroku](https://www.heroku.com/) (with the [Eco plan](https://www.heroku.com/pricing) at $5/month) since it greatly simplifies continuous deployment (it has automatic deploys linked to changes in the `main` branch) and maintenance for a small fee. In the past, I used the AWS free tier, but it was harder to maintain.
 
-## Nexts steps
+In terms of scheduling, the pipeline runs hourly and usually takes 6-8 minutes to complete. To avoid wasting resources, I'm using [Heroku Scheduler](https://devcenter.heroku.com/articles/scheduler), which allows me to trigger the pipeline with a cron.
 
-The idea is to extend the **slack** integration by creating a chatbot.
-
-This chatbot would allow me to:
-
-* ask about the current state of the tasks
-* make the assistant do a task instantaneously
-* get feedback of anything I ask
-
-## Authors
+## Author
 * [Arnau Villoro](villoro.com)
 
 ## License
