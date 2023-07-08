@@ -1,3 +1,9 @@
+docs:
+- README.md
+- images/*
+- src/*.md
+- src/**/*.md
+
 CI-CD:
 - .github/*
 - .github/**/*

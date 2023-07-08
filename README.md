@@ -1,7 +1,19 @@
-# Personal Assistant with Prefect
+# vtasks: Personal Pipeline
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
-This repository contains different **Prefect** tasks that allows me to automate repetitive tasks.
+This repo contains my personal pipeline and serves two main purpouses:
+
+1. **Learning**: it serves as a playground for trying and learning new things. As an example I've used this for trying different orchestrators such as [Airflow](https://airflow.apache.org/), [Luigi](https://luigi.readthedocs.io/en/stable/) and [Prefect](https://www.prefect.io/opensource/) which has allowed me to deeply understand pros and cons of each.
+2. **Automating**: this is a real pipeline that runs hourly in production and that allows me to automate certain repetitive tasks. You can find more details in [source](https://github.com/villoro/vtasks/tree/master/src).
+
+## Pipeline design with Prefect
+
+
+## Deployment
+
+For production I'm using [Heroku](https://www.heroku.com/) (with the [Eco plan](https://www.heroku.com/pricing) at $5/month) since it greatly simplifies the CD (it has automatic deploys linked to changes to the `main` branch) and maintainace for a small fee. In the past I used AWS free tier but it was harder to maintain.
+
+In terms of scheduling the pipeline is running hourly and usually takes 6-8 minutes to complete. So in order to not waste resources I'm using [Heroku Scheduler](https://devcenter.heroku.com/articles/scheduler) which allows me to trigger the pipeline with a cron.
 
 ## Tasks
 
@@ -21,8 +33,6 @@ In order to make it more flexible there are two tasks:
 With this approach is easy to modify the data or the template without needing to modify the other.
 
 So the pipeline is as follows:
-
-![reports_pipeline](images/luigi_reports.png)
 
 As you can see I use **dropbox** for storing all data this way is easy for me to access or modify it.
 
@@ -60,22 +70,7 @@ A sample of the data:
 
 ![flights_data](images/flights_data.jpg)
 
-## Getting info
-
-The assistant is connected to **slack** so that is able to send messages of each task it completes.
-It will also give information about any task failure that might happen.
-
-## Nexts steps
-
-The idea is to extend the **slack** integration by creating a chatbot.
-
-This chatbot would allow me to:
-
-* ask about the current state of the tasks
-* make the assistant do a task instantaneously
-* get feedback of anything I ask
-
-## Authors
+## Author
 * [Arnau Villoro](villoro.com)
 
 ## License
