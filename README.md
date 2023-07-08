@@ -1,19 +1,19 @@
 # vtasks: Personal Pipeline
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
-This repo contains my personal pipeline and serves two main purpouses:
+This repository contains my personal pipeline and serves two main purposes:
 
-1. **Learning**: it serves as a playground for trying and learning new things. As an example I've used this for trying different orchestrators such as [Airflow](https://airflow.apache.org/), [Luigi](https://luigi.readthedocs.io/en/stable/) and [Prefect](https://www.prefect.io/opensource/) which has allowed me to deeply understand pros and cons of each.
-2. **Automating**: this is a real pipeline that runs hourly in production and that allows me to automate certain repetitive tasks. You can find more details in [source](https://github.com/villoro/vtasks/tree/master/src).
+1. **Learning**: It serves as a playground for trying and learning new things. For example, I've used this repository to try different orchestrators such as [Airflow](https://airflow.apache.org/), [Luigi](https://luigi.readthedocs.io/en/stable/) and [Prefect](https://www.prefect.io/opensource/) which has allowed me to deeply understand the pros and cons of each.
+2. **Automating**: This is a real pipeline that runs hourly in production and allows me to automate certain repetitive tasks. You can find more details in the [source](https://github.com/villoro/vtasks/tree/master/src).
 
 ## Pipeline design with Prefect
 
 
 ## Deployment
 
-For production I'm using [Heroku](https://www.heroku.com/) (with the [Eco plan](https://www.heroku.com/pricing) at $5/month) since it greatly simplifies the CD (it has automatic deploys linked to changes to the `main` branch) and maintainace for a small fee. In the past I used AWS free tier but it was harder to maintain.
+For production, I'm using [Heroku](https://www.heroku.com/) (with the [Eco plan](https://www.heroku.com/pricing) at $5/month) since it greatly simplifies continuous deployment (it has automatic deploys linked to changes in the `main` branch) and maintenance for a small fee. In the past, I used the AWS free tier, but it was harder to maintain.
 
-In terms of scheduling the pipeline is running hourly and usually takes 6-8 minutes to complete. So in order to not waste resources I'm using [Heroku Scheduler](https://devcenter.heroku.com/articles/scheduler) which allows me to trigger the pipeline with a cron.
+In terms of scheduling, the pipeline runs hourly and usually takes 6-8 minutes to complete. To avoid wasting resources, I'm using [Heroku Scheduler](https://devcenter.heroku.com/articles/scheduler), which allows me to trigger the pipeline with a cron.
 
 ## Tasks
 
