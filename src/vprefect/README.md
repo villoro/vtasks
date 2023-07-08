@@ -8,6 +8,6 @@ Using this extracted data, the subflow generates a report that provides insights
 
 An example of the report is shown below:
 
-![vprefect_report](images/vprefect_report.png)
+![vprefect_report](/images/vprefect_report.png)
 
 By extracting and analyzing the flow run and task run information, the `vtasks.vprefect` subflow enables me to monitor the performance and stability of the pipelines created using Prefect. It helps me identify any issues or bottlenecks and provides valuable insights into the overall pipeline execution.
