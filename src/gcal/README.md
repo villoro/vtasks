@@ -4,7 +4,7 @@ The `vtasks.gcal` subflow is responsible for extracting data from Google Calenda
 
 Using the extracted data, the subflow generates reports that provide insights into how I allocate my time. For example, the reports may show the distribution of activities across different calendar types, as illustrated in the following image:
 
-![gcal_report](images/gcal_report.png)
+![gcal_report](/images/gcal_report.png)
 
 To ensure accuracy and consistency, I track different activities in separate calendars based on their type. This allows for a more detailed and comprehensive analysis of my time allocation.
 
