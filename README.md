@@ -59,8 +59,8 @@ You can find the definition and details of each subflow in:
 
 Finally here are some examples of the reports that I end up creating (from the [expensor](https://github.com/villoro/vtasks/tree/master/src/expensor) subflow):
 
-![report_dashboard](images/report_1_dashboard.png)
-![report_evolution](images/report_2_evolution.png)
+![report_dashboard](images/expensor_report_1_dashboard.png)
+![report_evolution](images/expensor_report_2_evolution.png)
 
 ## Deployment
 
