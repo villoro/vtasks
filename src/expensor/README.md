@@ -1,10 +1,10 @@
 # vtasks.expensor subflow
 
-`vtasks.expensor` takes the data extracted in [cryptos](https://github.com/villoro/vtasks/tree/master/src/cryptos), [money_lover](https://github.com/villoro/vtasks/tree/master/src/money_lover) and [indexa](https://github.com/villoro/vtasks/tree/master/src/indexa) subflows. It also uses a spreadsheet with historical data about my finances.
+The `vtasks.expensor` subflow takes the data extracted from the [cryptos](https://github.com/villoro/vtasks/tree/master/src/cryptos), [money_lover](https://github.com/villoro/vtasks/tree/master/src/money_lover) and [indexa](https://github.com/villoro/vtasks/tree/master/src/indexa) subflows. It also incorporates historical data from a spreadsheet that tracks my finances.
 
-This data is later used to create static `html` reports that show relevant information about my personal finances
+Using this combined dataset, the `vtasks.expensor` subflow generates static `html` reports that showcase relevant information about my personal finances. These reports provide insights into various aspects of my financial activities.
 
-Here you can see some of the pages the report have:
+Here are some example pages from the generated reports:
 
 ![report_dashboard](images/report_1_dashboard.png)
 ![report_evolution](images/report_2_evolution.png)
@@ -13,6 +13,8 @@ Here you can see some of the pages the report have:
 ![report_liquid](images/report_5_liquid.png)
 ![report_sankey](images/report_8_sankey.png)
 
-And of course the report is **responsive**:
+It's important to note that the reports are designed to be responsive, ensuring optimal viewing experience across different devices and screen sizes. Here's an example of the report displayed on a Nexus 5X device:
 
 ![report_nexus_5X](images/report_nexus_5X.png)
+
+These reports provide a comprehensive overview of my personal finances, enabling me to analyze and monitor my financial activities effectively.
