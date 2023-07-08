@@ -4,8 +4,7 @@
 This repository contains my personal pipeline and serves two main purposes:
 
 1. **Learning**: It serves as a playground for trying and learning new things. For example, I've used this repository to try different orchestrators such as [Airflow](https://airflow.apache.org/), [Luigi](https://luigi.readthedocs.io/en/stable/) and [Prefect](https://www.prefect.io/opensource/) which has allowed me to deeply understand the pros and cons of each.
-2. **Automating**: This is a real pipeline that runs hourly in production and allows me to automate certain repetitive tasks. You can find more details in the [source](https://github.com/villoro/vtasks/tree/master/src).
-
+2. **Automating**: This is a real pipeline that runs hourly in production and allows me to automate certain repetitive tasks.
 ## Pipeline Design with Prefect
 
 After trying different orchestrators, I have settled on using [Prefect](https://www.prefect.io/) as my preferred choice. This is mainly due to its simplicity and the fact that the free tier for personal projects works perfectly for my needs.
@@ -26,11 +25,11 @@ In my pipeline, there is a main flow called `vtasks`, which calls multiple subfl
   └── ...
 ```
 
-![prefect_vtasks](images/prefect_vtasks.png)
+![prefect_vtasks](/images/prefect_vtasks.png)
 
 And a zoomed-in view of the `vtasks.backup` subflow:
 
-![prefect_vtasks_backups](images/prefect_vtasks_backups.png)
+![prefect_vtasks_backups](/images/prefect_vtasks_backups.png)
 
 
 ## Subflows
@@ -44,23 +43,23 @@ In general, the pipeline is designed to perform the following steps: extracting 
 
 You can find the definition and details of each subflow in:
 
-| **Subflow**                                                                  | **Description**                                                                                       |
-|------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
-| [archive](https://github.com/villoro/vtasks/tree/master/src/archive)         | Helps in archiving files in Dropbox by renaming them and moving them to subfolders based on the year. |
-| [backups](https://github.com/villoro/vtasks/tree/master/src/backups)         | Creates dated backups of important files, such as a KeePass database.                                 |
-| [battery](https://github.com/villoro/vtasks/tree/master/src/battery)         | Processes the battery log from my phone.                                                              |
-| [cryptos](https://github.com/villoro/vtasks/tree/master/src/cryptos)         | Extracts data held in exchanges and retrives crypto currencies prices.                                                                      |
-| [expensor](https://github.com/villoro/vtasks/tree/master/src/expensor)       | Creates reports about my personal finances.                                                           |
-| [gcal](https://github.com/villoro/vtasks/tree/master/src/gcal)               | Creates information about how I spend my time using Google Calendar data.                             |
-| [indexa](https://github.com/villoro/vtasks/tree/master/src/indexa)           | Extracts data from a robo-advisor called [indexa_capital](https://indexacapital.com/).                |
-| [money_lover](https://github.com/villoro/vtasks/tree/master/src/money_lover) | Extracts incomes and expenses from the [Money Lover app](https://moneylover.me/)                      |
-| [vbooks](https://github.com/villoro/vtasks/tree/master/src/vbooks)           | Creates a report of the books I have read and the reading list.                                       |
-| [vprefect](https://github.com/villoro/vtasks/tree/master/src/vprefect)       | Exports information for the flow runs of this pipeline, allowing me to keep a history of all runs.    |
+| **Subflow**                              | **Description**                                                                                       |
+|------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| [archive](src/archive/README.md)         | Helps in archiving files in Dropbox by renaming them and moving them to subfolders based on the year. |
+| [backups](src/backups/README.md)         | Creates dated backups of important files, such as a KeePass database.                                 |
+| [battery](src/battery/README.md)         | Processes the battery log from my phone.                                                              |
+| [cryptos](src/cryptos/README.md)         | Extracts data held in exchanges and retrives crypto currencies prices.                                |
+| [expensor](src/expensor/README.md)       | Creates reports about my personal finances.                                                           |
+| [gcal](src/gcal/README.md)               | Creates information about how I spend my time using Google Calendar data.                             |
+| [indexa](src/indexa/README.md)           | Extracts data from a robo-advisor called [indexa_capital](https://indexacapital.com/).                |
+| [money_lover](src/money_lover/README.md) | Extracts incomes and expenses from the [Money Lover app](https://moneylover.me/)                      |
+| [vbooks](src/vbooks/README.md)           | Creates a report of the books I have read and the reading list.                                       |
+| [vprefect](src/vprefect/README.md)       | Exports information for the flow runs of this pipeline, allowing me to keep a history of all runs.    |
 
-Finally here are some examples of the reports that I end up creating (from the [expensor](https://github.com/villoro/vtasks/tree/master/src/expensor) subflow):
+Finally here are some examples of the reports that I end up creating (from the [expensor](/src/expensor/README.md) subflow):
 
-![report_dashboard](images/expensor_report_1_dashboard.png)
-![report_evolution](images/expensor_report_2_evolution.png)
+![report_dashboard](/images/expensor_report_1_dashboard.png)
+![report_evolution](/images/expensor_report_2_evolution.png)
 
 ## Deployment
 
