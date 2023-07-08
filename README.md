@@ -49,7 +49,7 @@ You can find the definition and details of each subflow in:
 | [archive](https://github.com/villoro/vtasks/tree/master/src/archive)         | Helps in archiving files in Dropbox by renaming them and moving them to subfolders based on the year. |
 | [backups](https://github.com/villoro/vtasks/tree/master/src/backups)         | Creates dated backups of important files, such as a KeePass database.                                 |
 | [battery](https://github.com/villoro/vtasks/tree/master/src/battery)         | Processes the battery log from my phone.                                                              |
-| [cryptos](https://github.com/villoro/vtasks/tree/master/src/cryptos)         | Extracts data held in exchanges.                                                                      |
+| [cryptos](https://github.com/villoro/vtasks/tree/master/src/cryptos)         | Extracts data held in exchanges and retrives crypto currencies prices.                                                                      |
 | [expensor](https://github.com/villoro/vtasks/tree/master/src/expensor)       | Creates reports about my personal finances.                                                           |
 | [gcal](https://github.com/villoro/vtasks/tree/master/src/gcal)               | Creates information about how I spend my time using Google Calendar data.                             |
 | [indexa](https://github.com/villoro/vtasks/tree/master/src/indexa)           | Extracts data from a robo-advisor called [indexa_capital](https://indexacapital.com/).                |
