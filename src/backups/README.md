@@ -1,6 +1,6 @@
 # vtasks.backups subflow
 
-The `vtasks.backups` subflow is responsible for creating dated backups of important files, such as a KeePass vaults. In order to not waste resources it will only backup files that had changes.
+The `vtasks.backups` subflow is responsible for creating dated backups of important files, such as KeePass vaults. It selectively backs up files that have undergone changes to avoid wasting resources.
 
 For example, let's consider the following file:
 
@@ -9,7 +9,7 @@ For example, let's consider the following file:
   └── vault.kdbx
 ```
 
-After some time using it, we would have the following backups:
+Over time, the subflow generates backups as follows:
 
 ```plaintext
 - KeePass
@@ -23,4 +23,4 @@ After some time using it, we would have the following backups:
   └── vault.kdbx
 ```
 
-Since old backups are less useful, it also removes some of the backups for the last month.
+To optimize storage usage, the subflow removes some of the backups from the previous month, considering that older backups become less useful over time.
