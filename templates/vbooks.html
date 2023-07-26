@@ -36,6 +36,10 @@
   <div class="w3-card w3-round w3-center w3-white elem">
     <div id="EVO_evolution_month" class="plot" style="height: 450px"></div>
   </div>
+
+  <div class="w3-card w3-round w3-center w3-white elem">
+    <div id="EVO_evolution_year_by_type" class="plot" style="height: 450px"></div>
+  </div>
 </div>
 
 <!-- PER -->
@@ -212,6 +216,27 @@
         name: "{{ name + '_trend' }}",
         color: "{{ colors[name + '_dim'] }}",
         data: [{% for mdate, value in month_by_category[name + "_trend"].items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      }, {% endfor %}
+    ],
+  });
+  Highcharts.chart('EVO_evolution_year_by_type', {
+    ...plot_datetime_stacked,
+    title: {text: 'Year evolution by type'},
+    series: [
+      {
+        name: "Total",
+        color: "{{ colors['Total'] }}",
+        data: [{% for mdate, value in year.items() %}
+          [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
+        ]
+      },
+      {% for name, values in year_by_type.items() %}{
+        name: "{{ name }}",
+        color: "{{ colors[name] }}",
+        type: 'column',
+        data: [{% for mdate, value in values.items() %}
           [Date.parse("{{ mdate }}"), {{ value }}], {% endfor %}
         ]
       }, {% endfor %}
