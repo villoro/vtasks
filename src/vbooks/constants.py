@@ -26,9 +26,9 @@ COLORS = {
     "English": ("green", 500), "English_dim": ("green", 300),
     "Italiano": ("purple", 500), "Italiano_dim": ("purple", 300),
     # Types:
-    "Fiction": ("green", 400),
+    "Fiction": ("grey", 100),
     "CP": ("purple", 400),
-    "Finances": ("blue", 400),
+    "Finances": ("green", 400),
     "IT": ("orange", 400),
     "Other non fiction": ("red", 400),
     # Ownership

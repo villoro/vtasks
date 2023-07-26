@@ -99,6 +99,15 @@ def get_year_percent(data, cumsum=True):
     return {x: u.serie_to_dict(df[x]) for x in df.columns if x != "Total"}
 
 
+def get_year_by_type(dfi):
+    df = dfi.pivot_table(values=c.COL_PAGES, index=c.COL_DATE, columns=c.COL_TYPE, aggfunc="sum")
+    df = to_year_start(df)
+
+    out = {x: u.serie_to_dict(df[x]) for x in df.columns}
+
+    return out
+
+
 def get_top(dfi, groupby, top_n=20):
 
     df = (
@@ -127,6 +136,9 @@ def extract_data(export=False):
     data = out["year_by_category"]
     out["year_percent"] = get_year_percent(data, cumsum=False)
     out["year_percent_cumsum"] = get_year_percent(data, cumsum=True)
+
+    # Add type
+    out["year_by_type"] = get_year_by_type(df)
 
     # Extract totals
     out["year"] = out["year_by_category"].pop("Total")
