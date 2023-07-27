@@ -48,9 +48,9 @@ DFS_ALL = [DF_TRANS] + [*DFS_ALL_FROM_DATA.keys()]
 DEFAULT_COLORS = {
     EXPENSES: ("red", 500), f"{EXPENSES}_dim": ("red", 100),
     INCOMES: ("green", 500), f"{INCOMES}_dim": ("green", 100),
-    "Passive_income_5": ("lime", 100),
-    "Passive_income_4": ("lime", 300),
-    "Passive_income_3": ("lime", 500),
+    "Passive_income_5": ("lime", 400),
+    "Passive_income_4": ("lime", 600),
+    "Passive_income_3": ("lime", 800),
     RESULT: ("amber", 500), f"{RESULT}_dim": ("amber", 100),
     LIQUID: ("blue", 500), f"{LIQUID}_dim": ("blue", 100),
     "Min_value": ("grey", 700), "Recomended_value": ("grey", 400),
