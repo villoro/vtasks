@@ -1,6 +1,6 @@
 import re
-import yaml
 import sys
+import yaml
 
 from argparse import ArgumentParser
 from collections import OrderedDict
@@ -14,6 +14,8 @@ import pandas as pd
 
 from prefect import get_run_logger
 from prefect.exceptions import MissingContextError
+from scipy.signal import savgol_filter
+from tsmoothie.smoother import ConvolutionSmoother
 from vcrypto import Cipher
 from vdropbox import Vdropbox
 
@@ -187,38 +189,20 @@ def series_to_dicts(series):
     return out
 
 
-def time_average(dfi, months=12, exponential=False, center=False):
-    """
-    Do some time average
-
-    Args:
-        dfi:            input dataframe (or series)
-        months:         num of months for the average
-        exponential:    whether to use EWM or simple rolling
-    """
-
-    # Exponential moving average
-    if exponential:
-        # No negative values
-        months = max(0, months)
-
-        df = dfi.ewm(span=months, min_periods=0, adjust=False, ignore_na=False)
-
-    # Regular moving average
-    else:
-        # One month at least
-        months = max(1, months)
-
-        df = dfi.rolling(months, min_periods=1, center=center)
-
-    return df.mean().apply(lambda x: round(x, 2))
+def tsmooth(serie, window):
+    """Apply convolution smoother to a 1D serie"""
+    smoother = ConvolutionSmoother(window_len=window, window_type="ones")
+    smoother.smooth(serie)
+    return smoother.smooth_data[0]
 
 
-def smooth_serie(dfi):
-    """Smooth a serie by doing a time_average 2 times"""
+def smooth_serie(
+    serie, savgol_window=35, savgol_polyorder=5, savgol_mode="nearest", tsmoothie_window=3
+):
+    """Smooth a serie by doing a savgol filter followed by a tsmooth"""
 
-    df = time_average(dfi, months=12, center=True)
-    return time_average(df, months=6, center=True)
+    savgol = savgol_filter(serie, savgol_window, savgol_polyorder, mode=savgol_mode)
+    return tsmooth(savgol, tsmoothie_window)
 
 
 def get_prefect_args(name):
