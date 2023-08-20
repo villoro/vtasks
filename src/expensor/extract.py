@@ -10,6 +10,7 @@ import utils as u
 
 from . import constants as c
 from . import constants as resample
+from . import smooth_serie
 
 
 def filter_by_date(dfs_in, mdate):
@@ -75,7 +76,7 @@ def get_basic_traces(dfs, period, mdate):
     # Append time averaged data
     if period == "MS":
         for name, serie in series.items():
-            out[f"{name}_trend"] = u.serie_to_dict(u.smooth_serie(serie))
+            out[f"{name}_trend"] = u.serie_to_dict(smooth_serie(serie))
 
     # Get by groups
     for name, dfg in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
@@ -122,7 +123,7 @@ def get_investment_or_liquid(dfs, entity):
 
     out = {
         entity: u.serie_to_dict(dfg["Total"]),
-        f"{entity}_trend": u.serie_to_dict(u.smooth_serie(dfg)["Total"]),
+        f"{entity}_trend": u.serie_to_dict(smooth_serie(dfg)["Total"]),
     }
 
     aux = OrderedDict()
@@ -193,7 +194,7 @@ def get_comparison_traces(dfs):
     def get_one_trace(df, col=c.COL_AMOUNT):
         """Create the comparison trace"""
 
-        df = u.smooth_serie(df[[col]].resample("MS").sum())
+        df = smooth_serie(df[[col]].resample("MS").sum())
         df["Month"] = df.index.month
         df["Year"] = df.index.year
 
