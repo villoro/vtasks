@@ -201,8 +201,9 @@ def smooth_serie(
 ):
     """Smooth a serie by doing a savgol filter followed by a convolution_smooth"""
 
-    savgol = savgol_filter(serie, savgol_window, savgol_polyorder, mode=savgol_mode)
-    return convolution_smooth(savgol, convolution_window)
+    savgol = savgol_filter(serie.fillna(0), savgol_window, savgol_polyorder, mode=savgol_mode)
+    convoluted = convolution_smooth(savgol, convolution_window)
+    return pd.Series(convoluted, index=serie.index)
 
 
 def get_prefect_args(name):
