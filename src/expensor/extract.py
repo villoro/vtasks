@@ -134,7 +134,7 @@ def get_investment_or_liquid(dfs, entity):
 
     out = {
         entity: u.serie_to_dict(dfg["Total"]),
-        f"{entity}_trend": u.serie_to_dict(u.smooth_serie(dfg)["Total"]),
+        f"{entity}_trend": u.serie_to_dict(u.smooth_serie(dfg["Total"])),
     }
 
     aux = OrderedDict()
@@ -205,7 +205,8 @@ def get_comparison_traces(dfs):
     def get_one_trace(df, col=c.COL_AMOUNT):
         """Create the comparison trace"""
 
-        df = u.smooth_serie(df[[col]].resample("MS").sum())
+        # Make sure we preserve it as a DataFrame
+        df = u.smooth_serie(df[[col]].resample("MS").sum()).to_frame().rename(columns={0: col})
         df["Month"] = df.index.month
         df["Year"] = df.index.year
 
