@@ -189,7 +189,7 @@ def series_to_dicts(series):
     return out
 
 
-def tsmooth(serie, window):
+def convolution_smooth(serie, window):
     """Apply convolution smoother to a 1D serie"""
     smoother = ConvolutionSmoother(window_len=window, window_type="ones")
     smoother.smooth(serie)
@@ -197,12 +197,12 @@ def tsmooth(serie, window):
 
 
 def smooth_serie(
-    serie, savgol_window=35, savgol_polyorder=5, savgol_mode="nearest", tsmoothie_window=3
+    serie, savgol_window=35, savgol_polyorder=5, savgol_mode="nearest", convolution_window=3
 ):
-    """Smooth a serie by doing a savgol filter followed by a tsmooth"""
+    """Smooth a serie by doing a savgol filter followed by a convolution_smooth"""
 
     savgol = savgol_filter(serie, savgol_window, savgol_polyorder, mode=savgol_mode)
-    return tsmooth(savgol, tsmoothie_window)
+    return convolution_smooth(savgol, convolution_window)
 
 
 def get_prefect_args(name):
