@@ -27,9 +27,7 @@ def get_average_times(df_in):
 
     out = {}
     out["times"] = {x: u.serie_to_dict(df[x].dropna()) for x in df.columns}
-
-    df = df.apply(u.smooth_serie)
-    out["times_trend"] = {x: u.serie_to_dict(df[x].dropna()) for x in df.columns}
+    out["times_trend"] = {x: u.serie_to_dict(u.smooth_serie(df[x].dropna())) for x in df.columns}
 
     return out
 
@@ -78,7 +76,6 @@ def get_results_percent(df_in):
     total = df["result"].notna().rolling("30D").sum()
 
     for x in results:
-
         counts = (df["result"] == x).rolling("30D").sum()
         df[x] = (100 * counts / total).apply(lambda x: round(x, 2))
 
@@ -137,7 +134,6 @@ def datetime_index_to_date(serie_in):
 
 
 def extract_anomalies(df_in):
-
     # Backfill to handle possible NaNs
     times = get_vtasks_times(df_in).backfill()
 
@@ -156,7 +152,6 @@ def extract_anomalies(df_in):
 
 @task(name="vtasks.vprefect.report")
 def create_report():
-
     vdp = u.get_vdropbox()
     df = read_flow_runs(vdp)
 
