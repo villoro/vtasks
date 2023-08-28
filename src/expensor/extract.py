@@ -190,7 +190,7 @@ def get_salaries(dfs, mdate):
     }
 
 
-def get_comparison_traces(dfs):
+def get_comparison_traces(dfs, mdate):
     """
     Add traces for comparison plots
 
@@ -202,11 +202,12 @@ def get_comparison_traces(dfs):
 
     out = {}
 
-    def get_one_trace(df, col=c.COL_AMOUNT):
+    def get_one_trace(df_in, mdate, col=c.COL_AMOUNT):
         """Create the comparison trace"""
 
         # Make sure we preserve it as a DataFrame
-        df = u.smooth_serie(df[[col]].resample("MS").sum()).to_frame().rename(columns={0: col})
+        serie = resample(df_in[col], "MS", mdate)
+        df = u.smooth_serie(serie).to_frame().rename(columns={0: col})
         df["Month"] = df.index.month
         df["Year"] = df.index.year
 
@@ -219,7 +220,7 @@ def get_comparison_traces(dfs):
 
     # Expenses and incomes
     for name, df in dfs[c.DF_TRANS].groupby(c.COL_TYPE):
-        out[name] = get_one_trace(df)
+        out[name] = get_one_trace(df, mdate)
 
     # Prepare transactions for Result
     df = dfs[c.DF_TRANS].copy()
@@ -227,10 +228,10 @@ def get_comparison_traces(dfs):
     df.loc[mfilter, c.COL_AMOUNT] = -df.loc[mfilter, c.COL_AMOUNT]
 
     # Add Result
-    out[c.RESULT] = get_one_trace(df)
+    out[c.RESULT] = get_one_trace(df, mdate)
 
     # Add liquid
-    out[c.LIQUID] = get_one_trace(dfs[c.DF_LIQUID], "Total")
+    out[c.LIQUID] = get_one_trace(dfs[c.DF_LIQUID], mdate, "Total")
 
     log.debug("Comparison traces added")
 
@@ -577,7 +578,7 @@ def extract_data(dfs, mdate, export_data=False):
     out["month"].update(get_total_investments(out))
     out["month"].update(get_salaries(dfs, mdate))
 
-    out["comp"] = get_comparison_traces(dfs)
+    out["comp"] = get_comparison_traces(dfs, mdate)
     out["pies"] = get_pie_traces(dfs, mdate)
     out["dash"] = get_dashboard(out, mdate)
     out["ratios"] = get_ratios(out)
