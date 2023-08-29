@@ -1,7 +1,6 @@
 from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
-from time import sleep
 
 import asyncio
 import pandas as pd
@@ -19,6 +18,9 @@ from .models import Flow
 from .models import FlowRun
 from .models import TaskRun
 
+MAX_RECORDS_PER_QUERY = 200
+HOURS_TO_QUERY = 6
+
 
 async def read_flows():
     """extract task runs"""
@@ -34,7 +36,7 @@ async def _read_flow_runs(offset, flow_run_filter=None):
     )
 
 
-async def read_flow_runs(flow_run_filter=None, max_queries=100):
+async def read_all_flow_runs(flow_run_filter=None, max_queries=100):
     """extract flow runs iterating to avoid query limits"""
 
     log = u.get_log()
@@ -42,17 +44,17 @@ async def read_flow_runs(flow_run_filter=None, max_queries=100):
 
     for x in range(max_queries):
         log.info(f"    Starting iteration {x+1}/{max_queries}")
-        response = await _read_flow_runs(offset=x * 200, flow_run_filter=flow_run_filter)
+        offset = x * MAX_RECORDS_PER_QUERY
+        response = await _read_flow_runs(offset=offset, flow_run_filter=flow_run_filter)
         if not response:
             break
         flow_runs += response
-        sleep(0.5)
 
     log.info(f"All flow_runs ({len(flow_runs)}) extracted in {x} API calls ({max_queries=})")
     return flow_runs
 
 
-async def query_flow_runs(
+async def query_all_flow_runs(
     start_time_min=datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0),
 ):
     client = get_client()
@@ -62,7 +64,7 @@ async def query_flow_runs(
         filter_params["start_time"] = filters.FlowRunFilterStartTime(after_=start_time_min)
 
     flow_run_filter = filters.FlowRunFilter(**filter_params)
-    return await read_flow_runs(flow_run_filter)
+    return await read_all_flow_runs(flow_run_filter)
 
 
 async def _read_task_runs(offset, task_run_filter=None):
@@ -73,7 +75,7 @@ async def _read_task_runs(offset, task_run_filter=None):
     )
 
 
-async def read_task_runs(task_run_filter=None, max_queries=200):
+async def read_all_task_runs(task_run_filter=None, max_queries=200):
     """extract task runs iterating to avoid query limits"""
 
     log = u.get_log()
@@ -81,17 +83,17 @@ async def read_task_runs(task_run_filter=None, max_queries=200):
 
     for x in range(max_queries):
         log.info(f"    Starting iteration {x+1}/{max_queries}")
-        response = await _read_task_runs(offset=x * 200, task_run_filter=task_run_filter)
+        offset = x * MAX_RECORDS_PER_QUERY
+        response = await _read_task_runs(offset=offset, task_run_filter=task_run_filter)
         if not response:
             break
         task_runs += response
-        sleep(0.5)
 
     log.info(f"All task_runs ({len(task_runs)}) extracted in {x} API calls ({max_queries=})")
     return task_runs
 
 
-async def query_task_runs(
+async def query_all_task_runs(
     name_like=None,
     env=None,
     state_names=["Completed"],
@@ -115,7 +117,7 @@ async def query_task_runs(
         filter_params["start_time"] = filters.TaskRunFilterStartTime(after_=start_time_min)
 
     task_run_filter = filters.TaskRunFilter(**filter_params)
-    return await read_task_runs(task_run_filter)
+    return await read_all_task_runs(task_run_filter)
 
 
 def handle_localization(df_in):
@@ -228,7 +230,8 @@ def process_flow_runs():
     log.info("Querying flows")
     flows = asyncio.run(read_flows())
     log.info("Querying flow_runs")
-    flow_runs = asyncio.run(query_flow_runs(start_time_min=last_update - timedelta(hours=6)))
+    start_time_min = last_update - timedelta(hours=HOURS_TO_QUERY)
+    flow_runs = asyncio.run(query_all_flow_runs(start_time_min=start_time_min))
 
     log.info("Removing invalid flow_runs")
     flow_runs = [x for x in flow_runs if x.start_time is not None]
@@ -256,9 +259,8 @@ def process_task_runs():
     last_update = get_last_update(df_history)
 
     log.info("Querying task_runs")
-    task_runs = asyncio.run(
-        query_task_runs(start_time_min=last_update - timedelta(hours=6), state_names=None)
-    )
+    start_time_min = last_update - timedelta(hours=HOURS_TO_QUERY)
+    task_runs = asyncio.run(query_all_task_runs(start_time_min=start_time_min, state_names=None))
 
     log.info("Removing invalid task_runs")
     task_runs = [x for x in task_runs if x.start_time is not None]
