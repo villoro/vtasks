@@ -14,7 +14,7 @@ import utils as u
 
 from .export import read_calendars
 from .report import get_daily_data
-from vprefect.query import query_task_runs
+from vprefect.query import query_all_task_runs
 
 MAIN_CALS = [
     "05_Sport",
@@ -133,7 +133,7 @@ def needs_summary(mdate: date):
         return False
 
     log.info(f"Checking if '{task_name}' has already run today")
-    task_runs = asyncio.run(query_task_runs(name_like=task_name, env=env))
+    task_runs = asyncio.run(query_all_task_runs(name_like=task_name, env=env))
 
     if task_runs:
         log.warning("Summary already send")
