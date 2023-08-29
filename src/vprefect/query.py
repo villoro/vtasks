@@ -1,7 +1,6 @@
 from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
-from time import sleep
 
 import asyncio
 import pandas as pd
@@ -49,7 +48,6 @@ async def read_flow_runs(flow_run_filter=None, max_queries=100):
         if not response:
             break
         flow_runs += response
-        sleep(0.5)
 
     log.info(f"All flow_runs ({len(flow_runs)}) extracted in {x} API calls ({max_queries=})")
     return flow_runs
@@ -89,7 +87,6 @@ async def read_task_runs(task_run_filter=None, max_queries=200):
         if not response:
             break
         task_runs += response
-        sleep(0.5)
 
     log.info(f"All task_runs ({len(task_runs)}) extracted in {x} API calls ({max_queries=})")
     return task_runs
