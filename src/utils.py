@@ -201,6 +201,8 @@ def smooth_serie(
 ):
     """Smooth a serie by doing a savgol filter followed by a convolution_smooth"""
 
+    assert isinstance(serie, pd.Series), "Input to smooth_serie must be 'pd.Series'"
+
     savgol = savgol_filter(serie.fillna(0), savgol_window, savgol_polyorder, mode=savgol_mode)
     convoluted = convolution_smooth(savgol, convolution_window)
     return pd.Series(convoluted, index=serie.index)
