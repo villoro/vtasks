@@ -19,6 +19,8 @@ from .models import Flow
 from .models import FlowRun
 from .models import TaskRun
 
+MAX_RECORDS_PER_QUERY = 200
+
 
 async def read_flows():
     """extract task runs"""
@@ -42,7 +44,8 @@ async def read_flow_runs(flow_run_filter=None, max_queries=100):
 
     for x in range(max_queries):
         log.info(f"    Starting iteration {x+1}/{max_queries}")
-        response = await _read_flow_runs(offset=x * 200, flow_run_filter=flow_run_filter)
+        offset = x * MAX_RECORDS_PER_QUERY
+        response = await _read_flow_runs(offset=offset, flow_run_filter=flow_run_filter)
         if not response:
             break
         flow_runs += response
@@ -81,7 +84,8 @@ async def read_task_runs(task_run_filter=None, max_queries=200):
 
     for x in range(max_queries):
         log.info(f"    Starting iteration {x+1}/{max_queries}")
-        response = await _read_task_runs(offset=x * 200, task_run_filter=task_run_filter)
+        offset = x * MAX_RECORDS_PER_QUERY
+        response = await _read_task_runs(offset=offset, task_run_filter=task_run_filter)
         if not response:
             break
         task_runs += response
