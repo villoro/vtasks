@@ -43,15 +43,15 @@ async def _read_flow_runs(offset, flow_run_filter=None, sort=sorting.FlowRunSort
     return await client.read_flow_runs(sort=sort, flow_run_filter=flow_run_filter, offset=offset)
 
 
-async def read_all_flow_runs(flow_run_filter=None, queries_per_batch=1, max_queries=100):
+async def read_all_flow_runs(flow_run_filter=None, queries_per_batch=4, max_queries=100):
     """Extract flow runs in concurrent batches to speed up"""
 
     log = u.get_log()
     async_tasks = []
-    total_batches = max_queries // queries_per_batch
+    max_batches = max_queries // queries_per_batch
 
-    for batch in range(total_batches):
-        log.info(f"    Starting batch {batch+1}/{total_batches}")
+    for batch in range(max_batches):
+        log.info(f"    Starting batch {batch+1}/{max_batches}")
 
         # Do batch of concurrent tasks
         async with asyncio.TaskGroup() as tg:
@@ -68,14 +68,15 @@ async def read_all_flow_runs(flow_run_filter=None, queries_per_batch=1, max_quer
 
     flow_runs = extract_async_tasks(async_tasks)
 
-    log.info(f"All flow_runs ({len(flow_runs)}) extracted in {batch+1} batches ({total_batches=})")
+    log.info(f"All flow_runs ({len(flow_runs)}) extracted in {batch+1} batches ({max_batches=})")
     return flow_runs
 
 
 async def query_all_flow_runs(
     start_time_min=datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0),
-    queries_per_batch=1,
+    queries_per_batch=4,
 ):
+    """Query flow runs with some predefined filters"""
     client = get_client()
     filter_params = {}
 
@@ -87,20 +88,20 @@ async def query_all_flow_runs(
 
 
 async def _read_task_runs(offset, task_run_filter=None, sort=sorting.TaskRunSort.END_TIME_DESC):
-    """extract task runs with query limits"""
+    """Extract task runs with query limits"""
     client = get_client()
     return await client.read_task_runs(sort=sort, task_run_filter=task_run_filter, offset=offset)
 
 
-async def read_all_task_runs(task_run_filter=None, max_queries=200, queries_per_batch=10):
-    """extract task runs iterating to avoid query limits"""
+async def read_all_task_runs(task_run_filter=None, max_queries=500, queries_per_batch=10):
+    """Extract task runs in concurrent batches to speed up"""
 
     log = u.get_log()
     async_tasks = []
-    total_batches = max_queries // queries_per_batch
+    max_batches = max_queries // queries_per_batch
 
-    for batch in range(total_batches):
-        log.info(f"    Starting batch {batch+1}/{total_batches}")
+    for batch in range(max_batches):
+        log.info(f"    Starting batch {batch+1}/{max_batches}")
 
         # Do batch of concurrent tasks
         async with asyncio.TaskGroup() as tg:
@@ -117,7 +118,7 @@ async def read_all_task_runs(task_run_filter=None, max_queries=200, queries_per_
 
     task_runs = extract_async_tasks(async_tasks)
 
-    log.info(f"All task_runs ({len(task_runs)}) extracted in {batch+1} batches ({total_batches=})")
+    log.info(f"All task_runs ({len(task_runs)}) extracted in {batch+1} batches ({max_batches=})")
     return task_runs
 
 
@@ -128,6 +129,7 @@ async def query_all_task_runs(
     start_time_min=datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0),
     queries_per_batch=10,
 ):
+    """Query task runs with some predefined filters"""
     client = get_client()
     filter_params = {}
 
