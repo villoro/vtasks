@@ -22,41 +22,61 @@ MAX_RECORDS_PER_QUERY = 200
 HOURS_TO_QUERY = 6
 
 
+def extract_async_tasks(tasks):
+    """Extract results from async tasks as a single list"""
+
+    out = []
+    for task in tasks:
+        out += task.result()
+    return out
+
+
 async def read_flows():
-    """extract task runs"""
+    """Extract task runs"""
     client = get_client()
     return await client.read_flows()
 
 
-async def _read_flow_runs(offset, flow_run_filter=None):
-    """extract flow runs with query limits"""
+async def _read_flow_runs(offset, flow_run_filter=None, sort=sorting.FlowRunSort.START_TIME_DESC):
+    """Extract flow runs with query limits"""
     client = get_client()
-    return await client.read_flow_runs(
-        sort=sorting.FlowRunSort.START_TIME_DESC, flow_run_filter=flow_run_filter, offset=offset
-    )
+    return await client.read_flow_runs(sort=sort, flow_run_filter=flow_run_filter, offset=offset)
 
 
-async def read_all_flow_runs(flow_run_filter=None, max_queries=100):
-    """extract flow runs iterating to avoid query limits"""
+async def read_all_flow_runs(flow_run_filter=None, queries_per_batch=4, max_queries=100):
+    """Extract flow runs in concurrent batches to speed up"""
 
     log = u.get_log()
-    flow_runs = []
+    async_tasks = []
+    max_batches = max_queries // queries_per_batch
 
-    for x in range(max_queries):
-        log.info(f"    Starting iteration {x+1}/{max_queries}")
-        offset = x * MAX_RECORDS_PER_QUERY
-        response = await _read_flow_runs(offset=offset, flow_run_filter=flow_run_filter)
-        if not response:
+    for batch in range(max_batches):
+        log.info(f"    Starting batch {batch+1}/{max_batches}")
+
+        # Do batch of concurrent tasks
+        async with asyncio.TaskGroup() as tg:
+            for task_num in range(queries_per_batch):
+                offset = (task_num + queries_per_batch * batch) * MAX_RECORDS_PER_QUERY
+                async_task = tg.create_task(
+                    _read_flow_runs(offset=offset, flow_run_filter=flow_run_filter)
+                )
+                async_tasks.append(async_task)
+
+        # If last query returned no results or less than max, stop iterations
+        if len(async_tasks[-1].result()) < MAX_RECORDS_PER_QUERY:
             break
-        flow_runs += response
 
-    log.info(f"All flow_runs ({len(flow_runs)}) extracted in {x} API calls ({max_queries=})")
+    flow_runs = extract_async_tasks(async_tasks)
+
+    log.info(f"All flow_runs ({len(flow_runs)}) extracted in {batch+1} batches ({max_batches=})")
     return flow_runs
 
 
 async def query_all_flow_runs(
     start_time_min=datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0),
+    queries_per_batch=4,
 ):
+    """Query flow runs with some predefined filters"""
     client = get_client()
     filter_params = {}
 
@@ -64,32 +84,41 @@ async def query_all_flow_runs(
         filter_params["start_time"] = filters.FlowRunFilterStartTime(after_=start_time_min)
 
     flow_run_filter = filters.FlowRunFilter(**filter_params)
-    return await read_all_flow_runs(flow_run_filter)
+    return await read_all_flow_runs(flow_run_filter, queries_per_batch=queries_per_batch)
 
 
-async def _read_task_runs(offset, task_run_filter=None):
-    """extract task runs with query limits"""
+async def _read_task_runs(offset, task_run_filter=None, sort=sorting.TaskRunSort.END_TIME_DESC):
+    """Extract task runs with query limits"""
     client = get_client()
-    return await client.read_task_runs(
-        sort=sorting.TaskRunSort.END_TIME_DESC, task_run_filter=task_run_filter, offset=offset
-    )
+    return await client.read_task_runs(sort=sort, task_run_filter=task_run_filter, offset=offset)
 
 
-async def read_all_task_runs(task_run_filter=None, max_queries=200):
-    """extract task runs iterating to avoid query limits"""
+async def read_all_task_runs(task_run_filter=None, max_queries=500, queries_per_batch=10):
+    """Extract task runs in concurrent batches to speed up"""
 
     log = u.get_log()
-    task_runs = []
+    async_tasks = []
+    max_batches = max_queries // queries_per_batch
 
-    for x in range(max_queries):
-        log.info(f"    Starting iteration {x+1}/{max_queries}")
-        offset = x * MAX_RECORDS_PER_QUERY
-        response = await _read_task_runs(offset=offset, task_run_filter=task_run_filter)
-        if not response:
+    for batch in range(max_batches):
+        log.info(f"    Starting batch {batch+1}/{max_batches}")
+
+        # Do batch of concurrent tasks
+        async with asyncio.TaskGroup() as tg:
+            for task_num in range(queries_per_batch):
+                offset = (task_num + queries_per_batch * batch) * MAX_RECORDS_PER_QUERY
+                async_task = tg.create_task(
+                    _read_task_runs(offset=offset, task_run_filter=task_run_filter)
+                )
+                async_tasks.append(async_task)
+
+        # If last query returned no results or less than max, stop iterations
+        if len(async_tasks[-1].result()) < MAX_RECORDS_PER_QUERY:
             break
-        task_runs += response
 
-    log.info(f"All task_runs ({len(task_runs)}) extracted in {x} API calls ({max_queries=})")
+    task_runs = extract_async_tasks(async_tasks)
+
+    log.info(f"All task_runs ({len(task_runs)}) extracted in {batch+1} batches ({max_batches=})")
     return task_runs
 
 
@@ -98,7 +127,9 @@ async def query_all_task_runs(
     env=None,
     state_names=["Completed"],
     start_time_min=datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0),
+    queries_per_batch=10,
 ):
+    """Query task runs with some predefined filters"""
     client = get_client()
     filter_params = {}
 
@@ -117,7 +148,7 @@ async def query_all_task_runs(
         filter_params["start_time"] = filters.TaskRunFilterStartTime(after_=start_time_min)
 
     task_run_filter = filters.TaskRunFilter(**filter_params)
-    return await read_all_task_runs(task_run_filter)
+    return await read_all_task_runs(task_run_filter, queries_per_batch=queries_per_batch)
 
 
 def handle_localization(df_in):

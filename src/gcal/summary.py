@@ -133,7 +133,7 @@ def needs_summary(mdate: date):
         return False
 
     log.info(f"Checking if '{task_name}' has already run today")
-    task_runs = asyncio.run(query_all_task_runs(name_like=task_name, env=env))
+    task_runs = asyncio.run(query_all_task_runs(name_like=task_name, env=env, queries_per_batch=1))
 
     if task_runs:
         log.warning("Summary already send")
