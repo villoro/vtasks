@@ -71,7 +71,7 @@ def get_calendar(name):
     )
 
 
-def query_events(calendar, end, start=MIN_DATE, drop_invalid=True):
+def query_events(name, calendar, end, start=MIN_DATE):
     """Get events from one calendar"""
 
     data = []
@@ -88,38 +88,34 @@ def query_events(calendar, end, start=MIN_DATE, drop_invalid=True):
                 # Defaults from 'to_json' are dict that include timezone and we don't want that
                 "start": event.start,
                 "end": event.end,
+                # Add fancy calendar name
+                "calendar": name,
             }
         )
 
-    # Return them as a nice pandas dataframe
-    df = pd.DataFrame(data)
-
-    if drop_invalid:
-        df = df.dropna(subset=["start"])
-
-    return df
+    return data
 
 
-def get_all_events(calendars, mdate):
+def get_all_events(calendars, mdate, drop_invalid=True):
     """Get all events from all calendars"""
 
     log = u.get_log()
     log.info("Querying all calendars")
 
-    dfs = []
+    events = []
 
     for name, data in calendars.items():
         log.info(f"Querying calendar '{name}'")
 
         calendar = get_calendar(data["url"])
 
-        df = query_events(calendar, end=mdate)
-        df["calendar"] = name
+        events += query_events(name, calendar, end=mdate)
 
-        dfs.append(df)
+    log.info("Tansforming to pandas")
+    df = pd.DataFrame(events)
 
-    log.info("Concatenating events from all calendars")
-    df = pd.concat(dfs).reset_index(drop=True)
+    if drop_invalid:
+        df = df.dropna(subset=["start"])
 
     # Cast datetime columns
     df["start"] = pd.to_datetime(df["start"], utc=True)
