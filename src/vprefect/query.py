@@ -23,8 +23,15 @@ HOURS_TO_QUERY = 6
 
 
 def extract_async_tasks(tasks):
-    """Extract results from async tasks as a single list"""
+    """
+    Extracts results from a list of asynchronous tasks into a single list.
 
+    Args:
+        tasks (list): List of asynchronous tasks.
+
+    Returns:
+        list: List containing the results of the asynchronous tasks.
+    """
     out = []
     for task in tasks:
         out += task.result()
@@ -32,19 +39,44 @@ def extract_async_tasks(tasks):
 
 
 async def read_flows():
-    """Extract task runs"""
+    """
+    Asynchronously retrieves the list of flows using the Prefect client.
+
+    Returns:
+        list: List of flows.
+    """
     client = get_client()
     return await client.read_flows()
 
 
 async def _read_flow_runs(offset, flow_run_filter=None, sort=sorting.FlowRunSort.START_TIME_DESC):
-    """Extract flow runs with query limits"""
+    """
+    Asynchronously retrieves flow runs with query limits.
+
+    Args:
+        offset (int): Offset for paginating the results.
+        flow_run_filter (prefect.orion.schemas.filters.FlowRunFilter, optional): Filter for flow runs. Defaults to None.
+        sort (prefect.orion.schemas.sorting.FlowRunSort, optional): Sorting options. Defaults to sorting.FlowRunSort.START_TIME_DESC.
+
+    Returns:
+        list: List of flow runs.
+    """
     client = get_client()
     return await client.read_flow_runs(sort=sort, flow_run_filter=flow_run_filter, offset=offset)
 
 
 async def read_all_flow_runs(flow_run_filter=None, queries_per_batch=4, max_queries=100):
-    """Extract flow runs in concurrent batches to speed up"""
+    """
+    Asynchronously extracts flow runs in concurrent batches to speed up retrieval.
+
+    Args:
+        flow_run_filter (prefect.orion.schemas.filters.FlowRunFilter, optional): Filter for flow runs. Defaults to None.
+        queries_per_batch (int, optional): Number of queries per batch. Defaults to 4.
+        max_queries (int, optional): Maximum number of queries. Defaults to 100.
+
+    Returns:
+        list: List of flow runs.
+    """
 
     log = u.get_log()
     async_tasks = []
@@ -76,7 +108,16 @@ async def query_all_flow_runs(
     start_time_min=datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0),
     queries_per_batch=4,
 ):
-    """Query flow runs with some predefined filters"""
+    """
+    Asynchronously queries flow runs with some predefined filters.
+
+    Args:
+        start_time_min (datetime, optional): Minimum start time for the query range. Defaults to the start of the current day.
+        queries_per_batch (int, optional): Number of queries per batch. Defaults to 4.
+
+    Returns:
+        list: List of flow runs.
+    """
     client = get_client()
     filter_params = {}
 
@@ -88,13 +129,33 @@ async def query_all_flow_runs(
 
 
 async def _read_task_runs(offset, task_run_filter=None, sort=sorting.TaskRunSort.END_TIME_DESC):
-    """Extract task runs with query limits"""
+    """
+    Asynchronously retrieves task runs with query limits.
+
+    Args:
+        offset (int): Offset for paginating the results.
+        task_run_filter (prefect.orion.schemas.filters.TaskRunFilter, optional): Filter for task runs. Defaults to None.
+        sort (prefect.orion.schemas.sorting.TaskRunSort, optional): Sorting options. Defaults to sorting.TaskRunSort.END_TIME_DESC.
+
+    Returns:
+        list: List of task runs.
+    """
     client = get_client()
     return await client.read_task_runs(sort=sort, task_run_filter=task_run_filter, offset=offset)
 
 
 async def read_all_task_runs(task_run_filter=None, max_queries=500, queries_per_batch=10):
-    """Extract task runs in concurrent batches to speed up"""
+    """
+    Asynchronously extracts task runs in concurrent batches to speed up retrieval.
+
+    Args:
+        task_run_filter (prefect.orion.schemas.filters.TaskRunFilter, optional): Filter for task runs. Defaults to None.
+        max_queries (int, optional): Maximum number of queries. Defaults to 500.
+        queries_per_batch (int, optional): Number of queries per batch. Defaults to 10.
+
+    Returns:
+        list: List of task runs.
+    """
 
     log = u.get_log()
     async_tasks = []
@@ -129,7 +190,19 @@ async def query_all_task_runs(
     start_time_min=datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0),
     queries_per_batch=10,
 ):
-    """Query task runs with some predefined filters"""
+    """
+    Asynchronously queries task runs with some predefined filters.
+
+    Args:
+        name_like (str, optional): Partial name of the task. Defaults to None.
+        env (str, optional): Environment tag. Defaults to None.
+        state_names (list, optional): List of state names to include. Defaults to ["Completed"].
+        start_time_min (datetime, optional): Minimum start time for the query range. Defaults to the start of the current day.
+        queries_per_batch (int, optional): Number of queries per batch. Defaults to 10.
+
+    Returns:
+        list: List of task runs.
+    """
     client = get_client()
     filter_params = {}
 
@@ -152,6 +225,15 @@ async def query_all_task_runs(
 
 
 def handle_localization(df_in):
+    """
+    Handles time localization and timezone issues in the input DataFrame.
+
+    Args:
+        df_in (pd.DataFrame): Input DataFrame.
+
+    Returns:
+        pd.DataFrame: DataFrame with proper time localization.
+    """
     df = df_in.copy()
 
     # There has been some problems with timezones,
@@ -173,12 +255,31 @@ def handle_localization(df_in):
 
 
 def parse_prefect(prefect_list, Model):
+    """
+    Parses a list of Prefect objects into a DataFrame.
+
+    Args:
+        prefect_list (list): List of Prefect objects.
+        Model (pydantic.BaseModel): Prefect model type.
+
+    Returns:
+        pd.DataFrame: Parsed DataFrame.
+    """
     data = [Model(**x.dict()).dict() for x in prefect_list]
     df = pd.DataFrame(data).set_index("id")
     return handle_localization(df)
 
 
 def _extract_env(tags):
+    """
+    Extracts the environment value from a list of tags.
+
+    Args:
+        tags (list): List of tags in the format ['key:value'].
+
+    Returns:
+        str: Extracted environment value.
+    """
     for x in tags:
         k, v = x.split(":")
         if k == "env":
@@ -186,6 +287,15 @@ def _extract_env(tags):
 
 
 def extract_tags(df_in):
+    """
+    Extracts tags and environment information from the input DataFrame.
+
+    Args:
+        df_in (pd.DataFrame): Input DataFrame.
+
+    Returns:
+        pd.DataFrame: DataFrame with extracted tags and environment information.
+    """
     df = df_in.copy()
 
     # Tags to proper list
@@ -201,12 +311,31 @@ def extract_tags(df_in):
 
 
 def deduplicate(df_in):
+    """
+    Removes duplicate rows from the input DataFrame.
+
+    Args:
+        df_in (pd.DataFrame): Input DataFrame.
+
+    Returns:
+        pd.DataFrame: DataFrame with duplicates removed, keeping the first occurrence.
+    """
     df = df_in.copy()
     df = df.sort_values([c.COL_CREATED, c.COL_EXPORTED_AT])
     return df[~df.index.duplicated(keep="first")]
 
 
 def get_history(vdp, parquet_path):
+    """
+    Retrieves historical data from a Parquet file using the specified VDropbox client.
+
+    Args:
+        vdp (VDropbox): VDropbox client instance.
+        parquet_path (str): Path to the Parquet file.
+
+    Returns:
+        pd.DataFrame: DataFrame containing historical data, or None if the file does not exist.
+    """
     log = u.get_log()
 
     if not vdp.file_exists(parquet_path):
@@ -217,13 +346,34 @@ def get_history(vdp, parquet_path):
     return handle_localization(df_history)
 
 
-def get_last_update(df_history):
+def get_last_update(df_history, env="prod"):
+    """
+    Retrieves the last update timestamp from the historical data DataFrame.
+
+    Args:
+        df_history (pd.DataFrame): DataFrame containing historical data.
+
+    Returns:
+        datetime: Last update timestamp for the specified environment.
+    """
     if df_history is None:
         return None
-    return df_history.loc[df_history[c.COL_ENV] == "prod", c.COL_START].max()
+    return df_history.loc[df_history[c.COL_ENV] == env, c.COL_START].max()
 
 
 def update_parquet(vdp, df_new, df_history, parquet_path):
+    """
+    Updates a Parquet file with new data, handling duplicates and proper merging.
+
+    Args:
+        vdp (VDropbox): VDropbox client instance.
+        df_new (pd.DataFrame): New data to be added.
+        df_history (pd.DataFrame): Historical data.
+        parquet_path (str): Path to the Parquet file.
+
+    Returns:
+        None
+    """
     log = u.get_log()
 
     vdp = u.get_vdropbox()
@@ -241,6 +391,16 @@ def update_parquet(vdp, df_new, df_history, parquet_path):
 
 
 def add_flow_name(df_in, flows):
+    """
+    Adds flow names to the DataFrame based on flow IDs.
+
+    Args:
+        df_in (pd.DataFrame): Input DataFrame.
+        flows (list): List of flows.
+
+    Returns:
+        pd.DataFrame: DataFrame with added flow names.
+    """
     df = df_in.copy()
 
     flow_map = parse_prefect(flows, Flow)[c.COL_NAME].to_dict()
@@ -251,6 +411,15 @@ def add_flow_name(df_in, flows):
 
 @task(name="vtasks.vprefect.flow_runs", retries=3, retry_delay_seconds=5)
 def process_flow_runs():
+    """
+    Prefect task that queries flow runs, processes the data, and updates a Parquet file.
+
+    Retrieves historical flow run data, queries new flow runs, processes the data by adding tags and flow names,
+    and then updates the Parquet file with the new data.
+
+    Returns:
+        None
+    """
     vdp = u.get_vdropbox()
     log = u.get_log()
 
@@ -274,7 +443,7 @@ def process_flow_runs():
     # Exclude running flows
     df_new = df_new[df_new[c.COL_STATE] != c.STATE_RUNNING]
 
-    # Retrive flow_name from flows
+    # Retrieve flow_name from flows
     df_new = add_flow_name(df_new, flows)
 
     update_parquet(vdp, df_new, df_history, c.PATH_FLOW_RUNS)
@@ -282,6 +451,15 @@ def process_flow_runs():
 
 @task(name="vtasks.vprefect.task_runs", retries=3, retry_delay_seconds=5)
 def process_task_runs():
+    """
+    Prefect task that queries task runs, processes the data, and updates a Parquet file.
+
+    Retrieves historical task run data, queries new task runs, processes the data by adding tags,
+    and then updates the Parquet file with the new data.
+
+    Returns:
+        None
+    """
     vdp = u.get_vdropbox()
     log = u.get_log()
 
