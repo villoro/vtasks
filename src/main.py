@@ -43,4 +43,5 @@ if __name__ == "__main__":
     with tags(f"env:{u.detect_env()}"):
         main(mdate=date.today())
 
-    complete_uncompleted_flow_runs()
+    with tags(f"env:{u.detect_env()}"):
+        complete_uncompleted_flow_runs()

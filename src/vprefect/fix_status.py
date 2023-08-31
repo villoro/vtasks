@@ -4,6 +4,7 @@ from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
 
+from prefect import flow
 from prefect import states
 from prefect.client import get_client
 
@@ -39,17 +40,15 @@ async def get_uncompleted_flow_runs(
     return flow_runs_id
 
 
-async def update_flow_run(flow_run_id, state=states.Completed()):
+async def update_flow_runs(flow_runs_id, state=states.Completed()):
 
     client = get_client()
-    return await client.set_flow_run_state(flow_run_id, state=state)
+    async with asyncio.TaskGroup() as tg:
+        for flow_run_id in flow_runs_id:
+            tg.create_task(client.set_flow_run_state(flow_run_id, state=state))
 
 
+@flow(**u.get_prefect_args("aux.fix_status"))
 def complete_uncompleted_flow_runs():
-
-    log = u.get_log()
-
     flow_runs_id = asyncio.run(get_uncompleted_flow_runs())
-    for flow_run_id in flow_runs_id:
-        log.info(f"Updating {flow_runs_id=}")
-        asyncio.run(update_flow_run(flow_run_id))
+    asyncio.run(update_flow_runs(flow_runs_id))
