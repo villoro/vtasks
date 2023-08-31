@@ -20,6 +20,9 @@ from .models import TaskRun
 
 MAX_RECORDS_PER_QUERY = 200
 HOURS_TO_QUERY = 6
+DATETIME_A_WEEK_AGO = datetime.now(timezone.utc).replace(
+    hour=0, minute=0, second=0, microsecond=0
+) - timedelta(days=7)
 
 
 def extract_async_tasks(tasks):
@@ -108,7 +111,7 @@ async def query_all_flow_runs(
     name_like=None,
     env=None,
     state_names=(),
-    start_time_min=datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0),
+    start_time_min=DATETIME_A_WEEK_AGO,
     queries_per_batch=4,
 ):
     """
@@ -204,7 +207,7 @@ async def query_all_task_runs(
     name_like=None,
     env=None,
     state_names=["Completed"],
-    start_time_min=datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0),
+    start_time_min=DATETIME_A_WEEK_AGO,
     queries_per_batch=10,
 ):
     """
