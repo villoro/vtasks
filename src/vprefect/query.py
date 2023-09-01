@@ -20,6 +20,9 @@ from .models import TaskRun
 
 MAX_RECORDS_PER_QUERY = 200
 HOURS_TO_QUERY = 6
+DATETIME_A_WEEK_AGO = datetime.now(timezone.utc).replace(
+    hour=0, minute=0, second=0, microsecond=0
+) - timedelta(days=7)
 
 
 def extract_async_tasks(tasks):
@@ -105,13 +108,19 @@ async def read_all_flow_runs(flow_run_filter=None, queries_per_batch=4, max_quer
 
 
 async def query_all_flow_runs(
-    start_time_min=datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0),
+    name_like=None,
+    env=None,
+    state_names=(),
+    start_time_min=DATETIME_A_WEEK_AGO,
     queries_per_batch=4,
 ):
     """
     Asynchronously queries flow runs with some predefined filters.
 
     Args:
+        name_like (str, optional): Partial name of the task. Defaults to None.
+        env (str, optional): Environment tag. Defaults to None.
+        state_names (list, optional): List of state names to include. Defaults to ().
         start_time_min (datetime, optional): Minimum start time for the query range. Defaults to the start of the current day.
         queries_per_batch (int, optional): Number of queries per batch. Defaults to 4.
 
@@ -120,6 +129,17 @@ async def query_all_flow_runs(
     """
     client = get_client()
     filter_params = {}
+
+    if name_like:
+        filter_params["name"] = filters.FlowRunFilterName(like_=name_like)
+
+    if env:
+        filter_params["tags"] = filters.FlowRunFilterTags(all_=[f"env:{env}"])
+
+    if state_names:
+        filter_params["state"] = filters.FlowRunFilterState(
+            name=filters.FlowRunFilterStateName(any_=state_names)
+        )
 
     if start_time_min:
         filter_params["start_time"] = filters.FlowRunFilterStartTime(after_=start_time_min)
@@ -187,7 +207,7 @@ async def query_all_task_runs(
     name_like=None,
     env=None,
     state_names=["Completed"],
-    start_time_min=datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0),
+    start_time_min=DATETIME_A_WEEK_AGO,
     queries_per_batch=10,
 ):
     """

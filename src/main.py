@@ -1,6 +1,5 @@
 from datetime import date
 from datetime import datetime
-from time import sleep
 
 from prefect import flow
 from prefect import tags
@@ -17,12 +16,11 @@ from indexa import indexa
 from money_lover import money_lover
 from vbooks import vbooks
 from vprefect import vprefect
-
-SLEEP_SECONDS = 5
+from vprefect.fix_status import complete_uncompleted_flow_runs
 
 
 @flow(**u.get_prefect_args("vtasks"))
-def main(mdate: date):
+def vtasks(mdate: date):
 
     vbooks()
     archive()
@@ -43,7 +41,7 @@ def main(mdate: date):
 if __name__ == "__main__":
 
     with tags(f"env:{u.detect_env()}"):
-        main(mdate=date.today())
+        vtasks(mdate=date.today())
 
-    print(f"Sleeping {SLEEP_SECONDS=}")
-    sleep(SLEEP_SECONDS)
+    with tags(f"env:{u.detect_env()}"):
+        complete_uncompleted_flow_runs()
