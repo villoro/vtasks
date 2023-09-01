@@ -39,12 +39,14 @@ def get_uncompleted_flow_runs(
     df = parse_prefect(flow_runs, FlowRun)
     flow_runs_id = df[df["name"].str.startswith("vtasks")].index
 
-    log.info(f"{len(flow_runs_id)} flow runs found")
-
+    log.info(f"Updating {len(flow_runs_id)}: {flow_runs_id=}")
     return flow_runs_id
 
 
-@task(name="aux.fix_status.complete_uncompleted")
+# This should be a task but I haven't managed to make it work since I'm getting:
+#    prefect.exceptions.MissingResult: State data is missing.
+#    Typically, this occurs when result persistence is disabled and the state has been retrieved from the API.
+# @task(name="aux.fix_status.complete_uncompleted")
 def update_flow_runs(flow_runs_id, state=states.Completed()):
     async def _update_flow_runs(flow_runs_id, state=states.Completed()):
         client = get_client()
@@ -57,4 +59,9 @@ def update_flow_runs(flow_runs_id, state=states.Completed()):
 
 @flow(**u.get_prefect_args("aux.fix_status"))
 def complete_uncompleted_flow_runs():
-    update_flow_runs(get_uncompleted_flow_runs())
+    log = u.get_log()
+
+    flow_runs = get_uncompleted_flow_runs()
+    update_flow_runs(flow_runs)
+
+    log.info(f"All {len(flow_runs)} flows updated")
