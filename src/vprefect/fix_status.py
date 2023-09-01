@@ -22,7 +22,17 @@ DATETIME_10_MIN_AGO = datetime.now(timezone.utc) - timedelta(minutes=10)
 def get_uncompleted_flow_runs(
     env=u.detect_env(), state_names=["Running"], start_time_min=DATETIME_10_MIN_AGO
 ):
+    """
+    Prefect task that queries uncompleted flow runs.
 
+    Args:
+        env (str, optional): Environment tag. Defaults to auto-detected environment.
+        state_names (list, optional): List of state names to include. Defaults to ["Running"].
+        start_time_min (datetime, optional): Minimum start time for the query range. Defaults to 10 minutes ago.
+
+    Returns:
+        list: List of uncompleted flow run IDs.
+    """
     log = u.get_log()
 
     log.info("Querying flow runs that are 'running'")
@@ -48,6 +58,17 @@ def get_uncompleted_flow_runs(
 #    Typically, this occurs when result persistence is disabled and the state has been retrieved from the API.
 # @task(name="aux.fix_status.complete_uncompleted")
 def update_flow_runs(flow_runs_id, state=states.Completed()):
+    """
+    Asynchronously updates the state of flow runs.
+
+    Args:
+        flow_runs_id (list): List of flow run IDs to update.
+        state (str, optional): New state for the flow runs. Defaults to 'Completed'.
+
+    Returns:
+        None
+    """
+
     async def _update_flow_runs(flow_runs_id, state=states.Completed()):
         client = get_client()
         async with asyncio.TaskGroup() as tg:
@@ -59,6 +80,14 @@ def update_flow_runs(flow_runs_id, state=states.Completed()):
 
 @flow(**u.get_prefect_args("aux.fix_status"))
 def complete_uncompleted_flow_runs():
+    """
+    Prefect flow that completes uncompleted flow runs.
+
+    Queries uncompleted flow runs and updates their state to 'Completed'
+
+    Returns:
+        None
+    """
     log = u.get_log()
 
     flow_runs = get_uncompleted_flow_runs()
