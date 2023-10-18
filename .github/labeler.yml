@@ -1,65 +1,51 @@
 docs:
 - README.md
-- images/*
-- src/*.md
-- src/**/*.md
+- images/**
+- src/**.md
 
 CI-CD:
-- .github/*
-- .github/**/*
+- .github/**
 - .pre-commit-config.yaml
 
 t/archive:
-- src/archive/*
-- src/archive/**/*
+- src/archive/**
 
 t/backups:
-- src/backups/*
-- src/backups/**/*
+- src/backups/**
 
 t/battery:
-- src/battery/*
-- src/battery/**/*
+- src/battery/**
 
 t/cryptos:
-- src/cryptos/*
-- src/cryptos/**/*
+- src/cryptos/**
 
 t/expensor:
-- src/expensor/*
-- src/expensor/**/*
+- src/expensor/**
 - templates/base.html
 - templates/expensor.html
 
 t/flights:
-- src/flights/*
-- src/flights/**/*
+- src/flights/**
 
 t/gcalendar:
-- src/gcal/*
-- src/gcal/**/*
+- src/gcal/**
 - templates/base.html
 - templates/gcalendar.html
 
 t/indexa:
-- src/indexa/*
-- src/indexa/**/*
+- src/indexa/**
 
 t/money_lover:
-- src/money_lover/*
-- src/money_lover/**/*
+- src/money_lover/**
 
 t/vbooks:
-- src/vbooks/*
-- src/vbooks/**/*
+- src/vbooks/**
 - templates/base.html
 - templates/vbooks.html
 
 t/vprefect:
-- scripts/logs_parser/*
-- scripts/logs_parser/**/*
-- src/vprefect/*
-- src/vprefect/**/*
+- scripts/logs_parser/**
+- src/vprefect/**
 - templates/base.html
 - templates/vtasks.html
 
