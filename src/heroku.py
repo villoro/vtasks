@@ -15,7 +15,11 @@ def prefect_login():
 
 def run_prefect_externally():
     """Calling it with subprocess so that prefect recoginzes the login"""
-    subprocess.run(VTASKS_RUN, shell=True)
+    result = subprocess.run(VTASKS_RUN, shell=True)
+
+    # Check that the process succeed and if not, raise and exception
+    if result.returncode != 0:
+        raise RuntimeError(f"Vtasks process failed ({result.returncode=})")
 
 
 if __name__ == "__main__":

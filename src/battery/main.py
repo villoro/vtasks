@@ -5,13 +5,13 @@ from datetime import timedelta
 
 import pandas as pd
 
+from mailjet import Email
 from prefect import flow
 from prefect import task
-from mailjet import Email
 
 import utils as u
 
-from vprefect.query import query_task_runs
+from vprefect.query import query_all_task_runs
 
 PATH_PHONE = "/Aplicaciones/pixel"
 PATH_CSV = f"{PATH_PHONE}/bmw_history.txt"
@@ -98,7 +98,7 @@ def needs_alert():
         return False
 
     log.info(f"Checking if '{task_name}' has already run today")
-    task_runs = asyncio.run(query_task_runs(name_like=task_name, env=env))
+    task_runs = asyncio.run(query_all_task_runs(name_like=task_name, env=env, queries_per_batch=1))
 
     if task_runs:
         log.warning("Alert already send")

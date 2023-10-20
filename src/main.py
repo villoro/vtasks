@@ -16,10 +16,11 @@ from indexa import indexa
 from money_lover import money_lover
 from vbooks import vbooks
 from vprefect import vprefect
+from vprefect.fix_status import complete_uncompleted_flow_runs
 
 
 @flow(**u.get_prefect_args("vtasks"))
-def main(mdate: date):
+def vtasks(mdate: date):
 
     vbooks()
     archive()
@@ -40,4 +41,7 @@ def main(mdate: date):
 if __name__ == "__main__":
 
     with tags(f"env:{u.detect_env()}"):
-        main(mdate=date.today())
+        vtasks(mdate=date.today())
+
+    with tags(f"env:{u.detect_env()}"):
+        complete_uncompleted_flow_runs()
