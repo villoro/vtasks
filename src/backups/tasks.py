@@ -2,8 +2,12 @@ from .models import BackupTask
 from .models import CopyTask
 
 COPY_TASKS = [
-    CopyTask(origin="/Aplicaciones/KeePass/General.kdbx", destination="/Groups/Casa/KeePass/Arnau.kdbx")
-    CopyTask(origin="/Aplicaciones/KeePass/General.kdbx", destination="/Groups/KeePass Cocco/Arnau.kdbx")
+    CopyTask(
+        origin="/Aplicaciones/KeePass/General.kdbx", destination="/Groups/Casa/KeePass/Arnau.kdbx"
+    ),
+    CopyTask(
+        origin="/Aplicaciones/KeePass/General.kdbx", destination="/Groups/KeePass Cocco/Arnau.kdbx"
+    ),
 ]
 
 BACKUP_TASKS = [
