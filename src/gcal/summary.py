@@ -1,6 +1,9 @@
 import asyncio
 
 from datetime import date
+from datetime import datetime
+from datetime import timedelta
+from datetime import timezone
 
 import plotly.graph_objects as go
 
@@ -112,6 +115,12 @@ def process_summary(mdate):
     email.send()
 
 
+def get_dt_last_n_days(n_days):
+    out = datetime.now(timezone.utc) - timedelta(days=2)
+    out = out.replace(hour=0, minute=0, second=0, microsecond=0)
+    return out
+
+
 @task(name="vtasks.gcal.needs_summary")
 def needs_summary(mdate: date):
     """Checks if it needs the summary"""
@@ -133,7 +142,11 @@ def needs_summary(mdate: date):
         return False
 
     log.info(f"Checking if '{task_name}' has already run today")
-    task_runs = asyncio.run(query_all_task_runs(name_like=task_name, env=env, queries_per_batch=1))
+    task_runs = asyncio.run(
+        query_all_task_runs(
+            name_like=task_name, env=env, queries_per_batch=1, start_time_min=get_dt_last_n_days(2)
+        )
+    )
 
     if task_runs:
         log.warning("Summary already send")
