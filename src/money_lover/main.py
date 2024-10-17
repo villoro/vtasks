@@ -98,9 +98,8 @@ def process_transtactions(vdp, df_in):
     # Handle FraVi
     df[c.COL_TOTAL_AMOUNT] = df[c.COL_AMOUNT]
     mask = df[c.COL_ACCOUNT] == c.ACCOUNT_FRAVI
-    df.loc[mask, c.COL_AMOUNT] = (
-        df[mask, c.COL_AMOUNT] * 0.82
-    )  # TODO: use dynamic percent
+    # TODO: use dynamic percent
+    df.loc[mask, c.COL_AMOUNT] = df[mask, c.COL_AMOUNT] * 0.82
 
     # Export
     vdp.write_excel(df[c.COLS_DF_TRANS], c.FILE_TRANSACTIONS)
