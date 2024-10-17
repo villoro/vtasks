@@ -21,7 +21,6 @@ from vprefect.fix_status import complete_uncompleted_flow_runs
 
 @flow(**u.get_prefect_args("vtasks"))
 def vtasks(mdate: date):
-
     vbooks()
     archive()
     battery()
@@ -39,7 +38,6 @@ def vtasks(mdate: date):
 
 
 if __name__ == "__main__":
-
     with tags(f"env:{u.detect_env()}"):
         vtasks(mdate=date.today())
 

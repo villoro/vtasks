@@ -16,8 +16,11 @@ FORBIDDEN_CATEGORIES = [
 COL_DATE = "Date"
 COL_NOTES = "Note"
 COL_AMOUNT = "Amount"
+COL_TOTAL_AMOUNT = "Total_amount"
 COL_CATEGORY = "Category"
 COL_TYPE = "Type"
+COL_ACCOUNT = "Account"
+COL_EVENT = "Event"
 
 EXPENSES = "Expenses"
 INCOMES = "Incomes"
@@ -34,5 +37,10 @@ COLS_DF_TRANS = [
     COL_AMOUNT,
     COL_TYPE,
     COL_DATE,
+    COL_ACCOUNT,
+    COL_TOTAL_AMOUNT,
+    COL_EVENT,
     COL_NOTES,
 ]
+
+ACCOUNT_FRAVI = "FraVi"
