@@ -101,6 +101,9 @@ def process_transtactions(vdp, df_in):
     # TODO: use dynamic percent
     df.loc[mask, c.COL_AMOUNT] = df.loc[mask, c.COL_AMOUNT] * 0.82
     df[c.COL_AMOUNT] = df[c.COL_AMOUNT].apply(lambda x: round(x, 2))
+    # Exclude Fravi income
+    mask = (df[c.COL_TYPE] == c.INCOMES) & (df[c.COL_ACCOUNT] == c.ACCOUNT_FRAVI)
+    df = df.loc[~mask]
 
     # Export
     vdp.write_excel(df[c.COLS_DF_TRANS], c.FILE_TRANSACTIONS)
