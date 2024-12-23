@@ -1,0 +1,33 @@
+# Expensor
+- doc_in: expensor_data
+  sheet_in: accounts
+  table_out: accounts
+
+- doc_in: expensor_data
+  sheet_in: trans_categ
+  table_out: categories
+
+- doc_in: expensor_data
+  sheet_in: liquid_m
+  table_out: liquid_month
+
+- doc_in: expensor_data
+  sheet_in: invest_m
+  table_out: invest_month
+
+- doc_in: expensor_data
+  sheet_in: salary
+  table_out: salary
+
+- doc_in: expensor_data
+  sheet_in: worth_m
+  table_out: worth_month
+
+# vbooks
+- doc_in: books_data
+  sheet_in: Books
+  table_out: books_read
+
+- doc_in: books_data
+  sheet_in: TODO
+  table_out: books_todo
