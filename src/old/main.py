@@ -14,14 +14,12 @@ from expensor import expensor
 from gcal import gcal
 from indexa import indexa
 from money_lover import money_lover
-from vbooks import vbooks
 from vprefect import vprefect
 from vprefect.fix_status import complete_uncompleted_flow_runs
 
 
 @flow(**u.get_prefect_args("vtasks"))
 def vtasks(mdate: date):
-    vbooks()
     archive()
     battery()
 
