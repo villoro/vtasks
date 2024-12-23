@@ -23,20 +23,22 @@ def _get_cipher():
     return CIPHER
 
 
-def read_secret(key, encoding="utf8"):
+def read_secret(secret, encoding="utf8"):
     """Retrives one encrypted secret"""
-
     logger = get_logger()
+    cipher = _get_cipher()
+
     logger.info(f"Reading {secret=}")
-    return _get_cipher().get_secret(key, encoding=encoding)
+    return cipher.get_secret(secret, encoding=encoding)
 
 
-def write_secret(key, value):
+def write_secret(secret, value):
     """Retrives one encrypted secret"""
-
     logger = get_logger()
+    cipher = _get_cipher()
+
     logger.info(f"Writing {secret=}")
-    return _get_cipher().save_secret(key, value)
+    return cipher.save_secret(secret, value)
 
 
 def export_secret(uri, secret_name, binary=False):
