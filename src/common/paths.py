@@ -1,6 +1,8 @@
 import yaml
 from pathlib import Path
 
+from common.logs import get_logger
+
 # Base path of the repo.
 # It needs to go 3 times up since this file has the following relative path:
 #   /src/common/paths.py
@@ -18,8 +20,12 @@ def get_path(path_relative):
     return str(path_out)
 
 
-def read_yaml(filename, encoding="utf8"):
+def read_yaml(filename, encoding="utf8", silent=False):
     """Read a yaml file"""
+
+    logger = get_logger()
+    if not silent:
+        logger.info(f"Reading {filename=} with {encoding=}")
 
     with open(filename, "r", encoding=encoding) as stream:
         return yaml.safe_load(stream)
