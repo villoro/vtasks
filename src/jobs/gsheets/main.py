@@ -21,6 +21,7 @@ class GsheetJob(BaseModel):
 
 def export_table(table):
     df = read_gdrive_sheet(table.doc_in, table.sheet_in)
+    df["_source"] = f"gsheet.{table.doc_in}.{table.sheet_in}"
     write_df(df, table.schema_out, table.table_out, mode=table.mode)
 
 

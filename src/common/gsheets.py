@@ -61,9 +61,9 @@ def _get_gdrive_sheet(doc, sheet, max_tries=5):
 
 def read_gdrive_sheet(doc, sheet):
     logger = get_logger()
-    sheet = _get_gdrive_sheet(doc, sheet)
+    gsheet = _get_gdrive_sheet(doc, sheet)
 
     logger.info(f"Reading data from google spreadsheet '{doc}.{sheet}'")
-    data = sheet.get_all_records()
+    data = gsheet.get_all_records()
 
     return pd.DataFrame(data)
