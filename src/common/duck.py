@@ -65,7 +65,7 @@ def _merge_table(df_input, schema, table, pk):
 
     temp_table_name = f"_temp_{table}"
     logger.info(f"Creating temporal table '{temp_table_name}'")
-    con.execute(f"CREATE TEMPORARY TABLE {temp_table_name} AS SELECT * FROM df_input")
+    con.execute(f"CREATE OR REPLACE TEMPORARY TABLE {temp_table_name} AS SELECT * FROM df_input")
 
     cols = [f"{x}=EXCLUDED.{x}" for x in df_input.columns if x not in [pk, "_n_updates"]]
     merge_query = f"""
@@ -104,8 +104,7 @@ def write_df(df_input, schema, table, mode="overwrite", pk=None):
 
     if mode == "overwrite":
         logger.info(f"Overwriting {table_name=}")
-        con.execute(f"DROP TABLE IF EXISTS {table_name}")
-        con.execute(f"CREATE TABLE {table_name} AS SELECT * FROM df_md")
+        con.execute(f"CREATE OR REPLACE TABLE {table_name} AS SELECT * FROM df_md")
 
     elif mode == "append":
         logger.info(f"Appending data to {table_name=}")
