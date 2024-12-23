@@ -116,6 +116,7 @@ def write_df(df_input, schema, table, mode="overwrite", pk=None):
             _merge_table(df_md, schema, table, pk)
 
         else:
+            logger.info(f"Creating {table_name=} since it doesn't exist")
             con.execute(f"CREATE TABLE {table_name} AS SELECT * FROM df_md")
 
     else:
