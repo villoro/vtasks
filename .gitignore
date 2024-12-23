@@ -41,13 +41,8 @@ dist/
 
 
 # --------------------- PROJECT EXCLUSIONS ------------------------------------
-# Luigi folders
-runs/
-logs/
-
-# Notebooks at src/scripts
-src/*.ipynb
-scripts/**/*.ipynb
+# Notebooks
+**.ipynb
 
 # Auth jsons
 auth/*

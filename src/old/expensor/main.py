@@ -30,7 +30,7 @@ def get_total_worth(dfs):
     return df
 
 
-@task(name="vtasks.expensor.read")
+# @task(name="vtasks.expensor.read")
 def get_data():
     """Retrive dataframes"""
 
