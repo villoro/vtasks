@@ -3,7 +3,7 @@ import re
 from datetime import date
 from datetime import timedelta
 
-from prefect import task
+from prefect import flow, task
 
 from jobs.backups.tasks import BACKUP_TASKS
 from common.logs import get_logger
@@ -11,6 +11,7 @@ from common.dropbox import get_vdropbox, scan_folder_and_subfolders_by_regex
 
 YEAR = f"{date.today():%Y}"
 DAY = f"{date.today():%Y_%m_%d}"
+FLOW_NAME = "vtasks.backups.backup_files"
 
 
 def get_update_at(vdp, filename):
@@ -26,7 +27,7 @@ def one_backup(vdp, path, regex):
     logger = get_logger()
 
     # Backup all files
-    for path, filename, _ in scan_folder_and_subfolders_by_regex(path, regex, vdp=vdp):
+    for path, filename in scan_folder_and_subfolders_by_regex(path, regex, vdp=vdp):
         origin = f"{path}/{filename}"
         logger.debug(f"Trying to backup '{origin}")
         updated_at = get_update_at(vdp, origin)
@@ -45,13 +46,12 @@ def one_backup(vdp, path, regex):
             logger.debug(f"Skipping '{origin}' since has not been updated")
 
 
-@task(name="vtasks.backup.backup_files")
+@flow(name=FLOW_NAME)
 def backup_files():
     """Back up all files from URIS"""
 
-    logger = get_logger()
     vdp = get_vdropbox()
 
-    for task in BACKUP_TASKS:
-        logger.info(f"Backing up '{task.dict()}'")
-        one_backup(vdp, **task.dict())
+    for backup_task in BACKUP_TASKS:
+        name = f"{FLOW_NAME}.{backup_task.path[1:].replace('/', '_')}"
+        task(name=name)(one_backup)(vdp, **backup_task.dict())

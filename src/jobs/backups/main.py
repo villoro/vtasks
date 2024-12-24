@@ -1,13 +1,11 @@
 from prefect import flow
 
-import utils as u
-
-from .backup_files import backup_files
-from .clean_backups import clean_backups
-from .copy import copy
+from jobs.backups.backup_files import backup_files
+from jobs.backups.clean_backups import clean_backups
+from jobs.backups.copy import copy
 
 
-@flow(**u.get_prefect_args("vtasks.backup"))
+@flow(name="vtasks.backups")
 def backup():
     backup_files()
     clean_backups()

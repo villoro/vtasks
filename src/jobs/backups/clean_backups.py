@@ -12,6 +12,8 @@ from common.logs import get_logger
 from common.dropbox import get_vdropbox
 from jobs.backups.tasks import BACKUP_TASKS
 
+FLOW_NAME = "vtasks.backups.clean_backups"
+
 
 def get_backup_data(vdp, path, regex):
     """Get info about the backups"""
@@ -54,7 +56,7 @@ def get_backup_data(vdp, path, regex):
     return df.set_index("uri")
 
 
-@task(name="vtasks.backup.clean_backups.get_all_backups")
+@task(name=f"{FLOW_NAME}.get_all_backups")
 def get_all_backups(vdp):
     """Get all backups"""
 
@@ -72,7 +74,7 @@ def get_all_backups(vdp):
     return pd.concat(dfs)
 
 
-@task(name="vtasks.backup.clean_backups.tag_duplicates")
+@task(name=f"{FLOW_NAME}.tag_duplicates")
 def tag_duplicates(df_in):
     """
     Tag entries to delete. Old files (>30d) keep the latest for each month.
@@ -94,7 +96,14 @@ def tag_duplicates(df_in):
     return df
 
 
-@flow(name="vtasks.backup.clean_backups")
+@task(name=f"{FLOW_NAME}.delete_duplicates")
+def delete_duplicates(vdp, df):
+    """Delete files tagged as 'delete'"""
+    for uri in df[df["delete"]].index:
+        vdp.delete(uri)
+
+
+@flow(name=FLOW_NAME)
 def clean_backups():
     """Delete backups so that only one per month remain (except if newer than 30d)"""
 
@@ -102,7 +111,4 @@ def clean_backups():
 
     df = get_all_backups(vdp)
     df = tag_duplicates(df)
-
-    # Delete files tagged as 'delete'
-    for uri in df[df["delete"]].index:
-        vdp.delete(uri)
+    delete_duplicates(vdp, df)
