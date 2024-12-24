@@ -136,6 +136,6 @@ def export_all():
     df = query_all_calendars(calendars)
 
     # Export events
-    write_df(df, SCHEMA_OUT, TABLE_OUT)
+    write_df(df, SCHEMA_OUT, TABLE_OUT, as_str=True)
 
     upload_token(vdp)
