@@ -51,7 +51,7 @@ def export_secret(uri, secret_name, binary=False):
         logger.info(f"Skipping secret export since {uri=} already exists")
         return False
 
-    secret = get_secret(secret_name, encoding="utf8" if not binary else None)
+    secret = read_secret(secret_name, encoding="utf8" if not binary else None)
 
     logger.info(f"Writing {secret_name=} to {uri=}")
     with open(uri, "wb" if binary else "w") as stream:
