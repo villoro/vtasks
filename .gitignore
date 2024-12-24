@@ -35,6 +35,9 @@ dist/
 # Passwords
 *.password
 
+# Ruff
+.ruff_cache
+
 # --------------------- PERSONAL EXCLUSIONS -----------------------------------
 # Data folders
 **/data
