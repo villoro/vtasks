@@ -3,10 +3,12 @@ from .models import CopyTask
 
 COPY_TASKS = [
     CopyTask(
-        origin="/Aplicaciones/KeePass/General.kdbx", destination="/Groups/Casa/KeePass/Arnau.kdbx"
+        origin="/Aplicaciones/KeePass/General.kdbx",
+        destination="/Groups/Casa/KeePass/Arnau.kdbx",
     ),
     CopyTask(
-        origin="/Aplicaciones/KeePass/General.kdbx", destination="/Groups/KeePass Cocco/Arnau.kdbx"
+        origin="/Aplicaciones/KeePass/General.kdbx",
+        destination="/Groups/KeePass Cocco/Arnau.kdbx",
     ),
 ]
 
