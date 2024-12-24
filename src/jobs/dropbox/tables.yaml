@@ -24,4 +24,4 @@
   table_out: battery_pixel_4a
   mode: merge
   pk: time
-  drop_source: True
+  # drop_source: True # TODO: uncomment this once migrated
