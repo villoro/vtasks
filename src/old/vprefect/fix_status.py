@@ -1,15 +1,13 @@
 import asyncio
-
 from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
 
+import utils as u
 from prefect import flow
 from prefect import states
 from prefect import task
 from prefect.client import get_client
-
-import utils as u
 
 from .models import FlowRun
 from .query import parse_prefect
@@ -38,12 +36,15 @@ def get_uncompleted_flow_runs(
     log.info("Querying flow runs that are 'running'")
     flow_runs = asyncio.run(
         query_all_flow_runs(
-            env=env, state_names=state_names, start_time_min=start_time_min, queries_per_batch=1
+            env=env,
+            state_names=state_names,
+            start_time_min=start_time_min,
+            queries_per_batch=1,
         )
     )
 
     if len(flow_runs) == 0:
-        log.info(f"There are no uncompleted flow runs")
+        log.info("There are no uncompleted flow runs")
         return []
 
     df = parse_prefect(flow_runs, FlowRun)

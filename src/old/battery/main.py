@@ -1,16 +1,12 @@
 import asyncio
-
 from datetime import datetime
 from datetime import timedelta
 
 import pandas as pd
-
+import utils as u
 from mailjet import Email
 from prefect import flow
 from prefect import task
-
-import utils as u
-
 from vprefect.query import query_all_task_runs
 
 PATH_PHONE = "/Aplicaciones/pixel"
@@ -41,7 +37,7 @@ def read_bmw_history(vdp):
 
     df = df.rename(columns=COL_MAP)
 
-    log.info(f"Formating dataframe")
+    log.info("Formating dataframe")
     df["time"] = df["time"].apply(lambda x: datetime.fromtimestamp(x / 1000))
     df["battery"] = df["battery"].str.split(" ").str[-1].str[:-1].apply(int)
     df["temperature"] = df["temperature"].str[:-2].apply(float)
@@ -91,14 +87,16 @@ def needs_alert():
         log.info(f"Skipping summary since {env=}")
         return False
 
-    log.info(f"Checking last days with battery info")
+    log.info("Checking last days with battery info")
     days = check_last_day_battery()
     if days < MAX_DAYS:
         log.info(f"Battery data is {int(days)=} old (not older than {MAX_DAYS=})")
         return False
 
     log.info(f"Checking if '{task_name}' has already run today")
-    task_runs = asyncio.run(query_all_task_runs(name_like=task_name, env=env, queries_per_batch=1))
+    task_runs = asyncio.run(
+        query_all_task_runs(name_like=task_name, env=env, queries_per_batch=1)
+    )
 
     if task_runs:
         log.warning("Alert already send")
@@ -125,7 +123,7 @@ def send_alert():
     </ol>
     """
 
-    Email(subject=f"Missing battery data", html=html).send()
+    Email(subject="Missing battery data", html=html).send()
 
 
 @flow(**u.get_prefect_args("vtasks.battery"))

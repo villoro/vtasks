@@ -1,8 +1,6 @@
 import pandas as pd
-
-from prefect import task
-
 import utils as u
+from prefect import task
 
 from .export import PATH_GCAL
 from .export import PATH_GCAL_DATA
@@ -17,7 +15,9 @@ def get_daily_data(vdp, mdate):
     # Filter out daily events
     df = df[df["duration"] < 24]
 
-    df = df.pivot_table(index="start_day", columns="calendar", values="duration", aggfunc="sum")
+    df = df.pivot_table(
+        index="start_day", columns="calendar", values="duration", aggfunc="sum"
+    )
 
     # Make sure all days are present
     df = df.fillna(0).resample("D").sum()
@@ -55,10 +55,8 @@ def get_cards(data, calendars):
 
     # Cast to list to so that keys can be reversed
     for x in reversed([*data["month"]]):
-
         # If it's one of the main calendars
         if calendars[x].get("main", False):
-
             mdict = data["month"][x]
 
             # Add value for last month
@@ -97,7 +95,7 @@ def extract_data(vdp, df, export=False):
     out["cards"] = get_cards(out, calendars)
 
     if export:
-        vdp.write_yaml(out, f"I will fail")
+        vdp.write_yaml(out, "I will fail")
 
     return out
 

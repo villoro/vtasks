@@ -1,10 +1,8 @@
-import duckdb
-
 from datetime import datetime
 
-from common.secrets import read_secret
-from common.texts import remove_extra_spacing
+import duckdb
 from common.logs import get_logger
+from common.texts import remove_extra_spacing
 
 CON = None
 DB_DUCKDB = "md:villoro"
@@ -49,7 +47,7 @@ def table_exists(schema, table, silent=False):
     log_func = logger.debug if silent else logger.info
 
     log_func(f"Checking if '{schema}.{table}' exists")
-    df_tables = query_md(f"SHOW ALL TABLES", silent=True).df()
+    df_tables = query_md("SHOW ALL TABLES", silent=True).df()
     table_names = (df_tables["schema"] + "." + df_tables["name"]).values
     out = f"{schema}.{table}" in table_names
 
@@ -65,17 +63,23 @@ def _merge_table(df_input, schema, table, pk):
         raise ValueError("Primary key (pk) must be provided for merge mode")
 
     table_name = f"{schema}.{table}"
-    query = f"CREATE UNIQUE INDEX IF NOT EXISTS idx__{table}__{pk} ON {table_name} ({pk})"
+    query = (
+        f"CREATE UNIQUE INDEX IF NOT EXISTS idx__{table}__{pk} ON {table_name} ({pk})"
+    )
     query_md(query, silent=True)
 
     logger.info(f"Merging data into {table_name=} using {pk=}")
 
     temp_table_name = f"_temp_{table}"
     logger.info(f"Creating temporal table '{temp_table_name}'")
-    query = f"CREATE OR REPLACE TEMPORARY TABLE {temp_table_name} AS SELECT * FROM df_md"
+    query = (
+        f"CREATE OR REPLACE TEMPORARY TABLE {temp_table_name} AS SELECT * FROM df_md"
+    )
     query_md(query, df_input, silent=True)
 
-    cols = [f"{x}=EXCLUDED.{x}" for x in df_input.columns if x not in [pk, "_n_updates"]]
+    cols = [
+        f"{x}=EXCLUDED.{x}" for x in df_input.columns if x not in [pk, "_n_updates"]
+    ]
     merge_query = f"""
     INSERT INTO {table_name}
     SELECT * FROM {temp_table_name}

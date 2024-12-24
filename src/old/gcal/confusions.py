@@ -1,6 +1,5 @@
-from prefect import task
-
 from mailjet import Email
+from prefect import task
 from utils import get_log
 from utils import get_vdropbox
 
@@ -21,7 +20,9 @@ def clear_potential_confusions(df_in, exclude_other=True, merge_study=True):
 
     if merge_study:
         study_related = ["21_Class", "22_Practices", "23_Study", "51_Exams"]
-        df.loc[df["calendar"].isin(study_related), "calendar"] = "21-23/51 study_related"
+        df.loc[df["calendar"].isin(study_related), "calendar"] = (
+            "21-23/51 study_related"
+        )
 
     return df
 
@@ -69,7 +70,9 @@ def extract_gcal_confusions(exclude_other=True, merge_study=True, min_alpha=0.1)
     dfg = vdp.read_parquet(PATH_GCAL_DATA)
 
     df_aux = clear_potential_confusions(dfg, exclude_other, merge_study)
-    df_matrix = get_confusion_matrix(df_aux, col_text="summary", col_category="calendar")
+    df_matrix = get_confusion_matrix(
+        df_aux, col_text="summary", col_category="calendar"
+    )
     df_confusions = filter_confusions(df_matrix, min_alpha)
 
     num_confusions = df_confusions.shape[0]

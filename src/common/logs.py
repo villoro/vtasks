@@ -1,6 +1,6 @@
 import sys
-from loguru import logger as loguru_logger
 
+from loguru import logger as loguru_logger
 from prefect import get_run_logger
 from prefect.exceptions import MissingContextError
 

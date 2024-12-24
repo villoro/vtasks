@@ -1,12 +1,12 @@
 from pathlib import Path
 
-from prefect import flow, task
-from pydantic import BaseModel
-
+from common.duck import write_df
+from common.gsheets import read_gdrive_sheet
 from common.logs import get_logger
 from common.paths import read_yaml
-from common.gsheets import read_gdrive_sheet
-from common.duck import write_df
+from prefect import flow
+from prefect import task
+from pydantic import BaseModel
 
 BASE_PATH = str(Path(__file__).parent)
 TABLES_FILE = f"{BASE_PATH}/tables.yaml"

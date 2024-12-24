@@ -1,11 +1,9 @@
 import glob
-import re
 import os
+import re
 
 import pandas as pd
-
 from loguru import logger as log
-
 from mappings import MAPPINGS
 
 PATH_IN = r"C:/Program Files (x86)/OpenHardwareMonitor"
@@ -43,7 +41,9 @@ def parse_data(filename):
 
 
 def process_files():
-    for filename in glob.glob(f"{PATH_IN}/OpenHardwareMonitorLog-*.csv")[:-1]:  # Skip today file
+    for filename in glob.glob(f"{PATH_IN}/OpenHardwareMonitorLog-*.csv")[
+        :-1
+    ]:  # Skip today file
         log.info(f"Processing {filename=}")
 
         match = REGEX_DATE.match(filename.split("\\")[-1])

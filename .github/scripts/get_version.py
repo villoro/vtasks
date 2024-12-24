@@ -1,7 +1,7 @@
 import click
 from loguru import logger as log
-
-from utils import set_output, get_version_from_toml
+from utils import get_version_from_toml
+from utils import set_output
 
 
 @click.command()

@@ -1,11 +1,15 @@
-from prefect import flow, task
-
-from common.logs import get_logger
-from common.dropbox import get_vdropbox, scan_folder_by_regex, infer_separator
+from common.dropbox import get_vdropbox
+from common.dropbox import infer_separator
+from common.dropbox import scan_folder_by_regex
 from common.duck import write_df
+from common.logs import get_logger
+from prefect import flow
+from prefect import task
 
 PATH_ML = "/Aplicaciones/expensor/Money Lover"
-REGEX_MONEY_LOVER = r"^(MoneyLover-)?(?P<date>\d{4}-\d{2}-\d{2})( \((?P<num>\d+)\))?(.xls|.csv)$"
+REGEX_MONEY_LOVER = (
+    r"^(MoneyLover-)?(?P<date>\d{4}-\d{2}-\d{2})( \((?P<num>\d+)\))?(.xls|.csv)$"
+)
 
 SCHEMA_OUT = "raw__dropbox"
 TABLE_OUT = "money_lover"

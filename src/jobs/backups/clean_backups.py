@@ -1,16 +1,13 @@
 import re
-
 from datetime import datetime
 from datetime import timedelta
 
 import pandas as pd
-
-from prefect import task
-from prefect import flow
-
-from common.logs import get_logger
 from common.dropbox import get_vdropbox
+from common.logs import get_logger
 from jobs.backups.tasks import BACKUP_TASKS
+from prefect import flow
+from prefect import task
 
 FLOW_NAME = "vtasks.backups.clean_backups"
 
@@ -88,7 +85,9 @@ def tag_duplicates(df_in):
 
     # For files newer than 30d, keep them all (use the day for the filter)
     is_newer_30d = df["date"] > datetime.now() - timedelta(30)
-    df.loc[is_newer_30d, "date_filter"] = df.loc[is_newer_30d, "date"].dt.strftime("%Y-%m-%d")
+    df.loc[is_newer_30d, "date_filter"] = df.loc[is_newer_30d, "date"].dt.strftime(
+        "%Y-%m-%d"
+    )
 
     # Mark the first duplicated for deletion
     df["delete"] = df.duplicated(["entity", "base_path", "date_filter"], keep="last")

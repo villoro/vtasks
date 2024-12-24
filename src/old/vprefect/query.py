@@ -1,17 +1,15 @@
+import asyncio
 from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
 
-import asyncio
 import pandas as pd
-
+import utils as u
 from pandas.api.types import is_datetime64_any_dtype
 from prefect import task
 from prefect.client import get_client
 from prefect.orion.schemas import filters
 from prefect.orion.schemas import sorting
-
-import utils as u
 
 from . import constants as c
 from .models import Flow
@@ -52,7 +50,9 @@ async def read_flows():
     return await client.read_flows()
 
 
-async def _read_flow_runs(offset, flow_run_filter=None, sort=sorting.FlowRunSort.START_TIME_DESC):
+async def _read_flow_runs(
+    offset, flow_run_filter=None, sort=sorting.FlowRunSort.START_TIME_DESC
+):
     """
     Asynchronously retrieves flow runs with query limits.
 
@@ -65,10 +65,14 @@ async def _read_flow_runs(offset, flow_run_filter=None, sort=sorting.FlowRunSort
         list: List of flow runs.
     """
     client = get_client()
-    return await client.read_flow_runs(sort=sort, flow_run_filter=flow_run_filter, offset=offset)
+    return await client.read_flow_runs(
+        sort=sort, flow_run_filter=flow_run_filter, offset=offset
+    )
 
 
-async def read_all_flow_runs(flow_run_filter=None, queries_per_batch=4, max_queries=100):
+async def read_all_flow_runs(
+    flow_run_filter=None, queries_per_batch=4, max_queries=100
+):
     """
     Asynchronously extracts flow runs in concurrent batches to speed up retrieval.
 
@@ -103,7 +107,9 @@ async def read_all_flow_runs(flow_run_filter=None, queries_per_batch=4, max_quer
 
     flow_runs = extract_async_tasks(async_tasks)
 
-    log.info(f"All flow_runs ({len(flow_runs)}) extracted in {batch+1} batches ({max_batches=})")
+    log.info(
+        f"All flow_runs ({len(flow_runs)}) extracted in {batch+1} batches ({max_batches=})"
+    )
     return flow_runs
 
 
@@ -142,13 +148,19 @@ async def query_all_flow_runs(
         )
 
     if start_time_min:
-        filter_params["start_time"] = filters.FlowRunFilterStartTime(after_=start_time_min)
+        filter_params["start_time"] = filters.FlowRunFilterStartTime(
+            after_=start_time_min
+        )
 
     flow_run_filter = filters.FlowRunFilter(**filter_params)
-    return await read_all_flow_runs(flow_run_filter, queries_per_batch=queries_per_batch)
+    return await read_all_flow_runs(
+        flow_run_filter, queries_per_batch=queries_per_batch
+    )
 
 
-async def _read_task_runs(offset, task_run_filter=None, sort=sorting.TaskRunSort.END_TIME_DESC):
+async def _read_task_runs(
+    offset, task_run_filter=None, sort=sorting.TaskRunSort.END_TIME_DESC
+):
     """
     Asynchronously retrieves task runs with query limits.
 
@@ -161,10 +173,14 @@ async def _read_task_runs(offset, task_run_filter=None, sort=sorting.TaskRunSort
         list: List of task runs.
     """
     client = get_client()
-    return await client.read_task_runs(sort=sort, task_run_filter=task_run_filter, offset=offset)
+    return await client.read_task_runs(
+        sort=sort, task_run_filter=task_run_filter, offset=offset
+    )
 
 
-async def read_all_task_runs(task_run_filter=None, max_queries=500, queries_per_batch=10):
+async def read_all_task_runs(
+    task_run_filter=None, max_queries=500, queries_per_batch=10
+):
     """
     Asynchronously extracts task runs in concurrent batches to speed up retrieval.
 
@@ -199,7 +215,9 @@ async def read_all_task_runs(task_run_filter=None, max_queries=500, queries_per_
 
     task_runs = extract_async_tasks(async_tasks)
 
-    log.info(f"All task_runs ({len(task_runs)}) extracted in {batch+1} batches ({max_batches=})")
+    log.info(
+        f"All task_runs ({len(task_runs)}) extracted in {batch+1} batches ({max_batches=})"
+    )
     return task_runs
 
 
@@ -238,10 +256,14 @@ async def query_all_task_runs(
         )
 
     if start_time_min:
-        filter_params["start_time"] = filters.TaskRunFilterStartTime(after_=start_time_min)
+        filter_params["start_time"] = filters.TaskRunFilterStartTime(
+            after_=start_time_min
+        )
 
     task_run_filter = filters.TaskRunFilter(**filter_params)
-    return await read_all_task_runs(task_run_filter, queries_per_batch=queries_per_batch)
+    return await read_all_task_runs(
+        task_run_filter, queries_per_batch=queries_per_batch
+    )
 
 
 def handle_localization(df_in):
@@ -489,7 +511,9 @@ def process_task_runs():
 
     log.info("Querying task_runs")
     start_time_min = last_update - timedelta(hours=HOURS_TO_QUERY)
-    task_runs = asyncio.run(query_all_task_runs(start_time_min=start_time_min, state_names=None))
+    task_runs = asyncio.run(
+        query_all_task_runs(start_time_min=start_time_min, state_names=None)
+    )
 
     log.info("Removing invalid task_runs")
     task_runs = [x for x in task_runs if x.start_time is not None]

@@ -1,11 +1,6 @@
 from datetime import date
-from datetime import datetime
-
-from prefect import flow
-from prefect import tags
 
 import utils as u
-
 from archive import archive
 from backups import backup
 from battery import battery
@@ -14,6 +9,8 @@ from expensor import expensor
 from gcal import gcal
 from indexa import indexa
 from money_lover import money_lover
+from prefect import flow
+from prefect import tags
 from vprefect import vprefect
 from vprefect.fix_status import complete_uncompleted_flow_runs
 

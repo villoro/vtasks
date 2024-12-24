@@ -1,18 +1,12 @@
 import cryptocompare
-import pandas as pd
-
-from datetime import date
-
 import gspreadsheets as gsh
-
-from prefect import flow
-from prefect import task
-
+import pandas as pd
 import utils as u
-
 from cryptos.kraken import get_balances
 from expensor.constants import DF_WORTH
 from expensor.constants import FILE_DATA
+from prefect import flow
+from prefect import task
 
 
 SPREADSHEET_CRYPTO = "crypto_data"
@@ -30,7 +24,10 @@ def get_market_cap(cryptos, order_magnitude=10**9):
 
     data = cryptocompare.get_price(cryptos, full=True)
 
-    return {key: values["EUR"]["MKTCAP"] / order_magnitude for key, values in data["RAW"].items()}
+    return {
+        key: values["EUR"]["MKTCAP"] / order_magnitude
+        for key, values in data["RAW"].items()
+    }
 
 
 @task(name="vtasks.crypto.market_cap")
@@ -99,7 +96,6 @@ def update_expensor(mfilter):
 
 @flow(retries=3, retry_delay_seconds=30, **u.get_prefect_args("vtasks.crypto"))
 def crypto(mdate):
-
     mfilter = mdate.strftime("%Y-%m-01")
 
     update_market_cap()

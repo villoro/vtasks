@@ -1,6 +1,6 @@
-import yaml
 from pathlib import Path
 
+import yaml
 from common.logs import get_logger
 
 # Base path of the repo.

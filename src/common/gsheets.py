@@ -1,9 +1,8 @@
 import backoff
 import gspread
 import pandas as pd
-
-from common.paths import get_path
 from common.logs import get_logger
+from common.paths import get_path
 from common.secrets import export_secret
 
 PATH_GSPREADSHEET_KEY = get_path("auth/gspreadsheets.json")
@@ -42,7 +41,9 @@ def _get_gdrive_sheet(doc, sheet, max_tries=5):
     def log_failure(details):
         tries = details["tries"]
         exception = details["exception"]
-        logger.warning(f"[Attempt {tries}] " f"{exception=} when trying to get '{doc}.{sheet}'")
+        logger.warning(
+            f"[Attempt {tries}] " f"{exception=} when trying to get '{doc}.{sheet}'"
+        )
 
     @backoff.on_exception(
         backoff.expo, ConnectionError, max_tries=max_tries, on_backoff=log_failure

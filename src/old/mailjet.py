@@ -1,10 +1,9 @@
 import base64
 
+import utils as u
 from mailjet_rest import Client
 from pydantic import BaseModel
 from pydantic import validator
-
-import utils as u
 
 
 class Attachment(BaseModel):
@@ -77,7 +76,9 @@ class Email(BaseModel):
             message["Attachments"] = [x.export() for x in self.attachments]
 
         if self.inline_attachments:
-            message["InlinedAttachments"] = [x.export() for x in self.inline_attachments]
+            message["InlinedAttachments"] = [
+                x.export() for x in self.inline_attachments
+            ]
 
         return {"Messages": [message]}
 
