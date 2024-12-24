@@ -56,7 +56,7 @@ def _get_gdrive_sheet(doc, sheet, max_tries=5):
         return fetch_sheet()
     except ConnectionError as e:
         msg_error = f"Too many attempts when getting '{doc}.{sheet}' {max_tries=}"
-        log.error(msg_error)
+        logger.error(msg_error)
         raise e
 
 

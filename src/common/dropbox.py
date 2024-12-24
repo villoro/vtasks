@@ -32,7 +32,7 @@ def scan_folder_by_regex(folder, regex, vdp=None, silent=False):
 
     out = []
     for file in vdp.ls(folder):
-        if match := re.match(regex, file):
+        if re.match(regex, file):
             out.append((folder, file))
 
     if not silent:

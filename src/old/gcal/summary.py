@@ -97,8 +97,6 @@ SEND_SUMMARY_TASK_NAME = "vtasks.gcal.send_summary"
 def process_summary(mdate):
     """Send gcalendar report"""
 
-    log = u.get_log()
-
     vdp = u.get_vdropbox()
     df = get_daily_data(vdp, mdate)
     calendars = read_calendars()

@@ -60,10 +60,10 @@ def get_all_backups(vdp):
     logger = get_logger()
 
     dfs = []
-    for task in BACKUP_TASKS:
-        logger.info("Scanning '{path}'".format(**task.dict()))
+    for backup_task in BACKUP_TASKS:
+        logger.info("Scanning '{path}'".format(**backup_task.dict()))
 
-        df = get_backup_data(vdp, **task.dict())
+        df = get_backup_data(vdp, **backup_task.dict())
 
         if df is not None:
             dfs.append(df)

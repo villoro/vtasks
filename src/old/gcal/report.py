@@ -78,8 +78,6 @@ def extract_data(vdp, df, export=False):
     # Filter out incomplete year
     df_y = df_y[df_y.index.year > 2011]
 
-    to_dict_reversed = lambda df: u.serie_to_dict()
-
     out = {
         "week_trend": u.serie_to_dict(df_w_trend),
         "month": u.serie_to_dict(df_m),

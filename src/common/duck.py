@@ -56,7 +56,6 @@ def table_exists(schema, table, silent=False):
 
 
 def _merge_table(df_input, schema, table, pk):
-    con = init_duckdb()
     logger = get_logger()
 
     if not pk:

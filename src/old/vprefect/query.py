@@ -23,9 +23,9 @@ DATETIME_A_WEEK_AGO = datetime.now(timezone.utc).replace(
 ) - timedelta(days=7)
 
 
-def extract_async_tasks(tasks):
+def extract_async_tasks(async_tasks):
     """
-    Extracts results from a list of asynchronous tasks into a single list.
+    Extracts results from a list of asynchronous async_tasks into a single list.
 
     Args:
         tasks (list): List of asynchronous tasks.
@@ -34,8 +34,8 @@ def extract_async_tasks(tasks):
         list: List containing the results of the asynchronous tasks.
     """
     out = []
-    for task in tasks:
-        out += task.result()
+    for async_task in async_tasks:
+        out += async_task.result()
     return out
 
 
@@ -133,7 +133,6 @@ async def query_all_flow_runs(
     Returns:
         list: List of flow runs.
     """
-    client = get_client()
     filter_params = {}
 
     if name_like:
@@ -241,7 +240,6 @@ async def query_all_task_runs(
     Returns:
         list: List of task runs.
     """
-    client = get_client()
     filter_params = {}
 
     if name_like:
