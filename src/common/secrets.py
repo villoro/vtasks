@@ -1,9 +1,8 @@
 from os import path
 
-from vcrypto import Cipher
-
-from common.paths import get_path
 from common.logs import get_logger
+from common.paths import get_path
+from vcrypto import Cipher
 
 CIPHER = None
 CIPHER_KWARGS = {

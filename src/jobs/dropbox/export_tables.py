@@ -1,13 +1,17 @@
 from pathlib import Path
-from typing import Optional, Dict, Literal, Any, List
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Literal
+from typing import Optional
 
-from prefect import flow, task
-from pydantic import BaseModel
-
-from common.logs import get_logger
-from common.paths import read_yaml
 from common.dropbox import get_vdropbox
 from common.duck import write_df
+from common.logs import get_logger
+from common.paths import read_yaml
+from prefect import flow
+from prefect import task
+from pydantic import BaseModel
 
 BASE_PATH = str(Path(__file__).parent)
 TABLES_FILE = f"{BASE_PATH}/tables.yaml"

@@ -1,23 +1,19 @@
 import asyncio
-
 from datetime import date
 from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
 
 import plotly.graph_objects as go
-
+import utils as u
 from mailjet import Attachment
 from mailjet import Email
 from mailjet import InlineAttachment
 from prefect import task
-from prefect.context import get_run_context
-
-import utils as u
+from vprefect.query import query_all_task_runs
 
 from .export import read_calendars
 from .report import get_daily_data
-from vprefect.query import query_all_task_runs
 
 MAIN_CALS = [
     "05_Sport",
@@ -88,7 +84,9 @@ def prepare_email(mdate, fig, main_list):
         )
     ]
     return Email(
-        subject=f"Gcal summary [{mdate}]", html=html, inline_attachments=inline_attachments
+        subject=f"Gcal summary [{mdate}]",
+        html=html,
+        inline_attachments=inline_attachments,
     )
 
 
@@ -98,8 +96,6 @@ SEND_SUMMARY_TASK_NAME = "vtasks.gcal.send_summary"
 @task(name=SEND_SUMMARY_TASK_NAME)
 def process_summary(mdate):
     """Send gcalendar report"""
-
-    log = u.get_log()
 
     vdp = u.get_vdropbox()
     df = get_daily_data(vdp, mdate)
@@ -144,7 +140,10 @@ def needs_summary(mdate: date):
     log.info(f"Checking if '{task_name}' has already run today")
     task_runs = asyncio.run(
         query_all_task_runs(
-            name_like=task_name, env=env, queries_per_batch=1, start_time_min=get_dt_last_n_days(2)
+            name_like=task_name,
+            env=env,
+            queries_per_batch=1,
+            start_time_min=get_dt_last_n_days(2),
         )
     )
 

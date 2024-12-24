@@ -1,14 +1,11 @@
-from requests.exceptions import ConnectionError
 from time import sleep
 
 import gspread
 import pandas as pd
-
-from utils import get_log
-from utils import PATH_ROOT
+from requests.exceptions import ConnectionError
 from utils import export_secret
+from utils import get_log
 from utils import get_path
-from utils import get_secret
 
 
 PATH_GSPREADSHEET_KEY = get_path("auth/gspreadsheets.json")
@@ -56,7 +53,7 @@ def get_gdrive_sheet(spreadsheet_name, sheet_name, retries=3):
             # Init gdrive again just in case
             init_gdrive(force=True)
 
-    log.error(msg_error.format("last_attempt", spreadsheet_name, sheet_name, e))
+    log.error(msg_error.format("last_attempt", spreadsheet_name, sheet_name, ""))
     raise ValueError("Too many reading attemps in 'get_gdrive_sheet'")
 
 
@@ -114,8 +111,9 @@ def get_coordinates(df):
 
     df_index = df.copy()
 
-    # Get column letter (Chr(65) = 'A')
-    index_to_letter = lambda x: chr(65 + x + 1)
+    def index_to_letter(x):
+        """Get column letter (Chr(65) = 'A')"""
+        return chr(65 + x + 1)
 
     n_rows = df_index.shape[0]
     numbers = pd.Series([str(x + 2) for x in range(n_rows)], index=df_index.index)

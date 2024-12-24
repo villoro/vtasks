@@ -1,11 +1,9 @@
 import glob
-import re
 import os
+import re
 
 import pandas as pd
-
 from loguru import logger as log
-
 from mappings import MAPPINGS
 
 PATH_IN = r"C:/Program Files (x86)/OpenHardwareMonitor"
@@ -32,8 +30,6 @@ def parse_data(filename):
     df = pd.read_csv(filename, header=[0, 1], index_col=0).droplevel(1, axis=1)
     df.index.name = "ts"
 
-    cols_to_keep = list(set(MAPPINGS).intersection(set(df.columns)))
-
     pc_name, cols = get_pc_name_and_columns(df.columns)
     df = df[cols].rename(columns=MAPPINGS[pc_name]).sort_index(axis=1, ascending=False)
 
@@ -43,7 +39,9 @@ def parse_data(filename):
 
 
 def process_files():
-    for filename in glob.glob(f"{PATH_IN}/OpenHardwareMonitorLog-*.csv")[:-1]:  # Skip today file
+    for filename in glob.glob(f"{PATH_IN}/OpenHardwareMonitorLog-*.csv")[
+        :-1
+    ]:  # Skip today file
         log.info(f"Processing {filename=}")
 
         match = REGEX_DATE.match(filename.split("\\")[-1])

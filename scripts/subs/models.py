@@ -1,6 +1,7 @@
 import re
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
+from pydantic import validator
 
 REGEX_YEAR = re.compile(r"\((?P<year>\d{4})\)")
 REGEX_QUALITY = re.compile(r"[\s\.\[](?P<quality>\d{3,4})p[\s\.\]]")

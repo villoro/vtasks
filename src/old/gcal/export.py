@@ -3,12 +3,10 @@ from pathlib import Path
 
 import oyaml as yaml
 import pandas as pd
-
+import utils as u
 from gcsa.google_calendar import GoogleCalendar
 from gcsa.serializers.event_serializer import EventSerializer
 from prefect import task
-
-import utils as u
 
 TOKEN_FILENAME = "token.pickle"
 
@@ -30,7 +28,7 @@ def download_token(vdp):
 
     log = u.get_log()
 
-    if not TOKEN_FILENAME in vdp.ls(PATH_GCAL):
+    if TOKEN_FILENAME not in vdp.ls(PATH_GCAL):
         log.warning("GCAL token not found in dropbox")
         return False
 

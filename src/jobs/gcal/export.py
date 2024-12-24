@@ -3,16 +3,15 @@ from pathlib import Path
 
 import oyaml as yaml
 import pandas as pd
-
-from gcsa.google_calendar import GoogleCalendar
-from gcsa.serializers.event_serializer import EventSerializer
-from prefect import task, flow
-
-from common.paths import get_path
-from common.logs import get_logger
-from common.secrets import export_secret
 from common.dropbox import get_vdropbox
 from common.duck import write_df
+from common.logs import get_logger
+from common.paths import get_path
+from common.secrets import export_secret
+from gcsa.google_calendar import GoogleCalendar
+from gcsa.serializers.event_serializer import EventSerializer
+from prefect import flow
+from prefect import task
 
 
 TOKEN_FILENAME = "token.pickle"
@@ -39,7 +38,7 @@ def download_token(vdp):
     logger = get_logger()
     export_secret(PATH_GCAL_JSON, "GCAL_JSON")
 
-    if not TOKEN_FILENAME in vdp.ls(PATH_GCAL):
+    if TOKEN_FILENAME not in vdp.ls(PATH_GCAL):
         logger.warning("GCAL token not found in dropbox")
         return False
 
@@ -74,7 +73,10 @@ def get_calendar(url):
     """Wrapper for GoogleCalendar"""
 
     return GoogleCalendar(
-        url, credentials_path=PATH_GCAL_JSON, token_path=PATH_TOKEN_LOCAL, read_only=True
+        url,
+        credentials_path=PATH_GCAL_JSON,
+        token_path=PATH_TOKEN_LOCAL,
+        read_only=True,
     )
 
 

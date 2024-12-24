@@ -1,14 +1,14 @@
-import re
 import os
-
-from datetime import timedelta, datetime, date, timezone
+import re
+from datetime import datetime
+from datetime import timedelta
+from datetime import timezone
 from pathlib import Path
 
-import yaml
 import pandas as pd
-
-from tqdm import tqdm
+import yaml
 from pydantic import BaseModel
+from tqdm import tqdm
 
 PATH_LOGS = "C:/GIT/vtasks/logs"
 REGEX_CLEAN_TIME = re.compile(
@@ -75,7 +75,6 @@ def extract_tasks_smart(lines):
     run = 0
 
     for x in lines:
-
         # Starts
         for regex in REGEX_LUIGI_START, REGEX_PREFECT_START:
             out = regex.search(x)
@@ -99,7 +98,7 @@ def extract_tasks_smart(lines):
                 data = out.groupdict()
                 name = data["task"]
 
-                if not name in started:
+                if name not in started:
                     continue
 
                 task = started.pop(name)
@@ -142,11 +141,17 @@ def mark_failed_runs(df_in):
         & (df["name"] != "vtasks")
         & (df["name"] != "vtasks")
     )
-    df_failed_runs = df[mask].groupby(["day", "run"])["name"].count().to_frame().reset_index()
+    df_failed_runs = (
+        df[mask].groupby(["day", "run"])["name"].count().to_frame().reset_index()
+    )
 
     rows = [row for _, row in df_failed_runs.iterrows()]
     for row in tqdm(rows, desc="Marking failed"):
-        mask = (df["day"] == row["day"]) & (df["run"] == row["run"]) & (df["name"] == "vtasks")
+        mask = (
+            (df["day"] == row["day"])
+            & (df["run"] == row["run"])
+            & (df["name"] == "vtasks")
+        )
         df.loc[mask, "state"] = "Failed"
 
     return df
@@ -166,14 +171,18 @@ def clean_results(df_in):
     df["day"] = df["start"].dt.date
 
     # Fix Luigi States
-    mask = (df["start"] < LAST_LUIGI_AT) & df["end"].notna() & (df["state"] == "Unknown")
+    mask = (
+        (df["start"] < LAST_LUIGI_AT) & df["end"].notna() & (df["state"] == "Unknown")
+    )
     df.loc[mask, "state"] = "Success"
 
     # Mark failed
     df = mark_failed_runs(df)
 
     # Mark prefect correct runs
-    mask = (df["start"] > LAST_LUIGI_AT) & df["end"].notna() & (df["state"] == "Unknown")
+    mask = (
+        (df["start"] > LAST_LUIGI_AT) & df["end"].notna() & (df["state"] == "Unknown")
+    )
     df.loc[mask, "state"] = "Success"
 
     # Mark stopped runs
@@ -183,7 +192,9 @@ def clean_results(df_in):
     # Add time spent
     df["time"] = None
     mask = df["end"].notna()
-    df.loc[mask, "time"] = (df.loc[mask, "end"] - df.loc[mask, "start"]) / timedelta(seconds=1)
+    df.loc[mask, "time"] = (df.loc[mask, "end"] - df.loc[mask, "start"]) / timedelta(
+        seconds=1
+    )
 
     # Map task names
     df["name"] = df["name"].map(get_maps())

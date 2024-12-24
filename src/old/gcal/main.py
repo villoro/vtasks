@@ -1,8 +1,7 @@
 from datetime import date
 
-from prefect import flow
-
 import utils as u
+from prefect import flow
 
 from .confusions import extract_gcal_confusions
 from .export import export_calendar_events

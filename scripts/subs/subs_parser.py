@@ -1,11 +1,11 @@
 import os
 
 import pandas as pd
+from models import Movie
+from models import Sub
 from tqdm.notebook import tqdm
 
-from models import Movie, Sub
-
-PATH = f"V:/Movies"
+PATH = "V:/Movies"
 
 
 def process_one(folder):
@@ -14,7 +14,6 @@ def process_one(folder):
     subs = []
 
     for file in os.listdir(path):
-
         if file.split(".")[-1] in ["mp4", "mkv"]:
             movie = file
 
@@ -57,7 +56,9 @@ def fix_using_smart_language(movies):
 
     for movie in tqdm(movies, desc="fix_using_smart_language"):
         for sub in movie.subs:
-            if (sub.language != sub.smart_language) and (sub.smart_language is not None):
+            if (sub.language != sub.smart_language) and (
+                sub.smart_language is not None
+            ):
                 old_path = f"{movie.path}/{sub.name}"
                 new_path = f"{movie.path}/{sub.movie}.{sub.smart_language}.srt"
 

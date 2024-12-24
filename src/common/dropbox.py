@@ -1,9 +1,8 @@
 import re
 
-from vdropbox import Vdropbox
-
-from common.secrets import read_secret
 from common.logs import get_logger
+from common.secrets import read_secret
+from vdropbox import Vdropbox
 
 VDROPBOX = None
 
@@ -33,7 +32,7 @@ def scan_folder_by_regex(folder, regex, vdp=None, silent=False):
 
     out = []
     for file in vdp.ls(folder):
-        if match := re.match(regex, file):
+        if re.match(regex, file):
             out.append((folder, file))
 
     if not silent:

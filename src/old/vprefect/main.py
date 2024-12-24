@@ -1,6 +1,5 @@
-from prefect import flow
-
 import utils as u
+from prefect import flow
 
 from .query import process_flow_runs
 from .query import process_task_runs

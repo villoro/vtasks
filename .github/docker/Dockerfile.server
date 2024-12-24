@@ -1,0 +1,5 @@
+FROM prefecthq/prefect:2-latest AS base
+
+RUN prefect config set PREFECT_SERVER_API_HOST=0.0.0.0
+
+CMD ["prefect", "server", "start"]

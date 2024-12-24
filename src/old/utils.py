@@ -1,7 +1,5 @@
 import re
 import sys
-import yaml
-
 from argparse import ArgumentParser
 from collections import OrderedDict
 from datetime import datetime
@@ -11,7 +9,7 @@ from pathlib import Path
 import jinja2
 import numpy as np
 import pandas as pd
-
+import yaml
 from prefect import get_run_logger
 from prefect.exceptions import MissingContextError
 from scipy.signal import savgol_filter
@@ -31,7 +29,9 @@ def detect_env():
 
     parser = ArgumentParser()
     parser.add_argument("-f", help="Dummy argument not meant to be used")
-    parser.add_argument("--env", help="Wether it is PRO or not (DEV)", default="dev", type=str)
+    parser.add_argument(
+        "--env", help="Wether it is PRO or not (DEV)", default="dev", type=str
+    )
 
     args = parser.parse_args()
 
@@ -66,7 +66,10 @@ def get_path(path_relative):
 
 
 CIPHER = None
-CIPHER_KWARGS = {"secrets_file": get_path("secrets.yaml"), "environ_var_name": "VTASKS_TOKEN"}
+CIPHER_KWARGS = {
+    "secrets_file": get_path("secrets.yaml"),
+    "environ_var_name": "VTASKS_TOKEN",
+}
 
 
 def get_secret(key, encoding="utf8"):
@@ -197,13 +200,19 @@ def convolution_smooth(serie, window):
 
 
 def smooth_serie(
-    serie, savgol_window=35, savgol_polyorder=5, savgol_mode="nearest", convolution_window=3
+    serie,
+    savgol_window=35,
+    savgol_polyorder=5,
+    savgol_mode="nearest",
+    convolution_window=3,
 ):
     """Smooth a serie by doing a savgol filter followed by a convolution_smooth"""
 
     assert isinstance(serie, pd.Series), "Input to smooth_serie must be 'pd.Series'"
 
-    savgol = savgol_filter(serie.fillna(0), savgol_window, savgol_polyorder, mode=savgol_mode)
+    savgol = savgol_filter(
+        serie.fillna(0), savgol_window, savgol_polyorder, mode=savgol_mode
+    )
     convoluted = convolution_smooth(savgol, convolution_window)
     return pd.Series(convoluted, index=serie.index)
 

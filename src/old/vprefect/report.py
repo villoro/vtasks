@@ -1,11 +1,9 @@
 import pandas as pd
-
+import utils as u
 from adtk.detector import OutlierDetector
 from prefect import task
 from sklearn.neighbors import LocalOutlierFactor
 from vpalette import get_colors
-
-import utils as u
 
 from . import constants as c
 
@@ -27,7 +25,9 @@ def get_average_times(df_in):
 
     out = {}
     out["times"] = {x: u.serie_to_dict(df[x].dropna()) for x in df.columns}
-    out["times_trend"] = {x: u.serie_to_dict(u.smooth_serie(df[x].dropna())) for x in df.columns}
+    out["times_trend"] = {
+        x: u.serie_to_dict(u.smooth_serie(df[x].dropna())) for x in df.columns
+    }
 
     return out
 
@@ -95,7 +95,8 @@ def extract_results(df_in):
 
     # Extract vtasks results
     data["vtasks_results"] = {
-        x: u.serie_to_dict((df_res["result"] == x).apply(int)) for x in df_res["result"].unique()
+        x: u.serie_to_dict((df_res["result"] == x).apply(int))
+        for x in df_res["result"].unique()
     }
 
     # Results percent
