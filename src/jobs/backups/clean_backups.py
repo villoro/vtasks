@@ -6,32 +6,31 @@ from datetime import timedelta
 import pandas as pd
 
 from prefect import task
+from prefect import flow
 
-from .tasks import BACKUP_TASKS
-from utils import get_log
-from utils import get_vdropbox
+from common.logs import get_logger
+from common.dropbox import get_vdropbox
+from jobs.backups.tasks import BACKUP_TASKS
 
 
 def get_backup_data(vdp, path, regex):
     """Get info about the backups"""
 
-    log = get_log()
-
-    base_path = f"{path}/Backups"
-
-    dfs = []
+    logger = get_logger()
 
     # Check if there are backups
+    base_path = f"{path}/Backups"
     if not vdp.file_exists(base_path):
         return None
 
     # Retrive all backups
+    dfs = []
     for year in vdp.ls(base_path):
-        log.debug(f"Exploring '{path}/{year}'")
+        logger.debug(f"Exploring '{path}/{year}'")
 
         # Skip iteration if it's not a year
         if not re.search(r"^\d{4}$", year):
-            log.debug("Skipping")
+            logger.debug("Skipping")
             continue
 
         uri = f"{base_path}/{year}"
@@ -55,15 +54,15 @@ def get_backup_data(vdp, path, regex):
     return df.set_index("uri")
 
 
+@task(name="vtasks.backup.clean_backups.get_all_backups")
 def get_all_backups(vdp):
     """Get all backups"""
 
-    log = get_log()
+    logger = get_logger()
 
     dfs = []
-
     for task in BACKUP_TASKS:
-        log.info("Scanning '{path}'".format(**task.dict()))
+        logger.info("Scanning '{path}'".format(**task.dict()))
 
         df = get_backup_data(vdp, **task.dict())
 
@@ -73,6 +72,7 @@ def get_all_backups(vdp):
     return pd.concat(dfs)
 
 
+@task(name="vtasks.backup.clean_backups.tag_duplicates")
 def tag_duplicates(df_in):
     """
     Tag entries to delete. Old files (>30d) keep the latest for each month.
@@ -94,7 +94,7 @@ def tag_duplicates(df_in):
     return df
 
 
-@task(name="vtasks.backup.clean_backups")
+@flow(name="vtasks.backup.clean_backups")
 def clean_backups():
     """Delete backups so that only one per month remain (except if newer than 30d)"""
 
