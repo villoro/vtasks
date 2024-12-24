@@ -3,15 +3,16 @@ from pathlib import Path
 
 import oyaml as yaml
 import pandas as pd
-from common.dropbox import get_vdropbox
-from common.duck import write_df
-from common.logs import get_logger
-from common.paths import get_path
-from common.secrets import export_secret
 from gcsa.google_calendar import GoogleCalendar
 from gcsa.serializers.event_serializer import EventSerializer
 from prefect import flow
 from prefect import task
+
+from src.common.dropbox import get_vdropbox
+from src.common.duck import write_df
+from src.common.logs import get_logger
+from src.common.paths import get_path
+from src.common.secrets import export_secret
 
 
 TOKEN_FILENAME = "token.pickle"

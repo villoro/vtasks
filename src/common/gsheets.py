@@ -1,9 +1,10 @@
 import backoff
 import gspread
 import pandas as pd
-from common.logs import get_logger
-from common.paths import get_path
-from common.secrets import export_secret
+
+from src.common.logs import get_logger
+from src.common.paths import get_path
+from src.common.secrets import export_secret
 
 PATH_GSPREADSHEET_KEY = get_path("auth/gspreadsheets.json")
 SECRET_NAME = "GSPREADSHEET_JSON"

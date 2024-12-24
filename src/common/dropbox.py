@@ -1,8 +1,9 @@
 import re
 
-from common.logs import get_logger
-from common.secrets import read_secret
 from vdropbox import Vdropbox
+
+from src.common.logs import get_logger
+from src.common.secrets import read_secret
 
 VDROPBOX = None
 

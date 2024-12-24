@@ -1,8 +1,9 @@
 from datetime import datetime
 
 import duckdb
-from common.logs import get_logger
-from common.texts import remove_extra_spacing
+
+from src.common.logs import get_logger
+from src.common.texts import remove_extra_spacing
 
 CON = None
 DB_DUCKDB = "md:villoro"
