@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Optional, Dict, Literal, Any, List
 
+from prefect import flow, task
 from pydantic import BaseModel
 
 from common.logs import get_logger
@@ -10,6 +11,7 @@ from common.duck import write_df
 
 BASE_PATH = str(Path(__file__).parent)
 TABLES_FILE = f"{BASE_PATH}/tables.yaml"
+FLOW_NAME = "vtasks.dropbox.export_tables"
 
 
 class Column(BaseModel):
@@ -57,6 +59,7 @@ def export_table(vdp, table):
     return True
 
 
+@flow(name=FLOW_NAME)
 def export_tables():
     logger = get_logger()
     data = read_yaml(TABLES_FILE)
@@ -67,4 +70,4 @@ def export_tables():
     logger.info(f"Exporting {len(tables)} tables")
 
     for table in tables:
-        export_table(vdp, table)
+        task(name=f"{FLOW_NAME}.{table.table_out}")(export_table)(vdp, table)
