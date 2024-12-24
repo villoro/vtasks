@@ -90,7 +90,7 @@ def _merge_table(df_input, schema, table, pk):
     query_md(f"DROP TABLE IF EXISTS {temp_table_name}", silent=True)
 
 
-def write_df(df_input, schema, table, mode="overwrite", pk=None):
+def write_df(df_input, schema, table, mode="overwrite", pk=None, as_str=False):
     """
     Write a DataFrame to a DuckDB table with flexible modes.
 
@@ -105,6 +105,11 @@ def write_df(df_input, schema, table, mode="overwrite", pk=None):
     logger = get_logger()
 
     df_md = df_input.copy()
+
+    if as_str:
+        logger.debug("Casting all columns to string")
+        df_md = df_md.astype(str)
+
     df_md["_exported_at"] = datetime.now()
     df_md["_n_updates"] = 0
 
