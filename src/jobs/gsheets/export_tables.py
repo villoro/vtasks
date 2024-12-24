@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from prefect import flow, task
 from pydantic import BaseModel
 
 from common.logs import get_logger
@@ -9,6 +10,7 @@ from common.duck import write_df
 
 BASE_PATH = str(Path(__file__).parent)
 TABLES_FILE = f"{BASE_PATH}/tables.yaml"
+FLOW_NAME = "vtasks.gsheets.export_tables"
 
 
 class GsheetJob(BaseModel):
@@ -25,6 +27,7 @@ def export_table(table):
     write_df(df, table.schema_out, table.table_out, mode=table.mode)
 
 
+@flow(name=FLOW_NAME)
 def export_tables():
     logger = get_logger()
     data = read_yaml(TABLES_FILE)
@@ -33,4 +36,4 @@ def export_tables():
     logger.info(f"Exporting {len(tables)} tables")
 
     for table in tables:
-        export_table(table)
+        task(name=f"{FLOW_NAME}.{table.table_out}")(export_table)(table)
