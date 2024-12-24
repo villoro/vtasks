@@ -1,3 +1,5 @@
+from prefect import flow, task
+
 from common.logs import get_logger
 from common.dropbox import get_vdropbox, scan_folder_by_regex, infer_separator
 from common.duck import write_df
@@ -9,12 +11,15 @@ SCHEMA_OUT = "raw__dropbox"
 TABLE_OUT = "money_lover"
 
 
-def main():
-    logger = get_logger()
-    vdp = get_vdropbox()
-
+@task(name="vtasks.dropbox.money_lover.get_files")
+def get_files(vdp):
     matches = scan_folder_by_regex(PATH_ML, REGEX_MONEY_LOVER, vdp=vdp)
-    files = [x[1] for x in matches]
+    return [x[1] for x in matches]
+
+
+@task(name="vtasks.dropbox.money_lover.export_last_file")
+def export_last_file(vdp, files):
+    logger = get_logger()
 
     last_file = f"{PATH_ML}/{files[-1]}"
     sep = infer_separator(last_file, vdp=vdp)
@@ -25,7 +30,21 @@ def main():
     df["_source"] = f"dropbox:/{last_file}"
     write_df(df, SCHEMA_OUT, TABLE_OUT, mode="append")
 
+
+@task(name="vtasks.dropbox.money_lover.remove_files")
+def remove_files(vdp, files):
+    logger = get_logger()
+
+    logger.info(f"Removing {len(files)} money lover files")
+    for file in files:
+        vdp.delete(f"{PATH_ML}/{file}")
+
+
+@flow(name="vtasks.dropbox.money_lover")
+def main():
+    vdp = get_vdropbox()
+
+    files = get_files(vdp)
+    export_last_file(vdp, files)
     # TODO: Enable this once migrated
-    # logger.info(f"Removing {len(files)} money lover files")
-    # for file in files:
-    #     vdp.delete(f"{PATH_ML}/{file}")
+    # remove_files(vdp, files)
