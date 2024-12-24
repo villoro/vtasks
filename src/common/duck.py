@@ -24,17 +24,16 @@ def init_duckdb():
     return CON
 
 
-def query_md(query, silent=False):
+def query_md(query, df_md=None, silent=False):
     con = init_duckdb()
     logger = get_logger()
+    log_func = logger.debug if silent else logger.info
 
-    if not silent:
-        logger.info(f"Querying motherduck query='{remove_extra_spacing(query)}'")
-
+    log_func(f"Querying motherduck query='{remove_extra_spacing(query)}'")
     return con.execute(query)
 
 
-def table_exists(schema, table):
+def table_exists(schema, table, silent=False):
     """
     Check if a table exists in a DuckDB/MotherDuck database.
 
@@ -46,9 +45,16 @@ def table_exists(schema, table):
         bool: True if the table exists, False otherwise.
     """
 
+    logger = get_logger()
+    log_func = logger.debug if silent else logger.info
+
+    log_func(f"Checking if '{schema}.{table}' exists")
     df_tables = query_md(f"SHOW ALL TABLES", silent=True).df()
     table_names = (df_tables["schema"] + "." + df_tables["name"]).values
-    return f"{schema}.{table}" in table_names
+    out = f"{schema}.{table}" in table_names
+
+    log_func(f"'{schema}.{table}' exists={out}")
+    return out
 
 
 def _merge_table(df_input, schema, table, pk):
@@ -59,13 +65,15 @@ def _merge_table(df_input, schema, table, pk):
         raise ValueError("Primary key (pk) must be provided for merge mode")
 
     table_name = f"{schema}.{table}"
-    con.execute(f"CREATE UNIQUE INDEX IF NOT EXISTS idx__{table}__{pk} ON {table_name} ({pk})")
+    query = f"CREATE UNIQUE INDEX IF NOT EXISTS idx__{table}__{pk} ON {table_name} ({pk})"
+    query_md(query, silent=True)
 
     logger.info(f"Merging data into {table_name=} using {pk=}")
 
     temp_table_name = f"_temp_{table}"
     logger.info(f"Creating temporal table '{temp_table_name}'")
-    con.execute(f"CREATE TEMPORARY TABLE {temp_table_name} AS SELECT * FROM df_input")
+    query = f"CREATE OR REPLACE TEMPORARY TABLE {temp_table_name} AS SELECT * FROM df_md"
+    query_md(query, df_input, silent=True)
 
     cols = [f"{x}=EXCLUDED.{x}" for x in df_input.columns if x not in [pk, "_n_updates"]]
     merge_query = f"""
@@ -75,8 +83,11 @@ def _merge_table(df_input, schema, table, pk):
       _n_updates = {table_name}._n_updates + 1,
       {', '.join(cols)}
     """
-    con.execute(merge_query)
-    con.execute(f"DROP TABLE IF EXISTS {temp_table_name}")
+    logger.info(f"Merging '{temp_table_name}' into '{table_name}'")
+    query_md(merge_query, silent=True)
+
+    logger.info(f"Droping '{temp_table_name}'")
+    query_md(f"DROP TABLE IF EXISTS {temp_table_name}", silent=True)
 
 
 def write_df(df_input, schema, table, mode="overwrite", pk=None):
@@ -102,22 +113,26 @@ def write_df(df_input, schema, table, mode="overwrite", pk=None):
 
     con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
 
+    if not table_exists(schema, table, silent=True):
+        logger.info(f"Creating {table_name=} since it doesn't exist")
+        query = f"CREATE TABLE {table_name} AS SELECT * FROM df_md"
+        query_md(query, df_md, silent=True)
+        return True
+
     if mode == "overwrite":
         logger.info(f"Overwriting {table_name=}")
-        con.execute(f"DROP TABLE IF EXISTS {table_name}")
-        con.execute(f"CREATE TABLE {table_name} AS SELECT * FROM df_md")
+        query = f"CREATE OR REPLACE TABLE {table_name} AS SELECT * FROM df_md"
+        query_md(query, df_md, silent=True)
 
     elif mode == "append":
         logger.info(f"Appending data to {table_name=}")
-        con.execute(f"INSERT INTO {table_name} SELECT * FROM df_md")
+        query = f"INSERT INTO {table_name} SELECT * FROM df_md"
+        query_md(query, df_md, silent=True)
 
     elif mode == "merge":
-        if table_exists(schema, table):
-            _merge_table(df_md, schema, table, pk)
-
-        else:
-            logger.info(f"Creating {table_name=} since it doesn't exist")
-            con.execute(f"CREATE TABLE {table_name} AS SELECT * FROM df_md")
+        _merge_table(df_md, schema, table, pk)
 
     else:
         raise ValueError(f"Unsupported {mode=}")
+
+    return True

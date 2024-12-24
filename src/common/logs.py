@@ -9,8 +9,6 @@ def get_logger():
     try:
         return get_run_logger()
     except MissingContextError:
-        logger.configure(handlers=[{"sink": sys.stdout, "level": "INFO"}])
+        logger.configure(handlers=[{"sink": sys.stdout, "level": "DEBUG"}])
         logger.enable("vtasks")
-
-        logger.debug("Switching to loguru")
         return logger
