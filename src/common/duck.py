@@ -27,14 +27,13 @@ def init_duckdb():
 def query_md(query, df_md=None, silent=False):
     con = init_duckdb()
     logger = get_logger()
-
     log_func = logger.debug if silent else logger.info
-    log_func(f"Querying motherduck query='{remove_extra_spacing(query)}'")
 
+    log_func(f"Querying motherduck query='{remove_extra_spacing(query)}'")
     return con.execute(query)
 
 
-def table_exists(schema, table):
+def table_exists(schema, table, silent=False):
     """
     Check if a table exists in a DuckDB/MotherDuck database.
 
@@ -46,9 +45,16 @@ def table_exists(schema, table):
         bool: True if the table exists, False otherwise.
     """
 
+    logger = get_logger()
+    log_func = logger.debug if silent else logger.info
+
+    log_func(f"Checking if '{schema}.{table}' exists")
     df_tables = query_md(f"SHOW ALL TABLES", silent=True).df()
     table_names = (df_tables["schema"] + "." + df_tables["name"]).values
-    return f"{schema}.{table}" in table_names
+    out = f"{schema}.{table}" in table_names
+
+    log_func(f"'{schema}.{table}' exists={out}")
+    return out
 
 
 def _merge_table(df_input, schema, table, pk):
@@ -107,6 +113,12 @@ def write_df(df_input, schema, table, mode="overwrite", pk=None):
 
     con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
 
+    if not table_exists(schema, table, silent=True):
+        logger.info(f"Creating {table_name=} since it doesn't exist")
+        query = f"CREATE TABLE {table_name} AS SELECT * FROM df_md"
+        query_md(query, df_md, silent=True)
+        return True
+
     if mode == "overwrite":
         logger.info(f"Overwriting {table_name=}")
         query = f"CREATE OR REPLACE TABLE {table_name} AS SELECT * FROM df_md"
@@ -118,12 +130,9 @@ def write_df(df_input, schema, table, mode="overwrite", pk=None):
         query_md(query, df_md, silent=True)
 
     elif mode == "merge":
-        if table_exists(schema, table):
-            _merge_table(df_md, schema, table, pk)
+        _merge_table(df_md, schema, table, pk)
 
-        else:
-            logger.info(f"Creating {table_name=} since it doesn't exist")
-            query = f"CREATE TABLE {table_name} AS SELECT * FROM df_md"
-            query_md(query, df_md, silent=True)
     else:
         raise ValueError(f"Unsupported {mode=}")
+
+    return True
