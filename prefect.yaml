@@ -1,0 +1,63 @@
+name: prefect_tnas
+
+pull:
+- prefect.deployments.steps.git_clone:
+    id: clone-step
+    repository: https://github.com/villoro/vtasks.git
+    branch: main
+- prefect.deployments.steps.pip_install_requirements:
+    requirements_file: requirements.txt
+    directory: "{{ clone-step.directory }}"
+    stream_output: False
+
+
+# Reuse some config
+definitions:
+  work_pools:
+    default-pool: &default-pool
+      name: default-pool
+
+  version: &version
+    version: 7.0.0-alpha.6
+
+  # Define defaults (that can be overwritten)
+  defaults: &defaults
+    <<: *version
+    work_pool: *default-pool
+    tags: ["type:prefect"]
+
+
+deployments:
+# ---------------------------------- SCHEDULES --------------------------------------
+
+
+# ---------------------------------- EXTRACTIONS ------------------------------------
+- name: backups.all
+  <<: *defaults
+  description: Do all backups tasks
+  entrypoint: src/jobs/backups/main.py:backup
+  tags: ["backups"]
+
+- name: dropbox.export_tables
+  <<: *defaults
+  description: Export dropbox tables
+  entrypoint: src/jobs/dropbox/export_tables.py:export_tables
+  tags: ["dropbox"]
+
+- name: dropbox.money_lover
+  <<: *defaults
+  description: Export Money Lover table
+  entrypoint: src/jobs/dropbox/money_lover.py:main
+  tags: ["dropbox"]
+
+- name: gcal.export
+  <<: *defaults
+  description: Export Google calendar data
+  entrypoint: src/jobs/gcal/export.py:export_all
+  tags: ["gcal"]
+
+- name: gsheets.export
+  <<: *defaults
+  description: Export Google Sheets data
+  entrypoint: src/jobs/gsheets/export.py:export_all
+  tags: ["gsheets"]

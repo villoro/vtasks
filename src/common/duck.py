@@ -1,11 +1,13 @@
 from datetime import datetime
 
 import duckdb
-from common.logs import get_logger
-from common.texts import remove_extra_spacing
+
+from src.common.logs import get_logger
+from src.common.secrets import read_secret
+from src.common.texts import remove_extra_spacing
 
 CON = None
-DB_DUCKDB = "md:villoro"
+DB_DUCKDB = "md:villoro?motherduck_token={token}"
 SECRET_MD = "MOTHERDUCK_TOKEN"
 
 
@@ -16,8 +18,9 @@ def init_duckdb():
 
     global CON
     if CON is None:
+        token = read_secret(SECRET_MD)
         logger.info(f"Connecting to {DB_DUCKDB=}")
-        CON = duckdb.connect(DB_DUCKDB)
+        CON = duckdb.connect(DB_DUCKDB.format(token=token))
 
     return CON
 

@@ -1,8 +1,9 @@
 import re
 
-from common.logs import get_logger
-from common.secrets import read_secret
 from vdropbox import Vdropbox
+
+from src.common.logs import get_logger
+from src.common.secrets import read_secret
 
 VDROPBOX = None
 
@@ -76,7 +77,7 @@ def infer_separator(filename, vdp=None):
 
     num_colon = data.count(",")
     num_semicolon = data.count(";")
-    sep = "," if num_colon > num_semicolon else ";"
+    separator = "," if num_colon > num_semicolon else ";"
 
-    logger.info(f"{sep=} for {filename=} ({num_colon=}, {num_semicolon=})")
-    return sep
+    logger.info(f"{separator=} for {filename=} ({num_colon=}, {num_semicolon=})")
+    return separator

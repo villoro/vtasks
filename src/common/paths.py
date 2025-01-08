@@ -1,7 +1,8 @@
 from pathlib import Path
 
 import yaml
-from common.logs import get_logger
+
+from src.common.logs import get_logger
 
 # Base path of the repo.
 # It needs to go 3 times up since this file has the following relative path:

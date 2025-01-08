@@ -1,5 +1,5 @@
-from .models import BackupTask
-from .models import CopyTask
+from src.jobs.backups.models import BackupTask
+from src.jobs.backups.models import CopyTask
 
 COPY_TASKS = [
     CopyTask(

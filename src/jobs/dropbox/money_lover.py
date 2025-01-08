@@ -1,10 +1,9 @@
-from common.dropbox import get_vdropbox
-from common.dropbox import infer_separator
-from common.dropbox import scan_folder_by_regex
-from common.duck import write_df
-from common.logs import get_logger
 from prefect import flow
 from prefect import task
+
+from src.common import dropbox
+from src.common.duck import write_df
+from src.common.logs import get_logger
 
 PATH_ML = "/Aplicaciones/expensor/Money Lover"
 REGEX_MONEY_LOVER = (
@@ -17,7 +16,7 @@ TABLE_OUT = "money_lover"
 
 @task(name="vtasks.dropbox.money_lover.get_files")
 def get_files(vdp):
-    matches = scan_folder_by_regex(PATH_ML, REGEX_MONEY_LOVER, vdp=vdp)
+    matches = dropbox.scan_folder_by_regex(PATH_ML, REGEX_MONEY_LOVER, vdp=vdp)
     return [x[1] for x in matches]
 
 
@@ -26,7 +25,7 @@ def export_last_file(vdp, files):
     logger = get_logger()
 
     last_file = f"{PATH_ML}/{files[-1]}"
-    sep = infer_separator(last_file, vdp=vdp)
+    sep = dropbox.infer_separator(last_file, vdp=vdp)
 
     logger.info(f"Reading {last_file=}")
     df = vdp.read_csv(last_file, index_col=0, sep=sep)
@@ -46,7 +45,7 @@ def remove_files(vdp, files):
 
 @flow(name="vtasks.dropbox.money_lover")
 def main():
-    vdp = get_vdropbox()
+    vdp = dropbox.get_vdropbox()
 
     files = get_files(vdp)
     export_last_file(vdp, files)
