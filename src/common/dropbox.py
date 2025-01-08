@@ -77,7 +77,7 @@ def infer_separator(filename, vdp=None):
 
     num_colon = data.count(",")
     num_semicolon = data.count(";")
-    sep = "," if num_colon > num_semicolon else ";"
+    separator = "," if num_colon > num_semicolon else ";"
 
-    logger.info(f"{sep=} for {filename=} ({num_colon=}, {num_semicolon=})")
-    return sep
+    logger.info(f"{separator=} for {filename=} ({num_colon=}, {num_semicolon=})")
+    return separator

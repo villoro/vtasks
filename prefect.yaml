@@ -1,5 +1,4 @@
 name: prefect_tnas
-# prefect-version: 2.20.16
 
 pull:
 - prefect.deployments.steps.git_clone:
