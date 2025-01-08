@@ -29,7 +29,7 @@ def export_table(table):
 
 
 @flow(name=FLOW_NAME)
-def export_tables():
+def export_gsheets_tables():
     logger = get_logger()
     data = read_yaml(TABLES_FILE)
     tables = [GsheetJob(**x) for x in data]

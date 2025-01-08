@@ -127,7 +127,7 @@ def query_all_calendars(calendars):
 
 
 @flow(name="vtasks.gcal.export")
-def export_all():
+def export_all_gcal():
     """Export all events as a parquet"""
 
     vdp = get_vdropbox()
