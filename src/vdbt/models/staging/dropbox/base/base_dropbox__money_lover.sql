@@ -6,12 +6,12 @@ WITH source AS (
 casted_and_renamed AS (
     SELECT
         -------- info
-        category,
+        Category AS category,
         abs(amount) AS amount,
-        CASE WHEN amount > 0 THEN 'income' ELSE 'expense' END AS transaction_type,
-        Date AS transaction_date,
-        account,
-        event,
+        CASE WHEN amount > 0 THEN 'incomes' ELSE 'expenses' END AS transaction_type,
+        strptime(Date, '%d/%m/%Y')::DATE AS transaction_date,
+        Account AS account,
+        Event AS event,
         note AS notes,
 
         -------- metadata
@@ -22,4 +22,4 @@ casted_and_renamed AS (
 )
 
 SELECT *
-FROM source
+FROM casted_and_renamed
