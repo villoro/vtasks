@@ -34,7 +34,7 @@ xlrd = "^2.0.1"
 backoff = "^2.2.1"
 
 [tool.poetry.group.dev.dependencies]
-black = "^22.10.0"
+black = "^24.3.0"
 jupyter = "^1.0.0"
 loguru = "^0.7.0"
 notebook = "^6.5.2"
