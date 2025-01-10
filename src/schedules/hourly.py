@@ -14,3 +14,7 @@ def hourly():
     export_money_lover()
     export_all_gcal()
     export_gsheets_tables()
+
+
+if __name__ == "__main__":
+    hourly()

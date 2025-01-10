@@ -10,6 +10,7 @@ maintainers = ["Arnau Villoro <arnau@villoro.com>"]
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/villoro/vtasks"
+packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
