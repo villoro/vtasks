@@ -1,0 +1,13 @@
+sources:
+  - name: raw__gsheets
+    tags: [gsheets]
+    description: Raw Google Sheets data
+    tables:
+      - name: accounts
+      - name: books_read
+      - name: books_todo
+      - name: categories
+      - name: invest_month
+      - name: liquid_month
+      - name: salary
+      - name: worth_month

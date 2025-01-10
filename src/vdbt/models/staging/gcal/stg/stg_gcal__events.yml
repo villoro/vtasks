@@ -28,8 +28,7 @@ models:
       - name: location
         description: The location of the event, if specified from the `location` column
       - name: description
-        description: >
-          A detailed description of the event, if provided from the `description` column.
+        description: A detailed description of the event, if provided from the `description` column.
 
       # -------- metadata
       - name: _exported_at
