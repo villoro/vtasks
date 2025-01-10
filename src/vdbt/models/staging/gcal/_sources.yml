@@ -1,0 +1,6 @@
+sources:
+  - name: raw__gcal
+    tags: [gcal]
+    description: Raw Google Calendar data
+    tables:
+      - name: events

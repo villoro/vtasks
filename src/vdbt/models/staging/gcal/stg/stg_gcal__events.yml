@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: stg_gcal__events
+    description: Events from google calendar (gcal)
+
+    columns:
+      # -------- pk
+      - name: id
+        description: The unique identifier for each event. Serves as the primary key for the dataset.
+        tests: [unique, not_null]
+
+      # -------- time related
+      - name: started_at
+        description: The starting time of the event. Extracted from the `start` column.
+      - name: ended_at
+        description: The ending time of the event. Extracted from the `end` column.
+
+      # -------- booleans
+      - name: is_whole_day_event
+        description: Flag indicating if the event is for the whole day(s).
+
+      # -------- info
+      - name: title
+        description: The title or summary of the event from the `summary` column
+      - name: calendar_name
+        description: The name of the calendar where the event is stored from the `calendar` column
+      - name: location
+        description: The location of the event, if specified from the `location` column
+      - name: description
+        description: A detailed description of the event, if provided from the `description` column.
+
+      # -------- metadata
+      - name: _exported_at
+        description: Metadata field indicating when the data was exported.
+      - name: _n_updates
+        description: Metadata field containing the number of updates applied to the row.

@@ -1,0 +1,7 @@
+sources:
+  - name: raw__dropbox
+    tags: [dropbox]
+    description: Raw dropbox data
+    tables:
+      - name: battery_pixel_4a
+      - name: money_lover

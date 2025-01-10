@@ -1,0 +1,11 @@
+vdbt:
+  target: md
+
+  outputs:
+    md:
+      type: duckdb
+      path: md:villoro
+
+    memory:
+      type: duckdb
+      path: ":memory:"

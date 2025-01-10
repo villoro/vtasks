@@ -3,7 +3,7 @@ line-length = 100
 
 [tool.poetry]
 name = "vtasks"
-version = "7.0.0-alpha.8"
+version = "7.0.0-alpha.9"
 description = "Personal tasks scheduled with Prefect"
 authors = ["Arnau Villoro <arnau@villoro.com>"]
 maintainers = ["Arnau Villoro <arnau@villoro.com>"]
@@ -15,6 +15,7 @@ packages = [{include = "src"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 cryptocompare = "^0.7.6"
+dbt-duckdb = "^1.9.1"
 dropbox = "^11.36.0"
 duckdb = "^1.1.3"
 gcsa = "^2.0.1"

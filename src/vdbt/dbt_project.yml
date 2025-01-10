@@ -1,0 +1,43 @@
+name: vdbt
+version: '1.0.0'
+
+profile: vdbt
+
+model-paths: [models]
+analysis-paths: [analyses]
+test-paths: [tests]
+seed-paths: [seeds]
+macro-paths: [macros]
+snapshot-paths: [snapshots]
+
+clean-targets:
+  - target
+  - dbt_packages
+
+seeds:
+  +schema: internal
+
+models:
+  vdbt:
+    +materialized: table
+
+    staging:
+      +materialized: ephemeral
+
+      dropbox:
+        +tags: dropbox
+        +schema: stg__dropbox
+        stg:
+          +materialized: table
+
+      gcal:
+        +tags: gcal
+        +schema: stg__gcal
+        stg:
+          +materialized: table
+
+      gsheets:
+        +tags: gsheets
+        +schema: stg__gsheets
+        stg:
+          +materialized: table

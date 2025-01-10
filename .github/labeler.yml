@@ -19,6 +19,15 @@ j/gcal:
 j/gsheets:
 - src/jobs/gsheets/**
 
+dbt:
+- src/vdbt/**
+
+l/staging:
+- src/vdbt/models/staging/**
+
+l/marts:
+- src/vdbt/models/marts/**
+
 common:
 - src/common/**
 
@@ -26,5 +35,5 @@ scripts:
 - scripts/*
 - scripts/**/*
 
-dependencies:
+deps:
 - poetry.lock
