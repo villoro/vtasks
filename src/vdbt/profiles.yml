@@ -1,0 +1,11 @@
+vdbt:
+  target: memory
+  # target: md
+
+  outputs:
+    memory:
+      type: duckdb
+      path: ":memory:"
+      attach:
+        - path: awsdatacatalog.duckdb
+          alias: ""
