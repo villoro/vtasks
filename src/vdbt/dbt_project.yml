@@ -25,11 +25,19 @@ models:
       +materialized: ephemeral
 
       dropbox:
+        +tags: dropbox
         +schema: stg__dropbox
         stg:
           +materialized: table
 
       gcal:
+        +tags: gcal
         +schema: stg__gcal
+        stg:
+          +materialized: table
+
+      gsheets:
+        +tags: gsheets
+        +schema: stg__gsheets
         stg:
           +materialized: table

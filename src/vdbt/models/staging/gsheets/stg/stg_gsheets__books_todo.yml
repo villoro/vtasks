@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: stg_gsheets__books_todo
+    description: Books to read from google sheets
+
+    columns:
+      # -------- info
+      - name: title
+        description: The title of the book.
+      - name: author
+        description: The author of the book.
+      - name: recommended_by
+        description: Who recommended the book.
+      - name: owning_type
+        description: The type of owning, `NULL` if it is not owned
+
+      # -------- time related
+      - name: added_date
+        description: Date when it was added to the TODO list.
+
+      # -------- measures
+      - name: num_pages
+        description: The number of pages in the book.
+
+      # -------- metadata
+      - name: _source
+        description: Metadata field containing the source of the data.
+      - name: _exported_at
+        description: Metadata field indicating when the data was exported.
+      - name: _n_updates
+        description: Metadata field containing the number of updates applied to the row.
