@@ -1,0 +1,47 @@
+version: 2
+
+models:
+  - name: stg_dropbox__money_lover
+    description: Transactions from the Money Lover app.
+
+    columns:
+      # -------- info
+      - name: category
+        description: |
+          The category of the transaction (e.g., "Food", "Transport"). 
+          Extracted directly from the `Category` column.
+      - name: amount
+        description: |
+          The absolute monetary value of the transaction. 
+          Positive values represent income, and negative values represent expenses.
+      - name: transaction_type
+        description: |
+          The type of the transaction, classified as either `incomes` or `expenses` 
+          based on the sign of the `amount`.
+        tests:
+          - accepted_values:
+              values: ['incomes', 'expenses']
+      - name: transaction_date
+        description: |
+          The date of the transaction, converted to a `DATE` type. 
+          Derived from the `Date` column in the format `%d/%m/%Y`.
+      - name: account
+        description: |
+          The account associated with the transaction (e.g., "Savings", "Credit Card").
+          Extracted from the `Account` column.
+      - name: event
+        description: |
+          The event associated with the transaction (e.g., "Birthday", "Anniversary"). 
+          Extracted from the `Event` column.
+      - name: notes
+        description: |
+          Any additional notes related to the transaction. 
+          Extracted from the `note` column.
+
+      # -------- metadata
+      - name: _source
+        description: Metadata field containing the source of the data.
+      - name: _exported_at
+        description: Metadata field indicating when the data was exported.
+      - name: _n_updates
+        description: Metadata field containing the number of updates applied to the row.
