@@ -29,35 +29,39 @@ definitions:
 
 deployments:
 # ---------------------------------- SCHEDULES --------------------------------------
-
+- name: _hourly
+  <<: *defaults
+  description: Do all hourly tasks
+  entrypoint: src/schedules/hourly.py:hourly
+  tags: ["schedules", "hourly"]
 
 # ---------------------------------- EXTRACTIONS ------------------------------------
 - name: backups.all
   <<: *defaults
   description: Do all backups tasks
-  entrypoint: src/jobs/backups/main.py:backup
-  tags: ["backups"]
+  entrypoint: src/jobs/backups/main.py:backup_all
+  tags: ["backups", "extract"]
 
 - name: dropbox.export_tables
   <<: *defaults
   description: Export dropbox tables
-  entrypoint: src/jobs/dropbox/export_tables.py:export_tables
-  tags: ["dropbox"]
+  entrypoint: src/jobs/dropbox/export_tables.py:export_dropbox_tables
+  tags: ["dropbox", "extract"]
 
 - name: dropbox.money_lover
   <<: *defaults
   description: Export Money Lover table
-  entrypoint: src/jobs/dropbox/money_lover.py:main
-  tags: ["dropbox"]
+  entrypoint: src/jobs/dropbox/money_lover.py:export_money_lover
+  tags: ["dropbox", "extract"]
 
 - name: gcal.export
   <<: *defaults
   description: Export Google calendar data
-  entrypoint: src/jobs/gcal/export.py:export_all
-  tags: ["gcal"]
+  entrypoint: src/jobs/gcal/export.py:export_all_gcal
+  tags: ["gcal", "extract"]
 
 - name: gsheets.export
   <<: *defaults
   description: Export Google Sheets data
-  entrypoint: src/jobs/gsheets/export.py:export_all
-  tags: ["gsheets"]
+  entrypoint: src/jobs/gsheets/export_tables.py:export_gsheets_tables
+  tags: ["gsheets", "extract"]

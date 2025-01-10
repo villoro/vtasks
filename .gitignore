@@ -38,6 +38,9 @@ dist/
 # Ruff
 .ruff_cache
 
+# Venv
+.venv
+
 # --------------------- PERSONAL EXCLUSIONS -----------------------------------
 # Data folders
 **/data

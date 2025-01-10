@@ -7,47 +7,20 @@ CI-CD:
 - .github/**
 - .pre-commit-config.yaml
 
-t/archive:
-- src/archive/**
+j/backups:
+- src/jobs/backups/**
 
-t/backups:
-- src/backups/**
+j/dropbox:
+- src/jobs/dropbox/**
 
-t/battery:
-- src/battery/**
+j/gcal:
+- src/jobs/gcal/**
 
-t/cryptos:
-- src/cryptos/**
+j/gsheets:
+- src/jobs/gsheets/**
 
-t/expensor:
-- src/expensor/**
-- templates/base.html
-- templates/expensor.html
-
-t/flights:
-- src/flights/**
-
-t/gcalendar:
-- src/gcal/**
-- templates/base.html
-- templates/gcalendar.html
-
-t/indexa:
-- src/indexa/**
-
-t/money_lover:
-- src/money_lover/**
-
-t/vbooks:
-- src/vbooks/**
-- templates/base.html
-- templates/vbooks.html
-
-t/vprefect:
-- scripts/logs_parser/**
-- src/vprefect/**
-- templates/base.html
-- templates/vtasks.html
+common:
+- src/common/**
 
 scripts:
 - scripts/*

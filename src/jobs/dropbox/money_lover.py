@@ -44,7 +44,7 @@ def remove_files(vdp, files):
 
 
 @flow(name="vtasks.dropbox.money_lover")
-def main():
+def export_money_lover():
     vdp = dropbox.get_vdropbox()
 
     files = get_files(vdp)

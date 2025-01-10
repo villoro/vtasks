@@ -65,7 +65,7 @@ def export_table(vdp, table):
 
 
 @flow(name=FLOW_NAME)
-def export_tables():
+def export_dropbox_tables():
     logger = get_logger()
     data = read_yaml(TABLES_FILE)
     tables = [DropboxJob(**x) for x in data]
