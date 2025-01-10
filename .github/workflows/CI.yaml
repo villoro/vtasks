@@ -26,7 +26,6 @@ jobs:
         sync-labels: true
 
   integration_tests:
-    needs: [pre_commit, labeler]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
