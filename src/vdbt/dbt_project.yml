@@ -16,5 +16,13 @@ clean-targets:
 
 models:
   vdbt:
-    example:
-      +materialized: view
+    +materialized: table
+
+    staging:
+      +materialized: ephemeral
+
+      dropbox:
+        +schema: stg__dropbox
+
+        stg:
+          +materialized: table
