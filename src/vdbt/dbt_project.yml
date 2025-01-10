@@ -26,6 +26,10 @@ models:
 
       dropbox:
         +schema: stg__dropbox
+        stg:
+          +materialized: table
 
+      gcal:
+        +schema: stg__gcal
         stg:
           +materialized: table
