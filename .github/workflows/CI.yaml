@@ -37,18 +37,19 @@ jobs:
             - 'src/**'
             - 'poetry.lock'
             - '.github/workflows/**'
-
     # Python version must match the one defined in poetry (.lock file)
     - if: steps.changes.outputs.code == 'true'
       name: Set up Python 3.11.0
       uses: actions/setup-python@v4
       with:
         python-version: 3.11.0
-
+    # Poetry version must match the one defined in heroku (with an env var)
     - if: steps.changes.outputs.code == 'true'
       name: Install dependencies
-      run: pip install -r requirements.txt
-
+      run: |
+        python -m pip install --upgrade pip
+        pip install poetry==1.2.2
+        poetry install --without dev
     - if: steps.changes.outputs.code == 'true'
       name: Tests
-      run: python src/schedules/hourly.py
+      run: poetry run python src/schedules/hourly.py
