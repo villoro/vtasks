@@ -51,4 +51,4 @@ jobs:
 
     - if: steps.changes.outputs.code == 'true'
       name: Tests
-      run: poetry run python src/schedules/hourly.py
+      run: python src/schedules/hourly.py
