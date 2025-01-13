@@ -3,16 +3,50 @@ version: '1.0.0'
 
 profile: vdbt
 
-model-paths: [models]
 analysis-paths: [analyses]
-test-paths: [tests]
-seed-paths: [seeds]
 macro-paths: [macros]
+model-paths: [models]
+seed-paths: [seeds]
 snapshot-paths: [snapshots]
+test-paths: [tests]
 
 clean-targets:
   - target
   - dbt_packages
+
+vars:
+  expensor:
+    accounts:
+      investments:
+        - ing
+        - degiro
+        - crypto
+        - indexa
+        - indexa_pp
+        - mintos
+        - fastinvest
+        - envestio
+        - inbestme
+        - glovo_ps
+        - dh
+      liquid:
+        - caixa_enginers
+        - caixa_enginers_diposit
+        - ing_sin_nomina
+        - ing_nomina
+        - ing_naranja
+        - ing_diposit
+        - bunq
+        - my_investor
+        - revolut
+        - n26
+        - pibank
+        - dukascopy
+        - correos
+        - monese
+        - simplex
+        - cash
+        - norwegian_bank
 
 seeds:
   +schema: internal

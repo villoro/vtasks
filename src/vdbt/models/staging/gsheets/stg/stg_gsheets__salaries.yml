@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: stg_gsheets__salaries
+    description: Salaries from Google Sheets
+
+    columns:
+      # -------- pk
+      - name: change_date
+        description: Date when the salary changed.
+        tests: [unique, not_null]
+
+      # -------- metrics
+      - name: gross_fixed_salary
+        description: Anual gross fixed salary.
+      - name: bonus
+        description: Anual bonus.
+      - name: eags
+        description: Equivalent anual gross salary (EAGS).
+      - name: total_gross_salary
+        description: Total anual gross salary (fixed + bonus).
+      - name: total_net_salary
+        description: Total anual net salary
+      - name: hours
+        description: Daily working hours.
+
+      # -------- metadata
+      - name: _source
+        description: Metadata field containing the source of the data.
+      - name: _exported_at
+        description: Metadata field indicating when the data was exported.
+      - name: _n_updates
+        description: Metadata field containing the number of updates applied to the row.

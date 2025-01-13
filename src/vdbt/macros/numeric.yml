@@ -1,0 +1,12 @@
+version: 2
+
+macros:
+  - name: clean_numeric
+    description: >
+      A macro to extract, clean, and convert numeric values from formatted strings.
+      This macro is designed to handle strings with thousands separators, decimal commas, 
+      and currency symbols, converting them into consistent numeric values.
+
+    arguments:
+      - name: column
+        description: The input column or value to be processed. 

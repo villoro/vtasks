@@ -12,16 +12,16 @@ models:
 
       # -------- info
       - name: color_name
-        description: Name of the color for that account
+        description: Name of the color for that account.
       - name: color_index
-        description: Color index for that account
+        description: Color index for that account.
       - name: account_type
-        description: Type of account
+        description: Type of account.
         tests:
           - accepted_values:
               values: ['Liquid', 'Investment']
       - name: account_subtype
-        description: Subtype of the account
+        description: Subtype of the account.
         tests:
           - accepted_values:
               name: accepted_values__accounts_subtypes
@@ -36,7 +36,7 @@ models:
                 - P2P
                 - PP
       - name: country
-        description: ISO country code (2 letters)
+        description: ISO country code (2 letters).
 
       # -------- metadata
       - name: _source
