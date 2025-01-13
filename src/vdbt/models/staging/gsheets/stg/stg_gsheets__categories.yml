@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: stg_gsheets__categories
+    description: Expensor categories from Google Sheets
+
+    columns:
+      # -------- pk
+      - name: name
+        description: Name of the category.
+        tests: [unique, not_null]
+
+      # -------- info
+      - name: category_type
+        description: Type of category (Income/Expense).
+        tests:
+          - accepted_values:
+              values: ['incomes', 'expenses']
+      - name: color_name
+        description: Name of the color for that category.
+      - name: color_index
+        description: Color index for that category.
+      - name: color
+        description: Color hex code.
+
+      # -------- flags
+      - name: is_fixed
+        description: Flag indicating if it's a fix category and not a variable one.
+
+      # -------- metadata
+      - name: _source
+        description: Metadata field containing the source of the data.
+      - name: _exported_at
+        description: Metadata field indicating when the data was exported.
+      - name: _n_updates
+        description: Metadata field containing the number of updates applied to the row.

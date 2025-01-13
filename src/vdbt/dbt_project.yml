@@ -3,12 +3,12 @@ version: '1.0.0'
 
 profile: vdbt
 
-model-paths: [models]
 analysis-paths: [analyses]
-test-paths: [tests]
-seed-paths: [seeds]
 macro-paths: [macros]
+model-paths: [models]
+seed-paths: [seeds]
 snapshot-paths: [snapshots]
+test-paths: [tests]
 
 clean-targets:
   - target
