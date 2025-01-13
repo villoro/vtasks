@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: stg_gsheets__liquids
+    description: |
+      Invesments data from Google Sheets.
+      It includes both the invested money and the actual value
+
+    columns:
+      # -------- pk
+      - name: month_date
+        description: Month as date
+        tests: [unique, not_null]
+
+      # -------- metrics
+      - name: total
+        description: Total monthly value.
+      # WARN: here we have a column for each account
+
+      # -------- metadata
+      - name: _source
+        description: Metadata field containing the source of the data.
+      - name: _exported_at
+        description: Metadata field indicating when the data was exported.
+      - name: _n_updates
+        description: Metadata field containing the number of updates applied to the row.

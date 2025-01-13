@@ -16,8 +16,8 @@ clean-targets:
 
 vars:
   expensor:
-    investments:
-      accounts:
+    accounts:
+      investments:
         - ing
         - degiro
         - crypto
@@ -29,6 +29,24 @@ vars:
         - inbestme
         - glovo_ps
         - dh
+      liquid:
+        - caixa_enginers
+        - caixa_enginers_diposit
+        - ing_sin_nomina
+        - ing_nomina
+        - ing_naranja
+        - ing_diposit
+        - bunq
+        - my_investor
+        - revolut
+        - n26
+        - pibank
+        - dukascopy
+        - correos
+        - monese
+        - simplex
+        - cash
+        - norwegian_bank
 
 seeds:
   +schema: internal
