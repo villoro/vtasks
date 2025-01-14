@@ -76,9 +76,9 @@ models:
         stg:
           +materialized: table
 
-    marts:
+    core:
       +materialized: table
 
       expensor:
         +tags: expensor
-        +schema: marts__expensor
+        +schema: core__expensor

@@ -11,9 +11,7 @@ models:
           The date of the transaction, converted to a `DATE` type. 
           Derived from the `Date` column in the format `%d/%m/%Y`.
       - name: amount
-        description: |
-          The absolute monetary value of the transaction. 
-          Positive values represent income, and negative values represent expenses.
+        description: The absolute monetary value of the transaction. 
       - name: category
         description: |
           The category of the transaction (e.g., "Food", "Transport"). 
