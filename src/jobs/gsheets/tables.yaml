@@ -23,6 +23,10 @@
   sheet_in: worth_m
   table_out: worth_month
 
+- doc_in: expensor_data
+  sheet_in: share_percent
+  table_out: share_percentages
+
 # vbooks
 - doc_in: books_data
   sheet_in: Books
