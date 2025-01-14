@@ -75,3 +75,10 @@ models:
         +schema: stg__gsheets
         stg:
           +materialized: table
+
+    marts:
+      +materialized: table
+
+      expensor:
+        +tags: expensor
+        +schema: marts__expensor

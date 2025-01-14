@@ -6,10 +6,10 @@ WITH source AS (
 casted_and_renamed AS (
     SELECT
         -------- info
-        Category AS category,
-        abs(amount) AS amount,
-        CASE WHEN amount > 0 THEN 'incomes' ELSE 'expenses' END AS transaction_type,
         strptime(Date, '%d/%m/%Y')::DATE AS transaction_date,
+        abs(amount) AS amount,
+        Category AS category,
+        CASE WHEN amount > 0 THEN 'incomes' ELSE 'expenses' END AS transaction_type,
         Account AS account,
         Event AS event,
         note AS notes,
