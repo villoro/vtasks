@@ -5,6 +5,11 @@ models:
     description: Core transactions table
 
     columns:
+      # -------- pks
+      - name: id
+        description: Transaction unique id.
+        tests: [unique, not_null]
+      
       # -------- info
       - name: transaction_date
         description: The date of the transaction. 

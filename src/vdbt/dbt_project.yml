@@ -56,6 +56,7 @@ models:
     +materialized: table
 
     staging:
+      +tags: staging
       +materialized: ephemeral
 
       dropbox:
@@ -77,6 +78,7 @@ models:
           +materialized: table
 
     core:
+      +tags: core
       +materialized: table
 
       expensor:

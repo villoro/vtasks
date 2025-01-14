@@ -17,7 +17,7 @@ renamed AS (
         LEAD(start_date, 1, DATE '2222-2-2') OVER (ORDER BY start_date) AS end_date,
 
         -------- metrics
-        Percent AS percent,
+        Percent / 100 AS percent,
 
         -------- metadata
         _source,

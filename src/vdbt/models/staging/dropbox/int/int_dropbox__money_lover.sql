@@ -8,9 +8,15 @@ invalid_categories AS (
     FROM {{ ref('invalid_categories') }}
 ),
 
-without_invalid_categories AS (
+without_dups AS (
     SELECT *
     FROM source
+    WHERE _exported_at = (SELECT MAX(_exported_at) FROM source)
+),
+
+without_invalid_categories AS (
+    SELECT *
+    FROM without_dups
     LEFT JOIN invalid_categories USING (category)
     WHERE invalid_categories.category IS NULL
 ),
@@ -19,7 +25,16 @@ without_fravi_incomes AS (
     SELECT *
     FROM without_invalid_categories
     WHERE NOT (account = 'FraVi' AND transaction_type = 'incomes')
+),
+
+with_id AS (
+    SELECT
+        ROW_NUMBER() OVER (
+            ORDER BY transaction_date DESC, category, amount DESC
+        ) AS id,
+        *
+    FROM without_fravi_incomes
 )
 
 SELECT *
-FROM without_fravi_incomes
+FROM with_id
