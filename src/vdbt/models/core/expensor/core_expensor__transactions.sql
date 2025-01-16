@@ -28,11 +28,11 @@ final AS (
         -------- info
         trans.transaction_date,
         trans.amount AS total_amount,
-        trans.amount * trans.percent AS personal_amount,
+        trans.amount * COALESCE(trans.percent, 1) AS personal_amount,
+        trans.percent AS sharing_percentage,
         trans.account,
         trans.event,
         trans.notes,
-        trans.percent AS sharing_percentage,
 
         -------- category
         trans.category,
