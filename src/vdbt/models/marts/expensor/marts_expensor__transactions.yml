@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: core_expensor__transactions
+  - name: marts_expensor__transactions
     description: Core transactions table
 
     columns:
