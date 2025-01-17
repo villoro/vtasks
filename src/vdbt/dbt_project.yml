@@ -93,6 +93,10 @@ models:
       +tags: marts
       +materialized: table
 
+      books:
+        +tags: books
+        +schema: marts__books
+
       expensor:
         +tags: expensor
         +schema: marts__expensor
