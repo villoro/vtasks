@@ -82,7 +82,7 @@ models:
 
       expensor:
         +tags: expensor
-        +schema: core__expensor
+        +schema: marts__expensor
 
         int:
           +schema: internal
