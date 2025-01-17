@@ -56,6 +56,7 @@ models:
     +materialized: table
 
     staging:
+      +tags: staging
       +materialized: ephemeral
 
       dropbox:
@@ -75,3 +76,17 @@ models:
         +schema: stg__gsheets
         stg:
           +materialized: table
+
+    marts:
+      +materialized: table
+
+      expensor:
+        +tags: expensor
+        +schema: marts__expensor
+
+        int:
+          +schema: internal
+
+      gcal:
+        +tags: gcal
+        +schema: marts__gcal

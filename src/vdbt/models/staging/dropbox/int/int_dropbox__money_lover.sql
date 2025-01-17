@@ -8,9 +8,15 @@ invalid_categories AS (
     FROM {{ ref('invalid_categories') }}
 ),
 
-without_invalid_categories AS (
+without_dups AS (
     SELECT *
     FROM source
+    WHERE _exported_at = (SELECT MAX(_exported_at) FROM source)
+),
+
+without_invalid_categories AS (
+    SELECT *
+    FROM without_dups
     LEFT JOIN invalid_categories USING (category)
     WHERE invalid_categories.category IS NULL
 ),

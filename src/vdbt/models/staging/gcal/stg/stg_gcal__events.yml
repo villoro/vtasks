@@ -15,6 +15,8 @@ models:
         description: The starting time of the event. Extracted from the `start` column.
       - name: ended_at
         description: The ending time of the event. Extracted from the `end` column.
+      - name: duration_hours
+        description: Duration of the event in hours.
 
       # -------- booleans
       - name: is_whole_day_event

@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: stg_gsheets__share_percentages
+    description: Expensor sharing percentages by each account from Google Sheets
+
+    columns:
+      # -------- time related
+      - name: start_date
+        description: Start date for the percentage.
+        tests: [unique, not_null]
+      - name: end_date
+        description: End date for the percentage.
+
+      # -------- metrics
+      - name: percent
+        description: Sharing percentage
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+              inclusive: true
+
+      # -------- metadata
+      - name: _source
+        description: Metadata field containing the source of the data.
+      - name: _exported_at
+        description: Metadata field indicating when the data was exported.
+      - name: _n_updates
+        description: Metadata field containing the number of updates applied to the row.

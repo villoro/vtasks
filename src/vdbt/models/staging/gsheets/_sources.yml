@@ -10,4 +10,5 @@ sources:
       - name: invest_month
       - name: liquid_month
       - name: salary
+      - name: share_percentages
       - name: worth_month

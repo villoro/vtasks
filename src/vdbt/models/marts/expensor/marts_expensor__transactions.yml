@@ -1,0 +1,40 @@
+version: 2
+
+models:
+  - name: marts_expensor__transactions
+    description: Core transactions table
+
+    columns:
+      # -------- info
+      - name: transaction_date
+        description: The date of the transaction. 
+      - name: total_amount
+        description: The total absolute monetary value of the transaction.
+      - name: personal_amount
+        description: Personal value (`total_amount * sharing_percentage`).
+      - name: sharing_percentage
+        description: Percentage of the total amount that can be personally attributed.
+      - name: account
+        description: The account associated with the transaction (e.g., "Savings", "Credit Card").
+      - name: event
+        description: The event associated with the transaction (e.g., "Birthday", "Anniversary"). 
+      - name: notes
+        description: Any additional notes related to the transaction. 
+
+      # -------- category
+      - name: category
+        description: The category of the transaction (e.g., "Food", "Transport"). 
+      - name: transaction_type
+        description: |
+          The type of the transaction, classified as either `incomes` or `expenses` 
+          based on the sign of the `amount`.
+      - name: is_fixed
+        description: Flag indicating if it's a fix category and not a variable one.
+
+      # -------- metadata
+      - name: _source
+        description: Metadata field containing the source of the data.
+      - name: _exported_at
+        description: Metadata field indicating when the data was exported.
+      - name: _n_updates
+        description: Metadata field containing the number of updates applied to the row.

@@ -6,14 +6,16 @@ models:
 
     columns:
       # -------- info
+      - name: transaction_date
+        description: |
+          The date of the transaction, converted to a `DATE` type. 
+          Derived from the `Date` column in the format `%d/%m/%Y`.
+      - name: amount
+        description: The absolute monetary value of the transaction. 
       - name: category
         description: |
           The category of the transaction (e.g., "Food", "Transport"). 
           Extracted directly from the `Category` column.
-      - name: amount
-        description: |
-          The absolute monetary value of the transaction. 
-          Positive values represent income, and negative values represent expenses.
       - name: transaction_type
         description: |
           The type of the transaction, classified as either `incomes` or `expenses` 
@@ -21,10 +23,6 @@ models:
         tests:
           - accepted_values:
               values: ['incomes', 'expenses']
-      - name: transaction_date
-        description: |
-          The date of the transaction, converted to a `DATE` type. 
-          Derived from the `Date` column in the format `%d/%m/%Y`.
       - name: account
         description: |
           The account associated with the transaction (e.g., "Savings", "Credit Card").
