@@ -5,11 +5,6 @@ models:
     description: Transactions from the Money Lover app.
 
     columns:
-      # -------- pks
-      - name: id
-        description: Transaction unique id.
-        tests: [unique, not_null]
-
       # -------- info
       - name: transaction_date
         description: |

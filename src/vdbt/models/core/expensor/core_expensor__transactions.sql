@@ -25,9 +25,6 @@ transactions_with_percent AS (
 
 final AS (
     SELECT
-        -------- pks
-        trans.id,
-
         -------- info
         trans.transaction_date,
         trans.amount AS total_amount,
@@ -49,7 +46,6 @@ final AS (
     FROM transactions_with_percent trans
     LEFT JOIN categories cat
     ON trans.category = cat.name AND trans.transaction_type = cat.category_type
-    ORDER BY id
 )
 
 SELECT *
