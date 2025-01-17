@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: marts_gcal__daily_stats
+    description: Daily stats for events
+
+    columns:
+      # -------- dims
+      - name: start_day
+        description: The starting day of the event.
+      - name: calendar_name
+        description: The name of the calendar where the event is stored.
+
+      # -------- dims
+      - name: duration_hours
+        description: Duration of the event in hours.

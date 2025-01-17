@@ -25,6 +25,9 @@ dbt:
 l/staging:
 - src/vdbt/models/staging/**
 
+l/core:
+- src/vdbt/models/core/**
+
 l/marts:
 - src/vdbt/models/marts/**
 

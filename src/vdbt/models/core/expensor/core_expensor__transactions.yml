@@ -17,14 +17,14 @@ models:
         description: The total absolute monetary value of the transaction.
       - name: personal_amount
         description: Personal value (`total_amount * sharing_percentage`).
+      - name: sharing_percentage
+        description: Percentage of the total amount that can be personally attributed.
       - name: account
         description: The account associated with the transaction (e.g., "Savings", "Credit Card").
       - name: event
         description: The event associated with the transaction (e.g., "Birthday", "Anniversary"). 
       - name: notes
         description: Any additional notes related to the transaction. 
-      - name: sharing_percentage
-        description: Percentage of the total amount that can be personally attributed.
 
       # -------- category
       - name: category

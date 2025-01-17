@@ -25,16 +25,7 @@ without_fravi_incomes AS (
     SELECT *
     FROM without_invalid_categories
     WHERE NOT (account = 'FraVi' AND transaction_type = 'incomes')
-),
-
-with_id AS (
-    SELECT
-        ROW_NUMBER() OVER (
-            ORDER BY transaction_date DESC, category, amount DESC
-        ) AS id,
-        *
-    FROM without_fravi_incomes
 )
 
 SELECT *
-FROM with_id
+FROM without_fravi_incomes

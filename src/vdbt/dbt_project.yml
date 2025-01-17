@@ -84,3 +84,10 @@ models:
       expensor:
         +tags: expensor
         +schema: core__expensor
+
+    marts:
+      +materialized: table
+
+      gcal:
+        +tags: gcal
+        +schema: marts__gcal

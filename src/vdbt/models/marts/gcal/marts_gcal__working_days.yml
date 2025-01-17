@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: marts_gcal__working_days
+    description: Core transactions table
+
+    columns:
+      # -------- dims
+      - name: start_day
+        description: The starting day of the event.
+
+      # -------- dims
+      - name: moving_avg_7_days
+        description: Duration of the event moving average for 7 days.
+      - name: moving_avg_30_days
+        description: Duration of the event moving average for 30 days.
