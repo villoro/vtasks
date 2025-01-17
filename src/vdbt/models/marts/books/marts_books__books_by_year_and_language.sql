@@ -23,12 +23,12 @@ aggregated AS (
     SELECT
         EXTRACT(YEAR FROM read_date) AS year,
         language,
-        sum(num_pages) AS total_pages
+        SUM(num_pages) AS total_pages
     FROM source
     GROUP BY EXTRACT(YEAR FROM read_date), language
 ),
 
-final AS (
+combined AS (
     SELECT
         -------- dims
         all_combinations.year,
@@ -41,7 +41,15 @@ final AS (
     ON all_combinations.year = aggregated.year
         AND all_combinations.language = aggregated.language
     ORDER BY ALL
+),
+
+with_cumsum AS (
+    SELECT
+        *,
+        SUM(COALESCE(total_pages, 0)) OVER (PARTITION BY language ORDER BY year)
+            AS cum_total_pages
+    FROM combined
 )
 
 SELECT *
-FROM final
+FROM with_cumsum
