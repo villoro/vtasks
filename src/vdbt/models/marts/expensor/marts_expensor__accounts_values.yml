@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: marts_expensor__accounts_values
+    description: Tracks all investments values
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - change_date
+            - investment_type
+            - account_name
+
+    columns:
+      # -------- pks
+      - name: change_date
+        description: Month as date
+        tests: [not_null]
+      - name: investment_type
+        description: Type of record (Invested, Worth or Liquid)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['invested', 'worth', 'liquid']
+      - name: account_name
+        description: Name of the account
+        tests: 
+          - not_null
+          # TODO: check relationships
+
+      # -------- measures
+      - name: value_eur
+        description: Total value in euros.
+
+      # -------- metadata
+      - name: _source
+        description: Metadata field containing the source of the data.
+      - name: _exported_at
+        description: Metadata field indicating when the data was exported.
+      - name: _n_updates
+        description: Metadata field containing the number of updates applied to the row.

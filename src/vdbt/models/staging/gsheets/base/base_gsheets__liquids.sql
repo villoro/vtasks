@@ -22,7 +22,7 @@ rename_cols AS (
 casted_and_renamed AS (
     SELECT
         -------- pk
-        replace(Date, '/', '-').concat('-01') :: date AS month_date,
+        replace(Date, '/', '-').concat('-01') :: date AS change_date,
 
         -------- metrics
         {{ gsheet_to_numeric('total') }} :: decimal(10, 2) AS total,

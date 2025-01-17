@@ -77,15 +77,25 @@ models:
         stg:
           +materialized: table
 
+
+    core:
+      +tags: core
+      +materialized: table
+
+      expensor:
+        +tags: expensor
+        +schema: core__expensor
+
+        int:
+          +schema: internal
+
     marts:
+      +tags: marts
       +materialized: table
 
       expensor:
         +tags: expensor
         +schema: marts__expensor
-
-        int:
-          +schema: internal
 
       gcal:
         +tags: gcal

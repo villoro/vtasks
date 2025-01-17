@@ -1,8 +1,8 @@
 version: 2
 
 models:
-  - name: marts_expensor__investments
-    description: Core transactions table
+  - name: core_expensor__investments
+    description: Tracks all investments values
 
     tests:
       - dbt_utils.unique_combination_of_columns:
