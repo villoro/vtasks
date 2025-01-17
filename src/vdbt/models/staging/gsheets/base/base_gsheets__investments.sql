@@ -1,4 +1,4 @@
-{%- set accounts = var("expensor")["investments"]["accounts"] -%}
+{%- set accounts = var("expensor")["accounts"]["investments"] -%}
 
 WITH source AS (
     SELECT *

@@ -6,14 +6,21 @@ models:
       Invesments data from Google Sheets.
       It includes both the invested money and the actual value
 
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - change_date
+            - investment_type
+
     columns:
       # -------- pk
-      - name: month_date
+      - name: change_date
         description: Month as date
-        tests: [unique, not_null]
+        tests: [not_null]
       - name: investment_type
         description: Type of record (Invested or Worth)
         tests:
+          - not_null
           - accepted_values:
               values: ['invested', 'worth']
 
