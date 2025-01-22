@@ -8,7 +8,7 @@ models:
 
     columns:
       # -------- pk
-      - name: month_date
+      - name: change_date
         description: Month as date
         tests: [unique, not_null]
 

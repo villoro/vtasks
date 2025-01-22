@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: marts_books__books_by_year_and_language
+    description: Books read by year and language
+
+    columns:
+      # -------- dims
+      - name: year
+        description: Year the book was read.
+      - name: language
+        description: The language in which the book is written (e.g., English, Spanish).
+
+      # -------- dims
+      - name: total_pages
+        description: Total pages read.

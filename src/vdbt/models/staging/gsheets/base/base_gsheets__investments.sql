@@ -17,7 +17,7 @@ casted_and_renamed AS (
         CASE
             WHEN _dbt_source_relation LIKE '%invest%' THEN 'invested'
             ELSE 'worth'
-        END AS investment_type,
+        END AS account_type,
 
         -------- metrics
         {{ gsheet_to_numeric('total') }} :: decimal(10, 2) AS total,

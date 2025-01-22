@@ -46,7 +46,7 @@ vars:
         - monese
         - simplex
         - cash
-        - norwegian_bank
+        - nb
 
 seeds:
   +schema: internal
@@ -77,15 +77,29 @@ models:
         stg:
           +materialized: table
 
-    marts:
+
+    core:
+      +tags: core
       +materialized: table
 
       expensor:
         +tags: expensor
-        +schema: marts__expensor
+        +schema: core__expensor
 
         int:
           +schema: internal
+
+    marts:
+      +tags: marts
+      +materialized: table
+
+      books:
+        +tags: books
+        +schema: marts__books
+
+      expensor:
+        +tags: expensor
+        +schema: marts__expensor
 
       gcal:
         +tags: gcal

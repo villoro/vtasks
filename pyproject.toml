@@ -3,7 +3,7 @@ line-length = 100
 
 [tool.poetry]
 name = "vtasks"
-version = "7.0.0-alpha.11"
+version = "7.0.0-alpha.12"
 description = "Personal tasks scheduled with Prefect"
 authors = ["Arnau Villoro <arnau@villoro.com>"]
 maintainers = ["Arnau Villoro <arnau@villoro.com>"]

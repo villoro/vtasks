@@ -1,16 +1,15 @@
 version: 2
 
 models:
-  - name: stg_gsheets__investments
-    description: |
-      Invesments data from Google Sheets.
-      It includes both the invested money and the actual value
+  - name: core_expensor__liquid
+    description: Tracks liquid value
 
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - change_date
             - account_type
+            - account_name
 
     columns:
       # -------- pks
@@ -19,15 +18,16 @@ models:
         tests: [not_null]
       - name: account_type
         description: Type of record (Invested or Worth)
-        tests:
+        tests: [not_null]
+      - name: account_name
+        description: Name of the account
+        tests: 
           - not_null
-          - accepted_values:
-              values: ['invested', 'worth']
+          # TODO: check relationships
 
-      # -------- metrics
-      - name: total
-        description: Total monthly value.
-      # WARN: here we have a column for each account
+      # -------- measures
+      - name: value_eur
+        description: Total value in euros.
 
       # -------- metadata
       - name: _source

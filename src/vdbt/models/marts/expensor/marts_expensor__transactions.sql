@@ -1,3 +1,5 @@
+{% set shared_account = 'fravi' %}
+
 WITH transactions AS (
     SELECT *
     FROM {{ ref('stg_dropbox__money_lover') }}
@@ -21,6 +23,7 @@ transactions_with_percent AS (
     LEFT JOIN share_percentages
     ON transactions.transaction_date >= share_percentages.start_date
         AND transactions.transaction_date < share_percentages.end_date
+        AND lower(transactions.account) = '{{ shared_account }}'
 ),
 
 final AS (
@@ -46,6 +49,7 @@ final AS (
     FROM transactions_with_percent trans
     LEFT JOIN categories cat
     ON trans.category = cat.name AND trans.transaction_type = cat.category_type
+    ORDER BY transaction_date DESC, category, personal_amount
 )
 
 SELECT *

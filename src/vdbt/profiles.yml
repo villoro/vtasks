@@ -5,7 +5,9 @@ vdbt:
     md:
       type: duckdb
       path: md:villoro
+      schema: ""
 
     memory:
       type: duckdb
       path: ":memory:"
+      schema: ""

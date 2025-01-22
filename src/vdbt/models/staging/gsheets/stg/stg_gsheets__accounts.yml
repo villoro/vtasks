@@ -19,7 +19,7 @@ models:
         description: Type of account.
         tests:
           - accepted_values:
-              values: ['Liquid', 'Investment']
+              values: ['liquid', 'investment']
       - name: account_subtype
         description: Subtype of the account.
         tests:

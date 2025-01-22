@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: marts_expensor__accounts_totals
+    description: Tracks totals for each account type
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - change_date
+            - category
+
+    columns:
+      # -------- pks
+      - name: change_date
+        description: Month as date
+        tests: [not_null]
+      - name: category
+        description: Type of account
+        tests: [not_null]
+
+      # -------- measures
+      - name: value_eur
+        description: Total value in euros.
+      - name: cum_value_eur
+        description: Total cumulative value over time in euros.
