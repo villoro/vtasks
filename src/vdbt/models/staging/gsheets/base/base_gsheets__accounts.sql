@@ -11,7 +11,7 @@ casted_and_renamed AS (
         -------- info
         "Color Name" AS color_name,
         "Color Index" AS color_index,
-        Type AS account_type,
+        lower(Type) AS account_type,
         Subtype AS account_subtype,
         Country AS country,
 

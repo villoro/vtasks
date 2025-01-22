@@ -46,7 +46,7 @@ vars:
         - monese
         - simplex
         - cash
-        - norwegian_bank
+        - nb
 
 seeds:
   +schema: internal

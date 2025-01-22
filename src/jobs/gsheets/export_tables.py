@@ -38,3 +38,7 @@ def export_gsheets_tables():
 
     for table in tables:
         task(name=f"{FLOW_NAME}.{table.table_out}")(export_table)(table)
+
+
+if __name__ == "__main__":
+    export_gsheets_tables()

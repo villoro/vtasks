@@ -7,15 +7,7 @@ WITH source AS (
 
 rename_cols AS (
     SELECT
-        *,
-        "CC - Caixa enginyers" AS caixa_enginers,
-        "Diposit - Caixa enginyers" AS caixa_enginers_diposit,
-        "C. sin nómina - ING" AS ing_sin_nomina,
-        "C. nómina - ING" AS ing_nomina,
-        "C. Naranja - ING" AS ing_naranja,
-        "Diposit - ING" AS ing_diposit,
-        MyInvestor AS my_investor,
-        NB AS norwegian_bank
+        *
     FROM source
 ),
 
