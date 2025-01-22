@@ -26,43 +26,31 @@ worth AS (
     FROM account_values
     WHERE account_type IN ('liquid', 'worth')
     GROUP BY ALL
-), 
+),
 
-incomes AS (
+monthly_transactions AS (
     SELECT
         date_trunc('month', transaction_date) AS change_date,
-        'incomes' AS category,
-        sum(personal_amount) AS value_eur
+        transaction_type AS category,
+        sum(personal_amount) AS _value
     FROM transactions
-    WHERE transaction_type = 'incomes'
     GROUP BY ALL
 ),
 
-expenses AS (
+cumsum_transactions AS (
     SELECT
-        date_trunc('month', transaction_date) AS change_date,
-        'expenses' AS category,
-        sum(personal_amount) AS value_eur
-    FROM transactions
-    WHERE transaction_type = 'expenses'
-    GROUP BY ALL
+        change_date,
+        category,
+        sum(_value) OVER (PARTITION BY category ORDER BY change_date) AS value_eur
+    FROM monthly_transactions
 ),
 
 combined AS (
     SELECT * FROM invested UNION ALL
     SELECT * FROM worth UNION ALL
-    SELECT * FROM incomes UNION ALL
-    SELECT * FROM expenses
-),
-
-with_cumsum AS (
-    SELECT
-        *,
-        sum(coalesce(value_eur, 0)) OVER (PARTITION BY category ORDER BY change_date)
-            AS cum_value_eur
-    FROM combined
-    ORDER BY ALL
+    SELECT * FROM cumsum_transactions
 )
 
 SELECT *
-FROM with_cumsum
+FROM combined
+ORDER BY ALL
