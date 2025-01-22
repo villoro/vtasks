@@ -10,14 +10,14 @@ models:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - change_date
-            - investment_type
+            - account_type
 
     columns:
       # -------- pks
       - name: change_date
         description: Month as date
         tests: [not_null]
-      - name: investment_type
+      - name: account_type
         description: Type of record (Invested or Worth)
         tests:
           - not_null

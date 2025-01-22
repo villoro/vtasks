@@ -8,12 +8,28 @@ WITH source AS (
     }}
 ),
 
+accounts AS (
+    SELECT *
+    FROM {{ ref('stg_gsheets__accounts') }}
+),
+
+with_account_subtypes AS (
+    SELECT
+        source.*,
+        accounts.account_subtype
+    FROM source
+    JOIN accounts ON lower(source.account_name) = lower(accounts.name)
+),
+
 selected_columns AS (
     SELECT
         -------- pks
         change_date,
-        investment_type,
+        account_type,
         account_name,
+
+        -------- account details
+        account_subtype,
 
         -------- measures
         value_eur,
@@ -22,7 +38,7 @@ selected_columns AS (
         _source,
         _exported_at,
         _n_updates
-    FROM source
+    FROM with_account_subtypes
     ORDER BY ALL
 )
 

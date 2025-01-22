@@ -8,7 +8,7 @@ models:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - change_date
-            - investment_type
+            - account_type
             - account_name
 
     columns:
@@ -16,8 +16,8 @@ models:
       - name: change_date
         description: Month as date
         tests: [not_null]
-      - name: investment_type
-        description: Type of record (Invested, Worth or Liquid)
+      - name: account_type
+        description: Type of account (Invested, Worth or Liquid)
         tests:
           - not_null
           - accepted_values:
@@ -26,7 +26,11 @@ models:
         description: Name of the account
         tests: 
           - not_null
-          # TODO: check relationships
+
+      # -------- account details
+      - name: account_subtype
+        description: Subtype of account
+        tests: [not_null]
 
       # -------- measures
       - name: value_eur

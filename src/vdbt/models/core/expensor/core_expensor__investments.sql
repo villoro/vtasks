@@ -15,7 +15,7 @@ ordered_cols AS (
     SELECT
         -------- pks
         change_date,
-        investment_type,
+        account_type,
         account_name,
 
         -------- measures
