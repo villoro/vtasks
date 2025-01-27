@@ -96,7 +96,7 @@ def update_cell(doc, sheet, cell, value, max_tries=5):
 
     @retry_on_exception(max_tries=max_tries)
     def _update_cell():
-        gsheet.update(cell, value)
+        gsheet.update(cell, [[value]])
 
     _update_cell()
 
