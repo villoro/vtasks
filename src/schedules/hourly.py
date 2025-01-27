@@ -6,12 +6,17 @@ from src.jobs.dropbox.export_tables import export_dropbox_tables
 from src.jobs.dropbox.money_lover import export_money_lover
 from src.jobs.gcal.export import export_all_gcal
 from src.jobs.gsheets.export_tables import export_gsheets_tables
+from src.jobs.indexa.main import indexa_all
 
 
 @flow(name="vtasks.hourly")
 def hourly():
+    # Maintain
     backup_all()
+
+    # Update data
     crypto()
+    indexa_all()
 
     # Export data
     export_dropbox_tables()
