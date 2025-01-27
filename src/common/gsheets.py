@@ -26,13 +26,7 @@ def init_gdrive(force=False):
 
 
 def retry_on_exception(max_tries=5, exception=ConnectionError):
-    """
-    Decorator to apply retry logic to a function with backoff.
-
-    Args:
-        max_tries: Maximum number of retry attempts
-        exception: Exception to trigger retries
-    """
+    """Decorator to apply retry logic to a function with backoff."""
 
     logger = get_logger()
 
@@ -61,44 +55,49 @@ def retry_on_exception(max_tries=5, exception=ConnectionError):
 
 
 def _get_gdrive_sheet(doc, sheet, max_tries=5):
-    """
-    Get a Google Drive spreadsheet.
-
-    Args:
-        doc:    name of the document
-        sheet:  name of the sheet inside the document
-    """
+    """Get a Google Drive spreadsheet."""
     logger = get_logger()
     init_gdrive()
 
     logger.info(f"Getting Google spreadsheet '{doc}.{sheet}'")
 
     @retry_on_exception(max_tries=max_tries)
-    def fetch_sheet():
+    def _fetch_sheet():
         spreadsheet = GDRIVE.open(doc)
         return spreadsheet.worksheet(sheet)
 
-    return fetch_sheet()
+    return _fetch_sheet()
 
 
 def read_gdrive_sheet(doc, sheet, max_tries=5):
-    """
-    Read data from a Google Drive sheet and return it as a DataFrame.
-
-    Args:
-        doc:    name of the document
-        sheet:  name of the sheet inside the document
-    """
+    """Read data from a Google Drive sheet and return it as a DataFrame."""
     logger = get_logger()
     gsheet = _get_gdrive_sheet(doc, sheet, max_tries)
 
-    logger.info(f"Reading data from 'gsheet.{doc}.{sheet}'")
+    logger.info(f"Reading data from 'gsheet://{doc}.{sheet}'")
 
     @retry_on_exception(max_tries=max_tries)
-    def fetch_data():
+    def _fetch_data():
         return gsheet.get_all_records()
 
-    data = fetch_data()
+    data = _fetch_data()
 
-    logger.info(f"Data read from 'gsheet.{doc}.{sheet}'")
+    logger.info(f"Data read from 'gsheet://{doc}.{sheet}'")
     return pd.DataFrame(data)
+
+
+def update_cell(doc, sheet, cell, value, max_tries=5):
+    """Update a cell on google spreadsheet"""
+
+    logger = get_logger()
+    gsheet = _get_gdrive_sheet(doc, sheet, max_tries)
+
+    logger.info(f"Updating {cell=} in 'gsheet://{doc}.{sheet}'")
+
+    @retry_on_exception(max_tries=max_tries)
+    def _update_cell():
+        gsheet.update(cell, value)
+
+    _update_cell()
+
+    logger.info(f"{cell=} successfully updated in 'gsheet://{doc}.{sheet}'")
