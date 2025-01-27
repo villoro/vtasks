@@ -25,41 +25,39 @@ def init_gdrive(force=False):
         GDRIVE = gspread.service_account(filename=PATH_GSPREADSHEET_KEY)
 
 
-def _retry_on_exception(
-    func, max_tries=5, exception=ConnectionError, logger=None, final_log_message=None
-):
+def retry_on_exception(max_tries=5, exception=ConnectionError):
     """
-    Retry logic for a function call with backoff.
+    Decorator to apply retry logic to a function with backoff.
 
     Args:
-        func: Callable to retry
         max_tries: Maximum number of retry attempts
         exception: Exception to trigger retries
-        logger: Logger instance for logging (optional)
-        final_log_message: Message to log when retries are exhausted (optional)
     """
 
-    def log_failure(details):
-        tries = details["tries"]
-        exc = details["exception"]
-        if logger:
+    logger = get_logger()
+
+    def decorator(func):
+        def log_failure(details):
+            tries = details["tries"]
+            exc = details["exception"]
             logger.warning(f"[Attempt {tries}] {exc=} when calling {func.__name__}")
 
-    @backoff.on_exception(
-        backoff.expo, exception, max_tries=max_tries, on_backoff=log_failure
-    )
-    def wrapped_func(*args, **kwargs):
-        return func(*args, **kwargs)
+        @backoff.on_exception(
+            backoff.expo, exception, max_tries=max_tries, on_backoff=log_failure
+        )
+        def wrapped_func(*args, **kwargs):
+            return func(*args, **kwargs)
 
-    def call_with_logging(*args, **kwargs):
-        try:
-            return wrapped_func(*args, **kwargs)
-        except exception as exc:
-            if logger and final_log_message:
-                logger.error(final_log_message.format(exc=exc, max_tries=max_tries))
-            raise exc
+        def wrapper(*args, **kwargs):
+            try:
+                return wrapped_func(*args, **kwargs)
+            except exception as exc:
+                logger.error(f"Too many attempts for '{func.__name__}' ({max_tries=})")
+                raise exc
 
-    return call_with_logging
+        return wrapper
+
+    return decorator
 
 
 def _get_gdrive_sheet(doc, sheet, max_tries=5):
@@ -75,14 +73,10 @@ def _get_gdrive_sheet(doc, sheet, max_tries=5):
 
     logger.info(f"Getting Google spreadsheet '{doc}.{sheet}'")
 
+    @retry_on_exception(max_tries=max_tries)
     def fetch_sheet():
         spreadsheet = GDRIVE.open(doc)
         return spreadsheet.worksheet(sheet)
-
-    final_message = f"Too many attempts when getting '{doc}.{sheet}' {max_tries=}"
-    fetch_sheet = _retry_on_exception(
-        fetch_sheet, max_tries, logger=logger, final_log_message=final_message
-    )
 
     return fetch_sheet()
 
@@ -100,15 +94,9 @@ def read_gdrive_sheet(doc, sheet, max_tries=5):
 
     logger.info(f"Reading data from 'gsheet.{doc}.{sheet}'")
 
+    @retry_on_exception(max_tries=max_tries)
     def fetch_data():
         return gsheet.get_all_records()
-
-    final_message = (
-        f"Too many attempts when reading 'gsheet.{doc}.{sheet}' {max_tries=}"
-    )
-    fetch_data = _retry_on_exception(
-        fetch_data, max_tries, logger=logger, final_log_message=final_message
-    )
 
     data = fetch_data()
 
