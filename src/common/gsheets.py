@@ -126,8 +126,8 @@ def _get_coordinates(df):
     return df_index
 
 
-def _get_range_to_update(df, mfilter, columns):
-    """Gets the range that needs to be updated"""
+def _get_columns(df, columns=None):
+    """If columns is None, use them all"""
 
     # If no columns are passed, update them all
     if columns is None:
@@ -136,6 +136,12 @@ def _get_range_to_update(df, mfilter, columns):
     # Make sure columns is a list
     if not isinstance(columns, list):
         columns = [columns]
+
+    return columns
+
+
+def _get_range_to_update(df, mfilter, columns):
+    """Gets the range that needs to be updated"""
 
     # Extract range from coordinates and filter
     coordinates = _get_coordinates(df).loc[mfilter, columns]
@@ -166,8 +172,9 @@ def df_to_gspread(doc, sheet, df, mfilter, cols=None, max_tries=5):
 
     logger.info(f"Preparing update for 'gsheet://{doc}.{sheet}' ({mfilter=}, {cols=})")
 
-    mrange = _get_range_to_update(df, mfilter, cols)
-    values = _get_values_to_update(df, mfilter, cols)
+    columns = _get_columns(df, cols)
+    mrange = _get_range_to_update(df, mfilter, columns)
+    values = _get_values_to_update(df, mfilter, columns)
 
     # Update values in gspreadsheet
     logger.info(f"Updating 'gsheet://{doc}.{sheet}' ({mrange=})")

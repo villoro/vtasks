@@ -1,4 +1,5 @@
 import cryptocompare
+import pandas as pd
 from prefect import task
 
 from src.common import gsheets
@@ -39,3 +40,27 @@ def update_market_cap():
 
     for crypto, cell in MAIN_CRYPTOS.items():
         gsheets.update_cell(SPREADSHEET_CRYPTO, SHEET_SUMMARY, cell, volumes[crypto])
+
+
+def get_crypto_prices(cryptos):
+    """Get latest prices of a list of cryptos"""
+
+    # Query cryptos
+    data = cryptocompare.get_price([*cryptos])
+
+    # Create a dict with prices
+    return {i: x["EUR"] for i, x in data.items()}
+
+
+@task(name="vtasks.crypto.prices")
+def update_crypto_prices(mfilter):
+    """Update latest cryptos prices"""
+
+    df = gsheets.read_gdrive_sheet(SPREADSHEET_CRYPTO, SHEET_PRICES, with_index=True)
+
+    # Update prices
+    values = get_crypto_prices(df.columns)
+    df.loc[mfilter] = pd.Series(values)
+
+    # Update gspreadsheet
+    gsheets.df_to_gspread(SPREADSHEET_CRYPTO, SHEET_PRICES, df, mfilter)
