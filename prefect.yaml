@@ -28,20 +28,41 @@ definitions:
 
 
 deployments:
-# ---------------------------------- SCHEDULES --------------------------------------
+# ------------------------------ SCHEDULES ------------------------------------
 - name: _hourly
   <<: *defaults
   description: Do all hourly tasks
   entrypoint: src/schedules/hourly.py:hourly
   tags: ["schedules", "hourly"]
 
-# ---------------------------------- EXTRACTIONS ------------------------------------
+# ------------------------------ DBT ------------------------------------------
+- name: dbt
+  <<: *defaults
+  description: Run DBT
+  entrypoint: src/vdbt/python/run.py:run_dbt
+  tags: ["dbt"]
+
+# ------------------------------ MAINTAIN -------------------------------------
 - name: backups.all
   <<: *defaults
   description: Do all backups tasks
   entrypoint: src/jobs/backups/main.py:backup_all
-  tags: ["backups", "extract"]
+  tags: ["backups", "maintain"]
 
+# ------------------------------ UPDATES --------------------------------------
+- name: crypto.all
+  <<: *defaults
+  description: Update all crypto related information
+  entrypoint: src/jobs/crypto/main.py:crypto
+  tags: ["crypto", "updates"]
+
+- name: indexa.all
+  <<: *defaults
+  description: Update all indexa related information
+  entrypoint: src/jobs/indexa/main.py:indexa_all
+  tags: ["crypto", "updates"]
+
+# ------------------------------ EXTRACTIONS ----------------------------------
 - name: dropbox.export_tables
   <<: *defaults
   description: Export dropbox tables

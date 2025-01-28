@@ -7,22 +7,34 @@ from src.jobs.dropbox.money_lover import export_money_lover
 from src.jobs.gcal.export import export_all_gcal
 from src.jobs.gsheets.export_tables import export_gsheets_tables
 from src.jobs.indexa.main import indexa_all
+from src.vdbt.python.run import run_dbt
 
 
-@flow(name="vtasks.hourly")
-def hourly():
-    # Maintain
+@flow(name="vtasks.hourly.maintain")
+def maintain():
     backup_all()
 
-    # Update data
+
+@flow(name="vtasks.hourly.updates")
+def updates():
     crypto()
     indexa_all()
 
-    # Export data
+
+@flow(name="vtasks.hourly.export")
+def export():
     export_dropbox_tables()
     export_money_lover()
     export_all_gcal()
     export_gsheets_tables()
+
+
+@flow(name="vtasks.hourly")
+def hourly():
+    maintain()
+    updates()
+    export()
+    run_dbt()
 
 
 if __name__ == "__main__":
