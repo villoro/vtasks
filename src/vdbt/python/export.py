@@ -56,7 +56,7 @@ def export_models():
     for x in ["config", "unrendered_config"]:
         df[x] = df[x].apply(str)
 
-    write_df(df, DATABASE, TABLE_MODELS, mode="append")
+    write_df(df, DATABASE, TABLE_MODELS, mode="append", as_str=True)
 
 
 def export_execution(data):
@@ -68,7 +68,7 @@ def export_execution(data):
 
     # Drop some columns and force 'string' in some others
     df = df.drop(columns=["env", "warn_error_options"])
-    write_df(df, DATABASE, TABLE_EXECUTION, mode="append")
+    write_df(df, DATABASE, TABLE_EXECUTION, mode="append", as_str=True)
 
 
 def export_run_results(data):
@@ -81,7 +81,7 @@ def export_run_results(data):
     if "compiled_code" in df.columns:
         df["compiled_code"] = df["compiled_code"].str.strip()
 
-    write_df(df, DATABASE, TABLE_RUN_RESULTS, mode="append")
+    write_df(df, DATABASE, TABLE_RUN_RESULTS, mode="append", as_str=True)
 
 
 def export_execution_and_run_results():
