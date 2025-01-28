@@ -8,9 +8,6 @@ from src.vdbt.python import paths
 from src.vdbt.python.export import export_execution_and_run_results
 
 
-ENV = None
-
-
 def get_dbt_version():
     # This has less info than the 'manifest.json'
     return Manifest().to_dict()["metadata"]["dbt_version"]
@@ -21,7 +18,7 @@ def get_project_version():
         return yaml.safe_load(stream)["version"]
 
 
-def run_dbt_command(args, flow_run_id, log_level="error"):
+def run_dbt_command(args, log_level="error"):
     """Run dbt command and raise exception if a problem is encountered"""
 
     # In order to use 'prefect.logger' inside the 'dbt.callbacks' we need to export it
@@ -40,7 +37,7 @@ def run_dbt_command(args, flow_run_id, log_level="error"):
     res = dbtRunner(callbacks=[log_utils.log_callback]).invoke(args)
 
     if export_results:
-        export_execution_and_run_results(flow_run_id)
+        export_execution_and_run_results()
 
     if not res.success:
         if res.exception:

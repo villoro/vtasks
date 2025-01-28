@@ -82,13 +82,12 @@ def export_models():
     export_table(df, TABLE_MODELS, {})
 
 
-def export_execution(data, flow_run_id):
+def export_execution(data):
     logger = get_run_logger()
 
     logger.info(f"Exporting '{TABLE_EXECUTION}'")
     df = pd.DataFrame([{**TAGS, **data["metadata"], **data["args"]}])
     df["elapsed_time"] = data["elapsed_time"]
-    df["flow_run_id"] = flow_run_id
 
     # Drop some columns and force 'string' in some others
     df = df.drop(columns=["env", "warn_error_options"])
@@ -97,7 +96,6 @@ def export_execution(data, flow_run_id):
         "exclude": "string",
         "vars": "string",
         "resource_types": "string",
-        "flow_run_id": "string",
     }
     export_table(df, TABLE_EXECUTION, dtypes)
 
@@ -117,7 +115,7 @@ def export_run_results(data):
     export_table(df, TABLE_RUN_RESULTS, dtypes)
 
 
-def export_execution_and_run_results(flow_run_id):
+def export_execution_and_run_results():
     logger = get_run_logger()
 
     logger.info("Running 'run_results' export")
@@ -125,5 +123,5 @@ def export_execution_and_run_results(flow_run_id):
     with open(paths.FILE_RUN_RESULTS) as stream:
         data = json.load(stream)
 
-    export_execution(data, flow_run_id)
+    export_execution(data)
     export_run_results(data)
