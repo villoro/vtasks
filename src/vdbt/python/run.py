@@ -1,8 +1,18 @@
+import os
+
 from prefect import flow
 from prefect import task
 
+from src.common.secrets import read_secret
 from src.vdbt.python import dbt_utils
 from src.vdbt.python import export
+
+MD_TOKEN = "MOTHERDUCK_TOKEN"
+
+
+@task(name="dbt.export_token")
+def export_motherduck_token():
+    os.environ[MD_TOKEN] = read_secret(MD_TOKEN)
 
 
 @task(name="dbt.clean")
