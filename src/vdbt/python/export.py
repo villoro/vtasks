@@ -2,10 +2,10 @@ import json
 from datetime import datetime
 
 import pandas as pd
-import paths
 from prefect import get_run_logger
 
 from src.common.duck import write_df
+from src.vdbt.python import paths
 
 TAGS = {}
 
