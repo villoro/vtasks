@@ -7,7 +7,6 @@ from prefect import get_run_logger
 from src.common.duck import write_df
 from src.vdbt.python import paths
 
-TAGS = {}
 
 DATABASE = "raw__dbt"
 
@@ -36,7 +35,6 @@ COLS_MANIFEST = [
     "compiled_path",
     "compiled",
     "compiled_code",
-    "deferred",
     "meta",
 ]
 
@@ -72,9 +70,6 @@ def export_models():
     df = pd.DataFrame(manifest.get("nodes", {})).T
     df = df.loc[df["resource_type"] == "model", COLS_MANIFEST]
 
-    # Extract owner
-    df["owner"] = df["meta"].apply(lambda x: x.get("owner", None))
-
     # Cast to string problematic columns
     for x in ["config", "unrendered_config"]:
         df[x] = df[x].apply(str)
@@ -86,7 +81,7 @@ def export_execution(data):
     logger = get_run_logger()
 
     logger.info(f"Exporting '{TABLE_EXECUTION}'")
-    df = pd.DataFrame([{**TAGS, **data["metadata"], **data["args"]}])
+    df = pd.DataFrame([{**data["metadata"], **data["args"]}])
     df["elapsed_time"] = data["elapsed_time"]
 
     # Drop some columns and force 'string' in some others

@@ -24,7 +24,7 @@ def run_debug():
 
 
 @task(name="dbt.build")
-def build(select, exclude, full_refresh, store_failures):
+def build(select, exclude, store_failures):
     """Perform DBT build (seed + run + test)"""
     command = ["build"]
 
