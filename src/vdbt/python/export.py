@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 
 import pandas as pd
 from prefect import get_run_logger
@@ -39,23 +38,6 @@ COLS_MANIFEST = [
 ]
 
 
-def export_table(df, table, dtypes):
-    logger = get_run_logger()
-
-    n_records = df.shape[0]
-    logger.info(f"Writing table to '{DATABASE}.{table}' ({n_records=})")
-
-    df["p_extracted_at"] = datetime.now()
-
-    # Mixed types will likely fail, logging them for easier fixing
-    for column in df.columns:
-        types = df[column].apply(type).value_counts().to_dict()
-        if len(types) > 1:
-            logger.debug(f"{column=} has mixed {types=}")
-
-    write_df(df, DATABASE, table, mode="append")
-
-
 def read_manifest():
     with open(paths.FILE_MANIFEST) as stream:
         return json.load(stream)
@@ -74,7 +56,7 @@ def export_models():
     for x in ["config", "unrendered_config"]:
         df[x] = df[x].apply(str)
 
-    export_table(df, TABLE_MODELS, {})
+    write_df(df, DATABASE, TABLE_MODELS, mode="append")
 
 
 def export_execution(data):
@@ -86,13 +68,7 @@ def export_execution(data):
 
     # Drop some columns and force 'string' in some others
     df = df.drop(columns=["env", "warn_error_options"])
-    dtypes = {
-        "select": "string",
-        "exclude": "string",
-        "vars": "string",
-        "resource_types": "string",
-    }
-    export_table(df, TABLE_EXECUTION, dtypes)
+    write_df(df, DATABASE, TABLE_EXECUTION, mode="append")
 
 
 def export_run_results(data):
@@ -105,9 +81,7 @@ def export_run_results(data):
     if "compiled_code" in df.columns:
         df["compiled_code"] = df["compiled_code"].str.strip()
 
-    # Force 'string' type in some columns
-    dtypes = {"message": "string", "failures": "int", "adapter_response": "string"}
-    export_table(df, TABLE_RUN_RESULTS, dtypes)
+    write_df(df, DATABASE, TABLE_RUN_RESULTS, mode="append")
 
 
 def export_execution_and_run_results():
