@@ -1,21 +1,9 @@
-import yaml
 from dbt.cli.main import dbtRunner
-from dbt.contracts.graph.manifest import Manifest
 from prefect import get_run_logger
 
 from src.vdbt.python import log_utils
-from src.vdbt.python import paths
 from src.vdbt.python.export import export_execution_and_run_results
-
-
-def get_dbt_version():
-    # This has less info than the 'manifest.json'
-    return Manifest().to_dict()["metadata"]["dbt_version"]
-
-
-def get_project_version():
-    with open(paths.FILE_DBT_PROJECT, "r") as stream:
-        return yaml.safe_load(stream)["version"]
+from src.vdbt.python.paths import PATH_DBT
 
 
 def run_dbt_command(args, log_level="error"):
@@ -29,7 +17,10 @@ def run_dbt_command(args, log_level="error"):
 
     # We change the 'log_level' to avoid log duplicates with the `prefect logger`
     assert log_level in ["debug", "info", "warn", "error", "none"]
-    args = ["--log-level", log_level] + args
+    args += ["--log-level", log_level]
+
+    # Add DBT path
+    args += ["--project-dir", PATH_DBT]
 
     command = f"dbt {' '.join(args)}"
     logger.info(f"Running {command=}")
@@ -38,10 +29,5 @@ def run_dbt_command(args, log_level="error"):
 
     if export_results:
         export_execution_and_run_results()
-
-    if not res.success:
-        if res.exception:
-            logger.critical(f"There was an exception in DBT: {res.exception=}")
-            raise res.exception
 
     return res.result

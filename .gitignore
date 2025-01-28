@@ -63,3 +63,4 @@ scripts/subs/*.parquet
 # DBT logs
 src/logs/**
 src/vdbt/logs/**
+logs/**

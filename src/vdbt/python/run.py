@@ -1,5 +1,4 @@
 from prefect import flow
-from prefect import tags
 from prefect import task
 
 from src.vdbt.python import dbt_utils
@@ -47,8 +46,12 @@ def export_models():
 
 
 @flow(name="dbt")
-def run_all(select, exclude, debug, store_failures):
+def run_dbt(select=None, exclude=None, debug=False, store_failures=True):
     """Run all DBT commands"""
+    # Clean commands (in some cases it includes unwanted quotation marks)
+    select = select.strip('"') if select is not None else None
+    exclude = exclude.strip('"') if exclude is not None else None
+
     is_complete_run = select is None
 
     clean()
@@ -63,30 +66,5 @@ def run_all(select, exclude, debug, store_failures):
     build(select, exclude, store_failures)
 
 
-def main(select=None, exclude=None, debug=False, store_failures=True):
-    from loguru import logger
-
-    logger.info("Starting DBT project")
-
-    # Clean commands (in some cases it includes unwanted quotation marks)
-    select = select.strip('"') if select is not None else None
-    exclude = exclude.strip('"') if exclude is not None else None
-
-    export.TAGS = {
-        "type": "dbt",
-        "version": dbt_utils.get_project_version(),
-        "dbt_version": dbt_utils.get_dbt_version(),
-        "select": select,
-        "exclude": exclude,
-    }
-
-    run_tags = [f"{k}:{v}" for k, v in export.TAGS.items()]
-    logger.info(f"Using {run_tags=}")
-
-    # This try catch is to let `fargate` know the process failed
-    with tags(*run_tags):
-        run_all(select, exclude, debug, store_failures)
-
-
 if __name__ == "__main__":
-    main()
+    run_dbt()

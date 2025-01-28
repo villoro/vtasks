@@ -1,9 +1,7 @@
 from pathlib import Path
 
 # The number of '.parent' must match the level where this file is placed in Docker
-_PATH_DBT = Path(__file__).parent.parent
-PATH_ROOT = str(_PATH_DBT.parent)
-PATH_DBT = str(_PATH_DBT)
+PATH_DBT = str(Path(__file__).parent.parent)
 
 PATH_TARGET = f"{PATH_DBT}/target"
 
