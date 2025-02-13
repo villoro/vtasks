@@ -1,4 +1,5 @@
 from prefect import flow
+from prefect import tags
 
 from src.jobs.backups.main import backup_all
 from src.jobs.crypto.main import crypto
@@ -31,10 +32,11 @@ def export():
 
 @flow(name="vtasks.hourly")
 def hourly():
-    maintain()
-    updates()
-    export()
-    run_dbt()
+    with tags("env:pro"):
+        maintain()
+        updates()
+        export()
+        run_dbt()
 
 
 if __name__ == "__main__":
