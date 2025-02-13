@@ -4,7 +4,7 @@ from prefect import task
 from src.common.dropbox import get_vdropbox
 from src.jobs.backups.tasks import COPY_TASKS
 
-FLOW_NAME = "vtasks.backups.copy"
+FLOW_NAME = "backups.copy"
 
 
 @flow(name=FLOW_NAME)

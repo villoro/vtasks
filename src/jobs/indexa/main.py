@@ -12,7 +12,7 @@ SPREADSHEET = "expensor_data"
 SHEET_WORTH = "worth_m"
 SHEET_INVEST = "invest_m"
 
-FLOW_NAME = "vtasks.indexa"
+FLOW_NAME = "indexa"
 
 
 @task(name=f"{FLOW_NAME}.query_portfolio")

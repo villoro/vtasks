@@ -27,7 +27,7 @@ TABLE_OUT = "events"
 BASE_PATH = str(Path(__file__).parent)
 PATH_CALENDARS = f"{BASE_PATH}/calendars.yaml"
 
-FLOW_NAME = "vtasks.gcal"
+FLOW_NAME = "gcal"
 
 MIN_DATE = date(2011, 11, 5)
 

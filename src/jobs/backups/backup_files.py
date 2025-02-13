@@ -11,7 +11,7 @@ from src.jobs.backups.tasks import BACKUP_TASKS
 
 YEAR = f"{date.today():%Y}"
 DAY = f"{date.today():%Y_%m_%d}"
-FLOW_NAME = "vtasks.backups.backup_files"
+FLOW_NAME = "backups.backup_files"
 
 
 def get_update_at(vdp, filename):
