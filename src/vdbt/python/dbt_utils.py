@@ -9,12 +9,27 @@ COMMANDS_EXPORT = ["seed", "docs", "test", "run", "build"]
 VALID_LOG_LEVES = ["debug", "info", "warn", "error", "none"]
 
 
+def check_dbt_result(res, command):
+    """Check dbt result and raise an exception if an error occurred"""
+
+    logger = get_run_logger()
+
+    if res.result is None or res.success is False:
+        message = f"DBT failed: {command=}"
+        logger.error(message)
+        raise RuntimeError(message)
+
+    return res.result
+
+
 def run_dbt_command(args, log_level="error"):
     """Run dbt command and raise exception if a problem is encountered"""
 
     # In order to use 'prefect.logger' inside the 'dbt.callbacks' we need to export it
     logger = get_run_logger()
     log_utils.LOGGER = logger
+
+    original_command = f"dbt {' '.join(args)}"
 
     assert args, f"{args=} must have at least one element"
     export_results = args[0] in COMMANDS_EXPORT
@@ -34,4 +49,4 @@ def run_dbt_command(args, log_level="error"):
     if export_results:
         export_execution_and_run_results()
 
-    return res.result
+    return check_dbt_result(res, original_command)
