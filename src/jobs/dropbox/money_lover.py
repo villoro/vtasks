@@ -13,14 +13,16 @@ REGEX_MONEY_LOVER = (
 SCHEMA_OUT = "raw__dropbox"
 TABLE_OUT = "money_lover"
 
+FLOW_NAME = "dropbox.money_lover"
 
-@task(name="vtasks.dropbox.money_lover.get_files")
+
+@task(name=f"{FLOW_NAME}.get_files")
 def get_files(vdp):
     matches = dropbox.scan_folder_by_regex(PATH_ML, REGEX_MONEY_LOVER, vdp=vdp)
     return [x[1] for x in matches]
 
 
-@task(name="vtasks.dropbox.money_lover.export_last_file")
+@task(name=f"{FLOW_NAME}.export_last_file")
 def export_last_file(vdp, files):
     logger = get_logger()
 
@@ -34,7 +36,7 @@ def export_last_file(vdp, files):
     write_df(df, SCHEMA_OUT, TABLE_OUT, mode="append")
 
 
-@task(name="vtasks.dropbox.money_lover.remove_files")
+@task(name=f"{FLOW_NAME}.remove_files")
 def remove_files(vdp, files):
     logger = get_logger()
 
@@ -43,7 +45,7 @@ def remove_files(vdp, files):
         vdp.delete(f"{PATH_ML}/{file}")
 
 
-@flow(name="vtasks.dropbox.money_lover")
+@flow(name=f"{FLOW_NAME}")
 def export_money_lover():
     vdp = dropbox.get_vdropbox()
 

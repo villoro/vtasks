@@ -10,7 +10,7 @@ from src.common.dropbox import get_vdropbox
 from src.common.logs import get_logger
 from src.jobs.backups.tasks import BACKUP_TASKS
 
-FLOW_NAME = "vtasks.backups.clean_backups"
+FLOW_NAME = "backups.clean_backups"
 
 
 def get_backup_data(vdp, path, regex):

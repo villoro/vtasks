@@ -16,7 +16,7 @@ from src.common.paths import read_yaml
 
 BASE_PATH = str(Path(__file__).parent)
 TABLES_FILE = f"{BASE_PATH}/tables.yaml"
-FLOW_NAME = "vtasks.dropbox.export_tables"
+FLOW_NAME = "dropbox.export_tables"
 
 
 class Column(BaseModel):

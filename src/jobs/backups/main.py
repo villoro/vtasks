@@ -5,7 +5,7 @@ from src.jobs.backups.clean_backups import clean_backups
 from src.jobs.backups.copy import copy
 
 
-@flow(name="vtasks.backups")
+@flow(name="backups")
 def backup_all():
     backup_files()
     clean_backups()

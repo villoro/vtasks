@@ -24,7 +24,7 @@ COL_CRYPTO = "crypto"
 # Crypto id: cell in summary
 MAIN_CRYPTOS = {"BTC": "B9", "ETH": "C9"}
 
-FLOW_NAME = "vtasks.crypto"
+FLOW_NAME = "crypto"
 
 
 def get_market_cap(cryptos, order_magnitude=10**9):
