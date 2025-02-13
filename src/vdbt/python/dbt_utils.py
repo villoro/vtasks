@@ -5,8 +5,9 @@ from src.vdbt.python import log_utils
 from src.vdbt.python.export import export_execution_and_run_results
 from src.vdbt.python.paths import PATH_DBT
 
-COMMANDS_EXPORT = ["seed", "docs", "test", "run", "build"]
-VALID_LOG_LEVES = ["debug", "info", "warn", "error", "none"]
+COMMANDS_EXPORT = {"seed", "docs", "test", "run", "build"}
+VALID_LOG_LEVES = {"debug", "info", "warn", "error", "none"}
+COMMANDS_NO_RESULT = {"clean", "deps"}
 
 
 def check_dbt_result(res, command):
@@ -14,7 +15,11 @@ def check_dbt_result(res, command):
 
     logger = get_run_logger()
 
-    if res.result is None or res.success is False:
+    command_name = command.split()[1]
+    missing_result = res.result is None and command_name not in COMMANDS_NO_RESULT
+    logger.debug(f"{command_name=}, {res.result}, {res.success}, {missing_result=}")
+
+    if missing_result or not res.success:
         message = f"DBT failed: {command=}"
         logger.error(message)
         raise RuntimeError(message)
