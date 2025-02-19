@@ -1,8 +1,8 @@
 from datetime import date
 from pathlib import Path
 
-import oyaml as yaml
 import pandas as pd
+import yaml
 from gcsa.google_calendar import GoogleCalendar
 from gcsa.serializers.event_serializer import EventSerializer
 from prefect import flow
@@ -126,7 +126,7 @@ def query_all_calendars(calendars):
     return pd.DataFrame(events)
 
 
-@flow(name="vtasks.gcal.export")
+@flow(name=FLOW_NAME)
 def export_all_gcal():
     """Export all events as a parquet"""
 

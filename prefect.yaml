@@ -35,7 +35,7 @@ deployments:
   entrypoint: src/schedules/hourly.py:hourly
   tags: ["schedules", "hourly"]
   schedules:
-    - cron: "0 * * * *" # Every hour
+    - cron: "10 * * * *" # Every hour
 
 # ------------------------------ DBT ------------------------------------------
 - name: dbt
