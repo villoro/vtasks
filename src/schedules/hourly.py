@@ -42,11 +42,11 @@ def run_flows(flows, flow_name):
     failures = [name for name, state in results.items() if is_failure(state)]
 
     if failures:
-        msg = f"❌ {flow_name} failed ({len(failures)} {failures=})."
+        msg = f"{flow_name} failed ({len(failures)} {failures=})."
         logger.error(msg)
         return states.Failed(message=msg)
 
-    logger.info(f"✅ {flow_name} completed successfully!")
+    logger.info(f"{flow_name} completed successfully!")
     return states
 
 
