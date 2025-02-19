@@ -4,4 +4,8 @@ sources:
     description: Raw dropbox data
     tables:
       - name: battery_pixel_4a
+        loaded_at_field: _exported_at
+        freshness:
+          warn_after: {count: 15, period: day}
+          error_after: {count: 20, period: day}
       - name: money_lover
