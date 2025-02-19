@@ -126,7 +126,7 @@ def query_all_calendars(calendars):
     return pd.DataFrame(events)
 
 
-@flow(name="vtasks.gcal.export")
+@flow(name=FLOW_NAME)
 def export_all_gcal():
     """Export all events as a parquet"""
 
