@@ -21,6 +21,7 @@ EVENTS_TO_LOG = [
     "SkippingDetails",
     "StatsLine",
     "UnusedResourceConfigPath",
+    "LogFreshnessResult",
 ]
 
 

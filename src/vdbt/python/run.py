@@ -23,6 +23,13 @@ def run_debug():
     dbt_utils.run_dbt_command(["debug"])
 
 
+@task(name="dbt.export_models")
+def export_models():
+    """Export information about the present models"""
+    dbt_utils.run_dbt_command(["compile"])
+    export.export_models()
+
+
 @task(name="dbt.build")
 def build(select, exclude, store_failures):
     """Perform DBT build (seed + run + test)"""
@@ -38,11 +45,10 @@ def build(select, exclude, store_failures):
     dbt_utils.run_dbt_command(command)
 
 
-@task(name="dbt.export_models")
-def export_models():
-    """Export information about the present models"""
-    dbt_utils.run_dbt_command(["compile"])
-    export.export_models()
+@task(name="dbt.freshness")
+def freshness():
+    """Check for DBT problems"""
+    dbt_utils.run_dbt_command(["source", "freshness"])
 
 
 @flow(name="dbt")
@@ -64,6 +70,7 @@ def run_dbt(select=None, exclude=None, debug=False, store_failures=True):
         export_models()
 
     build(select, exclude, store_failures)
+    freshness()
 
 
 if __name__ == "__main__":
