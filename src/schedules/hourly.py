@@ -26,6 +26,11 @@ JOBS = {
 }
 
 
+def is_failure(state):
+    """Checks if it's a failed state"""
+    return isinstance(state, states.State) and state.is_failed()
+
+
 def run_flows(flows, flow_name):
     """Execute a list of flows, collect states, and fail if any flow fails."""
 
@@ -34,14 +39,10 @@ def run_flows(flows, flow_name):
     results = {mflow.__name__: mflow(return_state=True) for mflow in flows}
 
     # Detect failed flows
-    failures = [
-        name
-        for name, state in results.items()
-        if isinstance(state, states.State) and state.is_failed()
-    ]
+    failures = [name for name, state in results.items() if is_failure(state)]
 
     if failures:
-        msg = f"❌ {flow_name} failed ({len(failures)} flows failed, {failures=})."
+        msg = f"❌ {flow_name} failed ({len(failures)} {failures=})."
         logger.error(msg)
         return states.Failed(message=msg)
 
@@ -49,14 +50,28 @@ def run_flows(flows, flow_name):
     return states
 
 
+@flow(name=f"{FLOW_NAME}.maintain")
+def maintain():
+    name = "maintain"
+    return run_flows(JOBS[name], name)
+
+
+@flow(name=f"{FLOW_NAME}.updates")
+def updates():
+    name = "updates"
+    return run_flows(JOBS[name], name)
+
+
+@flow(name=f"{FLOW_NAME}.export")
+def export():
+    name = "export"
+    return run_flows(JOBS[name], name)
+
+
 @flow(name=FLOW_NAME)
 def hourly():
     with tags("env:pro"):
-        flows = [
-            flow(name=f"{FLOW_NAME}.{name}")(flows, name)
-            for name, flows in JOBS.items()
-        ]
-        flows.append(run_flows([run_dbt], "dbt"))
+        flows = [maintain, updates, export, run_dbt]
         return run_flows(flows, "hourly")
 
 
