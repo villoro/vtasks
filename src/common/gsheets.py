@@ -1,6 +1,9 @@
+import time
+
 import backoff
 import gspread
 import pandas as pd
+from gspread.exceptions import APIError
 
 from src.common.logs import get_logger
 from src.common.paths import get_path
@@ -25,7 +28,7 @@ def init_gdrive(force=False):
         GDRIVE = gspread.service_account(filename=PATH_GSPREADSHEET_KEY)
 
 
-def retry_on_exception(max_tries=5, exception=ConnectionError):
+def retry_on_exception(max_tries=5):
     """Decorator to apply retry logic to a function with backoff."""
 
     logger = get_logger()
@@ -37,7 +40,10 @@ def retry_on_exception(max_tries=5, exception=ConnectionError):
             logger.warning(f"[Attempt {tries}] {exc=} when calling {func.__name__}")
 
         @backoff.on_exception(
-            backoff.expo, exception, max_tries=max_tries, on_backoff=log_failure
+            backoff.expo,
+            (APIError, ConnectionError),
+            max_tries=max_tries,
+            on_backoff=log_failure,
         )
         def wrapped_func(*args, **kwargs):
             return func(*args, **kwargs)
@@ -45,7 +51,7 @@ def retry_on_exception(max_tries=5, exception=ConnectionError):
         def wrapper(*args, **kwargs):
             try:
                 return wrapped_func(*args, **kwargs)
-            except exception as exc:
+            except (APIError, ConnectionError) as exc:
                 logger.error(f"Too many attempts for '{func.__name__}' ({max_tries=})")
                 raise exc
 
@@ -78,6 +84,7 @@ def read_gdrive_sheet(doc, sheet, with_index=False, max_tries=5):
 
     @retry_on_exception(max_tries=max_tries)
     def _fetch_data():
+        time.sleep(1)  # Throttle requests
         return gsheet.get_all_records()
 
     data = _fetch_data()
