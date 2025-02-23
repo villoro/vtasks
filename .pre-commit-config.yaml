@@ -24,12 +24,3 @@ repos:
       - id: ruff
         args: [ --fix ]
       - id: ruff-format
-
-  # Poetry stuff
-  - repo: https://github.com/python-poetry/poetry
-    rev: 1.6.1 # Should match Dockerfile
-    hooks:
-    - id: poetry-check
-    - id: poetry-export
-      args: ["-f", "requirements.txt", "-o", "requirements.txt", "--without-hashes"]
-    # - id: poetry-lock # This updates packages, we might want it in the future
