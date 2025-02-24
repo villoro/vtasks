@@ -4,10 +4,10 @@ import backoff
 import gspread
 import pandas as pd
 from gspread.exceptions import APIError
-from vcrypto import export_secret
 
 from src.common.logs import get_logger
 from src.common.paths import get_path
+from src.common.secrets import export_secret
 
 PATH_GSPREADSHEET_KEY = get_path("auth/gspreadsheets.json")
 SECRET_NAME = "GSPREADSHEET_JSON"
