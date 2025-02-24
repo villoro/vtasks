@@ -53,3 +53,7 @@ def export_money_lover():
     export_last_file(vdp, files)
     # TODO: Enable this once migrated
     # remove_files(vdp, files)
+
+
+if __name__ == "__main__":
+    export_money_lover()

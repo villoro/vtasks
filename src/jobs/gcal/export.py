@@ -142,3 +142,7 @@ def export_all_gcal():
     write_df(df, SCHEMA_OUT, TABLE_OUT, as_str=True)
 
     upload_token(vdp)
+
+
+if __name__ == "__main__":
+    export_all_gcal()
