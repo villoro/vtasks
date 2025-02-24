@@ -100,3 +100,7 @@ def crypto():
 
     update_crypto_prices(mfilter)
     update_expensor(mfilter)
+
+
+if __name__ == "__main__":
+    crypto()

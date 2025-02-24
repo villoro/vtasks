@@ -18,7 +18,7 @@ definitions:
       name: default-pool
 
   version: &version
-    version: 7.0.0-alpha.6
+    version: 7.1.1
 
   # Define defaults (that can be overwritten)
   defaults: &defaults
@@ -35,7 +35,7 @@ deployments:
   entrypoint: src/schedules/hourly.py:hourly
   tags: ["schedules", "hourly"]
   schedules:
-    - cron: "0 * * * *" # Every hour
+    - cron: "0 3 * * *" # Daily at 3
 
 # ------------------------------ DBT ------------------------------------------
 - name: dbt

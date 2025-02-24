@@ -59,3 +59,7 @@ def indexa_all():
     portfolio = query_portfolio()
     df_invest, df_worth = read_invested_and_worth()
     update_invested_and_worth(mfilter, portfolio, df_invest, df_worth)
+
+
+if __name__ == "__main__":
+    indexa_all()

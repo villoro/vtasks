@@ -3,7 +3,7 @@ line-length = 100
 
 [tool.poetry]
 name = "vtasks"
-version = "7.1.0"
+version = "7.1.1"
 description = "Personal tasks scheduled with Prefect"
 authors = ["Arnau Villoro <arnau@villoro.com>"]
 maintainers = ["Arnau Villoro <arnau@villoro.com>"]
@@ -27,7 +27,7 @@ prefect = "^3.2.7"
 pyarrow = "^10.0.1"
 regex = "^2022.10.31"
 setuptools = "^75.8.0" # Manually specified to fix an odd error in prefect
-vcrypto = "^3.0.0"
+vcrypto = "^4.2.0"
 vdropbox = "^0.2.7"
 
 [tool.poetry.group.dev.dependencies]
