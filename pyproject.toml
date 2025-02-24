@@ -27,7 +27,7 @@ prefect = "^3.2.7"
 pyarrow = "^10.0.1"
 regex = "^2022.10.31"
 setuptools = "^75.8.0" # Manually specified to fix an odd error in prefect
-vcrypto = "^3.0.0"
+vcrypto = "^4.1.0"
 vdropbox = "^0.2.7"
 
 [tool.poetry.group.dev.dependencies]
