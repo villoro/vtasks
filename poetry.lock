@@ -5169,13 +5169,13 @@ standard = ["colorama (>=0.4)", "httptools (>=0.6.3)", "python-dotenv (>=0.13)",
 
 [[package]]
 name = "vcrypto"
-version = "4.1.0"
+version = "4.2.0"
 description = "Utility to easily store passwords/secrets"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "vcrypto-4.1.0-py3-none-any.whl", hash = "sha256:cba84f7d87232d821d8e35a0a7f2b6325b99a273231acba48b83f3f932decbcc"},
-    {file = "vcrypto-4.1.0.tar.gz", hash = "sha256:473ab12b76cda0ce9bca27b0570ceec58635c65b5ce1b0052915152ae480fe08"},
+    {file = "vcrypto-4.2.0-py3-none-any.whl", hash = "sha256:d01505a628449812cb51fe32d5fc5f0f23ddeea116cb8b5232debb5a48af3d75"},
+    {file = "vcrypto-4.2.0.tar.gz", hash = "sha256:1100598ef5a51424abe834283da85e2d756405544d00abc3f6d41e6c98aedcea"},
 ]
 
 [package.dependencies]
@@ -5500,4 +5500,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "5e9678bc79041f0b16432c3e5cef869d4406d36646efa9e9238f52b123b599e8"
+content-hash = "3b41ad9e0ae52e521a449a7a3f6edbbefc689d134519ea93c6d8e438e295206c"
