@@ -1,9 +1,9 @@
 import re
 
-from vcrypto import read_secret
 from vdropbox import Vdropbox
 
 from vtasks.common.logs import get_logger
+from vtasks.common.secrets import read_secret
 
 VDROPBOX = None
 

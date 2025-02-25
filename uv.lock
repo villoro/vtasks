@@ -2754,7 +2754,7 @@ wheels = [
 
 [[package]]
 name = "vdropbox"
-version = "1.0.1"
+version = "1.0.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "dropbox" },
@@ -2762,15 +2762,15 @@ dependencies = [
     { name = "oyaml" },
     { name = "pandas" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a8/7a/02668a4cb5875580b720ed4c0a440d852089529c40c2fced37172cdc306c/vdropbox-1.0.1.tar.gz", hash = "sha256:7462a28142552123d7fb117a9646e16146c2d9af8ee00173a420c5977818f387", size = 3769 }
+sdist = { url = "https://files.pythonhosted.org/packages/2c/bc/8f3e23d7c95b7ee4c2e11628d6d64a60068559cde8ed1361e6afe996919b/vdropbox-1.0.2.tar.gz", hash = "sha256:c4d2efba32cce21ad7fb09750528f0a7a26e4a8907df8385d16bcdb3e672ea12", size = 3900 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/49/c4/db15ba5086ab1f342c4bfdfc863db19f1e77664350b5f97dbf35a19ef8bd/vdropbox-1.0.1-py3-none-any.whl", hash = "sha256:c8914087e2a8b97504d6e8468e7126852e91f82c69e8238d7fe10bb748f5b409", size = 3889 },
+    { url = "https://files.pythonhosted.org/packages/29/be/59c852a2d2cfdcdada5ddb1e6421e037fe811b4a9cf0f31395f8f8d2cbb8/vdropbox-1.0.2-py3-none-any.whl", hash = "sha256:3409cdf9486faa1b99267a81114f0d94dfbb8cdfe06e0f2c264cc5be655929d3", size = 4124 },
 ]
 
 [[package]]
 name = "vtasks"
 version = "7.1.1"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "backoff" },
     { name = "cryptocompare" },
@@ -2801,7 +2801,7 @@ requires-dist = [
     { name = "regex", specifier = ">=2024.11.6" },
     { name = "setuptools", specifier = ">=75.8.0" },
     { name = "vcrypto", specifier = ">=4.1.0" },
-    { name = "vdropbox", specifier = "==1.0.1" },
+    { name = "vdropbox", specifier = "==1.0.2" },
 ]
 
 [[package]]

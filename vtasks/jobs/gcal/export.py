@@ -7,12 +7,12 @@ from gcsa.google_calendar import GoogleCalendar
 from gcsa.serializers.event_serializer import EventSerializer
 from prefect import flow
 from prefect import task
-from vcrypto import export_secret
 
 from vtasks.common.dropbox import get_vdropbox
 from vtasks.common.duck import write_df
 from vtasks.common.logs import get_logger
 from vtasks.common.paths import get_path
+from vtasks.common.secrets import export_secret
 
 
 TOKEN_FILENAME = "token.pickle"

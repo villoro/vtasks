@@ -1,9 +1,9 @@
 from datetime import datetime
 
 import duckdb
-from vcrypto import read_secret
 
 from vtasks.common.logs import get_logger
+from vtasks.common.secrets import read_secret
 from vtasks.common.texts import remove_extra_spacing
 
 CON = None
