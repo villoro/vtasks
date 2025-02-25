@@ -2738,7 +2738,7 @@ wheels = [
 
 [[package]]
 name = "vcrypto"
-version = "4.1.0"
+version = "4.2.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cryptography" },
@@ -2747,9 +2747,9 @@ dependencies = [
     { name = "pyyaml" },
     { name = "ruff" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/43/9d/03b64dc7f50d501a1b869e420871724ebe2d0b73e839fe15471eab34ae32/vcrypto-4.1.0.tar.gz", hash = "sha256:473ab12b76cda0ce9bca27b0570ceec58635c65b5ce1b0052915152ae480fe08", size = 8453 }
+sdist = { url = "https://files.pythonhosted.org/packages/f6/50/753d86614bcc865cbd06af11e44499cfe32e48149645ecc42c04620f110c/vcrypto-4.2.1.tar.gz", hash = "sha256:bcd65142b11452aa93d23d0cddce6a1fe8bf7f830145f4b7f586693a1937de29", size = 8173 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/77/ec/5b193fce01cece67fc4384e70a8f42cbf26118506e621b00e88cb617cef2/vcrypto-4.1.0-py3-none-any.whl", hash = "sha256:cba84f7d87232d821d8e35a0a7f2b6325b99a273231acba48b83f3f932decbcc", size = 6207 },
+    { url = "https://files.pythonhosted.org/packages/5c/f5/235b7d4945773d1d839e8ba1646169877648fe0c3b9dfbabe3fe3b5288c6/vcrypto-4.2.1-py3-none-any.whl", hash = "sha256:538c810d46a8f231ad6974522ba3cc4eae00fa76585b494d9438f8e5635c9f97", size = 6367 },
 ]
 
 [[package]]
@@ -2800,7 +2800,7 @@ requires-dist = [
     { name = "pyarrow", specifier = ">=19.0.1" },
     { name = "regex", specifier = ">=2024.11.6" },
     { name = "setuptools", specifier = ">=75.8.0" },
-    { name = "vcrypto", specifier = ">=4.1.0" },
+    { name = "vcrypto", specifier = ">=4.2.1" },
     { name = "vdropbox", specifier = "==1.0.2" },
 ]
 

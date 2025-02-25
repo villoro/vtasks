@@ -39,6 +39,6 @@ dependencies = [
     "pyarrow>=19.0.1",
     "regex>=2024.11.6",
     "setuptools>=75.8.0",
-    "vcrypto>=4.1.0",
+    "vcrypto>=4.2.1",
     "vdropbox==1.0.2",
 ]
