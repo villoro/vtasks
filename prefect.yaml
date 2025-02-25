@@ -32,7 +32,7 @@ deployments:
 - name: _hourly
   <<: *defaults
   description: Do all hourly tasks
-  entrypoint: src/schedules/hourly.py:hourly
+  entrypoint: vtasks/schedules/hourly.py:hourly
   tags: ["schedules", "hourly"]
   schedules:
     - cron: "0 3 * * *" # Daily at 3
@@ -41,50 +41,50 @@ deployments:
 - name: dbt
   <<: *defaults
   description: Run DBT
-  entrypoint: src/vdbt/python/run.py:run_dbt
+  entrypoint: vtasks/vdbt/python/run.py:run_dbt
   tags: ["dbt"]
 
 # ------------------------------ MAINTAIN -------------------------------------
 - name: backups.all
   <<: *defaults
   description: Do all backups tasks
-  entrypoint: src/jobs/backups/main.py:backup_all
+  entrypoint: vtasks/jobs/backups/main.py:backup_all
   tags: ["backups", "maintain"]
 
 # ------------------------------ UPDATES --------------------------------------
 - name: crypto.all
   <<: *defaults
   description: Update all crypto related information
-  entrypoint: src/jobs/crypto/main.py:crypto
+  entrypoint: vtasks/jobs/crypto/main.py:crypto
   tags: ["crypto", "updates"]
 
 - name: indexa.all
   <<: *defaults
   description: Update all indexa related information
-  entrypoint: src/jobs/indexa/main.py:indexa_all
+  entrypoint: vtasks/jobs/indexa/main.py:indexa_all
   tags: ["crypto", "updates"]
 
 # ------------------------------ EXTRACTIONS ----------------------------------
 - name: dropbox.export_tables
   <<: *defaults
   description: Export dropbox tables
-  entrypoint: src/jobs/dropbox/export_tables.py:export_dropbox_tables
+  entrypoint: vtasks/jobs/dropbox/export_tables.py:export_dropbox_tables
   tags: ["dropbox", "extract"]
 
 - name: dropbox.money_lover
   <<: *defaults
   description: Export Money Lover table
-  entrypoint: src/jobs/dropbox/money_lover.py:export_money_lover
+  entrypoint: vtasks/jobs/dropbox/money_lover.py:export_money_lover
   tags: ["dropbox", "extract"]
 
 - name: gcal.export
   <<: *defaults
   description: Export Google calendar data
-  entrypoint: src/jobs/gcal/export.py:export_all_gcal
+  entrypoint: vtasks/jobs/gcal/export.py:export_all_gcal
   tags: ["gcal", "extract"]
 
 - name: gsheets.export
   <<: *defaults
   description: Export Google Sheets data
-  entrypoint: src/jobs/gsheets/export_tables.py:export_gsheets_tables
+  entrypoint: vtasks/jobs/gsheets/export_tables.py:export_gsheets_tables
   tags: ["gsheets", "extract"]
