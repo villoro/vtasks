@@ -45,10 +45,10 @@ jobs:
 
     # TODO: migrate to uv
     - if: steps.changes.outputs.code == 'true'
-      name: Set up Python 3.10
+      name: Set up Python 3.10.16
       uses: actions/setup-python@v4
       with:
-        python-version: 3.10
+        python-version: 3.10.16
 
     - if: steps.changes.outputs.code == 'true'
       name: Install dependencies
