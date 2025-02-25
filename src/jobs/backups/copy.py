@@ -17,3 +17,7 @@ def copy():
 
         name = f"{FLOW_NAME}.{origin}-{destination}"
         task(name=name)(copy_task.copy)(vdp)
+
+
+if __name__ == "__main__":
+    copy()

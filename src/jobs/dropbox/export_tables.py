@@ -76,3 +76,7 @@ def export_dropbox_tables():
 
     for table in tables:
         task(name=f"{FLOW_NAME}.{table.table_out}")(export_table)(vdp, table)
+
+
+if __name__ == "__main__":
+    export_dropbox_tables()

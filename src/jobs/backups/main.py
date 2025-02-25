@@ -10,3 +10,7 @@ def backup_all():
     backup_files()
     clean_backups()
     copy()
+
+
+if __name__ == "__main__":
+    backup_all()

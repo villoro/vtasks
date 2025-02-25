@@ -112,3 +112,7 @@ def clean_backups():
     df = get_all_backups(vdp)
     df = tag_duplicates(df)
     delete_duplicates(vdp, df)
+
+
+if __name__ == "__main__":
+    clean_backups()
