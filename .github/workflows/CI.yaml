@@ -39,7 +39,7 @@ jobs:
       with:
         filters: |
           code:
-            - 'src/**'
+            - 'vtasks/**'
             - 'poetry.lock'
             - '.github/workflows/**'
 
@@ -58,4 +58,4 @@ jobs:
       name: Tests
       env:
         MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
-      run: python src/schedules/hourly.py
+      run: python vtasks/schedules/hourly.py
