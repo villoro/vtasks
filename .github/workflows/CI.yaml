@@ -25,6 +25,11 @@ jobs:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         sync-labels: true
 
+  check_version:
+    runs-on: ubuntu-latest
+    steps:
+    -  uses: villoro/vhooks/check_version@1.0.0
+
   integration_tests:
     runs-on: ubuntu-latest
     steps:
@@ -40,10 +45,10 @@ jobs:
 
     # TODO: migrate to uv
     - if: steps.changes.outputs.code == 'true'
-      name: Set up Python 3.10.0
+      name: Set up Python 3.10
       uses: actions/setup-python@v4
       with:
-        python-version: 3.10.0
+        python-version: 3.10
 
     - if: steps.changes.outputs.code == 'true'
       name: Install dependencies
