@@ -38,24 +38,19 @@ jobs:
             - 'poetry.lock'
             - '.github/workflows/**'
 
-    # Python version must match the one defined in poetry (.lock file)
+    # TODO: migrate to uv
     - if: steps.changes.outputs.code == 'true'
-      name: Set up Python 3.11.0
+      name: Set up Python 3.10.0
       uses: actions/setup-python@v4
       with:
-        python-version: 3.11.0
-
-    # Poetry version must match the one defined in heroku (with an env var)
-    - if: steps.changes.outputs.code == 'true'
-      name: Install poetry
-      run: pip install poetry==1.6.1
+        python-version: 3.10.0
 
     - if: steps.changes.outputs.code == 'true'
       name: Install dependencies
-      run: poetry install --without dev
+      run: pip install -r requirements.txt
 
     - if: steps.changes.outputs.code == 'true'
       name: Tests
       env:
         MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
-      run: poetry run python src/schedules/hourly.py
+      run: python src/schedules/hourly.py
