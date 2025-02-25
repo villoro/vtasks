@@ -16,7 +16,9 @@ def get_vdropbox():
     global VDROPBOX
     if VDROPBOX is None:
         logger.info("Initializing Vdropbox connector")
-        VDROPBOX = Vdropbox(read_secret("DROPBOX_TOKEN"), log=get_logger())
+        VDROPBOX = Vdropbox(read_secret("DROPBOX_TOKEN"), logger=logger)
+
+    VDROPBOX.logger = logger
 
     return VDROPBOX
 
