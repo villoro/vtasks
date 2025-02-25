@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented here.
 
+## [7.2] - 2025-02-25 ⚡ Migration from Poetry to uv
+- **Dependency Management:** Replaced [Poetry](https://github.com/python-poetry/poetry) with [uv](https://github.com/astral-sh/uv) for faster dependency resolution and improved package management.
+- **Performance Boost:** Significantly reduced install and dependency resolution times.
+
 ## [7.1] - 2025-02-23 🚀 Upgraded to Prefect 3
 - **Prefect Upgrade:** Migrated from **Prefect 2.20** to **Prefect 3.2**, leveraging new API improvements and performance enhancements.
 

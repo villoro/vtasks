@@ -1,6 +1,6 @@
 [project]
 name = "vtasks"
-version = "7.1.1"
+version = "7.2.0"
 description = "Personal tasks scheduled with Prefect"
 authors = [{ name = "Arnau Villoro", email = "arnau@villoro.com" }]
 maintainers = [{ name = "Arnau Villoro", email = "arnau@villoro.com" }]
