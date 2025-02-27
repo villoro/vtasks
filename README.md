@@ -34,9 +34,47 @@ The pipeline is orchestrated with Prefect, using flows and tasks to manage depen
  │   └── indexa      # Indexa Capital data extraction
  ├── schedules       # Prefect scheduling logic
  │   └─── hourly.py  # Main schedule triggering all jobs hourly
- ├── vdbt            # dbt transformations for data modeling
- └─── tests          # Test cases for pipeline components
+ └── vdbt            # dbt project for data modeling
 ```
+
+## 🚀 How to Run Locally
+
+> **Note**  
+> This project uses **UV** for dependency management and execution.
+
+### Initial Setup
+
+1. **Install UV** (if not installed):
+   ```bash
+   pip install uv
+   ```
+2. **Set up the virtual environment:**
+   ```bash
+   uv venv --python=3.11 .venv
+   ```
+3. **Install dependencies (in editable mode for local development):**
+   ```bash
+   uv pip install --editable .
+   ```
+4. **Ensure pre-commit hooks are installed:**
+   ```bash
+   pre-commit install
+   ```
+
+### Running Prefect Schedules
+
+To run the main **hourly** schedule manually:
+```bash
+uv run python -m vtasks.schedules.hourly
+```
+
+### Running Individual Jobs (Subflows)
+
+To run a specific job, use **module-based execution**:
+```bash
+uv run python -m vtasks.jobs.dropbox.export_tables
+```
+This ensures that **relative imports** work correctly.
 
 ## Deployment
 
