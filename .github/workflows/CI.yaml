@@ -13,9 +13,9 @@ jobs:
   pre_commit:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
-    - uses: pre-commit/action@v3.0.0
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - uses: pre-commit/action@v3.0.0
 
   labeler:
     runs-on: ubuntu-latest
@@ -28,34 +28,35 @@ jobs:
   check_version:
     runs-on: ubuntu-latest
     steps:
-    -  uses: villoro/vhooks/check_version@1.0.0
+      - uses: villoro/vhooks/check_version@1.0.0
 
   integration_tests:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: dorny/paths-filter@v2
-      id: changes
-      with:
-        filters: |
-          code:
-            - 'vtasks/**'
-            - 'poetry.lock'
-            - '.github/workflows/**'
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            code:
+              - 'vtasks/**'
+              - 'pyproject.toml'
+              - '.github/workflows/**'
 
-    # TODO: migrate to uv
-    - if: steps.changes.outputs.code == 'true'
-      name: Set up Python 3.10.16
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.10.16
+      - if: steps.changes.outputs.code == 'true'
+        name: Install UV
+        run: pip install uv
 
-    - if: steps.changes.outputs.code == 'true'
-      name: Install dependencies
-      run: pip install -r requirements.txt
+      - if: steps.changes.outputs.code == 'true'
+        name: Set up virtual environment
+        run: uv venv .venv
 
-    - if: steps.changes.outputs.code == 'true'
-      name: Tests
-      env:
-        MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
-      run: python vtasks/schedules/hourly.py
+      - if: steps.changes.outputs.code == 'true'
+        name: Install dependencies
+        run: uv pip install --editable .
+
+      - if: steps.changes.outputs.code == 'true'
+        name: Tests
+        env:
+          MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }} # TODO: drop this
+        run: uv run python -m vtasks.schedules.hourly

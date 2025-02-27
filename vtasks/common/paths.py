@@ -10,6 +10,11 @@ from vtasks.common.logs import get_logger
 PATH_ROOT = Path(__file__).parent.parent.parent
 
 
+# Needed for storing some tokens
+PATH_AUTH = PATH_ROOT / "auth"
+PATH_AUTH.mkdir(parents=True, exist_ok=True)
+
+
 def get_path(path_relative):
     """Returns absolute path using PATH_ROOT"""
 
