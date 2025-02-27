@@ -3,24 +3,38 @@ from datetime import datetime
 import duckdb
 
 from vtasks.common.logs import get_logger
+from vtasks.common.paths import get_duckdb_path
 from vtasks.common.secrets import read_secret
 from vtasks.common.texts import remove_extra_spacing
 
 CON = None
-DB_DUCKDB = "md:villoro?motherduck_token={token}"
+DB_DUCKDB_MD = "md:villoro?motherduck_token={token}"
 SECRET_MD = "MOTHERDUCK_TOKEN"
 
 
-def init_duckdb():
-    """Connect to duckdb"""
+def init_duckdb(use_motherduck=False):
+    """
+    Initialize a DuckDB connection, choosing between MotherDuck or a local file.
 
+    :param use_motherduck: If True, always connect to MotherDuck.
+                           If False, use local DuckDB based on environment.
+    :return: A DuckDB connection.
+    """
     logger = get_logger()
-
     global CON
+
     if CON is None:
-        token = read_secret(SECRET_MD)
-        logger.info(f"Connecting to {DB_DUCKDB=}")
-        CON = duckdb.connect(DB_DUCKDB.format(token=token))
+        if use_motherduck:
+            # Use MotherDuck (GitHub Actions default)
+            token = read_secret(SECRET_MD)
+            db_path = DB_DUCKDB_MD.format(token=token)
+            logger.info("Connecting to MotherDuck")
+        else:
+            # Use local DuckDB file
+            db_path = get_duckdb_path("raw")
+            logger.info(f"Connecting to local DuckDB at {db_path}")
+
+        CON = duckdb.connect(db_path)
 
     return CON
 

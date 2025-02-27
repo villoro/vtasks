@@ -1,3 +1,5 @@
+import os
+import platform
 from pathlib import Path
 
 import yaml
@@ -9,6 +11,21 @@ from vtasks.common.logs import get_logger
 #   /vtasks/common/paths.py
 PATH_ROOT = Path(__file__).parent.parent.parent
 
+PATH_DATA_NAS = Path("/mnt/duckdb")
+FOLDER_DUCKDB_LOCAL = ".duckdb"
+
+
+def infer_environment():
+    """Detects whether the script is running on GitHub Actions, locally, or on the NAS."""
+    if "GITHUB_ACTIONS" in os.environ:
+        return "github"
+    elif platform.system() == "Windows":
+        return "local"
+    elif PATH_DATA_NAS.exists():
+        return "nas"
+    else:
+        return "unknown"
+
 
 def get_path(path_relative):
     """Returns absolute path using PATH_ROOT"""
@@ -19,6 +36,31 @@ def get_path(path_relative):
         path_out /= x
 
     return str(path_out)
+
+
+def get_duckdb_path(db_name):
+    """
+    Returns the correct DuckDB file path based on the environment.
+
+    :param db_name: The name of the DuckDB database (e.g., "raw" or "clean").
+    :return: Absolute path to the DuckDB file.
+    """
+    env = infer_environment()
+
+    if env == "github" or env == "local":
+        duckdb_dir = PATH_ROOT / FOLDER_DUCKDB_LOCAL
+    elif env == "nas":
+        duckdb_dir = PATH_DATA_NAS
+    else:
+        raise RuntimeError(
+            "Environment not recognized, unable to determine DuckDB path."
+        )
+
+    # Ensure directory exists for local testing
+    if env in ["github", "local"]:
+        duckdb_dir.mkdir(parents=True, exist_ok=True)
+
+    return str(duckdb_dir / f"{db_name}.duckdb")
 
 
 def read_yaml(filename, encoding="utf8", silent=False):
