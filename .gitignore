@@ -51,8 +51,7 @@ dist/
 **.ipynb
 
 # Auth jsons
-auth/*
-!auth/info.txt
+auth/**
 
 # Certificates
 vtasks/certificates/
