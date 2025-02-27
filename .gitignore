@@ -51,18 +51,17 @@ dist/
 **.ipynb
 
 # Auth jsons
-auth/*
-!auth/info.txt
+auth/**
 
 # Certificates
-src/certificates/
+vtasks/certificates/
 
 # Data files
 scripts/subs/*.parquet
 
 # DBT logs
-src/logs/**
-src/vdbt/logs/**
+vtasks/logs/**
+vtasks/vdbt/logs/**
 logs/**
 
 # Duckdb data

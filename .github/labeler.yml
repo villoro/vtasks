@@ -1,38 +1,38 @@
 docs:
 - README.md
 - images/**
-- src/**.md
+- vtasks/**.md
 
 CI-CD:
 - .github/**
 - .pre-commit-config.yaml
 
 j/backups:
-- src/jobs/backups/**
+- vtasks/jobs/backups/**
 
 j/dropbox:
-- src/jobs/dropbox/**
+- vtasks/jobs/dropbox/**
 
 j/gcal:
-- src/jobs/gcal/**
+- vtasks/jobs/gcal/**
 
 j/gsheets:
-- src/jobs/gsheets/**
+- vtasks/jobs/gsheets/**
 
 dbt:
-- src/vdbt/**
+- vtasks/vdbt/**
 
 l/staging:
-- src/vdbt/models/staging/**
+- vtasks/vdbt/models/staging/**
 
 l/core:
-- src/vdbt/models/core/**
+- vtasks/vdbt/models/core/**
 
 l/marts:
-- src/vdbt/models/marts/**
+- vtasks/vdbt/models/marts/**
 
 common:
-- src/common/**
+- vtasks/common/**
 
 scripts:
 - scripts/*
