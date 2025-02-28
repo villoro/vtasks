@@ -66,4 +66,4 @@ vtasks/vdbt/logs/**
 logs/**
 
 # Duckdb data
-.duckdb/**
+.duckdb/
