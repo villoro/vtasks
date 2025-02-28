@@ -27,6 +27,7 @@ with_moving_averages AS (
             ORDER BY start_day
             ROWS BETWEEN 29 PRECEDING AND CURRENT ROW
         )
+    ORDER BY 1 DESC
 )
 
 SELECT *
