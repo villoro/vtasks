@@ -52,6 +52,7 @@ dist/
 
 # Auth jsons
 auth/**
+.auth/**
 
 # Certificates
 vtasks/certificates/

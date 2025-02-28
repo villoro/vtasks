@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: marts_gcal__periods_stats
+    description: >
+      Aggregates total duration hours for different time windows 
+      (current week, current month, current year, last week, last month, last year)
+      per calendar, based on daily event statistics.
+
+    columns:
+      - name: calendar_name
+        description: Name of the calendar from which the event originated
+      - name: time_window
+        description: >
+          The time period for which the duration is aggregated. 
+          Possible values: 'current_week', 'current_month', 'current_year', 
+          'last_week', 'last_month', 'last_year'
+      - name: total_duration
+        description: Total duration of events (in hours) for the given calendar and time window
+      - name: num_days
+        description: Number of days included in the respective time window

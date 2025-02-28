@@ -10,7 +10,7 @@ daily_stats AS (
         calendar_name,
 
         -------- measures
-        sum(duration_hours) AS duration_hours
+        round(sum(duration_hours), 2) AS duration_hours
     FROM events
     WHERE NOT is_whole_day_event
     GROUP BY ALL
