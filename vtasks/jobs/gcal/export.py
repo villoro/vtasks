@@ -1,4 +1,5 @@
 from datetime import date
+from datetime import timedelta
 from pathlib import Path
 
 import pandas as pd
@@ -17,7 +18,7 @@ from vtasks.common.secrets import export_secret
 
 TOKEN_FILENAME = "token.pickle"
 
-PATH_GCAL_JSON = get_path("auth/gcal.json")
+PATH_GCAL_JSON = get_path(".auth/gcal.json")
 PATH_TOKEN_LOCAL = get_path(f"auth/{TOKEN_FILENAME}")
 
 PATH_GCAL = "/Aplicaciones/gcalendar"
@@ -30,6 +31,7 @@ PATH_CALENDARS = f"{BASE_PATH}/calendars.yaml"
 FLOW_NAME = "gcal"
 
 MIN_DATE = date(2011, 11, 5)
+MAX_DATE_DEFAULT = date.today() + timedelta(days=1)
 
 
 @task(name=f"{FLOW_NAME}.download_token")
@@ -94,7 +96,7 @@ def serialize_event(name, event):
     }
 
 
-def query_calendar(name, url, end=date.today(), start=MIN_DATE):
+def query_calendar(name, url, start=MIN_DATE, end=MAX_DATE_DEFAULT):
     """Get events from one calendar"""
 
     logger = get_logger()

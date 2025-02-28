@@ -11,10 +11,7 @@ WITH filtered_data AS (
 
 with_moving_averages AS (
     SELECT
-        -------- dims
         start_day,
-
-        -------- measures
         duration_hours AS total_hours,
         AVG(duration_hours) OVER (
             PARTITION BY calendar_name
@@ -28,7 +25,19 @@ with_moving_averages AS (
         ) AS moving_avg_30_days
     FROM filtered_data
     ORDER BY 1 DESC
+),
+
+values_rounded AS (
+    SELECT
+        -------- dims
+        start_day,
+
+        -------- measures
+        round(total_hours, 2) AS total_hours,
+        round(moving_avg_7_days, 2) AS moving_avg_7_days,
+        round(moving_avg_30_days, 2) AS moving_avg_30_days
+    FROM with_moving_averages
 )
 
 SELECT *
-FROM with_moving_averages
+FROM values_rounded
