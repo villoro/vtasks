@@ -11,7 +11,11 @@ WITH filtered_data AS (
 
 with_moving_averages AS (
     SELECT
+        -------- dims
         start_day,
+
+        -------- measures
+        duration_hours AS total_hours,
         AVG(duration_hours) OVER (
             PARTITION BY calendar_name
             ORDER BY start_day
