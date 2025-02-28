@@ -18,8 +18,8 @@ from vtasks.common.secrets import export_secret
 
 TOKEN_FILENAME = "token.pickle"
 
-PATH_GCAL_JSON = get_path(".auth/gcal.json")
-PATH_TOKEN_LOCAL = get_path(f"auth/{TOKEN_FILENAME}")
+PATH_GCAL_JSON = get_path("auth/gcal.json")
+PATH_TOKEN_LOCAL = get_path(f".auth/{TOKEN_FILENAME}")
 
 PATH_GCAL = "/Aplicaciones/gcalendar"
 SCHEMA_OUT = "raw__gcal"
