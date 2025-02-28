@@ -32,7 +32,7 @@ def init_duckdb(use_motherduck=False):
         else:
             # Use local DuckDB file
             db_path = get_duckdb_path("raw")
-            logger.info(f"Connecting to local DuckDB at {db_path}")
+            logger.info(f"Connecting to local DuckDB at {db_path=}")
 
         CON = duckdb.connect(db_path)
 

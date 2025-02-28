@@ -65,7 +65,7 @@ def get_duckdb_path(db_name):
     if env in ["github", "local"]:
         duckdb_dir.mkdir(parents=True, exist_ok=True)
 
-    return str(duckdb_dir / f"{db_name}.duckdb")
+    return str(duckdb_dir / f"{db_name}.duckdb").replace("\\", "/")
 
 
 def read_yaml(filename, encoding="utf8", silent=False):
