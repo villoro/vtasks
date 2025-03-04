@@ -162,3 +162,48 @@ def write_df(
         raise ValueError(f"Unsupported {mode=}")
 
     return True
+
+
+def sync_duckdb(src_md=True, schema_prefix="raw__"):
+    """
+    Sync tables between MotherDuck and local DuckDB.
+
+    Args:
+        src_md (bool): If True, copies from MotherDuck → Local. If False, copies from Local → MotherDuck.
+        schema_prefix (str): Only copy schemas that start with this prefix (default: "raw__").
+    """
+    logger = get_logger()
+    direction = "MotherDuck → Local" if src_md else "Local → MotherDuck"
+    logger.info(f"Starting DuckDB sync {direction=} where {schema_prefix=}")
+
+    # Source and destination connections
+    src_con = init_duckdb(use_md=src_md)
+    dest_con = init_duckdb(use_md=not src_md)
+
+    # Get all tables from the source DuckDB
+    df_tables = src_con.execute("SHOW ALL TABLES").df()
+
+    for _, row in df_tables.iterrows():
+        schema, table = row["schema"], row["name"]
+        if not schema.startswith(schema_prefix):
+            continue  # Skip schemas that don't match the prefix
+
+        full_table_name = f"{schema}.{table}"
+        logger.info(f"Syncing {full_table_name=}")
+
+        # Read data from source DuckDB
+        query = f"SELECT * FROM {full_table_name}"
+        df_duck = src_con.execute(query).df()  # Fetch table data as a Pandas DataFrame
+
+        # Ensure schema exists in destination
+        dest_con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
+
+        # Write data to destination using CREATE OR REPLACE TABLE
+        logger.info(f"Writing {len(df_duck)} rows to {full_table_name=}")
+        dest_con.execute(
+            f"CREATE OR REPLACE TABLE {full_table_name} AS SELECT * FROM df_duck"
+        )
+
+        logger.info(f"Copied table {full_table_name=} successfully")
+
+    logger.info("DuckDB sync completed successfully")
