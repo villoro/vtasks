@@ -51,6 +51,12 @@ deployments:
   entrypoint: vtasks/jobs/backups/main.py:backup_all
   tags: ["backups", "maintain"]
 
+- name: maintain.sync_duckdb
+  <<: *defaults
+  description: Do all backups tasks
+  entrypoint: vtasks/jobs/common/duck.py:sync_duckdb
+  tags: ["backups", "maintain"]
+
 # ------------------------------ UPDATES --------------------------------------
 - name: crypto.all
   <<: *defaults

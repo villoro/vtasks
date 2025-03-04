@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import duckdb
+from prefect import flow
 
 from vtasks.common.logs import get_logger
 from vtasks.common.paths import get_duckdb_path
@@ -181,7 +182,8 @@ def write_df(
     return True
 
 
-def sync_duckdb(src_md=True, schema_prefix="raw__"):
+@flow(name="maintain.sync_duckdb")
+def sync_duckdb(src_md: bool = True, schema_prefix: str = "raw__"):
     """
     Sync tables between MotherDuck and local DuckDB.
 
