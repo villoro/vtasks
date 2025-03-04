@@ -1,6 +1,7 @@
 sources:
   - name: raw__gsheets
     tags: [gsheets]
+    database: raw
     description: Raw Google Sheets data
     tables:
       - name: accounts

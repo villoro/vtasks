@@ -54,7 +54,7 @@ deployments:
 - name: maintain.sync_duckdb
   <<: *defaults
   description: Do all backups tasks
-  entrypoint: vtasks/jobs/common/duck.py:sync_duckdb
+  entrypoint: vtasks/common/duck.py:sync_duckdb
   tags: ["backups", "maintain"]
 
 # ------------------------------ UPDATES --------------------------------------
