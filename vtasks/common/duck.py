@@ -35,10 +35,13 @@ def init_duckdb(use_md=False):
     return CON
 
 
-def query_ddb(query, silent=False, use_md=False):
+def query_ddb(query, df_duck=None, silent=False, use_md=False):
     con = init_duckdb(use_md)
     logger = get_logger()
     log_func = logger.debug if silent else logger.info
+
+    if df_duck is not None:
+        logger.debug(f"Using the variable `df_duck` for the query {df_duck.shape=}")
 
     log_func(f"Querying duckdb ({use_md=}) query='{remove_extra_spacing(query)}'")
     return con.execute(query)
@@ -85,7 +88,7 @@ def _merge_table(df_input, schema, table, pk, use_md=False):
     temp_table_name = f"_temp_{table}"
     logger.info(f"Creating temporal table '{temp_table_name}'")
     query = (
-        f"CREATE OR REPLACE TEMPORARY TABLE {temp_table_name} AS SELECT * FROM df_md"
+        f"CREATE OR REPLACE TEMPORARY TABLE {temp_table_name} AS SELECT * FROM df_duck"
     )
     query_ddb(query, df_input, silent=True, use_md=use_md)
 
@@ -122,38 +125,38 @@ def write_df(
     con = init_duckdb(use_md)
     logger = get_logger()
 
-    df_md = df_input.copy()
+    df_duck = df_input.copy()
 
     if as_str:
         logger.debug("Casting all columns to string")
-        df_md = df_md.astype(str)
+        df_duck = df_duck.astype(str)
 
-    df_md["_exported_at"] = datetime.now()
-    df_md["_n_updates"] = 0
+    df_duck["_exported_at"] = datetime.now()
+    df_duck["_n_updates"] = 0
 
     table_name = f"{schema}.{table}"
-    logger.info(f"Writting {len(df_input)} rows to {table_name=} ({mode=})")
+    logger.info(f"Writting {len(df_input)} rows to {table_name=} ({mode=}, {use_md=})")
 
     con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
 
     if not table_exists(schema, table, silent=True):
         logger.info(f"Creating {table_name=} since it doesn't exist")
-        query = f"CREATE TABLE {table_name} AS SELECT * FROM df_md"
-        query_ddb(query, df_md, silent=True, use_md=use_md)
+        query = f"CREATE TABLE {table_name} AS SELECT * FROM df_duck"
+        query_ddb(query, df_duck, silent=True, use_md=use_md)
         return True
 
     if mode == "overwrite":
         logger.info(f"Overwriting {table_name=}")
-        query = f"CREATE OR REPLACE TABLE {table_name} AS SELECT * FROM df_md"
-        query_ddb(query, df_md, silent=True, use_md=use_md)
+        query = f"CREATE OR REPLACE TABLE {table_name} AS SELECT * FROM df_duck"
+        query_ddb(query, df_duck, silent=True, use_md=use_md)
 
     elif mode == "append":
         logger.info(f"Appending data to {table_name=}")
-        query = f"INSERT INTO {table_name} SELECT * FROM df_md"
-        query_ddb(query, df_md, silent=True, use_md=use_md)
+        query = f"INSERT INTO {table_name} SELECT * FROM df_duck"
+        query_ddb(query, df_duck, silent=True, use_md=use_md)
 
     elif mode == "merge":
-        _merge_table(df_md, schema, table, pk, use_md=use_md)
+        _merge_table(df_duck, schema, table, pk, use_md=use_md)
 
     else:
         raise ValueError(f"Unsupported {mode=}")
