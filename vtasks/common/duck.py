@@ -7,7 +7,9 @@ from vtasks.common.paths import get_duckdb_path
 from vtasks.common.secrets import read_secret
 from vtasks.common.texts import remove_extra_spacing
 
-CON = None
+CON_MD = None
+CON_LOCAL = None
+
 DB_DUCKDB_MD = "md:villoro?motherduck_token={token}"
 SECRET_MD = "MOTHERDUCK_TOKEN"
 
@@ -17,22 +19,25 @@ def init_duckdb(use_md=False):
     Initialize a DuckDB connection, choosing between MotherDuck or a local file.
     """
     logger = get_logger()
-    global CON
+    global CON_MD
+    global CON_LOCAL
 
-    if CON is None:
-        if use_md:
-            # Use MotherDuck (GitHub Actions default)
-            token = read_secret(SECRET_MD)
-            db_path = DB_DUCKDB_MD.format(token=token)
-            logger.info("Connecting to MotherDuck")
-        else:
-            # Use local DuckDB file
-            db_path = get_duckdb_path("raw")
-            logger.info(f"Connecting to local DuckDB at {db_path=}")
+    if use_md and CON_MD is None:
+        # Use MotherDuck (GitHub Actions default)
+        token = read_secret(SECRET_MD)
+        db_path = DB_DUCKDB_MD.format(token=token)
+        logger.info("Connecting to MotherDuck")
 
-        CON = duckdb.connect(db_path)
+        CON_MD = duckdb.connect(db_path)
+        return CON_MD
 
-    return CON
+    if not use_md and CON_LOCAL is None:
+        # Use local DuckDB file
+        db_path = get_duckdb_path("raw")
+        logger.info(f"Connecting to local DuckDB at {db_path=}")
+
+        CON_LOCAL = duckdb.connect(db_path)
+        return CON_LOCAL
 
 
 def query_ddb(query, df_duck=None, silent=False, use_md=False):
