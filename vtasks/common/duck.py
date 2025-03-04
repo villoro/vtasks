@@ -14,30 +14,42 @@ DB_DUCKDB_MD = "md:villoro?motherduck_token={token}"
 SECRET_MD = "MOTHERDUCK_TOKEN"
 
 
-def init_duckdb(use_md=False):
-    """
-    Initialize a DuckDB connection, choosing between MotherDuck or a local file.
-    """
+def _init_motherduck():
     logger = get_logger()
     global CON_MD
-    global CON_LOCAL
 
-    if use_md and CON_MD is None:
-        # Use MotherDuck (GitHub Actions default)
+    if CON_MD is None:
         token = read_secret(SECRET_MD)
         db_path = DB_DUCKDB_MD.format(token=token)
         logger.info("Connecting to MotherDuck")
 
         CON_MD = duckdb.connect(db_path)
-        return CON_MD
 
-    if not use_md and CON_LOCAL is None:
-        # Use local DuckDB file
+    return CON_MD
+
+
+def _init_local_duck():
+    logger = get_logger()
+    global CON_LOCAL
+
+    if CON_LOCAL is None:
         db_path = get_duckdb_path("raw")
         logger.info(f"Connecting to local DuckDB at {db_path=}")
-
         CON_LOCAL = duckdb.connect(db_path)
-        return CON_LOCAL
+
+    return CON_LOCAL
+
+
+def init_duckdb(use_md=False):
+    """
+    Initialize a DuckDB connection, choosing between MotherDuck or a local file.
+    """
+
+    if use_md:
+        return _init_motherduck()
+
+    else:
+        return _init_local_duck()
 
 
 def query_ddb(query, df_duck=None, silent=False, use_md=False):
