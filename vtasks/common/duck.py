@@ -25,7 +25,7 @@ def init_duckdb(use_md=False):
     return duckdb.connect(db_path)
 
 
-def query_ddb(query, df_duck=None, silent=False, use_md=False):
+def query_ddb(query, df_duck=None, silent=False, use_md=False, con=None):
     logger = get_logger()
     log_func = logger.debug if silent else logger.info
 
@@ -34,11 +34,14 @@ def query_ddb(query, df_duck=None, silent=False, use_md=False):
 
     log_func(f"Querying duckdb ({use_md=}) query='{remove_extra_spacing(query)}'")
 
+    if con is not None:
+        return con.execute(query)
+
     with init_duckdb(use_md) as con:
         return con.execute(query)
 
 
-def table_exists(schema, table, silent=False, use_md=False):
+def table_exists(schema, table, silent=False, use_md=False, con=None):
     """
     Check if a table exists in a DuckDB/MotherDuck database.
 
@@ -54,7 +57,7 @@ def table_exists(schema, table, silent=False, use_md=False):
     log_func = logger.debug if silent else logger.info
 
     log_func(f"Checking if '{schema}.{table}' exists")
-    df_tables = query_ddb("SHOW ALL TABLES", silent=True, use_md=use_md).df()
+    df_tables = query_ddb("SHOW ALL TABLES", silent=True, use_md=use_md, con=con).df()
     table_names = (df_tables["schema"] + "." + df_tables["name"]).values
     out = f"{schema}.{table}" in table_names
 
@@ -62,17 +65,19 @@ def table_exists(schema, table, silent=False, use_md=False):
     return out
 
 
-def _merge_table(df_input, schema, table, pk, use_md=False):
+def _merge_table(df_input, schema, table, pk, silent=True, use_md=False, con=None):
     logger = get_logger()
 
     if not pk:
         raise ValueError("Primary key (pk) must be provided for merge mode")
 
+    kwargs = {"silent": silent, "use_md": use_md, "con": con}
+
     table_name = f"{schema}.{table}"
     query = (
         f"CREATE UNIQUE INDEX IF NOT EXISTS idx__{table}__{pk} ON {table_name} ({pk})"
     )
-    query_ddb(query, silent=True, use_md=use_md)
+    query_ddb(query, **kwargs)
 
     logger.info(f"Merging data into {table_name=} using {pk=}")
 
@@ -81,7 +86,7 @@ def _merge_table(df_input, schema, table, pk, use_md=False):
     query = (
         f"CREATE OR REPLACE TEMPORARY TABLE {temp_table_name} AS SELECT * FROM df_duck"
     )
-    query_ddb(query, df_input, silent=True, use_md=use_md)
+    query_ddb(query, df_input, **kwargs)
 
     cols = [
         f"{x}=EXCLUDED.{x}" for x in df_input.columns if x not in [pk, "_n_updates"]
@@ -94,10 +99,10 @@ def _merge_table(df_input, schema, table, pk, use_md=False):
       {", ".join(cols)}
     """
     logger.info(f"Merging '{temp_table_name}' into '{table_name}'")
-    query_ddb(merge_query, silent=True, use_md=use_md)
+    query_ddb(merge_query, **kwargs)
 
     logger.info(f"Droping '{temp_table_name}'")
-    query_ddb(f"DROP TABLE IF EXISTS {temp_table_name}", silent=True, use_md=use_md)
+    query_ddb(f"DROP TABLE IF EXISTS {temp_table_name}", **kwargs)
 
 
 def write_df(
@@ -128,26 +133,27 @@ def write_df(
     logger.info(f"Writting {len(df_input)} rows to {table_name=} ({mode=}, {use_md=})")
 
     with init_duckdb(use_md) as con:
+        kwargs = {"silent": True, "use_md": use_md, "con": con}
         con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
 
-        if not table_exists(schema, table, silent=True):
+        if not table_exists(schema, table, **kwargs):
             logger.info(f"Creating {table_name=} since it doesn't exist")
             query = f"CREATE TABLE {table_name} AS SELECT * FROM df_duck"
-            query_ddb(query, df_duck, silent=True, use_md=use_md)
+            query_ddb(query, df_duck, **kwargs)
             return True
 
         if mode == "overwrite":
             logger.info(f"Overwriting {table_name=}")
             query = f"CREATE OR REPLACE TABLE {table_name} AS SELECT * FROM df_duck"
-            query_ddb(query, df_duck, silent=True, use_md=use_md)
+            query_ddb(query, df_duck, **kwargs)
 
         elif mode == "append":
             logger.info(f"Appending data to {table_name=}")
             query = f"INSERT INTO {table_name} SELECT * FROM df_duck"
-            query_ddb(query, df_duck, silent=True, use_md=use_md)
+            query_ddb(query, df_duck, **kwargs)
 
         elif mode == "merge":
-            _merge_table(df_duck, schema, table, pk, use_md=use_md)
+            _merge_table(df_duck, schema, table, pk, **kwargs)
 
         else:
             raise ValueError(f"Unsupported {mode=}")
