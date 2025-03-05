@@ -54,13 +54,13 @@ deployments:
 - name: maintain.sync_duckdb
   <<: *defaults
   description: Sync data between databases with duckdb
-  entrypoint: vtasks/jobs/maintain.py:sync_duckdb
+  entrypoint: vtasks/jobs/local/maintain.py:sync_duckdb
   tags: ["maintain"]
 
 - name: maintain.sync_dbt_metadata
   <<: *defaults
   description: Sync temporal DBT data into the raw.duckdb
-  entrypoint: vtasks/jobs/maintain.py:sync_dbt_metadata
+  entrypoint: vtasks/jobs/local/maintain.py:sync_dbt_metadata
   tags: ["maintain"]
 
 # ------------------------------ UPDATES --------------------------------------
