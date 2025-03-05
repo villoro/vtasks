@@ -9,6 +9,7 @@ vdbt:
       attach:
         - path: "{{ env_var('PATH_RAW_DUCKDB') }}"
           alias: raw
+          read_only: true
 
     md:
       type: duckdb

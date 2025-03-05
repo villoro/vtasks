@@ -10,22 +10,23 @@ from vtasks.common.texts import remove_extra_spacing
 
 DB_DUCKDB_MD = "md:villoro?motherduck_token={token}"
 SECRET_MD = "MOTHERDUCK_TOKEN"
+DEFAULT_FILE = "raw"
 
 
-def init_duckdb(use_md=False):
+def init_duckdb(use_md=False, filename=None):
     logger = get_logger()
     if use_md:
         logger.debug("Connecting to MotherDuck")
         token = read_secret(SECRET_MD)
         db_path = DB_DUCKDB_MD.format(token=token)
     else:
-        db_path = get_duckdb_path("raw")
+        db_path = get_duckdb_path(filename or DEFAULT_FILE)
         logger.debug(f"Connecting to local DuckDB at {db_path=}")
 
     return duckdb.connect(db_path)
 
 
-def query_ddb(query, df_duck=None, silent=False, use_md=False, con=None):
+def query_ddb(query, df_duck=None, silent=False, use_md=False, con=None, filename=None):
     logger = get_logger()
     log_func = logger.debug if silent else logger.info
 
@@ -37,7 +38,7 @@ def query_ddb(query, df_duck=None, silent=False, use_md=False, con=None):
     if con is not None:
         return con.execute(query)
 
-    with init_duckdb(use_md) as con:
+    with init_duckdb(use_md, filename) as con:
         return con.execute(query)
 
 
@@ -106,18 +107,19 @@ def _merge_table(df_input, schema, table, pk, silent=True, use_md=False, con=Non
 
 
 def write_df(
-    df_input, schema, table, mode="overwrite", pk=None, as_str=False, use_md=False
+    df_input,
+    schema,
+    table,
+    mode="overwrite",
+    pk=None,
+    as_str=False,
+    use_md=False,
+    filename=None,
 ):
     """
     Write a DataFrame to a DuckDB table with flexible modes.
-
-    Args:
-        df_input: DataFrame to upload
-        schema: Schema name in DuckDB
-        table: Table name in DuckDB
-        mode: "overwrite", "append", or "merge"
-        pk: For "merge", the column used as the primary key
     """
+
     logger = get_logger()
 
     df_duck = df_input.copy()
@@ -130,9 +132,11 @@ def write_df(
     df_duck["_n_updates"] = 0
 
     table_name = f"{schema}.{table}"
-    logger.info(f"Writting {len(df_input)} rows to {table_name=} ({mode=}, {use_md=})")
+    logger.info(
+        f"Writting {len(df_input)} rows to {table_name=} ({mode=}, {use_md=}, {filename=})"
+    )
 
-    with init_duckdb(use_md) as con:
+    with init_duckdb(use_md, filename) as con:
         kwargs = {"silent": True, "use_md": use_md, "con": con}
         con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
 
