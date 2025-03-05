@@ -64,3 +64,6 @@ scripts/subs/*.parquet
 vtasks/logs/**
 vtasks/vdbt/logs/**
 logs/**
+
+# Duckdb data
+.duckdb/

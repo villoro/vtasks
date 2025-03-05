@@ -1,7 +1,16 @@
 vdbt:
-  target: md
+  target: local
 
   outputs:
+    local:
+      type: duckdb
+      path: "{{ env_var('PATH_DBT_DUCKDB') }}"
+      schema: ""
+      attach:
+        - path: "{{ env_var('PATH_RAW_DUCKDB') }}"
+          alias: raw
+          read_only: true
+
     md:
       type: duckdb
       path: md:villoro

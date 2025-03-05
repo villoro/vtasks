@@ -18,7 +18,7 @@ definitions:
       name: default-pool
 
   version: &version
-    version: 7.2.1
+    version: 7.3.0
 
   # Define defaults (that can be overwritten)
   defaults: &defaults
@@ -50,6 +50,18 @@ deployments:
   description: Do all backups tasks
   entrypoint: vtasks/jobs/backups/main.py:backup_all
   tags: ["backups", "maintain"]
+
+- name: maintain.sync_duckdb
+  <<: *defaults
+  description: Sync data between databases with duckdb
+  entrypoint: vtasks/jobs/maintain.py:sync_duckdb
+  tags: ["maintain"]
+
+- name: maintain.sync_dbt_metadata
+  <<: *defaults
+  description: Sync temporal DBT data into the raw.duckdb
+  entrypoint: vtasks/jobs/maintain.py:sync_dbt_metadata
+  tags: ["maintain"]
 
 # ------------------------------ UPDATES --------------------------------------
 - name: crypto.all

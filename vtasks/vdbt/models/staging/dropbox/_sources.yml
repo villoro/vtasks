@@ -1,6 +1,7 @@
 sources:
   - name: raw__dropbox
     tags: [dropbox]
+    database: raw
     description: Raw dropbox data
     tables:
       - name: battery_pixel_4a
