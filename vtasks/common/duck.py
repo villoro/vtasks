@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Literal
 
 import duckdb
 from prefect import flow
@@ -166,21 +167,32 @@ def write_df(
 
 
 @flow(name="maintain.sync_duckdb")
-def sync_duckdb(src_md: bool = True, schema_prefix: str = "raw__"):
+def sync_duckdb(
+    src: str = "motherduck",
+    dest: str = "local",
+    schema_prefix: str = "raw__",
+    mode: Literal["append", "overwrite"] = "overwrite",
+):
     """
-    Sync tables between MotherDuck and local DuckDB.
+    Sync tables between two DuckDB sources (MotherDuck or a local file).
 
     Args:
-        src_md (bool): If True, copies from MotherDuck → Local. If False, copies from Local → MotherDuck.
+        src (str): Source database. Either "motherduck" or a DuckDB file path.
+        dest (str): Destination database. Either "motherduck" or a DuckDB file path.
         schema_prefix (str): Only copy schemas that start with this prefix (default: "raw__").
+        mode (str): Sync mode, either "append" or "overwrite" (default: "overwrite").
     """
+
     logger = get_logger()
-    direction = "MotherDuck → Local" if src_md else "Local → MotherDuck"
-    logger.info(f"Starting DuckDB sync {direction=} where {schema_prefix=}")
+    logger.info(f"Starting sync from {src} → {dest} ({mode=}, {schema_prefix=})")
+
+    src_use_md = src == "motherduck"
+    dest_use_md = dest == "motherduck"
+    src_filename = None if src_use_md else src
+    dest_filename = None if dest_use_md else dest
 
     # Source and destination connections
-    with init_duckdb(use_md=src_md) as src_con:
-        # Get all tables from the source DuckDB
+    with init_duckdb(use_md=src_use_md, filename=src_filename) as src_con:
         df_tables = src_con.execute("SHOW ALL TABLES").df()
 
         for _, row in df_tables.iterrows():
@@ -193,17 +205,21 @@ def sync_duckdb(src_md: bool = True, schema_prefix: str = "raw__"):
 
             # Read data from source DuckDB
             query = f"SELECT * FROM {full_table_name}"
-            df_duck = src_con.execute(query).df()  # Fetch table data
+            df_duck = src_con.execute(query).df()
 
-            # Ensure schema exists in destination
-            with init_duckdb(use_md=not src_md) as dest_con:
+            with init_duckdb(use_md=dest_use_md, filename=dest_filename) as dest_con:
                 dest_con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
 
-                # Write data to destination using CREATE OR REPLACE TABLE
-                logger.info(f"Writing {len(df_duck)} rows to {full_table_name=}")
-                dest_con.execute(
-                    f"CREATE OR REPLACE TABLE {full_table_name} AS SELECT * FROM df_duck"
-                )
+                if mode == "overwrite":
+                    logger.info(f"Overwriting {full_table_name=}")
+                    dest_con.execute(
+                        f"CREATE OR REPLACE TABLE {full_table_name} AS SELECT * FROM df_duck"
+                    )
+                else:
+                    logger.info(f"Appending {len(df_duck)} rows to {full_table_name=}")
+                    dest_con.execute(
+                        f"INSERT INTO {full_table_name} SELECT * FROM df_duck"
+                    )
 
             logger.info(f"Copied table {full_table_name=} successfully")
 
