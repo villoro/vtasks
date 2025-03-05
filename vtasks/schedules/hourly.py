@@ -10,12 +10,13 @@ from vtasks.jobs.dropbox.money_lover import export_money_lover
 from vtasks.jobs.gcal.export import export_all_gcal
 from vtasks.jobs.gsheets.export_tables import export_gsheets_tables
 from vtasks.jobs.indexa.main import indexa_all
+from vtasks.jobs.local.maintain import sync_dbt_metadata
 from vtasks.vdbt.python.run import run_dbt
 
 FLOW_NAME = "vtasks.hourly"
 
 JOBS = {
-    "maintain": [backup_all],
+    "maintain": [backup_all, sync_dbt_metadata],
     "updates": [crypto, indexa_all],
     "export": [
         export_dropbox_tables,

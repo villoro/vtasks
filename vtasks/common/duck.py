@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import Literal
 
 import duckdb
-from prefect import flow
 
 from vtasks.common.logs import get_logger
 from vtasks.common.paths import get_duckdb_path
@@ -14,7 +13,7 @@ SECRET_MD = "MOTHERDUCK_TOKEN"
 DEFAULT_FILE = "raw"
 
 
-def init_duckdb(use_md=False, filename=None):
+def get_duckdb(use_md=False, filename=None):
     logger = get_logger()
     if use_md:
         logger.debug("Connecting to MotherDuck")
@@ -39,7 +38,7 @@ def query_ddb(query, df_duck=None, silent=False, use_md=False, con=None, filenam
     if con is not None:
         return con.execute(query)
 
-    with init_duckdb(use_md, filename) as con:
+    with get_duckdb(use_md, filename) as con:
         return con.execute(query)
 
 
@@ -137,7 +136,7 @@ def write_df(
         f"Writting {len(df_input)} rows to {table_name=} ({mode=}, {use_md=}, {filename=})"
     )
 
-    with init_duckdb(use_md, filename) as con:
+    with get_duckdb(use_md, filename) as con:
         kwargs = {"silent": True, "use_md": use_md, "con": con}
         con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
 
@@ -166,7 +165,6 @@ def write_df(
     return True
 
 
-@flow(name="maintain.sync_duckdb")
 def sync_duckdb(
     src: str = "motherduck",
     dest: str = "local",
@@ -192,7 +190,7 @@ def sync_duckdb(
     dest_filename = None if dest_use_md else dest
 
     # Source and destination connections
-    with init_duckdb(use_md=src_use_md, filename=src_filename) as src_con:
+    with get_duckdb(use_md=src_use_md, filename=src_filename) as src_con:
         df_tables = src_con.execute("SHOW ALL TABLES").df()
 
         for _, row in df_tables.iterrows():
@@ -207,7 +205,7 @@ def sync_duckdb(
             query = f"SELECT * FROM {full_table_name}"
             df_duck = src_con.execute(query).df()
 
-            with init_duckdb(use_md=dest_use_md, filename=dest_filename) as dest_con:
+            with get_duckdb(use_md=dest_use_md, filename=dest_filename) as dest_con:
                 dest_con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
 
                 if mode == "overwrite":
