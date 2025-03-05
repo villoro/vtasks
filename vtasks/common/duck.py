@@ -201,8 +201,13 @@ def sync_duckdb(
             full_table_name = f"{schema}.{table}"
             logger.info(f"Syncing {full_table_name=}")
 
+            # Read column names from the source
+            query = f"DESCRIBE {full_table_name}"
+            col_names = [f'"{x[0]}"' for x in src_con.execute(query).fetchall()]
+            col_list = ", ".join(col_names)
+
             # Read data from source DuckDB
-            query = f"SELECT * FROM {full_table_name}"
+            query = f"SELECT {col_list} FROM {full_table_name}"
             df_duck = src_con.execute(query).df()
 
             with get_duckdb(use_md=dest_use_md, filename=dest_filename) as dest_con:
@@ -216,7 +221,7 @@ def sync_duckdb(
                 else:
                     logger.info(f"Appending {len(df_duck)} rows to {full_table_name=}")
                     dest_con.execute(
-                        f"INSERT INTO {full_table_name} SELECT * FROM df_duck"
+                        f"INSERT INTO {full_table_name} ({col_list}) SELECT {col_list} FROM df_duck"
                     )
 
             logger.info(f"Copied table {full_table_name=} successfully")
