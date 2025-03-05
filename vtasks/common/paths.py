@@ -43,13 +43,8 @@ def get_path(path_relative):
     return str(path_out)
 
 
-def get_duckdb_path(db_name):
-    """
-    Returns the correct DuckDB file path based on the environment.
-
-    :param db_name: The name of the DuckDB database (e.g., "raw" or "clean").
-    :return: Absolute path to the DuckDB file.
-    """
+def get_duckdb_path(db_name, as_str=True):
+    """Returns the correct DuckDB file path based on the environment."""
     env = infer_environment()
 
     if env == "github" or env == "local":
@@ -65,7 +60,12 @@ def get_duckdb_path(db_name):
     if env in ["github", "local"]:
         duckdb_dir.mkdir(parents=True, exist_ok=True)
 
-    return str(duckdb_dir / f"{db_name}.duckdb").replace("\\", "/")
+    out = duckdb_dir / f"{db_name}.duckdb"
+
+    if not as_str:
+        return out
+
+    return str(out).replace("\\", "/")
 
 
 def read_yaml(filename, encoding="utf8", silent=False):

@@ -3,6 +3,7 @@ from typing import Literal
 from prefect import flow
 
 from vtasks.common import duck
+from vtasks.common.logs import get_logger
 from vtasks.vdbt.python import export
 
 
@@ -28,4 +29,23 @@ def sync_duckdb(
 
 @flow(name="maintain.sync_dbt_metadata")
 def sync_dbt_metadata():
-    duck.sync_duckdb(src=export.DUCKDB_FILE, dest=duck.DEFAULT_FILE, mode="append")
+    logger = get_logger()
+
+    src = export.DUCKDB_FILE
+    dest = duck.DEFAULT_FILE
+
+    path_src = duck.get_duckdb_path(export.DUCKDB_FILE, as_str=False)
+
+    if path_src.exists():
+        duck.sync_duckdb(src=src, dest=dest, mode="append")
+
+        logger.info(f"Removing temporal duckdb {src=}")
+        path_src.unlink()
+        logger.info(f"Removed {src=}")
+
+    else:
+        logger.warning(f"{src=} doesn't exist, nothing to sync")
+
+
+if __name__ == "__main__":
+    sync_dbt_metadata()
