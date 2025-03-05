@@ -184,46 +184,28 @@ def sync_duckdb(
     logger = get_logger()
     logger.info(f"Starting sync from {src} → {dest} ({mode=}, {schema_prefix=})")
 
-    src_use_md = src == "motherduck"
-    dest_use_md = dest == "motherduck"
-    src_filename = None if src_use_md else src
-    dest_filename = None if dest_use_md else dest
+    use_md_src = src == "motherduck"
+    use_md_dest = dest == "motherduck"
+    filename_src = None if use_md_src else src
+    filename_dest = None if use_md_dest else dest
+
+    logger.info(
+        f"Config({use_md_src=}, {use_md_dest=}, {filename_src=}, {filename_dest=})"
+    )
 
     # Source and destination connections
-    with get_duckdb(use_md=src_use_md, filename=src_filename) as src_con:
-        df_tables = src_con.execute("SHOW ALL TABLES").df()
+    with get_duckdb(use_md=use_md_src, filename=filename_src) as src_con:
+        df_tables = query_ddb("SHOW ALL TABLES", con=src_con).df()
 
         for _, row in df_tables.iterrows():
             schema, table = row["schema"], row["name"]
             if not schema.startswith(schema_prefix):
                 continue  # Skip schemas that don't match the prefix
 
-            full_table_name = f"{schema}.{table}"
-            logger.info(f"Syncing {full_table_name=}")
-
-            # Read column names from the source
-            query = f"DESCRIBE {full_table_name}"
-            col_names = [f'"{x[0]}"' for x in src_con.execute(query).fetchall()]
-            col_list = ", ".join(col_names)
-
-            # Read data from source DuckDB
-            query = f"SELECT {col_list} FROM {full_table_name}"
-            df_duck = src_con.execute(query).df()
-
-            with get_duckdb(use_md=dest_use_md, filename=dest_filename) as dest_con:
-                dest_con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
-
-                if mode == "overwrite":
-                    logger.info(f"Overwriting {full_table_name=}")
-                    dest_con.execute(
-                        f"CREATE OR REPLACE TABLE {full_table_name} AS SELECT * FROM df_duck"
-                    )
-                else:
-                    logger.info(f"Appending {len(df_duck)} rows to {full_table_name=}")
-                    dest_con.execute(
-                        f"INSERT INTO {full_table_name} ({col_list}) SELECT {col_list} FROM df_duck"
-                    )
-
-            logger.info(f"Copied table {full_table_name=} successfully")
+            # Copy tables
+            df = query_ddb(f"SELECT * FROM {schema}.{table}", con=src_con).df()
+            write_df(
+                df, schema, table, mode, use_md=use_md_dest, filename=filename_dest
+            )
 
     logger.info("DuckDB sync completed successfully")
