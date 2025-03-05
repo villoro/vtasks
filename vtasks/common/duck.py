@@ -8,53 +8,24 @@ from vtasks.common.paths import get_duckdb_path
 from vtasks.common.secrets import read_secret
 from vtasks.common.texts import remove_extra_spacing
 
-CON_MD = None
-CON_LOCAL = None
-
 DB_DUCKDB_MD = "md:villoro?motherduck_token={token}"
 SECRET_MD = "MOTHERDUCK_TOKEN"
 
 
-def _init_motherduck():
+def init_duckdb(use_md=False):
     logger = get_logger()
-    global CON_MD
-
-    if CON_MD is None:
+    if use_md:
+        logger.debug("Connecting to MotherDuck")
         token = read_secret(SECRET_MD)
         db_path = DB_DUCKDB_MD.format(token=token)
-        logger.info("Connecting to MotherDuck")
-
-        CON_MD = duckdb.connect(db_path)
-
-    return CON_MD
-
-
-def _init_local_duck():
-    logger = get_logger()
-    global CON_LOCAL
-
-    if CON_LOCAL is None:
-        db_path = get_duckdb_path("raw")
-        logger.info(f"Connecting to local DuckDB at {db_path=}")
-        CON_LOCAL = duckdb.connect(db_path)
-
-    return CON_LOCAL
-
-
-def init_duckdb(use_md=False):
-    """
-    Initialize a DuckDB connection, choosing between MotherDuck or a local file.
-    """
-
-    if use_md:
-        return _init_motherduck()
-
     else:
-        return _init_local_duck()
+        db_path = get_duckdb_path("raw")
+        logger.debug(f"Connecting to local DuckDB at {db_path=}")
+
+    return duckdb.connect(db_path)
 
 
 def query_ddb(query, df_duck=None, silent=False, use_md=False):
-    con = init_duckdb(use_md)
     logger = get_logger()
     log_func = logger.debug if silent else logger.info
 
@@ -62,7 +33,9 @@ def query_ddb(query, df_duck=None, silent=False, use_md=False):
         logger.debug(f"Using the variable `df_duck` for the query {df_duck.shape=}")
 
     log_func(f"Querying duckdb ({use_md=}) query='{remove_extra_spacing(query)}'")
-    return con.execute(query)
+
+    with init_duckdb(use_md) as con:
+        return con.execute(query)
 
 
 def table_exists(schema, table, silent=False, use_md=False):
@@ -118,7 +91,7 @@ def _merge_table(df_input, schema, table, pk, use_md=False):
     SELECT * FROM {temp_table_name}
     ON CONFLICT ({pk}) DO UPDATE SET
       _n_updates = {table_name}._n_updates + 1,
-      {', '.join(cols)}
+      {", ".join(cols)}
     """
     logger.info(f"Merging '{temp_table_name}' into '{table_name}'")
     query_ddb(merge_query, silent=True, use_md=use_md)
@@ -140,7 +113,6 @@ def write_df(
         mode: "overwrite", "append", or "merge"
         pk: For "merge", the column used as the primary key
     """
-    con = init_duckdb(use_md)
     logger = get_logger()
 
     df_duck = df_input.copy()
@@ -155,29 +127,30 @@ def write_df(
     table_name = f"{schema}.{table}"
     logger.info(f"Writting {len(df_input)} rows to {table_name=} ({mode=}, {use_md=})")
 
-    con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
+    with init_duckdb(use_md) as con:
+        con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
 
-    if not table_exists(schema, table, silent=True):
-        logger.info(f"Creating {table_name=} since it doesn't exist")
-        query = f"CREATE TABLE {table_name} AS SELECT * FROM df_duck"
-        query_ddb(query, df_duck, silent=True, use_md=use_md)
-        return True
+        if not table_exists(schema, table, silent=True):
+            logger.info(f"Creating {table_name=} since it doesn't exist")
+            query = f"CREATE TABLE {table_name} AS SELECT * FROM df_duck"
+            query_ddb(query, df_duck, silent=True, use_md=use_md)
+            return True
 
-    if mode == "overwrite":
-        logger.info(f"Overwriting {table_name=}")
-        query = f"CREATE OR REPLACE TABLE {table_name} AS SELECT * FROM df_duck"
-        query_ddb(query, df_duck, silent=True, use_md=use_md)
+        if mode == "overwrite":
+            logger.info(f"Overwriting {table_name=}")
+            query = f"CREATE OR REPLACE TABLE {table_name} AS SELECT * FROM df_duck"
+            query_ddb(query, df_duck, silent=True, use_md=use_md)
 
-    elif mode == "append":
-        logger.info(f"Appending data to {table_name=}")
-        query = f"INSERT INTO {table_name} SELECT * FROM df_duck"
-        query_ddb(query, df_duck, silent=True, use_md=use_md)
+        elif mode == "append":
+            logger.info(f"Appending data to {table_name=}")
+            query = f"INSERT INTO {table_name} SELECT * FROM df_duck"
+            query_ddb(query, df_duck, silent=True, use_md=use_md)
 
-    elif mode == "merge":
-        _merge_table(df_duck, schema, table, pk, use_md=use_md)
+        elif mode == "merge":
+            _merge_table(df_duck, schema, table, pk, use_md=use_md)
 
-    else:
-        raise ValueError(f"Unsupported {mode=}")
+        else:
+            raise ValueError(f"Unsupported {mode=}")
 
     return True
 
@@ -196,33 +169,32 @@ def sync_duckdb(src_md: bool = True, schema_prefix: str = "raw__"):
     logger.info(f"Starting DuckDB sync {direction=} where {schema_prefix=}")
 
     # Source and destination connections
-    src_con = init_duckdb(use_md=src_md)
-    dest_con = init_duckdb(use_md=not src_md)
+    with init_duckdb(use_md=src_md) as src_con:
+        # Get all tables from the source DuckDB
+        df_tables = src_con.execute("SHOW ALL TABLES").df()
 
-    # Get all tables from the source DuckDB
-    df_tables = src_con.execute("SHOW ALL TABLES").df()
+        for _, row in df_tables.iterrows():
+            schema, table = row["schema"], row["name"]
+            if not schema.startswith(schema_prefix):
+                continue  # Skip schemas that don't match the prefix
 
-    for _, row in df_tables.iterrows():
-        schema, table = row["schema"], row["name"]
-        if not schema.startswith(schema_prefix):
-            continue  # Skip schemas that don't match the prefix
+            full_table_name = f"{schema}.{table}"
+            logger.info(f"Syncing {full_table_name=}")
 
-        full_table_name = f"{schema}.{table}"
-        logger.info(f"Syncing {full_table_name=}")
+            # Read data from source DuckDB
+            query = f"SELECT * FROM {full_table_name}"
+            df_duck = src_con.execute(query).df()  # Fetch table data
 
-        # Read data from source DuckDB
-        query = f"SELECT * FROM {full_table_name}"
-        df_duck = src_con.execute(query).df()  # Fetch table data as a Pandas DataFrame
+            # Ensure schema exists in destination
+            with init_duckdb(use_md=not src_md) as dest_con:
+                dest_con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
 
-        # Ensure schema exists in destination
-        dest_con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
+                # Write data to destination using CREATE OR REPLACE TABLE
+                logger.info(f"Writing {len(df_duck)} rows to {full_table_name=}")
+                dest_con.execute(
+                    f"CREATE OR REPLACE TABLE {full_table_name} AS SELECT * FROM df_duck"
+                )
 
-        # Write data to destination using CREATE OR REPLACE TABLE
-        logger.info(f"Writing {len(df_duck)} rows to {full_table_name=}")
-        dest_con.execute(
-            f"CREATE OR REPLACE TABLE {full_table_name} AS SELECT * FROM df_duck"
-        )
-
-        logger.info(f"Copied table {full_table_name=} successfully")
+            logger.info(f"Copied table {full_table_name=} successfully")
 
     logger.info("DuckDB sync completed successfully")
