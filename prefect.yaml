@@ -35,7 +35,7 @@ deployments:
   entrypoint: vtasks/schedules/hourly.py:hourly
   tags: ["schedules", "hourly"]
   schedules:
-    - cron: "0 3 * * *" # Daily at 3
+    - cron: "0 * * * *" # Every hour
 
 # ------------------------------ DBT ------------------------------------------
 - name: dbt
