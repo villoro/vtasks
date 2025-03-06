@@ -194,8 +194,8 @@ def sync_duckdb(
     )
 
     # Source and destination connections
-    with get_duckdb(use_md=use_md_src, filename=filename_src) as src_con:
-        df_tables = query_ddb("SHOW ALL TABLES", con=src_con).df()
+    with get_duckdb(use_md=use_md_src, filename=filename_src) as con_src:
+        df_tables = query_ddb("SHOW ALL TABLES", con=con_src).df()
 
         for _, row in df_tables.iterrows():
             schema, table = row["schema"], row["name"]
@@ -203,7 +203,7 @@ def sync_duckdb(
                 continue  # Skip schemas that don't match the prefix
 
             # Copy tables
-            df = query_ddb(f"SELECT * FROM {schema}.{table}", con=src_con).df()
+            df = query_ddb(f"SELECT * FROM {schema}.{table}", con=con_src).df()
             write_df(
                 df, schema, table, mode, use_md=use_md_dest, filename=filename_dest
             )
