@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from prefect import flow
 from prefect import task
@@ -8,13 +9,17 @@ from vtasks.common.paths import get_duckdb_path
 from vtasks.vdbt.python import dbt_utils
 from vtasks.vdbt.python import export
 
+FILE_DUCKDB_RAW = "raw"
+FILE_DUCKDB_DBT = "dbt"
+FILE_DUCKDB_METABASE = "metabase"
+
 
 def set_dbt_env():
     """Set environment variables for dbt depending on target."""
     logger = get_logger()
     logger.debug("Checking duckdb_paths")
 
-    for name in ["dbt", "raw"]:
+    for name in [FILE_DUCKDB_RAW, FILE_DUCKDB_DBT]:
         env_var_name = f"PATH_{name.upper()}_DUCKDB"
         path = get_duckdb_path(name)
         logger.info(f"Setting {env_var_name}={path}")
@@ -67,6 +72,20 @@ def freshness():
     dbt_utils.run_dbt_command(["source", "freshness"])
 
 
+@task(name="dbt.copy_duckdb")
+def copy_duckdb():
+    """Copy the output duckdb file to prevent locks with metabase"""
+
+    logger = get_logger()
+
+    src = get_duckdb_path(FILE_DUCKDB_DBT)
+    dest = get_duckdb_path(FILE_DUCKDB_METABASE)
+
+    logger.info(f"Copying {src=} to {dest=}")
+    shutil.copy2(src, dest)
+    logger.info(f"{dest=} successfully exported")
+
+
 @flow(name="dbt")
 def run_dbt(select=None, exclude=None, debug=False, store_failures=True):
     """Run all DBT commands"""
@@ -89,6 +108,7 @@ def run_dbt(select=None, exclude=None, debug=False, store_failures=True):
 
     build(select, exclude, store_failures)
     freshness()
+    copy_duckdb()
 
 
 if __name__ == "__main__":
