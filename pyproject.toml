@@ -24,7 +24,7 @@ dependencies = [
     "backoff>=2.2.1",
     "cryptocompare>=0.7.6",
     "dbt-duckdb>=1.9.2",
-    "duckdb>=1.2.0",
+    "duckdb==1.2.1",
     "gcsa>=2.5.1",
     "gspread>=6.1.4",
     "pandas>=2.2.3",
