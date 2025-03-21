@@ -24,31 +24,37 @@ def get_files(vdp):
     return [x[1] for x in matches]
 
 
-@task(name=f"{FLOW_NAME}.export_last_file")
-def export_last_file(vdp, files):
+@task(name=f"{FLOW_NAME}.read_file")
+def read_file(vdp, file_path):
     logger = get_logger()
-
-    if not files:
-        logger.info("There are no files to process")
-        return False
-
-    filename = files[-1]
-    file_path = f"{PATH_ML}/{filename}"
-
     sep = dropbox.infer_separator(file_path, vdp=vdp)
 
     logger.info(f"Reading {file_path=}")
-    df = vdp.read_csv(file_path, index_col=0, sep=sep)
+    return vdp.read_csv(file_path, index_col=0, sep=sep)
 
-    if match := re.match(REGEX_MONEY_LOVER, filename):
-        file_date = match.groupdict().get("date")
-        path_parquet = f"{PATH_ML}/{file_date[:4]}/{file_date}.parquet"
-        logger.info(f"Exporting {path_parquet=}")
-        vdp.write_parquet(df, path_parquet)
 
+@task(name=f"{FLOW_NAME}.backup_csv")
+def backup_csv(vdp, df, filename):
+    logger = get_logger()
+
+    match = re.match(REGEX_MONEY_LOVER, filename)
+    if not match:
+        logger.error(
+            f"Wrong money lover file {filename=} doesn't follow {REGEX_MONEY_LOVER=}"
+        )
+        return False
+
+    file_date = match.groupdict().get("date")
+    path_parquet = f"{PATH_ML}/{file_date[:4]}/{file_date}.parquet"
+    logger.info(f"Exporting {path_parquet=}")
+    vdp.write_parquet(df, path_parquet)
+    return True
+
+
+@task(name=f"{FLOW_NAME}.export_last_file")
+def export_last_file(df, file_path):
     df["_source"] = f"dropbox:/{file_path}"
     write_df(df, SCHEMA_OUT, TABLE_OUT)
-    return True
 
 
 @task(name=f"{FLOW_NAME}.remove_files")
@@ -62,11 +68,21 @@ def remove_files(vdp, files):
 
 @flow(name=f"{FLOW_NAME}")
 def export_money_lover():
+    logger = get_logger()
     vdp = dropbox.get_vdropbox()
 
-    files = get_files(vdp)
-    export_last_file(vdp, files)
+    if not (files := get_files(vdp)):
+        logger.info("There are no files to process")
+        return False
+
+    filename = files[-1]
+    file_path = f"{PATH_ML}/{filename}"
+
+    df = read_file(vdp, file_path)
+    backup_csv(vdp, df, filename)
+    export_last_file(df, file_path)
     remove_files(vdp, files)
+    return True
 
 
 if __name__ == "__main__":
