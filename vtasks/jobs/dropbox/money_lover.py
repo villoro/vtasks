@@ -61,8 +61,8 @@ def export_last_file(df, file_path):
 def remove_files(vdp, files):
     logger = get_logger()
 
-    logger.info(f"Removing {len(files)} money lover files")
-    for file in files:
+    logger.info(f"Removing {len(files) - 1} money lover files")
+    for file in files[:-1]:
         vdp.delete(f"{PATH_ML}/{file}")
 
 
@@ -81,6 +81,7 @@ def export_money_lover():
     df = read_file(vdp, file_path)
     backup_csv(vdp, df, filename)
     export_last_file(df, file_path)
+
     remove_files(vdp, files)
     return True
 
