@@ -1,3 +1,5 @@
+import re
+
 from prefect import flow
 from prefect import task
 
@@ -26,14 +28,27 @@ def get_files(vdp):
 def export_last_file(vdp, files):
     logger = get_logger()
 
-    last_file = f"{PATH_ML}/{files[-1]}"
-    sep = dropbox.infer_separator(last_file, vdp=vdp)
+    if not files:
+        logger.info("There are no files to process")
+        return False
 
-    logger.info(f"Reading {last_file=}")
-    df = vdp.read_csv(last_file, index_col=0, sep=sep)
+    filename = files[-1]
+    file_path = f"{PATH_ML}/{filename}"
 
-    df["_source"] = f"dropbox:/{last_file}"
-    write_df(df, SCHEMA_OUT, TABLE_OUT, mode="append")
+    sep = dropbox.infer_separator(file_path, vdp=vdp)
+
+    logger.info(f"Reading {file_path=}")
+    df = vdp.read_csv(file_path, index_col=0, sep=sep)
+
+    if match := re.match(REGEX_MONEY_LOVER, filename):
+        file_date = match.groupdict().get("date")
+        path_parquet = f"{PATH_ML}/{file_date[:4]}/{file_date}.parquet"
+        logger.info(f"Exporting {path_parquet=}")
+        vdp.write_parquet(df, path_parquet)
+
+    df["_source"] = f"dropbox:/{file_path}"
+    write_df(df, SCHEMA_OUT, TABLE_OUT)
+    return True
 
 
 @task(name=f"{FLOW_NAME}.remove_files")
@@ -51,8 +66,7 @@ def export_money_lover():
 
     files = get_files(vdp)
     export_last_file(vdp, files)
-    # TODO: Enable this once migrated
-    # remove_files(vdp, files)
+    remove_files(vdp, files)
 
 
 if __name__ == "__main__":
