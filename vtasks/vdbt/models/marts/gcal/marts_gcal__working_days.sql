@@ -14,6 +14,7 @@ WITH filtered_data AS (
 with_moving_averages AS (
     SELECT
         start_day,
+        calendar_name,
         duration_hours AS total_hours,
         AVG(duration_hours) OVER win_7d AS mavg_7d,
         AVG(duration_hours) OVER win_30d AS mavg_30d,
@@ -37,6 +38,7 @@ with_moving_averages AS (
 rounded AS (
     SELECT
         start_day,
+        calendar_name,
         ROUND(total_hours, 2) AS total_hours,
         ROUND(mavg_7d, 2) AS mavg_7d,
         ROUND(mavg_30d, 2) AS mavg_30d,
