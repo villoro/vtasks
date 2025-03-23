@@ -8,11 +8,17 @@ models:
       # -------- dims
       - name: start_day
         description: The starting day of the event.
+      - name: calendar_name
+        description: Name of the calendar.
 
       # -------- measures
       - name: total_hours
         description: Total duration in hours.
-      - name: moving_avg_7_days
-        description: Duration of the event moving average for 7 days.
-      - name: moving_avg_30_days
-        description: Duration of the event moving average for 30 days.
+      - name: mavg_7d
+        description: Duration of the event moving average for 7 days centerd.
+      - name: mavg_30d
+        description: Duration of the event moving average for 30 days centered.
+      - name: p10_30d
+        description: Duration of the event 10 decile for 30 days centered.
+      - name: p90_30d
+        description: Duration of the event 90 decile for 30 days centered.
