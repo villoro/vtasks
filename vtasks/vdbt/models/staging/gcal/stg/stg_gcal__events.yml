@@ -21,6 +21,8 @@ models:
       # -------- booleans
       - name: is_whole_day_event
         description: Flag indicating if the event is for the whole day(s).
+      - name: is_personal
+        description: Shows if the calendar is a personal one.
 
       # -------- info
       - name: title

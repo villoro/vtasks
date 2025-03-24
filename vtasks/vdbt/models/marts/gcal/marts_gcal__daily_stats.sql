@@ -8,6 +8,7 @@ daily_stats AS (
         -------- dims
         started_at :: date AS start_day,
         calendar_name,
+        is_personal,
 
         -------- measures
         round(sum(duration_hours), 2) AS duration_hours
