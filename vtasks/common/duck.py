@@ -26,18 +26,14 @@ def get_duckdb(use_md=False, filename=None):
     return duckdb.connect(db_path)
 
 
-def _log_query(query=None, df_duck=None, silent=None, use_md=None):
+def run_query(query, df_duck=None, silent=False, use_md=False, con=None, filename=None):
     logger = get_logger()
     log_func = logger.debug if silent else logger.info
 
     if df_duck is not None:
         logger.debug(f"Using the variable `df_duck` for the query {df_duck.shape=}")
 
-    log_func(f"Querying duckdb ({use_md=}) query='{remove_extra_spacing(query)}'")
-
-
-def run_query(query, df_duck=None, silent=False, use_md=False, con=None, filename=None):
-    _log_query(query, df_duck, silent, use_md)
+    log_func(f"Querying duckdb query='{remove_extra_spacing(query)} ({use_md=})'")
 
     if con is not None:
         return con.execute(query)
@@ -47,13 +43,20 @@ def run_query(query, df_duck=None, silent=False, use_md=False, con=None, filenam
 
 
 def read_query(query, silent=False, use_md=False, con=None, filename=None):
-    _log_query(query, silent=silent, use_md=use_md)
+    logger = get_logger()
+    log_func = logger.debug if silent else logger.info
+
+    log_func(f"Reading from duckdb query='{remove_extra_spacing(query)}' ({use_md=})")
 
     if con is not None:
-        return con.sql(query).df()
+        df = con.sql(query).df()
 
-    with get_duckdb(use_md, filename) as con:
-        return con.sql(query).df()
+    else:
+        with get_duckdb(use_md, filename) as con:
+            df = con.sql(query).df()
+
+    log_func(f"{len(df)} rows read from query='{remove_extra_spacing(query)}'")
+    return df
 
 
 def table_exists(schema, table, silent=False, use_md=False, con=None):
