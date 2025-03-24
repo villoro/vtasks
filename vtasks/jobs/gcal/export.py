@@ -120,9 +120,9 @@ def query_all_calendars(calendars):
 
     events = []
 
-    for name, data in calendars.items():
+    for name, url in calendars.items():
         task_name = f"{FLOW_NAME}.query__{name}".replace(" ", "_")
-        events += task(name=task_name)(query_calendar)(name, data["url"])
+        events += task(name=task_name)(query_calendar)(name, url)
 
     logger.info("Tansforming to pandas")
     return pd.DataFrame(events)
