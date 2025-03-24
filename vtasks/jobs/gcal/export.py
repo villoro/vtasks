@@ -116,12 +116,13 @@ def query_all_calendars(calendars):
     """Get all events from all calendars"""
 
     logger = get_logger()
-    logger.info(f"Querying all {len(calendars)} calendars")
+    total = len(calendars)
+    logger.info(f"Querying all {total} calendars")
 
     events = []
 
-    for name, url in calendars.items():
-        task_name = f"{FLOW_NAME}.query__{name}".replace(" ", "_")
+    for i, (name, url) in enumerate(calendars.items()):
+        task_name = f"{FLOW_NAME}.query__{name}__{i + 1}/{total}".replace(" ", "_")
         events += task(name=task_name)(query_calendar)(name, url)
 
     logger.info("Tansforming to pandas")
