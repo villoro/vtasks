@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: marts_gcal__fra
+    description: Fra working stats
+
+    columns:
+      # -------- dims
+      - name: start_day
+        description: The starting day of the event.
+
+      # -------- dims
+      - name: duration_hours
+        description: Duration of the event in hours.
+
+      # -------- dims
+      - name: week
+        description: Week for 'start_day'
+      - name: month
+        description: Month for 'start_day'

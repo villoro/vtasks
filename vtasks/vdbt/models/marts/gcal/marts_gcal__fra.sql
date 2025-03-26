@@ -21,8 +21,13 @@ daily_stats AS (
 
 final AS (
     SELECT
+        -------- dims
         start_day,
+
+        -------- measures
         duration_hours,
+
+        -------- time related
         DATE_TRUNC('week', start_day) AS week,
         STRFTIME(DATE_TRUNC('month', start_day), '%Y-%m') AS month
     FROM daily_stats
