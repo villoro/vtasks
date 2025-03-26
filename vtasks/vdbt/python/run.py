@@ -1,5 +1,6 @@
 import os
 import shutil
+from time import sleep
 
 from prefect import flow
 from prefect import task
@@ -77,6 +78,7 @@ def copy_duckdb():
     """Copy the output duckdb file to prevent locks with metabase"""
 
     logger = get_logger()
+    sleep(1)
 
     src = get_duckdb_path(FILE_DUCKDB_DBT)
     dest = get_duckdb_path(FILE_DUCKDB_METABASE)
