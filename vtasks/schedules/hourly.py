@@ -9,6 +9,7 @@ from vtasks.jobs.dropbox.export_tables import export_dropbox_tables
 from vtasks.jobs.dropbox.money_lover import export_money_lover
 from vtasks.jobs.gcal.export import export_all_gcal
 from vtasks.jobs.gsheets.export_tables import export_gsheets_tables
+from vtasks.jobs.gsheets.fra_work import update_fra_work
 from vtasks.jobs.indexa.main import indexa_all
 from vtasks.jobs.local.maintain import sync_dbt_metadata
 from vtasks.vdbt.python.run import run_dbt
@@ -24,6 +25,7 @@ JOBS = {
         export_all_gcal,
         export_gsheets_tables,
     ],
+    "post_dbt": [update_fra_work],
 }
 
 
@@ -69,10 +71,16 @@ def export():
     return run_flows(JOBS[name], name)
 
 
+@flow(name=f"{FLOW_NAME}.post_dbt")
+def post_dbt():
+    name = "post_dbt"
+    return run_flows(JOBS[name], name)
+
+
 @flow(name=FLOW_NAME)
 def hourly():
     with tags("env:pro"):
-        flows = [maintain, updates, export, run_dbt]
+        flows = [maintain, updates, export, run_dbt, post_dbt]
         return run_flows(flows, "hourly")
 
 

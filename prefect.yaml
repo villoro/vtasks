@@ -76,6 +76,12 @@ deployments:
   entrypoint: vtasks/jobs/indexa/main.py:indexa_all
   tags: ["crypto", "updates"]
 
+- name: gsheets.update_fra_work
+  <<: *defaults
+  description: Update Fra work data
+  entrypoint: vtasks/jobs/gsheets/fra_work.py:update_fra_work
+  tags: ["fra", "updates"]
+
 # ------------------------------ EXTRACTIONS ----------------------------------
 - name: dropbox.export_tables
   <<: *defaults
