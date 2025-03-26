@@ -1,3 +1,5 @@
+{% set fra_cal = 'fra.work' %}
+
 WITH source AS (
     SELECT *
     FROM {{ source('raw__gcal', 'events') }}
@@ -23,6 +25,7 @@ casted_and_renamed AS (
 
         -------- booleans
         len("start") == 10 AS is_whole_day_event,
+        calendar != '{{ fra_cal }}' AS is_personal,
 
         -------- info
         nullif(summary, 'nan') AS title,

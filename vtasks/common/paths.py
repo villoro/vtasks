@@ -60,6 +60,9 @@ def get_duckdb_path(db_name, as_str=True):
     if env in ["github", "local"]:
         duckdb_dir.mkdir(parents=True, exist_ok=True)
 
+    if "." in db_name:
+        db_name = db_name.split(".")[0]
+
     out = duckdb_dir / f"{db_name}.duckdb"
 
     if not as_str:

@@ -115,14 +115,14 @@ def update_cell(doc, sheet, cell, value, max_tries=5):
     logger.info(f"{cell=} successfully updated in 'gsheet://{doc}.{sheet}'")
 
 
-def _get_coordinates(df):
+def _get_coordinates(df, start_column):
     """Get gdrive coordinates as a pandas dataframe"""
 
     df_index = df.copy()
 
     def index_to_letter(x):
         """Get column letter (Chr(65) = 'A')"""
-        return chr(65 + x + 1)
+        return chr(65 + x + start_column)
 
     n_rows = df_index.shape[0]
     numbers = pd.Series([str(x + 2) for x in range(n_rows)], index=df_index.index)
@@ -147,11 +147,11 @@ def _get_columns(df, columns=None):
     return columns
 
 
-def _get_range_to_update(df, mfilter, columns):
+def _get_range_to_update(df, mfilter, columns, start_column):
     """Gets the range that needs to be updated"""
 
     # Extract range from coordinates and filter
-    coordinates = _get_coordinates(df).loc[mfilter, columns]
+    coordinates = _get_coordinates(df, start_column).loc[mfilter, columns]
 
     if isinstance(coordinates, pd.Series):
         return f"{coordinates.iloc[0]}:{coordinates.iloc[-1]}"
@@ -170,7 +170,9 @@ def _get_values_to_update(df, mfilter, columns):
     return values
 
 
-def df_to_gspread(doc, sheet, df, mfilter, cols=None, max_tries=5):
+def df_to_gspread(
+    doc, sheet, df, mfilter=slice(None), cols=None, max_tries=5, start_column=1
+):
     """Update a google spreadsheet based on a pandas dataframe row"""
 
     logger = get_logger()
@@ -180,7 +182,7 @@ def df_to_gspread(doc, sheet, df, mfilter, cols=None, max_tries=5):
     logger.info(f"Preparing update for 'gsheet://{doc}.{sheet}' ({mfilter=}, {cols=})")
 
     columns = _get_columns(df, cols)
-    mrange = _get_range_to_update(df, mfilter, columns)
+    mrange = _get_range_to_update(df, mfilter, columns, start_column)
     values = _get_values_to_update(df, mfilter, columns)
 
     # Update values in gspreadsheet

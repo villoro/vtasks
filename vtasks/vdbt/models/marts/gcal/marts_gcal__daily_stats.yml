@@ -10,6 +10,8 @@ models:
         description: The starting day of the event.
       - name: calendar_name
         description: The name of the calendar where the event is stored.
+      - name: is_personal
+        description: Shows if the calendar is a personal one.
 
       # -------- dims
       - name: duration_hours
