@@ -8,6 +8,8 @@ models:
       # -------- dims
       - name: start_day
         description: The starting day of the event.
+      - name: description
+        description: A detailed description of the event.
 
       # -------- dims
       - name: duration_hours
