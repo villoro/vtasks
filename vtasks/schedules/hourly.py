@@ -12,6 +12,7 @@ from vtasks.jobs.gsheets.export_tables import export_gsheets_tables
 from vtasks.jobs.gsheets.fra_work import update_fra_work
 from vtasks.jobs.indexa.main import indexa_all
 from vtasks.jobs.local.maintain import sync_dbt_metadata
+from vtasks.jobs.local.maintain import upload_marts_to_md
 from vtasks.vdbt.python.run import run_dbt
 
 FLOW_NAME = "vtasks.hourly"
@@ -25,7 +26,7 @@ JOBS = {
         export_all_gcal,
         export_gsheets_tables,
     ],
-    "post_dbt": [update_fra_work],
+    "post_dbt": [upload_marts_to_md, update_fra_work],
 }
 
 

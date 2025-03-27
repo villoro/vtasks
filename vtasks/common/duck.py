@@ -127,15 +127,13 @@ def write_df(
     df_input,
     schema,
     table,
-    mode="overwrite",
+    mode: Literal["append", "overwrite"] = "overwrite",
     pk=None,
     as_str=False,
     use_md=False,
     filename=None,
 ):
-    """
-    Write a DataFrame to a DuckDB table with flexible modes.
-    """
+    """Write a DataFrame to a DuckDB table with flexible modes"""
 
     logger = get_logger()
 
@@ -185,7 +183,7 @@ def write_df(
 def sync_duckdb(
     src: str = "dbt",
     dest: str = "motherduck",
-    schema_prefix: str = "_marts__",
+    schema_prefixes: str = ["_marts__", "_core__"],
     mode: Literal["append", "overwrite"] = "overwrite",
 ):
     """
@@ -194,12 +192,12 @@ def sync_duckdb(
     Args:
         src (str): Source database. Either "motherduck" or a DuckDB file path.
         dest (str): Destination database. Either "motherduck" or a DuckDB file path.
-        schema_prefix (str): Only copy schemas that start with this prefix (default: "raw__").
-        mode (str): Sync mode, either "append" or "overwrite" (default: "overwrite").
+        schema_prefixes (List[str]): Only copy schemas that start with any of those prefixes.
+        mode (str): Sync mode, either "append" or "overwrite".
     """
 
     logger = get_logger()
-    logger.info(f"Starting sync from {src} → {dest} ({mode=}, {schema_prefix=})")
+    logger.info(f"Starting sync from {src} → {dest} ({mode=}, {schema_prefixes=})")
 
     use_md_src = src == "motherduck"
     use_md_dest = dest == "motherduck"
@@ -216,11 +214,11 @@ def sync_duckdb(
 
         for _, row in df_tables.iterrows():
             schema, table = row["schema"], row["name"]
-            if not schema.startswith(schema_prefix):
+            if not any(schema.startswith(x) for x in schema_prefixes):
                 logger.debug(
-                    f"Skipping {schema=} since it doesn't match {schema_prefix=}"
+                    f"Skipping {schema=} since it doesn't match any of {schema_prefixes=}"
                 )
-                continue  # Skip schemas that don't match the prefix
+                continue  # Skip schemas that don't match any of the prefixes
 
             # Copy tables
             df = read_query(f"SELECT * FROM {schema}.{table}", con=con_src)
@@ -229,7 +227,3 @@ def sync_duckdb(
             )
 
     logger.info("DuckDB sync completed successfully")
-
-
-if __name__ == "__main__":
-    sync_duckdb()

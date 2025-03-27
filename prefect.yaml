@@ -63,6 +63,12 @@ deployments:
   entrypoint: vtasks/jobs/local/maintain.py:sync_dbt_metadata
   tags: ["maintain"]
 
+- name: maintain.upload_marts_to_md
+  <<: *defaults
+  description: Upload 'marts' and 'core' data to motherduck
+  entrypoint: vtasks/jobs/local/maintain.py:upload_marts_to_md
+  tags: ["maintain"]
+
 # ------------------------------ UPDATES --------------------------------------
 - name: crypto.all
   <<: *defaults
