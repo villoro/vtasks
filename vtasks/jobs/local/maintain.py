@@ -4,14 +4,15 @@ from prefect import flow
 
 from vtasks.common import duck
 from vtasks.common.logs import get_logger
+from vtasks.common.paths import infer_environment
 from vtasks.vdbt.python import export
 
 
 @flow(name="maintain.sync_duckdb")
 def sync_duckdb(
-    src: str = "motherduck",
-    dest: str = "local",
-    schema_prefix: str = "raw__",
+    src: str = "dbt",
+    dest: str = "motherduck",
+    schema_prefixes: str = ["_marts__", "_core__"],
     mode: Literal["append", "overwrite"] = "overwrite",
 ):
     """
@@ -24,7 +25,24 @@ def sync_duckdb(
         mode (str): Sync mode, either "append" or "overwrite" (default: "overwrite").
     """
 
-    duck.sync_duckdb(src=src, dest=dest, schema_prefix=schema_prefix, mode=mode)
+    duck.sync_duckdb(src=src, dest=dest, schema_prefix=schema_prefixes, mode=mode)
+
+
+@flow(name="maintain.upload_marts_to_md")
+def upload_marts_to_md():
+    logger = get_logger()
+
+    env = infer_environment()
+    if env != "nas":
+        logger.warning(f"Skipping upload to motherduck since we are in {env=}")
+        return False
+
+    duck.sync_duckdb(
+        src=duck.DEFAULT_FILE,
+        dest="motherduck",
+        schema_prefixes=["_marts__", "_core__"],
+        mode="overwrite",
+    )
 
 
 @flow(name="maintain.sync_dbt_metadata")
@@ -37,7 +55,7 @@ def sync_dbt_metadata():
     path_src = duck.get_duckdb_path(export.DUCKDB_FILE, as_str=False)
 
     if path_src.exists():
-        duck.sync_duckdb(src=src, dest=dest, mode="append")
+        duck.sync_duckdb(src=src, dest=dest, schema_prefixes=["raw__"], mode="append")
 
         logger.info(f"Removing temporal duckdb {src=}")
         path_src.unlink()

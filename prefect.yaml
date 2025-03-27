@@ -18,7 +18,7 @@ definitions:
       name: default-pool
 
   version: &version
-    version: 7.3.9
+    version: 7.4.0
 
   # Define defaults (that can be overwritten)
   defaults: &defaults
@@ -61,6 +61,12 @@ deployments:
   <<: *defaults
   description: Sync temporal DBT data into the raw.duckdb
   entrypoint: vtasks/jobs/local/maintain.py:sync_dbt_metadata
+  tags: ["maintain"]
+
+- name: maintain.upload_marts_to_md
+  <<: *defaults
+  description: Upload 'marts' and 'core' data to motherduck
+  entrypoint: vtasks/jobs/local/maintain.py:upload_marts_to_md
   tags: ["maintain"]
 
 # ------------------------------ UPDATES --------------------------------------
