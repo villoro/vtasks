@@ -49,7 +49,7 @@ def sync_dbt_metadata():
     logger = get_logger()
 
     src = paths.FILE_DUCKDB_RAW
-    dest = duck.DEFAULT_FILE
+    dest = paths.FILE_DUCKDB_RAW
 
     path_src = duck.get_duckdb_path(src, as_str=False)
 
