@@ -14,6 +14,10 @@ PATH_ROOT = Path(__file__).parent.parent.parent
 PATH_DATA_NAS = Path("/mnt/duckdb")
 FOLDER_DUCKDB_LOCAL = ".duckdb"
 
+FILE_DUCKDB_RAW = "raw"
+FILE_DUCKDB_DBT = "dbt"
+FILE_DUCKDB_METABASE = "metabase"
+
 
 def infer_environment():
     """Detects whether the script is running on GitHub Actions, locally, or on the NAS."""

@@ -89,7 +89,7 @@ This ensures that **relative imports** work correctly.
 
 ```bash
 set PREFECT_API_URL=http://tnas:6006/api
-prefect --no-prompt deploy --all
+uv run prefect --no-prompt deploy --all
 ```
 
 ### 🔢 Versioning

@@ -5,14 +5,10 @@ from time import sleep
 from prefect import flow
 from prefect import task
 
+from vtasks.common import paths
 from vtasks.common.logs import get_logger
-from vtasks.common.paths import get_duckdb_path
 from vtasks.vdbt.python import dbt_utils
 from vtasks.vdbt.python import export
-
-FILE_DUCKDB_RAW = "raw"
-FILE_DUCKDB_DBT = "dbt"
-FILE_DUCKDB_METABASE = "metabase"
 
 
 def set_dbt_env():
@@ -20,9 +16,9 @@ def set_dbt_env():
     logger = get_logger()
     logger.debug("Checking duckdb_paths")
 
-    for name in [FILE_DUCKDB_RAW, FILE_DUCKDB_DBT]:
+    for name in [paths.FILE_DUCKDB_RAW, paths.FILE_DUCKDB_DBT]:
         env_var_name = f"PATH_{name.upper()}_DUCKDB"
-        path = get_duckdb_path(name)
+        path = paths.get_duckdb_path(name)
         logger.info(f"Setting {env_var_name}={path}")
         os.environ[env_var_name] = path
 
@@ -80,8 +76,8 @@ def copy_duckdb():
     logger = get_logger()
     sleep(1)
 
-    src = get_duckdb_path(FILE_DUCKDB_DBT)
-    dest = get_duckdb_path(FILE_DUCKDB_METABASE)
+    src = paths.get_duckdb_path(paths.FILE_DUCKDB_DBT)
+    dest = paths.get_duckdb_path(paths.FILE_DUCKDB_METABASE)
 
     logger.info(f"Copying {src=} to {dest=}")
     shutil.copy2(src, dest)
