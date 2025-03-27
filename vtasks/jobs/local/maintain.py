@@ -51,7 +51,7 @@ def sync_dbt_metadata():
     src = paths.FILE_DUCKDB_RAW
     dest = paths.FILE_DUCKDB_RAW
 
-    path_src = duck.get_duckdb_path(src, as_str=False)
+    path_src = paths.get_duckdb_path(src, as_str=False)
 
     if path_src.exists():
         duck.sync_duckdb(src=src, dest=dest, schema_prefixes=["raw__"], mode="append")
