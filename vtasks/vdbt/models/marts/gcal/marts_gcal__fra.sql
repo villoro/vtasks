@@ -10,6 +10,7 @@ daily_stats AS (
     SELECT
         -------- dims
         started_at :: date AS start_day,
+        description,
 
         -------- measures
         round(sum(duration_hours), 2) AS duration_hours
@@ -23,6 +24,7 @@ final AS (
     SELECT
         -------- dims
         start_day,
+        description,
 
         -------- measures
         duration_hours,

@@ -48,7 +48,7 @@ def upload_marts_to_md():
 def sync_dbt_metadata():
     logger = get_logger()
 
-    src = paths.FILE_DUCKDB_RAW
+    src = paths.FILE_DUCKDB_DBT_METADATA
     dest = paths.FILE_DUCKDB_RAW
 
     path_src = paths.get_duckdb_path(src, as_str=False)

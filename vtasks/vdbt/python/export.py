@@ -4,10 +4,9 @@ import pandas as pd
 from prefect import get_run_logger
 
 from vtasks.common.duck import write_df
+from vtasks.common.paths import FILE_DUCKDB_DBT_METADATA
 from vtasks.vdbt.python import paths
 
-
-DUCKDB_FILE = "dbt_metadata"
 DATABASE = "raw__dbt"
 
 TABLE_EXECUTION = "dbt_executions"
@@ -38,7 +37,11 @@ COLS_MANIFEST = [
     "meta",
 ]
 
-KWARGS_WRITE = {"mode": "append", "as_str": True, "filename": DUCKDB_FILE}
+KWARGS_WRITE = {
+    "mode": "append",
+    "as_str": True,
+    "filename": FILE_DUCKDB_DBT_METADATA,
+}
 
 
 def read_manifest():
