@@ -3,7 +3,7 @@ from prefect import flow
 from vtasks.common.duck import read_query
 from vtasks.common.gsheets import df_to_gspread
 
-SPREADSHEET = "test"
+SPREADSHEET = "registro_lavoro"
 SHEET = "data"
 
 QUERY = "SELECT * FROM dbt._marts__gcal.marts_gcal__fra"
