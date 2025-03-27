@@ -183,9 +183,9 @@ def write_df(
 
 
 def sync_duckdb(
-    src: str = "motherduck",
-    dest: str = "local",
-    schema_prefix: str = "raw__",
+    src: str = "dbt",
+    dest: str = "motherduck",
+    schema_prefix: str = "_marts__",
     mode: Literal["append", "overwrite"] = "overwrite",
 ):
     """
@@ -217,6 +217,9 @@ def sync_duckdb(
         for _, row in df_tables.iterrows():
             schema, table = row["schema"], row["name"]
             if not schema.startswith(schema_prefix):
+                logger.debug(
+                    f"Skipping {schema=} since it doesn't match {schema_prefix=}"
+                )
                 continue  # Skip schemas that don't match the prefix
 
             # Copy tables
@@ -226,3 +229,7 @@ def sync_duckdb(
             )
 
     logger.info("DuckDB sync completed successfully")
+
+
+if __name__ == "__main__":
+    sync_duckdb()
