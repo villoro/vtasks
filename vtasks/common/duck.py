@@ -3,14 +3,13 @@ from typing import Literal
 
 import duckdb
 
+from vtasks.common import paths
 from vtasks.common.logs import get_logger
-from vtasks.common.paths import get_duckdb_path
 from vtasks.common.secrets import read_secret
 from vtasks.common.texts import remove_extra_spacing
 
 DB_DUCKDB_MD = "md:villoro?motherduck_token={token}"
 SECRET_MD = "MOTHERDUCK_TOKEN"
-DEFAULT_FILE = "raw"
 
 
 def get_duckdb(use_md=False, filename=None):
@@ -20,7 +19,7 @@ def get_duckdb(use_md=False, filename=None):
         token = read_secret(SECRET_MD)
         db_path = DB_DUCKDB_MD.format(token=token)
     else:
-        db_path = get_duckdb_path(filename or DEFAULT_FILE)
+        db_path = paths.get_duckdb_path(filename or paths.FILE_DUCKDB_RAW)
         logger.info(f"Connecting to local DuckDB at {db_path=}")
 
     return duckdb.connect(db_path)

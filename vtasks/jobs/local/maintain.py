@@ -38,7 +38,7 @@ def upload_marts_to_md():
         return False
 
     duck.sync_duckdb(
-        src=duck.DEFAULT_FILE,
+        src=duck.FILE_DUCKDB_DBT,
         dest="motherduck",
         schema_prefixes=["_marts__", "_core__"],
         mode="overwrite",
@@ -49,10 +49,10 @@ def upload_marts_to_md():
 def sync_dbt_metadata():
     logger = get_logger()
 
-    src = export.DUCKDB_FILE
+    src = export.FILE_DUCKDB_RAW
     dest = duck.DEFAULT_FILE
 
-    path_src = duck.get_duckdb_path(export.DUCKDB_FILE, as_str=False)
+    path_src = duck.get_duckdb_path(src, as_str=False)
 
     if path_src.exists():
         duck.sync_duckdb(src=src, dest=dest, schema_prefixes=["raw__"], mode="append")
