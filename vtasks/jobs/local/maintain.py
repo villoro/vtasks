@@ -3,9 +3,8 @@ from typing import Literal
 from prefect import flow
 
 from vtasks.common import duck
+from vtasks.common import paths
 from vtasks.common.logs import get_logger
-from vtasks.common.paths import infer_environment
-from vtasks.vdbt.python import export
 
 
 @flow(name="maintain.sync_duckdb")
@@ -32,13 +31,13 @@ def sync_duckdb(
 def upload_marts_to_md():
     logger = get_logger()
 
-    env = infer_environment()
+    env = paths.infer_environment()
     if env != "nas":
         logger.warning(f"Skipping upload to motherduck since we are in {env=}")
         return False
 
     duck.sync_duckdb(
-        src=duck.FILE_DUCKDB_DBT,
+        src=paths.FILE_DUCKDB_DBT,
         dest="motherduck",
         schema_prefixes=["_marts__", "_core__"],
         mode="overwrite",
@@ -49,7 +48,7 @@ def upload_marts_to_md():
 def sync_dbt_metadata():
     logger = get_logger()
 
-    src = export.FILE_DUCKDB_RAW
+    src = paths.FILE_DUCKDB_RAW
     dest = duck.DEFAULT_FILE
 
     path_src = duck.get_duckdb_path(src, as_str=False)
