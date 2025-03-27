@@ -4,6 +4,7 @@ import pandas as pd
 from prefect import get_run_logger
 
 from vtasks.common.duck import write_df
+from vtasks.common.paths import FILE_DUCKDB_DBT_METADATA
 from vtasks.vdbt.python import paths
 
 DATABASE = "raw__dbt"
@@ -39,7 +40,7 @@ COLS_MANIFEST = [
 KWARGS_WRITE = {
     "mode": "append",
     "as_str": True,
-    "filename": paths.FILE_DUCKDB_DBT_METADATA,
+    "filename": FILE_DUCKDB_DBT_METADATA,
 }
 
 
