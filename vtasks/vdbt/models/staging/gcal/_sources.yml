@@ -5,3 +5,7 @@ sources:
     description: Raw Google Calendar data
     tables:
       - name: events
+        loaded_at_field: _exported_at
+        freshness:
+          warn_after: {count: 1, period: day}
+          error_after: {count: 2, period: day}

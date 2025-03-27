@@ -5,11 +5,42 @@ sources:
     description: Raw Google Sheets data
     tables:
       - name: accounts
+        loaded_at_field: _exported_at
+        freshness:
+          warn_after: {count: 1, period: day}
+          error_after: {count: 2, period: day}
+
       - name: books_read
+        loaded_at_field: _exported_at
+        freshness:
+          warn_after: {count: 1, period: day}
+          error_after: {count: 10, period: day}
+
       - name: books_todo
+        loaded_at_field: _exported_at
+        freshness:
+          warn_after: {count: 1, period: day}
+          error_after: {count: 10, period: day}
+
       - name: categories
+
       - name: invest_month
+        loaded_at_field: _exported_at
+        freshness:
+          warn_after: {count: 1, period: day}
+          error_after: {count: 2, period: day}
+
       - name: liquid_month
+        loaded_at_field: _exported_at
+        freshness:
+          warn_after: {count: 1, period: day}
+          error_after: {count: 2, period: day}
+
       - name: salary
       - name: share_percentages
+
       - name: worth_month
+        loaded_at_field: _exported_at
+        freshness:
+          warn_after: {count: 1, period: day}
+          error_after: {count: 2, period: day}
