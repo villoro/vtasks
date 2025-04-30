@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: marts_books__read
+    description: Books read from google sheets
+
+    columns:
+      # -------- info
+      - name: title
+        description: The title of the book.
+      - name: author
+        description: The author of the book.
+      - name: language
+        description: The language in which the book is written (e.g., English, Spanish).
+      - name: type
+        description: The type or genre of the book (e.g., Fiction, Non-Fiction).
+
+      # -------- time related
+      - name: read_date
+        description: The date the book was read from the `Date` column.
+
+      # -------- measures
+      - name: num_pages
+        description: The number of pages in the book.
+
+      # -------- metadata
+      - name: _source
+        description: Metadata field containing the source of the data.
+      - name: _exported_at
+        description: Metadata field indicating when the data was exported.
+      - name: _n_updates
+        description: Metadata field containing the number of updates applied to the row.
