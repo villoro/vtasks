@@ -22,11 +22,5 @@ models:
       # -------- measures
       - name: num_pages
         description: The number of pages in the book.
-
-      # -------- metadata
-      - name: _source
-        description: Metadata field containing the source of the data.
-      - name: _exported_at
-        description: Metadata field indicating when the data was exported.
-      - name: _n_updates
-        description: Metadata field containing the number of updates applied to the row.
+      - name: total_hours
+        description: Number of reading hours for the book.
