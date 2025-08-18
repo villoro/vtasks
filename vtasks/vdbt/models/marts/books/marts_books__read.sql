@@ -35,9 +35,16 @@ joined AS (
         SUM(calendar.total_hours) AS total_hours
     FROM books
     LEFT JOIN calendar
-        ON lower(trim(books.title)) = calendar.book
+        ON lower(trim(books.title)) = lower(calendar.book)
         AND ABS(EXTRACT('year' FROM books.read_date) - calendar.read_year) < 2
     GROUP BY ALL
+),
+
+final AS (
+    SELECT
+        *,
+        60 * total_hours / num_pages AS minutes_per_page
+    FROM joined
 )
 
-SELECT * FROM joined
+SELECT * FROM final
