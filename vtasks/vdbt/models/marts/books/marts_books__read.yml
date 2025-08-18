@@ -24,3 +24,5 @@ models:
         description: The number of pages in the book.
       - name: total_hours
         description: Number of reading hours for the book.
+      - name: minutes_per_page
+        description: Average reading speed as minutes/page.
