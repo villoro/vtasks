@@ -149,7 +149,7 @@ tzdata==2025.2
 tzlocal==4.3.1
 ujson==5.10.0
 uritemplate==4.2.0
-urllib3==2.4.0
+urllib3==2.5.0
 uv==0.7.13
 uvicorn==0.34.3
 vcrypto==4.2.1
