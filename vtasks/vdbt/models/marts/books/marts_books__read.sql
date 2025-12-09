@@ -43,7 +43,7 @@ joined AS (
 final AS (
     SELECT
         *,
-        60 * total_hours / num_pages AS minutes_per_page
+        round(60 * total_hours / num_pages, 3) AS minutes_per_page
     FROM joined
 )
 
