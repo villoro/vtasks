@@ -1,14 +1,7 @@
 {%- set accounts = var("expensor")["accounts"]["liquid"] -%}
 
 WITH source AS (
-    SELECT *
-    FROM {{ source('raw__gsheets', 'liquid_month') }}
-),
-
-rename_cols AS (
-    SELECT
-        *
-    FROM source
+    SELECT * FROM {{ source('raw__gsheets', 'liquid_month') }}
 ),
 
 casted_and_renamed AS (
@@ -26,8 +19,7 @@ casted_and_renamed AS (
         _source,
         _exported_at,
         _n_updates
-    FROM rename_cols
+    FROM source
 )
 
-SELECT *
-FROM casted_and_renamed
+SELECT * FROM casted_and_renamed

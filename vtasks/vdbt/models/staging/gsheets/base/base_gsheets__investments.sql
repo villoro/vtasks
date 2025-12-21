@@ -32,5 +32,4 @@ casted_and_renamed AS (
     FROM source
 )
 
-SELECT *
-FROM casted_and_renamed
+SELECT * FROM casted_and_renamed

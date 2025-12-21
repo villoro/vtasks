@@ -3,5 +3,4 @@ WITH source AS (
     FROM {{ ref('base_gcal__events') }}
 )
 
-SELECT *
-FROM source
+SELECT * FROM source

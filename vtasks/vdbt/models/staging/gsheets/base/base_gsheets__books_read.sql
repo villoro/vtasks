@@ -1,6 +1,5 @@
 WITH source AS (
-    SELECT *
-    FROM {{ source('raw__gsheets', 'books_read') }}
+    SELECT * FROM {{ source('raw__gsheets', 'books_read') }}
 ),
 
 casted_and_renamed AS (
@@ -24,5 +23,4 @@ casted_and_renamed AS (
     FROM source
 )
 
-SELECT *
-FROM casted_and_renamed
+SELECT * FROM casted_and_renamed

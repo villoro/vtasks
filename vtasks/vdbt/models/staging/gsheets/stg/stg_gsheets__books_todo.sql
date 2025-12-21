@@ -3,5 +3,4 @@ WITH source AS (
     FROM {{ ref('base_gsheets__books_todo') }}
 )
 
-SELECT *
-FROM source
+SELECT * FROM source
