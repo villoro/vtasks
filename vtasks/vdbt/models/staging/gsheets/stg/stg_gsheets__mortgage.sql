@@ -16,7 +16,14 @@ ffilled AS (
     FROM source
 ),
 
-personal AS (
+ownership AS (
+    SELECT
+        *,
+        home_value - debt AS ownership
+    FROM ffilled
+),
+
+final AS (
     SELECT
         -------- pk
         month,
@@ -28,12 +35,14 @@ personal AS (
         debt * {{ percent }} AS debt_personal,
         home_value,
         home_value * {{ percent }} AS home_value_personal,
+        ownership,
+        ownership * {{ percent }} AS ownership_personal,
 
         -------- metadata
         _source,
         _exported_at,
         _n_updates
-    FROM ffilled
+    FROM ownership
 )
 
-SELECT * FROM personal
+SELECT * FROM final
