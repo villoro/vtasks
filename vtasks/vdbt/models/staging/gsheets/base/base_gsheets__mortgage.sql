@@ -11,7 +11,7 @@ casted_and_renamed AS (
         {{ gsheet_to_numeric('Amortitzation') }} :: decimal(10, 2) AS amortitzation,
         {{ gsheet_to_numeric('Interest') }} :: decimal(10, 2) AS interest,
         {{ gsheet_to_numeric('Debt') }} :: decimal(10, 2) AS debt,
-        {{ gsheet_to_numeric('Home value') }} :: decimal(10, 2) AS home_value,
+        {{ gsheet_to_numeric('"Home value"') }} :: decimal(10, 2) AS home_value,
 
         -------- metadata
         _source,
