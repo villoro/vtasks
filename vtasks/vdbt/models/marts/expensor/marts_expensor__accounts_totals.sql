@@ -44,8 +44,8 @@ cumsum_transactions AS (
 ),
 
 combined AS (
-    SELECT * FROM invested UNION ALL
-    SELECT * FROM worth UNION ALL
+    SELECT * FROM invested UNION ALL BY NAME
+    SELECT * FROM worth UNION ALL BY NAME
     SELECT * FROM cumsum_transactions
 )
 
