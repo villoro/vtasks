@@ -1,18 +1,15 @@
 {% set shared_account = 'fravi' %}
 
 WITH transactions AS (
-    SELECT *
-    FROM {{ ref('stg_dropbox__money_lover') }}
+    SELECT * FROM {{ ref('stg_dropbox__money_lover') }}
 ),
 
 categories AS (
-    SELECT *
-    FROM {{ ref('stg_gsheets__categories') }}
+    SELECT * FROM {{ ref('stg_gsheets__categories') }}
 ),
 
 share_percentages AS (
-    SELECT *
-    FROM {{ ref('stg_gsheets__share_percentages') }}
+    SELECT * FROM {{ ref('stg_gsheets__share_percentages') }}
 ),
 
 transactions_with_percent AS (
@@ -52,5 +49,4 @@ final AS (
     ORDER BY transaction_date DESC, category, personal_amount
 )
 
-SELECT *
-FROM final
+SELECT * FROM final

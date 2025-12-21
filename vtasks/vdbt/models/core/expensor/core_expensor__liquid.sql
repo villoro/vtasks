@@ -1,6 +1,5 @@
 WITH source AS (
-    SELECT *
-    FROM {{ ref('stg_gsheets__liquids') }}
+    SELECT * FROM {{ ref('stg_gsheets__liquids') }}
 ),
 
 un_pivoted AS (
@@ -28,5 +27,4 @@ ordered_cols AS (
     FROM un_pivoted
 )
 
-SELECT *
-FROM ordered_cols
+SELECT * FROM ordered_cols

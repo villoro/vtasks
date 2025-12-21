@@ -1,6 +1,5 @@
 WITH source AS (
-    SELECT *
-    FROM {{ ref('stg_gsheets__salaries') }}
+    SELECT * FROM {{ ref('stg_gsheets__salaries') }}
 ),
 
 un_pivoted AS (
@@ -28,5 +27,4 @@ final AS (
     FROM un_pivoted
 )
 
-SELECT *
-FROM final
+SELECT * FROM final

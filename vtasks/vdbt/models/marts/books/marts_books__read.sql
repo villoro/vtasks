@@ -5,8 +5,7 @@ WITH books AS (
 ),
 
 raw_calendar AS (
-    SELECT *
-    FROM {{ ref('stg_gcal__events') }}
+    SELECT * FROM {{ ref('stg_gcal__events') }}
     WHERE calendar_name = '{{ cal_books }}'
 ),
 

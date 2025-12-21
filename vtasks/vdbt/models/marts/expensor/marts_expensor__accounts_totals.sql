@@ -1,11 +1,9 @@
 WITH account_values AS (
-    SELECT *
-    FROM {{ ref('marts_expensor__accounts_values') }}
+    SELECT * FROM {{ ref('marts_expensor__accounts_values') }}
 ),
 
 transactions AS (
-    SELECT *
-    FROM {{ ref('marts_expensor__transactions') }}
+    SELECT * FROM {{ ref('marts_expensor__transactions') }}
 ),
 
 invested AS (

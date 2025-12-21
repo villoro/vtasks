@@ -1,11 +1,9 @@
 WITH source AS (
-    SELECT *
-    FROM {{ ref('base_dropbox__money_lover') }}
+    SELECT * FROM {{ ref('base_dropbox__money_lover') }}
 ),
 
 invalid_categories AS (
-    SELECT *
-    FROM {{ ref('invalid_categories') }}
+    SELECT * FROM {{ ref('invalid_categories') }}
 ),
 
 without_dups AS (
@@ -27,5 +25,4 @@ without_fravi_incomes AS (
     WHERE NOT (account = 'FraVi' AND transaction_type = 'incomes')
 )
 
-SELECT *
-FROM without_fravi_incomes
+SELECT * FROM without_fravi_incomes
