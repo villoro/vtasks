@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: stg_gsheets__mortgage
+    description: Salaries from Google Sheets
+
+    columns:
+      # -------- pk
+      - name: month
+        description: Date with month resolution.
+        tests: [unique, not_null]
+
+      # -------- metrics
+      - name: amortitzation
+        description: Amount paid towards reducing the debt.
+      - name: interest
+        description: Amount paid that represents bank's earnings.
+      - name: debt
+        description: Remaining debt.
+      - name: debt_personal
+        description: Remaining personal debt.
+      - name: home_value
+        description: Value of the house.
+      - name: home_value_personal
+        description: Personal value of the house.
+      - name: ownership
+        description: Home value owned (value - debt).
+      - name: ownership
+        description: Home personal value owned (personal_value - personal_debt).
+
+      # -------- metadata
+      - name: _source
+        description: Metadata field containing the source of the data.
+      - name: _exported_at
+        description: Metadata field indicating when the data was exported.
+      - name: _n_updates
+        description: Metadata field containing the number of updates applied to the row.

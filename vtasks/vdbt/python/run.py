@@ -85,7 +85,7 @@ def copy_duckdb():
 
 
 @flow(name="dbt")
-def run_dbt(select=None, exclude=None, debug=False, store_failures=True):
+def run_dbt(select=None, exclude=None, debug=False, store_failures=True, do_copy=True):
     """Run all DBT commands"""
     set_dbt_env()
 
@@ -106,8 +106,9 @@ def run_dbt(select=None, exclude=None, debug=False, store_failures=True):
 
     build(select, exclude, store_failures)
     freshness()
-    copy_duckdb()
+    if do_copy:
+        copy_duckdb()
 
 
 if __name__ == "__main__":
-    run_dbt()
+    run_dbt(do_copy=False)
