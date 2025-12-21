@@ -1,6 +1,5 @@
 WITH source AS (
-    SELECT *
-    FROM {{ source('raw__dropbox', 'money_lover') }}
+    SELECT * FROM {{ source('raw__dropbox', 'money_lover') }}
 ),
 
 casted_and_renamed AS (
@@ -21,5 +20,4 @@ casted_and_renamed AS (
     FROM source
 )
 
-SELECT *
-FROM casted_and_renamed
+SELECT * FROM casted_and_renamed

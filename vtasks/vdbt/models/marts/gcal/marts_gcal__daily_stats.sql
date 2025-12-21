@@ -1,6 +1,5 @@
 WITH events AS (
-    SELECT *
-    FROM {{ ref('stg_gcal__events') }}
+    SELECT * FROM {{ ref('stg_gcal__events') }}
 ),
 
 daily_stats AS (
@@ -18,5 +17,4 @@ daily_stats AS (
     ORDER BY ALL
 )
 
-SELECT *
-FROM daily_stats
+SELECT * FROM daily_stats

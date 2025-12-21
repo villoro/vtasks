@@ -38,5 +38,4 @@ with_is_account AS (
 	FROM cleaned
 )
 
-SELECT *
-FROM with_is_account
+SELECT * FROM with_is_account

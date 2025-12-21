@@ -9,8 +9,7 @@ WITH source AS (
 ),
 
 accounts AS (
-    SELECT *
-    FROM {{ ref('stg_gsheets__accounts') }}
+    SELECT * FROM {{ ref('stg_gsheets__accounts') }}
 ),
 
 with_account_subtypes AS (
@@ -42,5 +41,4 @@ selected_columns AS (
     ORDER BY ALL
 )
 
-SELECT *
-FROM selected_columns
+SELECT * FROM selected_columns

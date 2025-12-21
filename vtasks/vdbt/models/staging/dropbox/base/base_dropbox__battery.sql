@@ -1,6 +1,5 @@
 WITH source AS (
-    SELECT *
-    FROM {{ source('raw__dropbox', 'battery_pixel_4a') }}
+    SELECT * FROM {{ source('raw__dropbox', 'battery_pixel_4a') }}
 ),
 
 casted_and_renamed AS (
@@ -28,5 +27,4 @@ casted_and_renamed AS (
     FROM source
 )
 
-SELECT *
-FROM casted_and_renamed
+SELECT * FROM casted_and_renamed

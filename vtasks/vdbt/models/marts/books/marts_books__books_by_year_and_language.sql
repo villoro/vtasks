@@ -1,6 +1,5 @@
 WITH source AS (
-    SELECT *
-    FROM {{ ref('stg_gsheets__books_read') }}
+    SELECT * FROM {{ ref('stg_gsheets__books_read') }}
 ),
 
 years AS (
@@ -51,5 +50,4 @@ with_cumsum AS (
     FROM combined
 )
 
-SELECT *
-FROM with_cumsum
+SELECT * FROM with_cumsum

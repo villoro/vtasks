@@ -1,6 +1,5 @@
 WITH source AS (
-    SELECT *
-    FROM {{ source('raw__gsheets', 'share_percentages') }}
+    SELECT * FROM {{ source('raw__gsheets', 'share_percentages') }}
 ),
 
 casted AS (

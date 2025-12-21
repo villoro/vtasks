@@ -1,8 +1,7 @@
 {% set min_date = '2025-01-01' %}
 
 WITH events AS (
-    SELECT *
-    FROM {{ ref('stg_gcal__events') }}
+    SELECT * FROM {{ ref('stg_gcal__events') }}
     WHERE NOT is_personal AND NOT is_whole_day_event
 ),
 

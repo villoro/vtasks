@@ -1,8 +1,7 @@
 {% set fra_cal = 'fra.work' %}
 
 WITH source AS (
-    SELECT *
-    FROM {{ source('raw__gcal', 'events') }}
+    SELECT * FROM {{ source('raw__gcal', 'events') }}
 ),
 
 casted_ts AS (
@@ -39,5 +38,4 @@ casted_and_renamed AS (
     FROM casted_ts
 )
 
-SELECT *
-FROM casted_and_renamed
+SELECT * FROM casted_and_renamed

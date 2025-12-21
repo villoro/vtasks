@@ -3,8 +3,7 @@
 {% set min_working_hours = 3 %}
 
 WITH filtered_data AS (
-    SELECT *
-    FROM {{ ref('marts_gcal__daily_stats') }}
+    SELECT * FROM {{ ref('marts_gcal__daily_stats') }}
     WHERE (
         calendar_name = '{{ paid_work_calendar }}'
         AND duration_hours > {{ min_working_hours }}
@@ -47,5 +46,4 @@ rounded AS (
     FROM with_moving_averages
 )
 
-SELECT *
-FROM rounded
+SELECT * FROM rounded
