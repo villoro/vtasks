@@ -27,6 +27,11 @@
   sheet_in: share_percent
   table_out: share_percentages
 
+- doc_in: expensor_data
+  sheet_in: mortgage
+  table_out: mortgage
+
+
 # vbooks
 - doc_in: books_data
   sheet_in: Books
