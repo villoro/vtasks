@@ -8,7 +8,6 @@ from prefect import task
 from vtasks.common import paths
 from vtasks.common.logs import get_logger
 from vtasks.vdbt.python import dbt_utils
-from vtasks.vdbt.python import export
 
 
 def set_dbt_env():
@@ -39,13 +38,6 @@ def deps():
 def run_debug():
     """Check for DBT problems"""
     dbt_utils.run_dbt_command(["debug"])
-
-
-@task(name="dbt.export_models")
-def export_models():
-    """Export information about the present models"""
-    dbt_utils.run_dbt_command(["compile"])
-    export.export_models()
 
 
 @task(name="dbt.build")
@@ -93,16 +85,11 @@ def run_dbt(select=None, exclude=None, debug=False, store_failures=True, do_copy
     select = select.strip('"') if select is not None else None
     exclude = exclude.strip('"') if exclude is not None else None
 
-    is_complete_run = select is None
-
     clean()
     deps()
 
     if debug:
         run_debug()
-
-    if is_complete_run:
-        export_models()
 
     build(select, exclude, store_failures)
     freshness()
