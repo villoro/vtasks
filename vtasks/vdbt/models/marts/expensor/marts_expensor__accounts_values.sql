@@ -30,7 +30,7 @@ selected_columns AS (
         account_name,
 
         -------- account details
-        COEALSECE(account_subtype, 'home') AS account_subtype,
+        COALSECE(account_subtype, 'home') AS account_subtype,
 
         -------- measures
         value_eur,
