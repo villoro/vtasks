@@ -7,7 +7,7 @@ from vtasks.common.gsheets import df_to_gspread
 SPREADSHEET = "registro_lavoro"
 SHEET = "data"
 
-QUERY = "SELECT * FROM dbt._marts__gcal.marts_gcal__fra"
+QUERY = "SELECT * FROM villoro._marts__gcal.marts_gcal__fra"
 
 
 def get_empty_df(df_in, margin=20):
