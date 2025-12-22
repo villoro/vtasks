@@ -40,6 +40,7 @@ selected_columns AS (
         _exported_at,
         _n_updates
     FROM with_account_subtypes
+    WHERE change_date <= CURRENT_DATE
     ORDER BY ALL
 )
 
