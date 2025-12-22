@@ -15,8 +15,8 @@ casted_and_renamed AS (
         -------- pk
         replace(Date, '/', '-').concat('-01') :: date AS change_date,
         CASE
-            WHEN _dbt_source_relation LIKE '%invest%' THEN 'invested'
-            ELSE 'worth'
+            WHEN _dbt_source_relation LIKE '%invest%' THEN 'financial_invested'
+            ELSE 'financial_assets'
         END AS account_type,
 
         -------- metrics

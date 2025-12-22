@@ -8,7 +8,7 @@ renamed AS (
         month AS change_date,
 
         -------- measures
-        ownership_personal AS home_ownership,
+        equity_personal AS home_equity,
         debt_personal AS home_debt,
         home_value_personal AS home_value,
 
@@ -21,7 +21,7 @@ renamed AS (
 
 unpivoted AS (
     UNPIVOT renamed
-    ON home_ownership, home_debt, home_value
+    ON home_equity, home_debt, home_value
     INTO
     NAME account_name
     VALUE value_eur

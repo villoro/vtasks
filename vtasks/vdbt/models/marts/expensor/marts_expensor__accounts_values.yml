@@ -21,7 +21,7 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['invested', 'worth', 'liquid']
+              values: ['financial_invested', 'financial_assets', 'liquid', 'home']
       - name: account_name
         description: Name of the account
         tests: 
