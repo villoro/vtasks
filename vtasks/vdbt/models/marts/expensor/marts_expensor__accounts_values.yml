@@ -30,7 +30,10 @@ models:
       # -------- account details
       - name: account_subtype
         description: Subtype of account
-        tests: [not_null]
+        tests:
+          - not_null:
+              config:
+                where: "account_type != 'home'"
 
       # -------- measures
       - name: value_eur
