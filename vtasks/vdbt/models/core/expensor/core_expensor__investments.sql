@@ -2,7 +2,7 @@ WITH source AS (
     SELECT * FROM {{ ref('stg_gsheets__investments') }}
 ),
 
-un_pivoted AS (
+unpivoted AS (
     UNPIVOT source
     ON {{ var('expensor')['accounts']['investments'] | join(', ') }}
     INTO
@@ -10,7 +10,7 @@ un_pivoted AS (
     VALUE value_eur
 ),
 
-ordered_cols AS (
+final AS (
     SELECT
         -------- pks
         change_date,
@@ -24,7 +24,7 @@ ordered_cols AS (
         _source,
         _exported_at,
         _n_updates
-    FROM un_pivoted
+    FROM unpivoted
 )
 
-SELECT * FROM ordered_cols
+SELECT * FROM final

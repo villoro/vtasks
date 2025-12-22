@@ -23,9 +23,9 @@ models:
         description: Value of the house.
       - name: home_value_personal
         description: Personal value of the house.
-      - name: ownership
+      - name: equity
         description: Home value owned (value - debt).
-      - name: ownership
+      - name: equity_personal
         description: Home personal value owned (personal_value - personal_debt).
 
       # -------- metadata

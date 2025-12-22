@@ -22,7 +22,7 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['invested', 'worth']
+              values: ['financial_invested', 'financial_assets']
 
       # -------- metrics
       - name: total

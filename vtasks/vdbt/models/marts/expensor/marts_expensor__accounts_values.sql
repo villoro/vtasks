@@ -2,6 +2,7 @@ WITH source AS (
     SELECT *
     FROM {{ dbt_utils.union_relations(
         relations=[
+            ref('core_expensor__home'),
             ref('core_expensor__investments'),
             ref('core_expensor__liquid'),
         ])
@@ -17,7 +18,7 @@ with_account_subtypes AS (
         source.*,
         accounts.account_subtype
     FROM source
-    JOIN accounts ON lower(source.account_name) = lower(accounts.name)
+    LEFT JOIN accounts ON lower(source.account_name) = lower(accounts.name)
 ),
 
 selected_columns AS (

@@ -15,7 +15,7 @@ worth_month_table_def AS (
 all_tables AS (
 	SELECT *
 	FROM invest_month_table_def
-	UNION ALL
+	UNION ALL BY NAME
 	SELECT *
 	FROM worth_month_table_def
 ),

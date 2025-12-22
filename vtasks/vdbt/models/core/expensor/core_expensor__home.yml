@@ -1,14 +1,13 @@
 version: 2
 
 models:
-  - name: marts_expensor__accounts_values
-    description: Tracks all investments values
+  - name: core_expensor__home
+    description: Tracks information about the home.
 
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - change_date
-            - account_type
             - account_name
 
     columns:
@@ -17,23 +16,13 @@ models:
         description: Month as date
         tests: [not_null]
       - name: account_type
-        description: Type of account (Invested, Worth or Liquid)
+        description: Type of record
         tests:
           - not_null
-          - accepted_values:
-              values: ['financial_invested', 'financial_assets', 'liquid', 'home']
       - name: account_name
         description: Name of the account
         tests: 
           - not_null
-
-      # -------- account details
-      - name: account_subtype
-        description: Subtype of account
-        tests:
-          - not_null:
-              config:
-                where: "account_type != 'home'"
 
       # -------- measures
       - name: value_eur

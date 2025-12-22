@@ -16,10 +16,10 @@ ffilled AS (
     FROM source
 ),
 
-ownership AS (
+equity AS (
     SELECT
         *,
-        home_value - debt AS ownership
+        home_value - debt AS equity
     FROM ffilled
 ),
 
@@ -35,14 +35,14 @@ final AS (
         debt * {{ percent }} AS debt_personal,
         home_value,
         home_value * {{ percent }} AS home_value_personal,
-        ownership,
-        ownership * {{ percent }} AS ownership_personal,
+        equity,
+        equity * {{ percent }} AS equity_personal,
 
         -------- metadata
         _source,
         _exported_at,
         _n_updates
-    FROM ownership
+    FROM equity
 )
 
 SELECT * FROM final
