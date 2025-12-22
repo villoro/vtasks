@@ -9,7 +9,11 @@ from vtasks.vdbt.python import dbt_utils
 
 
 def set_dbt_env():
-    """Set environment variables for dbt depending on target."""
+    """
+    Set environment variables for dbt depending on target.
+    This allows to query the appropiate duckdb local files
+    """
+
     logger = get_logger()
     logger.debug("Checking duckdb_paths")
 
