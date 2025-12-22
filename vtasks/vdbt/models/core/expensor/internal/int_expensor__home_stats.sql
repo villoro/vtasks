@@ -41,7 +41,7 @@ final AS (
         _source,
         _exported_at,
         _n_updates
-    FROM mortgage
+    FROM unpivoted
 )
 
 SELECT * FROM final
