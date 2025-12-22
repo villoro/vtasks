@@ -31,9 +31,8 @@ def sync_duckdb(
 def upload_marts_to_md():
     logger = get_logger()
 
-    env = paths.infer_environment()
-    if env != "nas":
-        logger.warning(f"Skipping upload to motherduck since we are in {env=}")
+    if not paths.is_pro():
+        logger.warning(f"Skipping upload to motherduck since we are in {paths.ENV=}")
         return False
 
     duck.sync_duckdb(

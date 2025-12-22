@@ -18,8 +18,9 @@ FILE_DUCKDB_RAW = "raw"
 FILE_DUCKDB_DBT = "dbt"
 
 
-def infer_environment():
+def _infer_environment():
     """Detects whether the script is running on GitHub Actions, locally, or on the NAS."""
+
     if "GITHUB_ACTIONS" in os.environ:
         return "github"
     elif platform.system() == "Windows":
@@ -27,12 +28,23 @@ def infer_environment():
     elif PATH_DATA_NAS.exists():
         return "nas"
     else:
-        return "unknown"
+        raise RuntimeError(
+            "Environment not recognized, unable to determine DuckDB path."
+        )
+
+
+# Set it only once and reuse it
+ENV = _infer_environment()
 
 
 # Needed for storing some tokens
 PATH_AUTH = PATH_ROOT / ".auth"
 PATH_AUTH.mkdir(parents=True, exist_ok=True)
+
+
+def is_pro():
+    global ENV
+    return ENV == "nas"
 
 
 def get_path(path_relative):
@@ -48,19 +60,13 @@ def get_path(path_relative):
 
 def get_duckdb_path(db_name, as_str=True):
     """Returns the correct DuckDB file path based on the environment."""
-    env = infer_environment()
 
-    if env == "github" or env == "local":
-        duckdb_dir = PATH_ROOT / FOLDER_DUCKDB_LOCAL
-    elif env == "nas":
+    if is_pro():
         duckdb_dir = PATH_DATA_NAS
     else:
-        raise RuntimeError(
-            "Environment not recognized, unable to determine DuckDB path."
-        )
+        duckdb_dir = PATH_ROOT / FOLDER_DUCKDB_LOCAL
 
-    # Ensure directory exists for local testing
-    if env in ["github", "local"]:
+        # Ensure directory exists for local testing
         duckdb_dir.mkdir(parents=True, exist_ok=True)
 
     if "." in db_name:
