@@ -9,20 +9,30 @@ transactions AS (
 invested AS (
     SELECT
         change_date,
-        'invested' AS category,
+        'financial_invested' AS category,
         sum(value_eur) AS value_eur,
     FROM account_values
-    WHERE account_type IN ('liquid', 'invested')
+    WHERE account_type IN ('liquid', 'financial_invested')
     GROUP BY ALL
 ),
 
-worth AS (
+assets AS (
     SELECT
         change_date,
-        'worth' AS category,
+        'financial_assets' AS category,
         sum(value_eur) AS value_eur,
     FROM account_values
-    WHERE account_type IN ('liquid', 'worth')
+    WHERE account_type IN ('liquid', 'financial_assets')
+    GROUP BY ALL
+),
+
+home AS (
+    SELECT
+        change_date,
+        account_name AS category,
+        sum(value_eur) AS value_eur,
+    FROM account_values
+    WHERE account_type = 'home' AND account_name IN ('home_equity', 'home_debt')
     GROUP BY ALL
 ),
 
@@ -45,7 +55,8 @@ cumsum_transactions AS (
 
 combined AS (
     SELECT * FROM invested UNION ALL BY NAME
-    SELECT * FROM worth UNION ALL BY NAME
+    SELECT * FROM assets UNION ALL BY NAME
+    SELECT * FROM home UNION ALL BY NAME
     SELECT * FROM cumsum_transactions
 )
 
