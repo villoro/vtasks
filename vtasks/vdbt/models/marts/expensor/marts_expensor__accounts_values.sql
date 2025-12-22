@@ -16,7 +16,8 @@ accounts AS (
 with_account_subtypes AS (
     SELECT
         source.*,
-        accounts.account_subtype
+        -- No ugly numbers here
+        accounts.account_subtype.split('-')[-1].trim() AS account_subtype
     FROM source
     LEFT JOIN accounts ON lower(source.account_name) = lower(accounts.name)
 ),
