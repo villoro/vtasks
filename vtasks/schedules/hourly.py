@@ -11,14 +11,13 @@ from vtasks.jobs.gcal.export import export_all_gcal
 from vtasks.jobs.gsheets.export_tables import export_gsheets_tables
 from vtasks.jobs.gsheets.fra_work import update_fra_work
 from vtasks.jobs.indexa.main import indexa_all
-from vtasks.jobs.local.maintain import sync_dbt_metadata
 from vtasks.jobs.local.maintain import upload_marts_to_md
 from vtasks.vdbt.python.run import run_dbt
 
 FLOW_NAME = "vtasks.hourly"
 
 JOBS = {
-    "maintain": [backup_all, sync_dbt_metadata],
+    "maintain": [backup_all],
     "updates": [crypto, indexa_all],
     "export": [
         export_dropbox_tables,
