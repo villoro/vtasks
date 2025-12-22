@@ -70,6 +70,9 @@ def freshness(target=None):
 @flow(name="dbt")
 def run_dbt(select=None, exclude=None, debug=False, store_failures=True, target=None):
     """Run all DBT commands"""
+
+    logger = get_logger()
+
     set_dbt_env()
 
     # Clean commands (in some cases it includes unwanted quotation marks)
@@ -79,6 +82,7 @@ def run_dbt(select=None, exclude=None, debug=False, store_failures=True, target=
     # Infer target if needed
     if target is None:
         target = "md" if paths.is_pro() else "local"
+        logger.info(f"Using {target=}")
 
     clean()
     deps()
