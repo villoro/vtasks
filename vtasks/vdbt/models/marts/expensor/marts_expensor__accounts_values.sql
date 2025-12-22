@@ -18,7 +18,7 @@ with_account_subtypes AS (
         source.*,
         accounts.account_subtype
     FROM source
-    JOIN accounts ON lower(source.account_name) = lower(accounts.name)
+    LEFT JOIN accounts ON lower(source.account_name) = lower(accounts.name)
 ),
 
 selected_columns AS (
