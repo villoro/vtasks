@@ -28,7 +28,7 @@ dependencies = [
     "gcsa>=2.5.1",
     "gspread>=6.1.4",
     "pandas>=2.2.3",
-    "prefect>=3.2.7",
+    "prefect==3.2.7",
     "pyarrow>=19.0.1",
     "regex>=2024.11.6",
     "setuptools>=75.8.0",
