@@ -2,6 +2,7 @@ WITH source AS (
     SELECT *
     FROM {{ dbt_utils.union_relations(
         relations=[
+            ref('core_expensor__home'),
             ref('core_expensor__investments'),
             ref('core_expensor__liquid'),
         ])
