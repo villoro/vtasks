@@ -1,6 +1,4 @@
 import os
-import shutil
-from time import sleep
 
 from prefect import flow
 from prefect import task
@@ -11,7 +9,11 @@ from vtasks.vdbt.python import dbt_utils
 
 
 def set_dbt_env():
-    """Set environment variables for dbt depending on target."""
+    """
+    Set environment variables for dbt depending on target.
+    This allows to query the appropiate duckdb local files
+    """
+
     logger = get_logger()
     logger.debug("Checking duckdb_paths")
 
@@ -41,8 +43,7 @@ def run_debug():
 
 
 @task(name="dbt.build")
-def build(select, exclude, store_failures):
-    """Perform DBT build (seed + run + test)"""
+def build(select, exclude, store_failures, target=None):
     command = ["build"]
 
     if select:
@@ -51,39 +52,37 @@ def build(select, exclude, store_failures):
         command += ["--exclude", exclude]
     if store_failures:
         command += ["--store-failures"]
+    if target:
+        command += ["--target", target]
 
     dbt_utils.run_dbt_command(command)
 
 
 @task(name="dbt.freshness")
-def freshness():
-    """Check for DBT problems"""
-    dbt_utils.run_dbt_command(["source", "freshness"])
+def freshness(target=None):
+    command = ["source", "freshness"]
+    if target:
+        command += ["--target", target]
 
-
-@task(name="dbt.copy_duckdb")
-def copy_duckdb():
-    """Copy the output duckdb file to prevent locks with metabase"""
-
-    logger = get_logger()
-    sleep(1)
-
-    src = paths.get_duckdb_path(paths.FILE_DUCKDB_DBT)
-    dest = paths.get_duckdb_path(paths.FILE_DUCKDB_METABASE)
-
-    logger.info(f"Copying {src=} to {dest=}")
-    shutil.copy2(src, dest)
-    logger.info(f"{dest=} successfully exported")
+    dbt_utils.run_dbt_command(command)
 
 
 @flow(name="dbt")
-def run_dbt(select=None, exclude=None, debug=False, store_failures=True, do_copy=True):
+def run_dbt(select=None, exclude=None, debug=False, store_failures=True, target=None):
     """Run all DBT commands"""
+
+    logger = get_logger()
+
     set_dbt_env()
 
     # Clean commands (in some cases it includes unwanted quotation marks)
     select = select.strip('"') if select is not None else None
     exclude = exclude.strip('"') if exclude is not None else None
+
+    # Infer target if needed
+    if target is None:
+        target = "md" if paths.is_pro() else "local"
+        logger.info(f"Using {target=}")
 
     clean()
     deps()
@@ -91,11 +90,9 @@ def run_dbt(select=None, exclude=None, debug=False, store_failures=True, do_copy
     if debug:
         run_debug()
 
-    build(select, exclude, store_failures)
-    freshness()
-    if do_copy:
-        copy_duckdb()
+    build(select, exclude, store_failures, target)
+    freshness(target)
 
 
 if __name__ == "__main__":
-    run_dbt(do_copy=False)
+    run_dbt(target="local")

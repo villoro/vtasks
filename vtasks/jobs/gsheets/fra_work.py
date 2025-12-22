@@ -7,7 +7,15 @@ from vtasks.common.gsheets import df_to_gspread
 SPREADSHEET = "registro_lavoro"
 SHEET = "data"
 
-QUERY = "SELECT * FROM dbt._marts__gcal.marts_gcal__fra"
+QUERY = """
+SELECT
+    start_day AS day,
+    title AS concept,
+    duration_hours AS total_hours,
+    week,
+    month
+FROM villoro._marts__gcal.marts_gcal__fra
+"""
 
 
 def get_empty_df(df_in, margin=20):
@@ -18,9 +26,9 @@ def get_empty_df(df_in, margin=20):
 
 @flow(name="gsheets.update_fra_work")
 def update_fra_work():
-    df = read_query(QUERY, filename="dbt")
+    df = read_query(QUERY, use_md=True)
 
-    for col in ["start_day", "week"]:
+    for col in ["day", "week"]:
         df[col] = df[col].dt.strftime("%Y-%m-%d")
 
     df_empty = get_empty_df(df)
