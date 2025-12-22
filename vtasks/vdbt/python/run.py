@@ -43,8 +43,7 @@ def run_debug():
 
 
 @task(name="dbt.build")
-def build(select, exclude, store_failures):
-    """Perform DBT build (seed + run + test)"""
+def build(select, exclude, store_failures, target=None):
     command = ["build"]
 
     if select:
@@ -53,18 +52,23 @@ def build(select, exclude, store_failures):
         command += ["--exclude", exclude]
     if store_failures:
         command += ["--store-failures"]
+    if target:
+        command += ["--target", target]
 
     dbt_utils.run_dbt_command(command)
 
 
 @task(name="dbt.freshness")
-def freshness():
-    """Check for DBT problems"""
-    dbt_utils.run_dbt_command(["source", "freshness"])
+def freshness(target=None):
+    command = ["source", "freshness"]
+    if target:
+        command += ["--target", target]
+
+    dbt_utils.run_dbt_command(command)
 
 
 @flow(name="dbt")
-def run_dbt(select=None, exclude=None, debug=False, store_failures=True):
+def run_dbt(select=None, exclude=None, debug=False, store_failures=True, target=None):
     """Run all DBT commands"""
     set_dbt_env()
 
@@ -72,15 +76,19 @@ def run_dbt(select=None, exclude=None, debug=False, store_failures=True):
     select = select.strip('"') if select is not None else None
     exclude = exclude.strip('"') if exclude is not None else None
 
+    # Infer target if needed
+    if target is None:
+        target = "md" if paths.is_pro() else "local"
+
     clean()
     deps()
 
     if debug:
         run_debug()
 
-    build(select, exclude, store_failures)
-    freshness()
+    build(select, exclude, store_failures, target)
+    freshness(target)
 
 
 if __name__ == "__main__":
-    run_dbt()
+    run_dbt(target="local")
