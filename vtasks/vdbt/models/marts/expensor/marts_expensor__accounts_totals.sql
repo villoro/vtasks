@@ -9,7 +9,7 @@ transactions AS (
 invested AS (
     SELECT
         change_date,
-        'financial_invested' AS category,
+        'total_financial_invested' AS category,
         sum(value_eur) AS value_eur,
     FROM account_values
     WHERE account_type IN ('liquid', 'financial_invested')
@@ -19,7 +19,7 @@ invested AS (
 assets AS (
     SELECT
         change_date,
-        'financial_assets' AS category,
+        'total_financial_assets' AS category,
         sum(value_eur) AS value_eur,
     FROM account_values
     WHERE account_type IN ('liquid', 'financial_assets')
