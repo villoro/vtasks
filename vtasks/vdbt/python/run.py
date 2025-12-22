@@ -1,6 +1,4 @@
 import os
-import shutil
-from time import sleep
 
 from prefect import flow
 from prefect import task
@@ -61,23 +59,8 @@ def freshness():
     dbt_utils.run_dbt_command(["source", "freshness"])
 
 
-@task(name="dbt.copy_duckdb")
-def copy_duckdb():
-    """Copy the output duckdb file to prevent locks with metabase"""
-
-    logger = get_logger()
-    sleep(1)
-
-    src = paths.get_duckdb_path(paths.FILE_DUCKDB_DBT)
-    dest = paths.get_duckdb_path(paths.FILE_DUCKDB_METABASE)
-
-    logger.info(f"Copying {src=} to {dest=}")
-    shutil.copy2(src, dest)
-    logger.info(f"{dest=} successfully exported")
-
-
 @flow(name="dbt")
-def run_dbt(select=None, exclude=None, debug=False, store_failures=True, do_copy=True):
+def run_dbt(select=None, exclude=None, debug=False, store_failures=True):
     """Run all DBT commands"""
     set_dbt_env()
 
@@ -93,9 +76,7 @@ def run_dbt(select=None, exclude=None, debug=False, store_failures=True, do_copy
 
     build(select, exclude, store_failures)
     freshness()
-    if do_copy:
-        copy_duckdb()
 
 
 if __name__ == "__main__":
-    run_dbt(do_copy=False)
+    run_dbt()

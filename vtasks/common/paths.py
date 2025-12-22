@@ -16,8 +16,6 @@ FOLDER_DUCKDB_LOCAL = ".duckdb"
 
 FILE_DUCKDB_RAW = "raw"
 FILE_DUCKDB_DBT = "dbt"
-FILE_DUCKDB_METABASE = "metabase"
-FILE_DUCKDB_DBT_METADATA = "dbt_metadata"
 
 
 def infer_environment():
