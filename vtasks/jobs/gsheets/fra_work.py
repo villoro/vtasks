@@ -18,7 +18,7 @@ def get_empty_df(df_in, margin=20):
 
 @flow(name="gsheets.update_fra_work")
 def update_fra_work():
-    df = read_query(QUERY, filename="dbt")
+    df = read_query(QUERY, use_md=True)
 
     for col in ["start_day", "week"]:
         df[col] = df[col].dt.strftime("%Y-%m-%d")
