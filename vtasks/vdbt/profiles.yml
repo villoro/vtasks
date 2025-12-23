@@ -7,7 +7,8 @@ vdbt:
       path: "{{ env_var('PATH_DBT_DUCKDB') }}"
       schema: ""
       attach:
-        - path: "{{ env_var('PATH_RAW_DUCKDB') }}"
+        # This represents raw. Named villoro for Motherduck interoperability
+        - path: "{{ env_var('PATH_VILLORO_DUCKDB') }}" 
           alias: raw
           read_only: true
 
