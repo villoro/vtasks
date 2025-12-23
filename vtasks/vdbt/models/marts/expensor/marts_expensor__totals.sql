@@ -44,7 +44,7 @@ total AS (
     FROM account_values
     WHERE
         account_type IN ('liquid', 'financial_assets')
-        OR account_name IN ('home_equity', 'home_debt')
+        OR account_name = 'home_equity'
     GROUP BY ALL
 ),
 
