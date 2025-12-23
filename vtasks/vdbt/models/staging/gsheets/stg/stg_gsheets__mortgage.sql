@@ -1,4 +1,5 @@
 {% set percent = 0.7 %}
+{% set buy_year = 2026 %}
 
 WITH source AS (
     SELECT * FROM {{ ref('base_gsheets__mortgage') }}
@@ -32,11 +33,11 @@ final AS (
         amortitzation,
         interest,
         debt,
-        debt * {{ percent }} AS debt_personal,
+        IF(YEAR(month) >= {{ buy_year }}, debt * {{ percent }}, debt) AS debt_personal,
         home_value,
-        home_value * {{ percent }} AS home_value_personal,
+        IF(YEAR(month) >= {{ buy_year }}, home_value * {{ percent }}, home_value) AS home_value_personal,
         equity,
-        equity * {{ percent }} AS equity_personal,
+        IF(YEAR(month) >= {{ buy_year }}, equity * {{ percent }}, equity) AS equity_personal,
 
         -------- metadata
         _source,
