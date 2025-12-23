@@ -50,7 +50,6 @@ vars:
 
 seeds:
   +schema: internal
-  +materialized: ephemeral
 
 models:
   vdbt:
