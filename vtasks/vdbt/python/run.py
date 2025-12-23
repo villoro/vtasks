@@ -95,4 +95,4 @@ def run_dbt(select=None, exclude=None, debug=False, store_failures=True, target=
 
 
 if __name__ == "__main__":
-    run_dbt(target="local")
+    run_dbt()
