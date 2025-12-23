@@ -58,8 +58,12 @@ combined AS (
     SELECT * FROM assets UNION ALL BY NAME
     SELECT * FROM home UNION ALL BY NAME
     SELECT * FROM cumsum_transactions
+),
+
+final AS (
+    SELECT * FROM combined
+    WHERE change_date <= CURRENT_DATE
+    ORDER BY ALL
 )
 
-SELECT *
-FROM combined
-ORDER BY ALL
+SELECT * FROM final
