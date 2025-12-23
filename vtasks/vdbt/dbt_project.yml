@@ -50,6 +50,7 @@ vars:
 
 seeds:
   +schema: internal
+  +materialized: ephemeral
 
 models:
   vdbt:
@@ -88,6 +89,7 @@ models:
 
         internal:
           +schema: internal
+          +materialized: ephemeral
 
     marts:
       +tags: marts
