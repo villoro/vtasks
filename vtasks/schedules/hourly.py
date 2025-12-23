@@ -5,7 +5,6 @@ from prefect import tags
 from vtasks.common.logs import get_logger
 from vtasks.jobs.backups.main import backup_all
 from vtasks.jobs.crypto.main import crypto
-from vtasks.jobs.dropbox.export_tables import export_dropbox_tables
 from vtasks.jobs.dropbox.money_lover import export_money_lover
 from vtasks.jobs.gcal.export import export_all_gcal
 from vtasks.jobs.gsheets.export_tables import export_gsheets_tables
@@ -20,7 +19,6 @@ JOBS = {
     "maintain": [backup_all],
     "updates": [crypto, indexa_all],
     "export": [
-        export_dropbox_tables,
         export_money_lover,
         export_all_gcal,
         export_gsheets_tables,
