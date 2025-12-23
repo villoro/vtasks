@@ -4,12 +4,8 @@ vdbt:
   outputs:
     local:
       type: duckdb
-      path: "{{ env_var('PATH_DBT_DUCKDB') }}"
+      path: "{{ env_var('PATH_DUCKDB') }}"
       schema: ""
-      attach:
-        - path: "{{ env_var('PATH_RAW_DUCKDB') }}"
-          alias: villoro # This helps with motherduck compatibility
-          read_only: true
 
     md:
       type: duckdb
