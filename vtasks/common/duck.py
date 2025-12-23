@@ -11,18 +11,26 @@ from vtasks.common.texts import remove_extra_spacing
 DB_DUCKDB_MD = "md:villoro?motherduck_token={token}"
 SECRET_MD = "MOTHERDUCK_TOKEN"
 
+DB_PATH = None
+
 
 def get_duckdb(use_md=False, filename=None):
     logger = get_logger()
+
+    global DB_PATH
+    if DB_PATH is not None:
+        logger.debug(f"Reusing {DB_PATH=}")
+        return duckdb.connect(DB_PATH)
+
     if use_md:
         logger.debug("Connecting to MotherDuck")
         token = read_secret(SECRET_MD)
-        db_path = DB_DUCKDB_MD.format(token=token)
+        DB_PATH = DB_DUCKDB_MD.format(token=token)
     else:
-        db_path = paths.get_duckdb_path(filename or paths.FILE_DUCKDB_RAW)
-        logger.info(f"Connecting to local DuckDB at {db_path=}")
+        DB_PATH = paths.get_duckdb_path(filename or paths.FILE_DUCKDB_RAW)
+        logger.info(f"Connecting to local DuckDB at {DB_PATH=}")
 
-    return duckdb.connect(db_path)
+    return duckdb.connect(DB_PATH)
 
 
 def run_query(query, df_duck=None, silent=False, use_md=False, con=None, filename=None):
