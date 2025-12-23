@@ -57,12 +57,6 @@ deployments:
   entrypoint: vtasks/jobs/local/maintain.py:sync_duckdb
   tags: ["maintain"]
 
-- name: maintain.sync_dbt_metadata
-  <<: *defaults
-  description: Sync temporal DBT data into the raw.duckdb
-  entrypoint: vtasks/jobs/local/maintain.py:sync_dbt_metadata
-  tags: ["maintain"]
-
 - name: maintain.upload_marts_to_md
   <<: *defaults
   description: Upload 'marts' and 'core' data to motherduck
