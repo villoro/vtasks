@@ -4,27 +4,15 @@ vdbt:
   outputs:
     local:
       type: duckdb
-      path: "{{ env_var('PATH_DBT_DUCKDB') }}"
+      path: "{{ env_var('PATH_DUCKDB') }}"
       schema: ""
-      attach:
-        - path: "{{ env_var('PATH_RAW_DUCKDB') }}"
-          alias: raw
-          read_only: true
 
     md:
       type: duckdb
       path: md:villoro
       schema: ""
-      attach:
-        - path: "{{ env_var('PATH_RAW_DUCKDB') }}"
-          alias: raw
-          read_only: true
 
     memory:
       type: duckdb
       path: ":memory:"
       schema: ""
-      attach:
-        - path: "{{ env_var('PATH_RAW_DUCKDB') }}"
-          alias: raw
-          read_only: true

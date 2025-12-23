@@ -17,11 +17,10 @@ def set_dbt_env():
     logger = get_logger()
     logger.debug("Checking duckdb_paths")
 
-    for name in [paths.FILE_DUCKDB_RAW, paths.FILE_DUCKDB_DBT]:
-        env_var_name = f"PATH_{name.upper()}_DUCKDB"
-        path = paths.get_duckdb_path(name)
-        logger.info(f"Setting {env_var_name}={path}")
-        os.environ[env_var_name] = path
+    env_var_name = "PATH_DUCKDB"
+    path = paths.get_duckdb_path(paths.FILE_DUCKDB)
+    logger.info(f"Setting {env_var_name}={path}")
+    os.environ[env_var_name] = path
 
 
 @task(name="dbt.clean")
@@ -95,4 +94,4 @@ def run_dbt(select=None, exclude=None, debug=False, store_failures=True, target=
 
 
 if __name__ == "__main__":
-    run_dbt(target="local")
+    run_dbt()

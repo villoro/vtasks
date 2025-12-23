@@ -1,7 +1,7 @@
 sources:
   - name: raw__gcal
     tags: [gcal]
-    database: raw
+    database: villoro
     description: Raw Google Calendar data
     tables:
       - name: events
