@@ -22,8 +22,8 @@ def get_duckdb(use_md=False, filename=paths.FILE_DUCKDB):
         logger.debug(f"Reusing {DB_PATH=}")
         return duckdb.connect(DB_PATH)
 
-    if use_md or (is_pro := paths.is_pro()):
-        logger.info(f"Connecting to MotherDuck since {use_md=} or {is_pro=}")
+    if (is_pro := paths.is_pro()) or use_md:
+        logger.info(f"Connecting to MotherDuck since {is_pro=} or {use_md=}")
         token = read_secret(SECRET_MD)
         DB_PATH = DB_DUCKDB_MD.format(token=token)
     else:
