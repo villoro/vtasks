@@ -19,8 +19,12 @@ ffilled AS (
 
 equity AS (
     SELECT
-        *,
-        home_value - debt AS equity
+        * REPLACE (
+            COALESCE(home_value, 0) AS home_value,
+            COALESCE(debt, 0) AS debt
+        ),
+        COALESCE(home_value, 0) - COALESCE(debt, 0) AS equity,
+        IF(YEAR(month) >= {{ buy_year }}, {{ percent }}, 1) AS _personal_percent
     FROM ffilled
 ),
 
@@ -33,11 +37,11 @@ final AS (
         amortitzation,
         interest,
         debt,
-        IF(YEAR(month) >= {{ buy_year }}, debt * {{ percent }}, debt) AS debt_personal,
+        debt * _personal_percent AS debt_personal,
         home_value,
-        IF(YEAR(month) >= {{ buy_year }}, home_value * {{ percent }}, home_value) AS home_value_personal,
+        home_value * _personal_percent AS home_value_personal,
         equity,
-        IF(YEAR(month) >= {{ buy_year }}, equity * {{ percent }}, equity) AS equity_personal,
+        equity * _personal_percent AS equity_personal,
 
         -------- metadata
         _source,
