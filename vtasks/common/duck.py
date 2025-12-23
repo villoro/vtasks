@@ -14,7 +14,7 @@ SECRET_MD = "MOTHERDUCK_TOKEN"
 DB_PATH = None
 
 
-def get_duckdb(use_md=False, filename=paths.FILE_DUCKDB):
+def get_duckdb(use_md=False, filename=None):
     logger = get_logger()
 
     global DB_PATH
@@ -27,7 +27,7 @@ def get_duckdb(use_md=False, filename=paths.FILE_DUCKDB):
         token = read_secret(SECRET_MD)
         DB_PATH = DB_DUCKDB_MD.format(token=token)
     else:
-        DB_PATH = paths.get_duckdb_path(filename)
+        DB_PATH = paths.get_duckdb_path(filename or paths.FILE_DUCKDB)
         logger.info(f"Connecting to local DuckDB at {DB_PATH=}")
 
     return duckdb.connect(DB_PATH)
