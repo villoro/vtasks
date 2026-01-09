@@ -22,7 +22,9 @@ without_invalid_categories AS (
 without_fravi_incomes AS (
     SELECT *
     FROM without_invalid_categories
-    WHERE NOT (account = 'FraVi' AND transaction_type = 'incomes')
+    WHERE
+        NOT (LOWER(account) = 'fravi' AND transaction_type = 'incomes')
+        AND NOT LOWER(account) = 'home'
 )
 
 SELECT * FROM without_fravi_incomes
