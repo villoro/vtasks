@@ -100,7 +100,7 @@ prometheus-client==0.23.1
 proto-plus==1.27.0
 protobuf==6.33.2
 pyarrow==22.0.0
-pyasn1==0.6.1
+pyasn1==0.6.2
 pyasn1-modules==0.4.2
 pycparser==2.23 ; implementation_name != 'PyPy' and platform_python_implementation != 'PyPy'
 pydantic==2.12.5
