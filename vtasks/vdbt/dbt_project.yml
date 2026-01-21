@@ -29,6 +29,7 @@ vars:
         - inbestme
         - glovo_ps
         - dh
+        - kutxabank_pp
       liquid:
         - caixa_enginers
         - caixa_enginers_diposit
