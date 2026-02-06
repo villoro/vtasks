@@ -2,7 +2,7 @@
 #    uv export --no-hashes --frozen --output-file=requirements.txt
 agate==1.9.1
 aiosqlite==0.22.1
-alembic==1.18.1
+alembic==1.18.3
 annotated-doc==0.0.4
 annotated-types==0.7.0
 anyio==4.12.1
@@ -11,7 +11,7 @@ asgi-lifespan==2.1.0
 async-timeout==5.0.1 ; python_full_version < '3.11'
 asyncpg==0.31.0
 attrs==25.4.0
-babel==2.17.0
+babel==2.18.0
 backoff==2.2.1
 beautiful-date==2.3.0
 cachetools==5.5.2
@@ -23,39 +23,39 @@ cloudpickle==3.1.2
 colorama==0.4.6
 coolname==2.2.0
 cryptocompare==0.7.6
-cryptography==46.0.3
+cryptography==46.0.4
 daff==1.4.2
-dateparser==1.2.2
+dateparser==1.3.0
 dbt-adapters==1.22.5
 dbt-common==1.37.2
 dbt-core==1.10.19
 dbt-duckdb==1.10.0
 dbt-extractor==0.6.0
-dbt-protos==1.0.419
+dbt-protos==1.0.427
 dbt-semantic-interfaces==0.9.0
 deepdiff==8.6.1
 docker==7.1.0
 dropbox==12.0.2
-duckdb==1.4.3
+duckdb==1.4.4
 exceptiongroup==1.3.1
-fastapi==0.128.0
-fsspec==2026.1.0
+fastapi==0.128.2
+fsspec==2026.2.0
 gcsa==2.6.0
 google-api-core==2.29.0
-google-api-python-client==2.188.0
-google-auth==2.47.0
+google-api-python-client==2.189.0
+google-auth==2.48.0
 google-auth-httplib2==0.3.0
 google-auth-oauthlib==1.2.4
 googleapis-common-protos==1.72.0
 graphviz==0.21
-greenlet==3.3.0
+greenlet==3.3.1
 griffe==1.15.0
 gspread==6.2.1
 h11==0.16.0
 h2==4.3.0
 hpack==4.1.0
 httpcore==1.0.9
-httplib2==0.31.1
+httplib2==0.31.2
 httpx==0.28.1
 humanize==4.15.0
 hyperframe==6.1.0
@@ -72,7 +72,7 @@ jsonschema-specifications==2025.9.1
 leather==0.4.1
 loguru==0.7.3
 mako==1.3.10
-markdown==3.10
+markdown==3.10.1
 markdown-it-py==4.0.0
 markupsafe==3.0.3
 mashumaro==3.14
@@ -82,27 +82,28 @@ msgpack==1.1.2
 networkx==3.4.2 ; python_full_version < '3.11'
 networkx==3.6.1 ; python_full_version >= '3.11'
 numpy==2.2.6 ; python_full_version < '3.11'
-numpy==2.4.1 ; python_full_version >= '3.11'
+numpy==2.4.2 ; python_full_version >= '3.11'
 oauthlib==3.3.1
 opentelemetry-api==1.39.1
 orderly-set==5.5.0
-orjson==3.11.5
+orjson==3.11.7
 oyaml==1.0
 packaging==24.2
-pandas==2.3.3
+pandas==2.3.3 ; python_full_version < '3.11'
+pandas==3.0.0 ; python_full_version >= '3.11'
 parsedatetime==2.6
 pathspec==0.12.1
-pendulum==3.1.0
+pendulum==3.2.0
 pluggy==1.6.0
 ply==3.11
 prefect==3.2.7
 prometheus-client==0.24.1
-proto-plus==1.27.0
-protobuf==6.33.4
+proto-plus==1.27.1
+protobuf==6.33.5
 pyarrow==23.0.0
 pyasn1==0.6.2
 pyasn1-modules==0.4.2
-pycparser==2.23 ; implementation_name != 'PyPy' and platform_python_implementation != 'PyPy'
+pycparser==3.0 ; implementation_name != 'PyPy' and platform_python_implementation != 'PyPy'
 pydantic==2.12.5
 pydantic-core==2.41.5
 pydantic-extra-types==2.11.0
@@ -128,13 +129,13 @@ rich==13.9.4
 rpds-py==0.30.0
 rsa==4.9.1
 ruamel-yaml==0.19.1
-ruff==0.14.13
-setuptools==80.9.0
+ruff==0.15.0
+setuptools==80.10.2
 shellingham==1.5.4
 six==1.17.0
 sniffio==1.3.1
 snowplow-tracker==1.1.0
-sqlalchemy==2.0.45
+sqlalchemy==2.0.46
 sqlparse==0.5.4
 starlette==0.50.0
 stone==3.3.1
