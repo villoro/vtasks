@@ -89,8 +89,7 @@ orderly-set==5.5.0
 orjson==3.11.7
 oyaml==1.0
 packaging==24.2
-pandas==2.3.3 ; python_full_version < '3.11'
-pandas==3.0.0 ; python_full_version >= '3.11'
+pandas==2.3.3
 parsedatetime==2.6
 pathspec==0.12.1
 pendulum==3.2.0
