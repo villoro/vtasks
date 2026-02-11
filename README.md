@@ -1,6 +1,4 @@
 # vtasks: Personal Pipeline
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
-
 This repository contains my personal data pipeline, built with [Prefect](https://www.prefect.io/), to automate data extraction, transformation, and loading (ETL). The pipeline runs on my NAS and integrates multiple data sources, processing them and exporting the results to [MotherDuck](https://motherduck.com/) for analysis in [Metabase](https://www.metabase.com/).
 
 ## 📌 Pipeline Overview
@@ -56,10 +54,18 @@ The pipeline is orchestrated with Prefect, using flows and tasks to manage depen
    ```bash
    uv pip install --editable .
    ```
-4. **Ensure pre-commit hooks are installed:**
+4. **Ensure prek hooks are installed:**
    ```bash
-   pre-commit install
+   prek install
    ```
+
+### Update deps
+
+Update dependencies with:
+```bash
+uv lock --upgrade
+uv sync
+```
 
 ### Running Prefect Schedules
 

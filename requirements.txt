@@ -2,7 +2,7 @@
 #    uv export --no-hashes --frozen --output-file=requirements.txt
 agate==1.9.1
 aiosqlite==0.22.1
-alembic==1.18.3
+alembic==1.18.4
 annotated-doc==0.0.4
 annotated-types==0.7.0
 anyio==4.12.1
@@ -23,7 +23,7 @@ cloudpickle==3.1.2
 colorama==0.4.6
 coolname==2.2.0
 cryptocompare==0.7.6
-cryptography==46.0.4
+cryptography==46.0.5
 daff==1.4.2
 dateparser==1.3.0
 dbt-adapters==1.22.5
@@ -31,14 +31,14 @@ dbt-common==1.37.2
 dbt-core==1.10.19
 dbt-duckdb==1.10.0
 dbt-extractor==0.6.0
-dbt-protos==1.0.427
+dbt-protos==1.0.431
 dbt-semantic-interfaces==0.9.0
 deepdiff==8.6.1
 docker==7.1.0
 dropbox==12.0.2
 duckdb==1.4.4
 exceptiongroup==1.3.1
-fastapi==0.128.2
+fastapi==0.128.7
 fsspec==2026.2.0
 gcsa==2.6.0
 google-api-core==2.29.0
@@ -72,7 +72,7 @@ jsonschema-specifications==2025.9.1
 leather==0.4.1
 loguru==0.7.3
 mako==1.3.10
-markdown==3.10.1
+markdown==3.10.2
 markdown-it-py==4.0.0
 markupsafe==3.0.3
 mashumaro==3.14
@@ -129,14 +129,14 @@ rpds-py==0.30.0
 rsa==4.9.1
 ruamel-yaml==0.19.1
 ruff==0.15.0
-setuptools==80.10.2
+setuptools==82.0.0
 shellingham==1.5.4
 six==1.17.0
 sniffio==1.3.1
 snowplow-tracker==1.1.0
 sqlalchemy==2.0.46
 sqlparse==0.5.4
-starlette==0.50.0
+starlette==0.52.1
 stone==3.3.1
 text-unidecode==1.3
 toml==0.10.2
