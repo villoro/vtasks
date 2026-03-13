@@ -89,11 +89,6 @@ deployments:
   tags: ["updates"]
 
 # ------------------------------ EXTRACTIONS ----------------------------------
-- name: dropbox.export_tables
-  <<: *defaults
-  description: Export dropbox tables
-  entrypoint: vtasks/jobs/dropbox/export_tables.py:export_dropbox_tables
-  tags: ["dropbox", "extract"]
 
 - name: dropbox.money_lover
   <<: *defaults
