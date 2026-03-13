@@ -8,12 +8,13 @@ SHEET = "Costos"
 
 QUERY = """
 SELECT
+    transaction_date AS data,
     category AS categoria,
     amount AS cost,
-    transaction_date AS data,
     notes AS comentaris
 FROM villoro._stg__dropbox.stg_dropbox__money_lover
 WHERE lower(account) = 'home'
+ORDER BY ALL
 """
 
 
