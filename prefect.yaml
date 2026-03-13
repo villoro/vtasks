@@ -82,6 +82,12 @@ deployments:
   entrypoint: vtasks/jobs/gsheets/fra_work.py:update_fra_work
   tags: ["fra", "updates"]
 
+- name: gsheets.update_home_costs
+  <<: *defaults
+  description: Update Fra work data
+  entrypoint: vtasks/jobs/gsheets/home_costs.py:update_home_costs
+  tags: ["updates"]
+
 # ------------------------------ EXTRACTIONS ----------------------------------
 - name: dropbox.export_tables
   <<: *defaults
