@@ -17,14 +17,6 @@ without_invalid_categories AS (
     FROM without_dups
     LEFT JOIN invalid_categories USING (category)
     WHERE invalid_categories.category IS NULL
-),
-
-without_fravi_incomes AS (
-    SELECT *
-    FROM without_invalid_categories
-    WHERE
-        NOT (LOWER(account) = 'fravi' AND transaction_type = 'incomes')
-        AND NOT LOWER(account) = 'home'
 )
 
-SELECT * FROM without_fravi_incomes
+SELECT * FROM without_invalid_categories
