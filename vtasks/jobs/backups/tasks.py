@@ -15,6 +15,6 @@ COPY_TASKS = [
 BACKUP_TASKS = [
     BackupTask(path="/Aplicaciones/FreeFileSync", regex=r"[\w\s]+\.ffs_gui"),
     BackupTask(path="/Aplicaciones/KeePass", regex=r"[\w\s]+\.kdbx"),
-    BackupTask(path="/Groups/Casa/KeePass", regex=r"[\w\s]+\.kdbx"),
+    # BackupTask(path="/Groups/Casa/KeePass", regex=r"[\w\s]+\.kdbx"), # TODO: fix
     BackupTask(path="/Groups/KeePass Cocco", regex=r"[\w\s]+\.kdbx"),
 ]

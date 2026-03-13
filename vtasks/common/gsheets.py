@@ -170,7 +170,7 @@ def _get_values_to_update(df, mfilter, columns):
     return values
 
 
-def df_to_gspread(
+def _df_to_gspread(
     doc, sheet, df, mfilter=slice(None), cols=None, max_tries=5, start_column=1
 ):
     """Update a google spreadsheet based on a pandas dataframe row"""
@@ -195,3 +195,21 @@ def df_to_gspread(
     _update_cells()
 
     logger.info(f"{mrange=} successfully updated in 'gsheet://{doc}.{sheet}'")
+
+
+def _get_empty_df(df_in, margin=20):
+    df_empty = pd.DataFrame(columns=df_in.columns, index=range(df_in.shape[0] + margin))
+    df_empty[:] = ""
+    return df_empty
+
+
+def df_to_gspread(
+    doc, sheet, df, mfilter=slice(None), cols=None, max_tries=5, start_column=1
+):
+    logger = get_logger()
+    logger.info("Cleaning data")
+    df_empty = _get_empty_df(df)
+    _df_to_gspread(doc, sheet, df_empty, mfilter, cols, max_tries, start_column)
+
+    logger.info("Updating data")
+    _df_to_gspread(doc, sheet, df, mfilter, cols, max_tries, start_column)
