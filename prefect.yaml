@@ -18,7 +18,7 @@ definitions:
       name: default-pool
 
   version: &version
-    version: 7.5.17
+    version: 7.5.18
 
   # Define defaults (that can be overwritten)
   defaults: &defaults
@@ -82,12 +82,13 @@ deployments:
   entrypoint: vtasks/jobs/gsheets/fra_work.py:update_fra_work
   tags: ["fra", "updates"]
 
-# ------------------------------ EXTRACTIONS ----------------------------------
-- name: dropbox.export_tables
+- name: gsheets.update_home_costs
   <<: *defaults
-  description: Export dropbox tables
-  entrypoint: vtasks/jobs/dropbox/export_tables.py:export_dropbox_tables
-  tags: ["dropbox", "extract"]
+  description: Update Fra work data
+  entrypoint: vtasks/jobs/gsheets/home_costs.py:update_home_costs
+  tags: ["updates"]
+
+# ------------------------------ EXTRACTIONS ----------------------------------
 
 - name: dropbox.money_lover
   <<: *defaults

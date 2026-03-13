@@ -3235,7 +3235,7 @@ wheels = [
 
 [[package]]
 name = "vtasks"
-version = "7.5.17"
+version = "7.5.18"
 source = { virtual = "." }
 dependencies = [
     { name = "backoff" },
