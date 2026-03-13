@@ -4,17 +4,17 @@ from prefect import flow
 from vtasks.common.duck import read_query
 from vtasks.common.gsheets import df_to_gspread
 
-SPREADSHEET = "registro_lavoro"
-SHEET = "data"
+SPREADSHEET = "Reforma HZ22"
+SHEET = "Costos"
 
 QUERY = """
 SELECT
-    start_day AS day,
-    title AS concept,
-    duration_hours AS total_hours,
-    week,
-    month
-FROM villoro._marts__gcal.marts_gcal__fra
+    category AS categoria,
+    amount AS cost,
+    transaction_date AS data,
+    notes AS comentaris
+FROM villoro._stg__dropbox.stg_dropbox__money_lover
+WHERE lower(account) = 'home'
 """
 
 
@@ -24,12 +24,10 @@ def get_empty_df(df_in, margin=20):
     return df_empty
 
 
-@flow(name="gsheets.update_fra_work")
-def update_fra_work():
+@flow(name="gsheets.update_home_costs")
+def update_home_costs():
     df = read_query(QUERY, use_md=True)
-
-    for col in ["day", "week"]:
-        df[col] = df[col].dt.strftime("%Y-%m-%d")
+    df["data"] = df["data"].dt.strftime("%Y-%m-%d")
 
     df_empty = get_empty_df(df)
     df_to_gspread(SPREADSHEET, SHEET, df_empty, start_column=1)
@@ -37,4 +35,4 @@ def update_fra_work():
 
 
 if __name__ == "__main__":
-    update_fra_work()
+    update_home_costs()
