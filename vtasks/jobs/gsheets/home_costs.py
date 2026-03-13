@@ -13,7 +13,8 @@ SELECT
     amount AS cost,
     transaction_date AS data,
     notes AS comentaris
-FROM villoro._marts__gcal.marts_gcal__fra
+FROM villoro._marts__gcal.stg_dropbox__money_lover
+WHERE lower(account) = 'home'
 """
 
 
