@@ -5,7 +5,7 @@ from vtasks.common.duck import read_query
 from vtasks.common.gsheets import df_to_gspread
 
 SPREADSHEET = "Reforma HZ22"
-SHEET = "data"
+SHEET = "Costos"
 
 QUERY = """
 SELECT
