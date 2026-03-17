@@ -9,6 +9,7 @@ from vtasks.jobs.dropbox.money_lover import export_money_lover
 from vtasks.jobs.gcal.export import export_all_gcal
 from vtasks.jobs.gsheets.export_tables import export_gsheets_tables
 from vtasks.jobs.gsheets.fra_work import update_fra_work
+from vtasks.jobs.gsheets.home_costs import update_home_costs
 from vtasks.jobs.indexa.main import indexa_all
 from vtasks.vdbt.python.run import run_dbt
 
@@ -22,7 +23,7 @@ JOBS = {
         export_all_gcal,
         export_gsheets_tables,
     ],
-    "post_dbt": [update_fra_work],
+    "post_dbt": [update_fra_work, update_home_costs],
 }
 
 
