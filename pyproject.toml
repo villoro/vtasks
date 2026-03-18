@@ -25,6 +25,7 @@ dependencies = [
     "cryptocompare>=0.7.6",
     "dbt-duckdb>=1.9.2",
     "duckdb>=1.4.0",
+    "fastapi<0.132",
     "gcsa>=2.5.1",
     "gspread>=6.1.4",
     "pandas>=2.2.3,<3",
