@@ -57,7 +57,7 @@ def backup_files():
 
     for backup_task in BACKUP_TASKS:
         name = f"{FLOW_NAME}.{backup_task.path[1:].replace('/', '_')}"
-        task(name=name)(one_backup)(vdp, **backup_task.dict())
+        task(name=name)(one_backup)(vdp, **backup_task.model_dump())
 
 
 if __name__ == "__main__":
