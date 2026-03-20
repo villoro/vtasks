@@ -198,7 +198,9 @@ def _df_to_gspread(
 
 
 def _get_empty_df(df_in, margin=20):
-    df_empty = pd.DataFrame(columns=df_in.columns, index=range(df_in.shape[0] + margin))
+    df_empty = pd.DataFrame(
+        columns=df_in.columns, index=df_in.index.tolist() + [x for x in range(margin)]
+    )
     df_empty[:] = ""
     return df_empty
 
