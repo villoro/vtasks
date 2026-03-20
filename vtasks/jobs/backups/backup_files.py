@@ -33,7 +33,10 @@ def one_backup(vdp, path, regex):
         updated_at = get_update_at(vdp, origin)
 
         if updated_at >= date.today() - timedelta(1):
-            dest = f"{path}/Backups/{YEAR}/{updated_at:%Y_%m_%d} {filename}"
+            path_backup = f"{path}/Backups/{YEAR}"
+            vdp.mkdir_p(path_backup)
+
+            dest = f"{path_backup}/{updated_at:%Y_%m_%d} {filename}"
 
             if not vdp.file_exists(dest):
                 logger.info(f"Copying '{origin}' to '{dest}'")
@@ -54,7 +57,7 @@ def backup_files():
 
     for backup_task in BACKUP_TASKS:
         name = f"{FLOW_NAME}.{backup_task.path[1:].replace('/', '_')}"
-        task(name=name)(one_backup)(vdp, **backup_task.dict())
+        task(name=name)(one_backup)(vdp, **backup_task.model_dump())
 
 
 if __name__ == "__main__":
