@@ -89,7 +89,9 @@ def update_expensor(mfilter):
     value = prices.at[mfilter, "Total"]
     df.at[mfilter, COL_CRYPTO] = to_number(value)
 
-    gsheets.df_to_gspread(SPREADSHEET_EXPENSOR, SHEET_WORTH, df, mfilter, COL_CRYPTO)
+    gsheets.df_to_gspread(
+        SPREADSHEET_EXPENSOR, SHEET_WORTH, df, mfilter, COL_CRYPTO, do_clean=False
+    )
 
 
 @flow(name=FLOW_NAME)
