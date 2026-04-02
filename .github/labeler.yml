@@ -10,6 +10,9 @@ CI-CD:
 j/backups:
 - vtasks/jobs/backups/**
 
+j/crypto:
+- vtasks/jobs/crypto/**
+
 j/dropbox:
 - vtasks/jobs/dropbox/**
 
@@ -18,6 +21,12 @@ j/gcal:
 
 j/gsheets:
 - vtasks/jobs/gsheets/**
+
+j/indexa:
+- vtasks/jobs/indexa/**
+
+j/local:
+- vtasks/jobs/local/**
 
 dbt:
 - vtasks/vdbt/**
@@ -34,9 +43,13 @@ l/marts:
 common:
 - vtasks/common/**
 
+schedules:
+- vtasks/schedules/**
+
 scripts:
 - scripts/*
 - scripts/**/*
 
 deps:
-- poetry.lock
+- requirements.txt
+- uv.lock
