@@ -207,12 +207,20 @@ def _get_empty_df(df_in, margin=20):
 
 
 def df_to_gspread(
-    doc, sheet, df, mfilter=slice(None), cols=None, max_tries=5, start_column=1
+    doc,
+    sheet,
+    df,
+    mfilter=slice(None),
+    cols=None,
+    max_tries=5,
+    start_column=1,
+    do_clean=True,
 ):
     logger = get_logger()
-    logger.info("Cleaning data")
-    df_empty = _get_empty_df(df)
-    _df_to_gspread(doc, sheet, df_empty, mfilter, cols, max_tries, start_column)
+    if do_clean:
+        logger.info("Cleaning data")
+        df_empty = _get_empty_df(df)
+        _df_to_gspread(doc, sheet, df_empty, mfilter, cols, max_tries, start_column)
 
     logger.info("Updating data")
     _df_to_gspread(doc, sheet, df, mfilter, cols, max_tries, start_column)

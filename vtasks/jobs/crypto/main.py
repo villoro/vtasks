@@ -80,10 +80,14 @@ def update_expensor(mfilter):
     """Update expensor cryptos worth based on crypto values"""
 
     # Get worths
-    df = gsheets.read_gdrive_sheet(SPREADSHEET_EXPENSOR, SHEET_WORTH, with_index=True)
+    df = gsheets.read_gdrive_sheet(
+        SPREADSHEET_EXPENSOR, SHEET_WORTH, with_index=True, do_clean=False
+    )
 
     # Get worth of actual month
-    prices = gsheets.read_gdrive_sheet(SPREADSHEET_CRYPTO, SHEET_VALUE, with_index=True)
+    prices = gsheets.read_gdrive_sheet(
+        SPREADSHEET_CRYPTO, SHEET_VALUE, with_index=True, do_clean=False
+    )
 
     # Update kraken value
     value = prices.at[mfilter, "Total"]

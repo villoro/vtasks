@@ -48,8 +48,12 @@ def update_invested_and_worth(mfilter, portfolio, df_invest_in, df_worth_in):
 
     # Update gdrive values
     cols = [*portfolio.keys()]
-    gsheets.df_to_gspread(SPREADSHEET, SHEET_INVEST, df_invest, mfilter, cols)
-    gsheets.df_to_gspread(SPREADSHEET, SHEET_WORTH, df_worth, mfilter, cols)
+    gsheets.df_to_gspread(
+        SPREADSHEET, SHEET_INVEST, df_invest, mfilter, cols, do_clean=False
+    )
+    gsheets.df_to_gspread(
+        SPREADSHEET, SHEET_WORTH, df_worth, mfilter, cols, do_clean=False
+    )
 
 
 @flow(name=FLOW_NAME)
