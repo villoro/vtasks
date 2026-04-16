@@ -388,6 +388,17 @@ def format_calibre_date(value: datetime) -> str:
     return value.strftime("%Y-%m-%d 00:00:00+00:00")
 
 
+def parse_read_rating(value: str) -> str | None:
+    value = (value or "").strip()
+    if not value:
+        return None
+
+    rating_1_to_5 = float(value.replace(",", "."))
+    rating_0_to_10 = int(round(rating_1_to_5 * 2))
+    rating_0_to_10 = max(0, min(10, rating_0_to_10))
+    return str(rating_0_to_10)
+
+
 def read_key(row: dict) -> tuple[str, str]:
     return normalize_text(row["Title"]), normalize_text(row["Author"])
 
@@ -496,6 +507,7 @@ def main() -> None:
 
     calibre_by_id = {row["id"]: row for row in calibre_rows}
     update_by_calibre_id: dict[str, datetime] = {}
+    rating_by_calibre_id: dict[str, str] = {}
     not_found_rows: list[dict] = []
     matched_read_books = 0
 
@@ -519,10 +531,18 @@ def main() -> None:
         if current_value is None or latest_entry.parsed_date > current_value:
             update_by_calibre_id[best.row["id"]] = latest_entry.parsed_date
 
+        rating_value = parse_read_rating(latest_entry.row.get("Rating", ""))
+        if rating_value is not None:
+            rating_by_calibre_id[best.row["id"]] = rating_value
+
     for calibre_id, read_date in update_by_calibre_id.items():
         calibre_row = calibre_by_id[calibre_id]
         calibre_row["#kobo_percent_read"] = "100"
         calibre_row["#kobo_last_read"] = format_calibre_date(read_date)
+
+        rating_value = rating_by_calibre_id.get(calibre_id)
+        if rating_value is not None:
+            calibre_row["rating"] = rating_value
 
     output_calibre_csv = write_calibre_csv(calibre_fieldnames, calibre_rows)
 
@@ -534,6 +554,7 @@ def main() -> None:
     print(f"read_books={len(reads_by_key)}")
     print(f"matched_read_books={matched_read_books}")
     print(f"updated_calibre_rows={len(update_by_calibre_id)}")
+    print(f"updated_rating_rows={len(rating_by_calibre_id)}")
     print(f"not_found_books={len(not_found_rows)}")
     print(f"updated_calibre_csv={output_calibre_csv}")
     print(f"not_found_csv={NOT_FOUND_CSV}")
