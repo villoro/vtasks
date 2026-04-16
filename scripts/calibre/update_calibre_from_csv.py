@@ -10,6 +10,7 @@ ID_COLUMN = "id"
 PERCENT_READ_COLUMN = "#kobo_percent_read"
 LAST_READ_COLUMN = "#kobo_last_read"
 RATING_COLUMN = "rating"
+TAGS_COLUMN = "tags"
 
 
 def is_blank(value):
@@ -37,6 +38,25 @@ def parse_date(value):
     return str(value).strip()
 
 
+def parse_tags(value):
+    if is_blank(value):
+        return None
+
+    tags = []
+    seen = set()
+    for raw_tag in str(value).split("|"):
+        tag = raw_tag.strip()
+        if not tag:
+            continue
+        normalized_key = tag.casefold()
+        if normalized_key in seen:
+            continue
+        seen.add(normalized_key)
+        tags.append(tag)
+
+    return tags or None
+
+
 def main():
     calibre_db = db(LIBRARY_PATH).new_api
     existing_book_ids = set(calibre_db.all_book_ids())
@@ -44,6 +64,7 @@ def main():
     update_percent = {}
     update_last_read = {}
     update_rating = {}
+    update_tags = {}
 
     skipped_missing_id = 0
     skipped_unknown_book = 0
@@ -71,6 +92,7 @@ def main():
             percent_value = parse_percent(row.get(PERCENT_READ_COLUMN))
             last_read_value = parse_date(row.get(LAST_READ_COLUMN))
             rating_value = parse_rating(row.get(RATING_COLUMN))
+            tags_value = parse_tags(row.get(TAGS_COLUMN))
 
             has_progress_update = (
                 percent_value is not None or last_read_value is not None
@@ -86,6 +108,9 @@ def main():
             if has_progress_update and rating_value is not None:
                 update_rating[book_id] = rating_value
 
+            if tags_value is not None:
+                update_tags[book_id] = tags_value
+
     if update_percent:
         calibre_db.set_field(PERCENT_READ_COLUMN, update_percent)
 
@@ -95,10 +120,14 @@ def main():
     if update_rating:
         calibre_db.set_field(RATING_COLUMN, update_rating)
 
+    if update_tags:
+        calibre_db.set_field(TAGS_COLUMN, update_tags)
+
     print(f"books_in_library={len(existing_book_ids)}")
     print(f"updated_{PERCENT_READ_COLUMN}={len(update_percent)}")
     print(f"updated_{LAST_READ_COLUMN}={len(update_last_read)}")
     print(f"updated_{RATING_COLUMN}={len(update_rating)}")
+    print(f"updated_{TAGS_COLUMN}={len(update_tags)}")
     print(f"skipped_missing_id={skipped_missing_id}")
     print(f"skipped_unknown_book={skipped_unknown_book}")
 
