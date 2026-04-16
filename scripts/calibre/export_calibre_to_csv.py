@@ -21,7 +21,6 @@ COLUMNS = [
     "tags",
     "publisher",
     "pubdate",
-    "last_modified",
     "id",
     "formats",
     "path",
