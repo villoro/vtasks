@@ -4,7 +4,7 @@ from calibre.library import db
 
 
 LIBRARY_PATH = r"C:\calibre"
-CSV_PATH = r"C:\GIT\temp\calibre\calibre_export.csv"
+CSV_PATH = r"C:\GIT\vtasks\scripts\calibre\calibre_export.csv"
 
 ID_COLUMN = "id"
 PERCENT_READ_COLUMN = "#kobo_percent_read"
@@ -26,16 +26,9 @@ def parse_rating(value):
     if is_blank(value):
         return None
 
-    # CSV is 1-5 stars, Calibre stores 0-10
-    rating_1_to_5 = float(str(value).strip().replace(",", "."))
-    rating_0_to_10 = int(round(rating_1_to_5 * 2))
-
-    if rating_0_to_10 < 0:
-        rating_0_to_10 = 0
-    if rating_0_to_10 > 10:
-        rating_0_to_10 = 10
-
-    return rating_0_to_10
+    # calibre_export.csv already stores Calibre's native 0-10 rating scale.
+    rating_0_to_10 = int(round(float(str(value).strip().replace(",", "."))))
+    return max(0, min(10, rating_0_to_10))
 
 
 def parse_date(value):
@@ -79,13 +72,18 @@ def main():
             last_read_value = parse_date(row.get(LAST_READ_COLUMN))
             rating_value = parse_rating(row.get(RATING_COLUMN))
 
+            has_progress_update = (
+                percent_value is not None or last_read_value is not None
+            )
+
             if percent_value is not None:
                 update_percent[book_id] = percent_value
 
             if last_read_value is not None:
                 update_last_read[book_id] = last_read_value
 
-            if rating_value is not None:
+            # Only sync rating for rows that are part of the read-progress update.
+            if has_progress_update and rating_value is not None:
                 update_rating[book_id] = rating_value
 
     if update_percent:

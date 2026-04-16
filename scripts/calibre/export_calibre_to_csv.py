@@ -5,7 +5,7 @@ from calibre.library import db
 
 
 LIBRARY_PATH = r"C:\calibre"
-OUTPUT_CSV = r"C:\GIT\temp\calibre\calibre_export.csv"
+OUTPUT_CSV = r"C:\GIT\vtasks\scripts\calibre\calibre_export.csv"
 
 COLUMNS = [
     "ondevice",
