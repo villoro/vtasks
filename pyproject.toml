@@ -1,6 +1,6 @@
 [project]
 name = "vtasks"
-version = "7.5.27"
+version = "7.5.28"
 description = "Personal tasks scheduled with Prefect"
 authors = [{ name = "Arnau Villoro", email = "arnau@villoro.com" }]
 maintainers = [{ name = "Arnau Villoro", email = "arnau@villoro.com" }]
@@ -36,3 +36,15 @@ dependencies = [
     "vcrypto>=4.2.1",
     "vdropbox>=1.1.1",
 ]
+
+[tool.bumpversion]
+current_version = "7.5.28"
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+
+[[tool.bumpversion.files]]
+filename = "prefect.yaml"
+
+[[tool.bumpversion.files]]
+filename = "vtasks/vdbt/dbt_project.yml"
