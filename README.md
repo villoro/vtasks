@@ -100,13 +100,22 @@ uv run prefect --no-prompt deploy --all
 
 ### 🔢 Versioning
 
-To ensure all files reflect the correct version, use `bump2version`:
+We follow [semver](https://semver.org/) for the versioning of the project.
+In short the version consists of three numbers (M.m.p) where:
+
+* M: major version. Represents breaking changes
+* m: minor version. Represents relevant changes
+* p: patch version. For fixes without new functionality
+
+You can update those by running:
 
 ```bash
-bump2version patch  # Or major/minor
+uvx bump-my-version bump major
+uvx bump-my-version bump minor
+uvx bump-my-version bump patch
 ```
 
-This automates version updates across `prefect.yaml`, `pyproject.toml`, and `uv.lock`.
+This automates version updates across `prefect.yaml`, `pyproject.toml`, and `vtasks/vdbt/dbt_project.yml`.
 
 ## 👤 Author
 [Arnau Villoro](https://villoro.com)

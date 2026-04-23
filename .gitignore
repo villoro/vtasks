@@ -67,3 +67,5 @@ logs/**
 
 # Duckdb data
 .duckdb/
+
+.claude/
