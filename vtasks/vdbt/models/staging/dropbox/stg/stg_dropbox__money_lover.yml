@@ -7,34 +7,26 @@ models:
     columns:
       # -------- info
       - name: transaction_date
-        description: |
-          The date of the transaction, converted to a `DATE` type. 
-          Derived from the `Date` column in the format `%d/%m/%Y`.
+        description: "The date of the transaction, converted to a `DATE` type. Derived from the `Date` column in the format
+          `%d/%m/%Y`."
       - name: amount
-        description: The absolute monetary value of the transaction. 
+        description: The absolute monetary value of the transaction.
       - name: category
-        description: |
-          The category of the transaction (e.g., "Food", "Transport"). 
-          Extracted directly from the `Category` column.
+        description: "The category of the transaction (e.g., 'Food', 'Transport'). Extracted directly from the `Category`
+          column."
       - name: transaction_type
-        description: |
-          The type of the transaction, classified as either `incomes` or `expenses` 
-          based on the sign of the `amount`.
+        description: "The type of the transaction, classified as either `incomes` or `expenses` based on the sign of the `amount`."
         tests:
           - accepted_values:
               values: ['incomes', 'expenses']
       - name: account
-        description: |
-          The account associated with the transaction (e.g., "Savings", "Credit Card").
-          Extracted from the `Account` column.
+        description: "The account associated with the transaction (e.g., 'Savings', 'Credit Card').Extracted from the `Account`
+          column."
       - name: event
-        description: |
-          The event associated with the transaction (e.g., "Birthday", "Anniversary"). 
-          Extracted from the `Event` column.
+        description: "The event associated with the transaction (e.g., 'Birthday', 'Anniversary'). Extracted from the `Event`
+          column."
       - name: notes
-        description: |
-          Any additional notes related to the transaction. 
-          Extracted from the `note` column.
+        description: "Any additional notes related to the transaction. Extracted from the `note` column."
 
       # -------- metadata
       - name: _source
