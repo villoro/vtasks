@@ -1,14 +1,14 @@
 name: prefect_tnas
 
 pull:
-- prefect.deployments.steps.git_clone:
-    id: clone-step
-    repository: https://github.com/villoro/vtasks.git
-    branch: main
-- prefect.deployments.steps.pip_install_requirements:
-    requirements_file: requirements.txt
-    directory: "{{ clone-step.directory }}"
-    stream_output: True
+  - prefect.deployments.steps.git_clone:
+      id: clone-step
+      repository: https://github.com/villoro/vtasks.git
+      branch: main
+  - prefect.deployments.steps.pip_install_requirements:
+      requirements_file: requirements.txt
+      directory: "{{ clone-step.directory }}"
+      stream_output: True
 
 
 # Reuse some config
@@ -18,7 +18,7 @@ definitions:
       name: default-pool
 
   version: &version
-    version: 7.5.28
+    version: 7.5.29
 
   # Define defaults (that can be overwritten)
   defaults: &defaults
@@ -28,82 +28,81 @@ definitions:
 
 
 deployments:
-# ------------------------------ SCHEDULES ------------------------------------
-- name: _hourly
-  <<: *defaults
-  description: Do all hourly tasks
-  entrypoint: vtasks/schedules/hourly.py:hourly
-  tags: ["schedules", "hourly"]
-  schedules:
-    - cron: "0 * * * *" # Every hour
+  # ------------------------------ SCHEDULES ------------------------------------
+  - name: _hourly
+    <<: *defaults
+    description: Do all hourly tasks
+    entrypoint: vtasks/schedules/hourly.py:hourly
+    tags: ["schedules", "hourly"]
+    schedules:
+      - cron: "0 * * * *" # Every hour
 
-# ------------------------------ DBT ------------------------------------------
-- name: dbt
-  <<: *defaults
-  description: Run DBT
-  entrypoint: vtasks/vdbt/python/run.py:run_dbt
-  tags: ["dbt"]
+  # ------------------------------ DBT ------------------------------------------
+  - name: dbt
+    <<: *defaults
+    description: Run DBT
+    entrypoint: vtasks/vdbt/python/run.py:run_dbt
+    tags: ["dbt"]
 
-# ------------------------------ MAINTAIN -------------------------------------
-- name: backups.all
-  <<: *defaults
-  description: Do all backups tasks
-  entrypoint: vtasks/jobs/backups/main.py:backup_all
-  tags: ["backups", "maintain"]
+  # ------------------------------ MAINTAIN -------------------------------------
+  - name: backups.all
+    <<: *defaults
+    description: Do all backups tasks
+    entrypoint: vtasks/jobs/backups/main.py:backup_all
+    tags: ["backups", "maintain"]
 
-- name: maintain.sync_duckdb
-  <<: *defaults
-  description: Sync data between databases with duckdb
-  entrypoint: vtasks/jobs/local/maintain.py:sync_duckdb
-  tags: ["maintain"]
+  - name: maintain.sync_duckdb
+    <<: *defaults
+    description: Sync data between databases with duckdb
+    entrypoint: vtasks/jobs/local/maintain.py:sync_duckdb
+    tags: ["maintain"]
 
-- name: maintain.upload_marts_to_md
-  <<: *defaults
-  description: Upload 'marts' and 'core' data to motherduck
-  entrypoint: vtasks/jobs/local/maintain.py:upload_marts_to_md
-  tags: ["maintain"]
+  - name: maintain.upload_marts_to_md
+    <<: *defaults
+    description: Upload 'marts' and 'core' data to motherduck
+    entrypoint: vtasks/jobs/local/maintain.py:upload_marts_to_md
+    tags: ["maintain"]
 
-# ------------------------------ UPDATES --------------------------------------
-- name: crypto.all
-  <<: *defaults
-  description: Update all crypto related information
-  entrypoint: vtasks/jobs/crypto/main.py:crypto
-  tags: ["crypto", "updates"]
+  # ------------------------------ UPDATES --------------------------------------
+  - name: crypto.all
+    <<: *defaults
+    description: Update all crypto related information
+    entrypoint: vtasks/jobs/crypto/main.py:crypto
+    tags: ["crypto", "updates"]
 
-- name: indexa.all
-  <<: *defaults
-  description: Update all indexa related information
-  entrypoint: vtasks/jobs/indexa/main.py:indexa_all
-  tags: ["crypto", "updates"]
+  - name: indexa.all
+    <<: *defaults
+    description: Update all indexa related information
+    entrypoint: vtasks/jobs/indexa/main.py:indexa_all
+    tags: ["crypto", "updates"]
 
-- name: gsheets.update_fra_work
-  <<: *defaults
-  description: Update Fra work data
-  entrypoint: vtasks/jobs/gsheets/fra_work.py:update_fra_work
-  tags: ["fra", "updates"]
+  - name: gsheets.update_fra_work
+    <<: *defaults
+    description: Update Fra work data
+    entrypoint: vtasks/jobs/gsheets/fra_work.py:update_fra_work
+    tags: ["fra", "updates"]
 
-- name: gsheets.update_home_costs
-  <<: *defaults
-  description: Update Fra work data
-  entrypoint: vtasks/jobs/gsheets/home_costs.py:update_home_costs
-  tags: ["updates"]
+  - name: gsheets.update_home_costs
+    <<: *defaults
+    description: Update Fra work data
+    entrypoint: vtasks/jobs/gsheets/home_costs.py:update_home_costs
+    tags: ["updates"]
 
-# ------------------------------ EXTRACTIONS ----------------------------------
+  # ------------------------------ EXTRACTIONS ----------------------------------
+  - name: dropbox.money_lover
+    <<: *defaults
+    description: Export Money Lover table
+    entrypoint: vtasks/jobs/dropbox/money_lover.py:export_money_lover
+    tags: ["dropbox", "extract"]
 
-- name: dropbox.money_lover
-  <<: *defaults
-  description: Export Money Lover table
-  entrypoint: vtasks/jobs/dropbox/money_lover.py:export_money_lover
-  tags: ["dropbox", "extract"]
+  - name: gcal.export
+    <<: *defaults
+    description: Export Google calendar data
+    entrypoint: vtasks/jobs/gcal/export.py:export_all_gcal
+    tags: ["gcal", "extract"]
 
-- name: gcal.export
-  <<: *defaults
-  description: Export Google calendar data
-  entrypoint: vtasks/jobs/gcal/export.py:export_all_gcal
-  tags: ["gcal", "extract"]
-
-- name: gsheets.export
-  <<: *defaults
-  description: Export Google Sheets data
-  entrypoint: vtasks/jobs/gsheets/export_tables.py:export_gsheets_tables
-  tags: ["gsheets", "extract"]
+  - name: gsheets.export
+    <<: *defaults
+    description: Export Google Sheets data
+    entrypoint: vtasks/jobs/gsheets/export_tables.py:export_gsheets_tables
+    tags: ["gsheets", "extract"]

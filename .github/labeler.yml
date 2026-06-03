@@ -1,55 +1,55 @@
 docs:
-- README.md
-- images/**
-- vtasks/**.md
+  - README.md
+  - images/**
+  - vtasks/**.md
 
 CI-CD:
-- .github/**
-- .pre-commit-config.yaml
+  - .github/**
+  - .pre-commit-config.yaml
 
 j/backups:
-- vtasks/jobs/backups/**
+  - vtasks/jobs/backups/**
 
 j/crypto:
-- vtasks/jobs/crypto/**
+  - vtasks/jobs/crypto/**
 
 j/dropbox:
-- vtasks/jobs/dropbox/**
+  - vtasks/jobs/dropbox/**
 
 j/gcal:
-- vtasks/jobs/gcal/**
+  - vtasks/jobs/gcal/**
 
 j/gsheets:
-- vtasks/jobs/gsheets/**
+  - vtasks/jobs/gsheets/**
 
 j/indexa:
-- vtasks/jobs/indexa/**
+  - vtasks/jobs/indexa/**
 
 j/local:
-- vtasks/jobs/local/**
+  - vtasks/jobs/local/**
 
 dbt:
-- vtasks/vdbt/**
+  - vtasks/vdbt/**
 
 l/staging:
-- vtasks/vdbt/models/staging/**
+  - vtasks/vdbt/models/staging/**
 
 l/core:
-- vtasks/vdbt/models/core/**
+  - vtasks/vdbt/models/core/**
 
 l/marts:
-- vtasks/vdbt/models/marts/**
+  - vtasks/vdbt/models/marts/**
 
 common:
-- vtasks/common/**
+  - vtasks/common/**
 
 schedules:
-- vtasks/schedules/**
+  - vtasks/schedules/**
 
 scripts:
-- scripts/*
-- scripts/**/*
+  - scripts/*
+  - scripts/**/*
 
 deps:
-- requirements.txt
-- uv.lock
+  - requirements.txt
+  - uv.lock

@@ -21,7 +21,7 @@ models:
           - not_null
       - name: account_name
         description: Name of the account
-        tests: 
+        tests:
           - not_null
 
       # -------- measures

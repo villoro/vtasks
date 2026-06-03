@@ -15,7 +15,6 @@ models:
       # -------- metrics
       - name: total
         description: Total monthly value.
-      # WARN: here we have a column for each account
 
       # -------- metadata
       - name: _source

@@ -31,7 +31,6 @@
   sheet_in: mortgage
   table_out: mortgage
 
-
 # vbooks
 - doc_in: books_data
   sheet_in: Books
