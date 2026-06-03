@@ -24,10 +24,9 @@ models:
               values: ['financial_invested', 'financial_assets']
       - name: account_name
         description: Name of the account
-        tests: 
+        tests:
           - not_null
           # TODO: check relationships
-
       # -------- measures
       - name: value_eur
         description: Total value in euros.
