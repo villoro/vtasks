@@ -13,7 +13,7 @@ models:
 
       # -------- measures
       - name: value_eur
-        description: Total value in euros. 
+        description: Total value in euros.
 
       # -------- metadata
       - name: _source

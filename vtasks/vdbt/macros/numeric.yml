@@ -2,11 +2,9 @@ version: 2
 
 macros:
   - name: gsheet_to_numeric
-    description: >
-      A macro to extract, clean, and convert numeric values from formatted strings.
-      This macro is designed to handle strings with thousands separators, decimal commas, 
-      and currency symbols, converting them into consistent numeric values.
-
+    description: "A macro to extract, clean, and convert numeric values from formatted strings. This macro is designed to
+      handle strings with thousands separators, decimal commas, and currency symbols, converting them into consistent numeric
+      values."
     arguments:
       - name: column
-        description: The input column or value to be processed. 
+        description: The input column or value to be processed.
