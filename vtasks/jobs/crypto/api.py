@@ -2,72 +2,92 @@ import backoff
 import requests
 
 from vtasks.common.logs import get_logger
-from vtasks.common.secrets import read_secret
 
-BASE_URL = "https://min-api.cryptocompare.com/data"
-SECRET_NAME = "CRYPTOCOMPARE_API_KEY"
+BASE_URL = "https://api.coingecko.com/api/v3"
 
-DEFAULT_CURRENCY = "EUR"
+DEFAULT_CURRENCY = "eur"
+
+# CoinGecko uses coin ids (e.g. 'bitcoin') instead of symbols (e.g. 'BTC')
+SYMBOL_TO_ID = {
+    "BCH": "bitcoin-cash",
+    "BTC": "bitcoin",
+    "DASH": "dash",
+    "ETH": "ethereum",
+    "LTC": "litecoin",
+    "XMR": "monero",
+    "XRP": "ripple",
+}
 
 
-class CryptoCompare:
-    """Helper to interact with the CryptoCompare API"""
+class CoinGecko:
+    """Helper to interact with the CoinGecko API"""
 
     def __init__(self, currency=DEFAULT_CURRENCY):
         self.currency = currency
-        self.token = read_secret(SECRET_NAME)
 
     @backoff.on_exception(
         backoff.expo, requests.exceptions.RequestException, max_tries=5
     )
-    def _query(self, endpoint, params):
-        """Raw function for querying CryptoCompare"""
+    def _query(self, endpoint, params=None):
+        """Raw function for querying CoinGecko"""
 
         logger = get_logger()
 
         url = f"{BASE_URL}/{endpoint}"
         logger.debug(f"Querying {url=} {params=}")
 
-        headers = {"authorization": f"Apikey {self.token}"}
-        res = requests.get(url, params=params, headers=headers)
+        res = requests.get(url, params=params)
         res.raise_for_status()
 
-        data = res.json()
+        return res.json()
 
-        # CryptoCompare returns 200 even on errors, signaling them in the body
-        if isinstance(data, dict) and data.get("Response") == "Error":
-            raise RuntimeError(f"CryptoCompare error: {data.get('Message')}")
-        if isinstance(data, dict) and data.get("Err"):
-            raise RuntimeError(f"CryptoCompare error: {data['Err'].get('message')}")
+    def _to_ids(self, symbols):
+        """Map crypto symbols (BTC) to CoinGecko ids (bitcoin)"""
 
-        return data
+        missing = [x for x in symbols if x not in SYMBOL_TO_ID]
+        if missing:
+            raise ValueError(
+                f"Missing CoinGecko id mapping for {missing} (see SYMBOL_TO_ID)"
+            )
+
+        return {SYMBOL_TO_ID[x]: x for x in symbols}
 
     def ping(self):
-        """Check that the API is reachable and the credentials are valid"""
+        """Check that the API is reachable"""
 
         logger = get_logger()
-        logger.info("Pinging CryptoCompare")
+        logger.info("Pinging CoinGecko")
 
-        self._query("price", {"fsym": "BTC", "tsyms": self.currency})
+        self._query("ping")
 
-        logger.info("CryptoCompare ping successful")
+        logger.info("CoinGecko ping successful")
         return True
+
+    def _simple_price(self, symbols, include_market_cap=False):
+        ids = self._to_ids(symbols)
+
+        data = self._query(
+            "simple/price",
+            {
+                "ids": ",".join(ids),
+                "vs_currencies": self.currency,
+                "include_market_cap": str(include_market_cap).lower(),
+            },
+        )
+        # Return keyed by symbol instead of CoinGecko id
+        return {symbol: data[cid] for cid, symbol in ids.items()}
 
     def get_prices(self, cryptos):
         """Get the latest price of a list of cryptos in `self.currency`"""
 
-        data = self._query(
-            "pricemulti", {"fsyms": ",".join(cryptos), "tsyms": self.currency}
-        )
-        return {coin: values[self.currency] for coin, values in data.items()}
+        data = self._simple_price(cryptos)
+        return {symbol: values[self.currency] for symbol, values in data.items()}
 
     def get_market_cap(self, cryptos, order_magnitude=10**9):
         """Get market capitalization of the asked coins in `self.currency`"""
 
-        data = self._query(
-            "pricemultifull", {"fsyms": ",".join(cryptos), "tsyms": self.currency}
-        )
+        data = self._simple_price(cryptos, include_market_cap=True)
         return {
-            coin: values[self.currency]["MKTCAP"] / order_magnitude
-            for coin, values in data["RAW"].items()
+            symbol: values[f"{self.currency}_market_cap"] / order_magnitude
+            for symbol, values in data.items()
         }

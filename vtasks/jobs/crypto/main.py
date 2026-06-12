@@ -5,7 +5,7 @@ from prefect import flow
 from prefect import task
 
 from vtasks.common import gsheets
-from vtasks.jobs.crypto.api import CryptoCompare
+from vtasks.jobs.crypto.api import CoinGecko
 
 
 # crypto_data spreadsheet info
@@ -30,7 +30,7 @@ FLOW_NAME = "crypto"
 @task(name=f"{FLOW_NAME}.update_market_cap")
 def update_market_cap():
     """Update market capitalization in google spreadsheet"""
-    volumes = CryptoCompare().get_market_cap(list(MAIN_CRYPTOS))
+    volumes = CoinGecko().get_market_cap(list(MAIN_CRYPTOS))
 
     for crypto, cell in MAIN_CRYPTOS.items():
         gsheets.update_cell(SPREADSHEET_CRYPTO, SHEET_SUMMARY, cell, volumes[crypto])
@@ -43,7 +43,7 @@ def update_crypto_prices(mfilter):
     df = gsheets.read_gdrive_sheet(SPREADSHEET_CRYPTO, SHEET_PRICES, with_index=True)
 
     # Update prices
-    values = CryptoCompare().get_prices(df.columns)
+    values = CoinGecko().get_prices(df.columns)
     df.loc[mfilter] = pd.Series(values)
 
     # Update gspreadsheet
@@ -77,7 +77,7 @@ def update_expensor(mfilter):
 def crypto():
     mfilter = date.today().strftime("%Y/%m")
 
-    task(name=f"{FLOW_NAME}.ping")(CryptoCompare().ping)()
+    task(name=f"{FLOW_NAME}.ping")(CoinGecko().ping)()
     update_market_cap()
 
     update_crypto_prices(mfilter)
