@@ -1,10 +1,11 @@
+import backoff
 import requests
 
 from vtasks.common.logs import get_logger
 from vtasks.common.secrets import read_secret
 
 BASE_URL = "https://min-api.cryptocompare.com/data"
-TOKEN_NAME = "CRYPTOCOMPARE_API_KEY"
+SECRET_NAME = "CRYPTOCOMPARE_API_KEY"
 
 DEFAULT_CURRENCY = "EUR"
 
@@ -14,8 +15,11 @@ class CryptoCompare:
 
     def __init__(self, currency=DEFAULT_CURRENCY):
         self.currency = currency
-        self.token = read_secret(TOKEN_NAME)
+        self.token = read_secret(SECRET_NAME)
 
+    @backoff.on_exception(
+        backoff.expo, requests.exceptions.RequestException, max_tries=5
+    )
     def _query(self, endpoint, params):
         """Raw function for querying CryptoCompare"""
 

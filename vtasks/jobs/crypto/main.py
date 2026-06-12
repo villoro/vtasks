@@ -5,7 +5,7 @@ from prefect import flow
 from prefect import task
 
 from vtasks.common import gsheets
-from vtasks.jobs.crypto.client import CryptoCompare
+from vtasks.jobs.crypto.api import CryptoCompare
 
 
 # crypto_data spreadsheet info
@@ -25,12 +25,6 @@ COL_CRYPTO = "crypto"
 MAIN_CRYPTOS = {"BTC": "B9", "ETH": "C9"}
 
 FLOW_NAME = "crypto"
-
-
-@task(name=f"{FLOW_NAME}.ping")
-def ping():
-    """Check that CryptoCompare is reachable before doing any work"""
-    CryptoCompare().ping()
 
 
 @task(name=f"{FLOW_NAME}.update_market_cap")
@@ -83,6 +77,7 @@ def update_expensor(mfilter):
 def crypto():
     mfilter = date.today().strftime("%Y/%m")
 
+    task(name=f"{FLOW_NAME}.ping")(CryptoCompare().ping)()
     update_market_cap()
 
     update_crypto_prices(mfilter)

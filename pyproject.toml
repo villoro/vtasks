@@ -22,7 +22,6 @@ classifiers = [
 ]
 dependencies = [
     "backoff>=2.2.1",
-    "cryptocompare>=0.7.6",
     "dbt-duckdb>=1.9.2",
     "duckdb<1.5.0",
     "fastapi<0.132",
