@@ -1,11 +1,11 @@
 from datetime import date
 
-import cryptocompare
 import pandas as pd
 from prefect import flow
 from prefect import task
 
 from vtasks.common import gsheets
+from vtasks.jobs.crypto.api import CoinGecko
 
 
 # crypto_data spreadsheet info
@@ -27,34 +27,13 @@ MAIN_CRYPTOS = {"BTC": "B9", "ETH": "C9"}
 FLOW_NAME = "crypto"
 
 
-def get_market_cap(cryptos, order_magnitude=10**9):
-    """Get market capitalization of the asked coins"""
-
-    data = cryptocompare.get_price(cryptos, full=True)
-
-    return {
-        key: values["EUR"]["MKTCAP"] / order_magnitude
-        for key, values in data["RAW"].items()
-    }
-
-
 @task(name=f"{FLOW_NAME}.update_market_cap")
 def update_market_cap():
     """Update market capitalization in google spreadsheet"""
-    volumes = get_market_cap(list(MAIN_CRYPTOS))
+    volumes = CoinGecko().get_market_cap(list(MAIN_CRYPTOS))
 
     for crypto, cell in MAIN_CRYPTOS.items():
         gsheets.update_cell(SPREADSHEET_CRYPTO, SHEET_SUMMARY, cell, volumes[crypto])
-
-
-def get_crypto_prices(cryptos):
-    """Get latest prices of a list of cryptos"""
-
-    # Query cryptos
-    data = cryptocompare.get_price([*cryptos])
-
-    # Create a dict with prices
-    return {i: x["EUR"] for i, x in data.items()}
 
 
 @task(name=f"{FLOW_NAME}.update_crypto_prices")
@@ -64,7 +43,7 @@ def update_crypto_prices(mfilter):
     df = gsheets.read_gdrive_sheet(SPREADSHEET_CRYPTO, SHEET_PRICES, with_index=True)
 
     # Update prices
-    values = get_crypto_prices(df.columns)
+    values = CoinGecko().get_prices(df.columns)
     df.loc[mfilter] = pd.Series(values)
 
     # Update gspreadsheet
@@ -98,6 +77,7 @@ def update_expensor(mfilter):
 def crypto():
     mfilter = date.today().strftime("%Y/%m")
 
+    task(name=f"{FLOW_NAME}.ping")(CoinGecko().ping)()
     update_market_cap()
 
     update_crypto_prices(mfilter)

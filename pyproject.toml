@@ -1,6 +1,6 @@
 [project]
 name = "vtasks"
-version = "7.5.31"
+version = "7.6.0"
 description = "Personal tasks scheduled with Prefect"
 authors = [{ name = "Arnau Villoro", email = "arnau@villoro.com" }]
 maintainers = [{ name = "Arnau Villoro", email = "arnau@villoro.com" }]
@@ -22,7 +22,6 @@ classifiers = [
 ]
 dependencies = [
     "backoff>=2.2.1",
-    "cryptocompare>=0.7.6",
     "dbt-duckdb>=1.9.2",
     "duckdb<1.5.0",
     "fastapi<0.132",
@@ -38,7 +37,7 @@ dependencies = [
 ]
 
 [tool.bumpversion]
-current_version = "7.5.31"
+current_version = "7.6.0"
 
 [[tool.bumpversion.files]]
 filename = "pyproject.toml"
