@@ -33,7 +33,7 @@ dependencies = [
     "regex>=2024.11.6",
     "setuptools>=75.8.0",
     "vcrypto>=4.2.1",
-    "vdropbox>=1.1.1",
+    "vdropbox>=2.0.0",
 ]
 
 [tool.bumpversion]

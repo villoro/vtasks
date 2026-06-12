@@ -86,7 +86,6 @@ oauthlib==3.3.1
 opentelemetry-api==1.42.1
 orderly-set==5.5.0
 orjson==3.11.9
-oyaml==1.0
 packaging==24.2
 pandas==2.3.3
 parsedatetime==2.6
@@ -150,7 +149,7 @@ uritemplate==4.2.0
 urllib3==2.7.0
 uvicorn==0.49.0
 vcrypto==4.2.1
-vdropbox==1.1.2
+vdropbox==2.0.0
 websockets==13.1
 win32-setctime==1.2.0 ; sys_platform == 'win32'
 zipp==4.1.0
