@@ -1,6 +1,6 @@
 [project]
 name = "vtasks"
-version = "7.5.30"
+version = "7.5.31"
 description = "Personal tasks scheduled with Prefect"
 authors = [{ name = "Arnau Villoro", email = "arnau@villoro.com" }]
 maintainers = [{ name = "Arnau Villoro", email = "arnau@villoro.com" }]
@@ -38,7 +38,7 @@ dependencies = [
 ]
 
 [tool.bumpversion]
-current_version = "7.5.30"
+current_version = "7.5.31"
 
 [[tool.bumpversion.files]]
 filename = "pyproject.toml"
