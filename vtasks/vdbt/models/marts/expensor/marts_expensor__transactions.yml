@@ -20,6 +20,8 @@ models:
         description: The event associated with the transaction (e.g., "Birthday", "Anniversary").
       - name: notes
         description: Any additional notes related to the transaction.
+      - name: is_excluded
+        description: True if it should be excluded for regular income/expenses analysis
 
       # -------- category
       - name: category

@@ -2,9 +2,7 @@
 
 WITH transactions AS (
     SELECT * FROM {{ ref('stg_dropbox__money_lover') }}
-    WHERE
-        NOT (LOWER(account) = 'fravi' AND transaction_type = 'incomes')
-        AND NOT LOWER(account) = 'home'
+    WHERE NOT (LOWER(account) = 'fravi' AND transaction_type = 'incomes')
 ),
 
 categories AS (
@@ -36,6 +34,7 @@ final AS (
         trans.account,
         trans.event,
         trans.notes,
+        LOWER(trans.account) = 'home' AS is_excluded,
 
         -------- category
         trans.category,
