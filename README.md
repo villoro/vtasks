@@ -78,7 +78,7 @@ uv run python -m vtasks.schedules.hourly
 
 To run a specific job, use **module-based execution**:
 ```bash
-uv run python -m vtasks.jobs.dropbox.export_tables
+uv run python -m vtasks.jobs.dropbox.money_lover
 ```
 This ensures that **relative imports** work correctly.
 

@@ -157,8 +157,6 @@ Deployments and their schedules are defined in `prefect.yaml`.
 - `paths.ENV` is computed at import time; changing env vars after import has no effect.
 - Running modules with `python path/to/file.py` will break relative imports — always use
   `python -m vtasks.<...>`.
-- `vtasks/jobs/local/maintain.py` currently has known bugs (see `IMPROVEMENTS.md`) — don't
-  treat it as a working reference.
 - `requests` and `loguru` are imported directly but are only transitive dependencies (not
   declared in `pyproject.toml`).
 - Windows is a first-class local environment (the repo lives on `C:\`); `paths.py`

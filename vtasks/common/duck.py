@@ -14,12 +14,19 @@ SECRET_MD = "MOTHERDUCK_TOKEN"
 DB_PATH = None
 
 
+def _redact_token(db_path):
+    """Hide the MotherDuck token before logging a connection string."""
+    if db_path and "motherduck_token=" in db_path:
+        return db_path.split("motherduck_token=")[0] + "motherduck_token=***"
+    return db_path
+
+
 def get_duckdb(use_md=False, filename=None):
     logger = get_logger()
 
     global DB_PATH
     if DB_PATH is not None:
-        logger.debug(f"Reusing {DB_PATH=}")
+        logger.debug(f"Reusing DB_PATH={_redact_token(DB_PATH)}")
         return duckdb.connect(DB_PATH)
 
     if (is_pro := paths.is_pro()) or use_md:
@@ -134,7 +141,7 @@ def write_df(
     df_input,
     schema,
     table,
-    mode: Literal["append", "overwrite"] = "overwrite",
+    mode: Literal["append", "overwrite", "merge"] = "overwrite",
     pk=None,
     as_str=False,
     use_md=False,
@@ -190,7 +197,7 @@ def write_df(
 def sync_duckdb(
     src: str = "dbt",
     dest: str = "motherduck",
-    schema_prefixes: str = ["_marts__", "_core__"],
+    schema_prefixes: list[str] = ["_marts__", "_core__"],
     mode: Literal["append", "overwrite"] = "overwrite",
 ):
     """

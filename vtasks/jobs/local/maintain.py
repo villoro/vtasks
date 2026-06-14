@@ -11,7 +11,7 @@ from vtasks.common.logs import get_logger
 def sync_duckdb(
     src: str = "dbt",
     dest: str = "motherduck",
-    schema_prefixes: str = ["_marts__", "_core__"],
+    schema_prefixes: list[str] = ["_marts__", "_core__"],
     mode: Literal["append", "overwrite"] = "overwrite",
 ):
     """
@@ -20,11 +20,11 @@ def sync_duckdb(
     Args:
         src (str): Source database. Either "motherduck" or a DuckDB file path.
         dest (str): Destination database. Either "motherduck" or a DuckDB file path.
-        schema_prefix (str): Only copy schemas that start with this prefix (default: "raw__").
+        schema_prefixes (list[str]): Only copy schemas that start with any of these prefixes.
         mode (str): Sync mode, either "append" or "overwrite" (default: "overwrite").
     """
 
-    duck.sync_duckdb(src=src, dest=dest, schema_prefix=schema_prefixes, mode=mode)
+    duck.sync_duckdb(src=src, dest=dest, schema_prefixes=schema_prefixes, mode=mode)
 
 
 @flow(name="maintain.upload_marts_to_md")
@@ -36,7 +36,7 @@ def upload_marts_to_md():
         return False
 
     duck.sync_duckdb(
-        src=paths.FILE_DUCKDB_DBT,
+        src=paths.FILE_DUCKDB,
         dest="motherduck",
         schema_prefixes=["_marts__", "_core__"],
         mode="overwrite",
