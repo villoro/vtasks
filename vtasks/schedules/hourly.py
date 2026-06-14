@@ -48,7 +48,7 @@ def run_flows(flows, flow_name):
         return states.Failed(message=msg)
 
     logger.info(f"{flow_name} completed successfully!")
-    return states
+    return states.Completed(message=f"{flow_name} completed successfully!")
 
 
 @flow(name=f"{FLOW_NAME}.maintain")
