@@ -3,6 +3,7 @@ import time
 import backoff
 import gspread
 import pandas as pd
+import requests
 from gspread.exceptions import APIError
 
 from vtasks.common.logs import get_logger
@@ -13,6 +14,11 @@ PATH_GSPREADSHEET_KEY = get_path(".auth/gspreadsheets.json")
 SECRET_NAME = "GSPREADSHEET_JSON"
 
 GDRIVE = None
+
+# Transient errors worth retrying. `requests.exceptions.ConnectionError` is a
+# sibling of the builtin `ConnectionError` (both subclass `OSError`), so the
+# builtin alone does NOT catch the dropped-connection errors gspread raises.
+RETRYABLE_EXCEPTIONS = (APIError, ConnectionError, requests.exceptions.RequestException)
 
 
 def init_gdrive(force=False):
@@ -41,7 +47,7 @@ def retry_on_exception(max_tries=5):
 
         @backoff.on_exception(
             backoff.expo,
-            (APIError, ConnectionError),
+            RETRYABLE_EXCEPTIONS,
             max_tries=max_tries,
             on_backoff=log_failure,
         )
@@ -51,7 +57,7 @@ def retry_on_exception(max_tries=5):
         def wrapper(*args, **kwargs):
             try:
                 return wrapped_func(*args, **kwargs)
-            except (APIError, ConnectionError) as exc:
+            except RETRYABLE_EXCEPTIONS as exc:
                 logger.error(f"Too many attempts for '{func.__name__}' ({max_tries=})")
                 raise exc
 
