@@ -135,7 +135,9 @@ def backup_events(vdp, df):
     """Backup all events as a monthly parquet in dropbox"""
 
     path_parquet = f"{PATH_BACKUPS}/{date.today():%Y_%m}.parquet"
-    vdp.write_parquet(df, path_parquet)
+
+    # Cast to str like 'write_df(as_str=True)' since 'start'/'end' mix dates and datetimes
+    vdp.write_parquet(df.astype(str), path_parquet)
 
 
 @flow(name=FLOW_NAME)
