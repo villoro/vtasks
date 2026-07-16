@@ -155,9 +155,9 @@ def export_all_gcal():
     # Export events
     write_df(df, SCHEMA_OUT, TABLE_OUT, as_str=True)
 
-    backup_events(vdp, df)
-
     upload_token(vdp)
+
+    backup_events(vdp, df)
 
 
 if __name__ == "__main__":
