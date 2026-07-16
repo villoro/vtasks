@@ -22,6 +22,7 @@ PATH_GCAL_JSON = get_path(".auth/gcal.json")
 PATH_TOKEN_LOCAL = get_path(f".auth/{TOKEN_FILENAME}")
 
 PATH_GCAL = "/Aplicaciones/gcalendar"
+PATH_BACKUPS = f"{PATH_GCAL}/backups"
 SCHEMA_OUT = "raw__gcal"
 TABLE_OUT = "events"
 
@@ -129,6 +130,16 @@ def query_all_calendars(calendars):
     return pd.DataFrame(events)
 
 
+@task(name=f"{FLOW_NAME}.backup_events")
+def backup_events(vdp, df):
+    """Backup all events as a monthly parquet in dropbox"""
+
+    path_parquet = f"{PATH_BACKUPS}/{date.today():%Y_%m}.parquet"
+
+    # Cast to str like 'write_df(as_str=True)' since 'start'/'end' mix dates and datetimes
+    vdp.write_parquet(df.astype(str), path_parquet)
+
+
 @flow(name=FLOW_NAME)
 def export_all_gcal():
     """Export all events as a parquet"""
@@ -145,6 +156,8 @@ def export_all_gcal():
     write_df(df, SCHEMA_OUT, TABLE_OUT, as_str=True)
 
     upload_token(vdp)
+
+    backup_events(vdp, df)
 
 
 if __name__ == "__main__":
