@@ -110,9 +110,9 @@ In short the version consists of three numbers (M.m.p) where:
 You can update those by running:
 
 ```bash
-uvx bump-my-version bump major
-uvx bump-my-version bump minor
-uvx bump-my-version bump patch
+uvx bump-my-version bump major && uv sync
+uvx bump-my-version bump minor && uv sync
+uvx bump-my-version bump patch && uv sync
 ```
 
 This automates version updates across `prefect.yaml`, `pyproject.toml`, and `vtasks/vdbt/dbt_project.yml`.
