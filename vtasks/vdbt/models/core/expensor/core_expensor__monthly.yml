@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: core_expensor__monthly
+    description: >
+      Monthly incomes, expenses and result, on a complete month grid.
+      Months with no transaction for a category are present with a value of 0,
+      which is what makes the smoothing in `marts_expensor__monthly_trends` correct.
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - month
+            - category
+
+    columns:
+      # -------- pks
+      - name: month
+        description: First day of the month
+        tests: [not_null]
+      - name: category
+        description: Type of transaction, plus the derived `result`
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['incomes', 'expenses', 'result']
+
+      # -------- measures
+      - name: value_eur
+        description: Total personal amount for the month in euros
+        tests: [not_null]
+
+      # -------- metadata
+      - name: is_filled
+        description: True when the month had no transaction and the value was filled with 0
+        tests: [not_null]

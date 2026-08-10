@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: marts_expensor__monthly_trends
+    description: >
+      `marts_expensor__monthly` with a smoothed trend column.
+      The smoother is a Savitzky-Golay filter (window 35, degree 5, edges clamped)
+      followed by a 3-month centred mean, which reproduces the trend lines the
+      pre-2023 expensor HTML reports used.
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - month
+            - category
+
+    columns:
+      # -------- pks
+      - name: month
+        description: First day of the month
+        tests: [not_null]
+      - name: category
+        description: Type of transaction, plus the derived `result`
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['incomes', 'expenses', 'result']
+
+      # -------- measures
+      - name: value_eur
+        description: Total personal amount for the month in euros
+        tests: [not_null]
+      - name: trend_eur
+        description: Smoothed value in euros
+        tests: [not_null]
+
+      # -------- metadata
+      - name: is_filled
+        description: True when the month had no transaction and the value was filled with 0
+        tests: [not_null]
+      - name: is_provisional_trend
+        description: >
+          True for the last half-window of months, where the centred filter only sees
+          part of its window and the trend will still move as new months arrive.
+        tests: [not_null]
