@@ -83,6 +83,10 @@ models:
       +tags: core
       +materialized: table
 
+      books:
+        +tags: books
+        +schema: core__books
+
       expensor:
         +tags: expensor
         +schema: core__expensor
