@@ -40,6 +40,11 @@ macros:
 
   - name: savgol_smooth
     description: >
+      Use this for dense aggregate series, the monthly totals: incomes, expenses, result.
+      For sparse detail series, such as a breakdown by category, use `gaussian_smooth`
+      instead.
+
+
       Adds a smoothed column to a monthly series using a Savitzky-Golay filter, optionally
       followed by a short centred moving average.
 
@@ -87,5 +92,57 @@ macros:
         description: >
           Size of the centred moving average applied after the filter. Must be odd. Use 1 to
           disable it. Defaults to 3.
+      - name: out_column
+        description: Name of the smoothed column that is added. Defaults to `trend`.
+
+  - name: gaussian_smooth
+    description: >
+      Use this for sparse detail series, such as a breakdown by category, where months
+      with no data are common. For dense aggregate series, the monthly totals, use
+      `savgol_smooth` instead: it tracks turning points faster.
+
+
+      Adds a smoothed column to a monthly series using a Gaussian kernel, that is a
+      weighted moving average where the weight of a neighbour falls off with the square of
+      its distance in months.
+
+
+      Unlike `savgol_smooth` the weights are all positive, so the result of smoothing
+      non-negative values can never go negative. That makes this the right choice for
+      sparse or spiky series such as counts per category, where the negative lobes of a
+      Savitzky-Golay filter would ring below zero around an isolated spike. The trade-off
+      is that it lags at turning points, since a weighted mean cannot bend to a peak the
+      way a fitted polynomial can.
+
+
+      The weights are computed inline rather than read from the `smoothing_weights` seed,
+      so any `sigma` works without generating anything first.
+
+
+      The filter is centred, so it uses future months as well as past ones and the most
+      recent months keep moving as data arrives. Where the kernel is truncated, at the
+      edges of the series, dividing by the sum of the weights renormalises it.
+
+
+      `relation` must already be a complete monthly grid produced by `monthly_grid`, and it
+      must expose a `month_date` column. The macro expands to a full `WITH ... SELECT`
+      query, so the call must be wrapped in its own CTE.
+    arguments:
+      - name: relation
+        description: Relation holding the complete monthly grid, either a `ref()` or the name of an earlier CTE.
+      - name: measure
+        description: Numeric column to smooth.
+      - name: dims
+        description: >
+          List of dimension columns that identify each series. Each combination is smoothed
+          independently. Defaults to an empty list, which smooths a single series.
+      - name: sigma
+        description: >
+          Width of the kernel in months. Larger values give a smoother, flatter curve.
+          Defaults to 3.
+      - name: truncate
+        description: >
+          How many sigmas out the kernel is cut off, which bounds the join. Defaults to 3,
+          where the neglected weight is under 1% and the cost stays O(n * sigma).
       - name: out_column
         description: Name of the smoothed column that is added. Defaults to `trend`.
