@@ -6,16 +6,17 @@ models:
       Monthly incomes, expenses and result, on a complete month grid.
       Months with no transaction for a category are present with a value of 0,
       which is what makes the smoothing in `marts_expensor__monthly_trends` correct.
+      Excludes the transactions flagged `is_excluded`.
 
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - month
+            - month_date
             - category
 
     columns:
       # -------- pks
-      - name: month
+      - name: month_date
         description: First day of the month
         tests: [not_null]
       - name: category

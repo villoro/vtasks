@@ -21,7 +21,7 @@ WITH smoothed AS (
 final AS (
     SELECT
         -------- dims
-        month,
+        month_date,
         category,
 
         -------- measures
@@ -35,7 +35,7 @@ final AS (
         -- the series, not to today: if the pipeline lags, the provisional region
         -- has to move with the data. Flagged rather than dropped so the dashboard
         -- keeps the choice.
-        month > (SELECT max(month) FROM smoothed) - INTERVAL {{ window_size // 2 }} MONTH
+        month_date > (SELECT max(month_date) FROM smoothed) - INTERVAL {{ window_size // 2 }} MONTH
             AS is_provisional_trend
     FROM smoothed
     ORDER BY ALL

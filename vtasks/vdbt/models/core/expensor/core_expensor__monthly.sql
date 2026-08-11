@@ -1,10 +1,11 @@
 WITH transactions AS (
     SELECT * FROM {{ ref('marts_expensor__transactions') }}
+    WHERE NOT is_excluded
 ),
 
 by_type AS (
     SELECT
-        date_trunc('month', transaction_date) AS month,
+        date_trunc('month', transaction_date) AS month_date,
         transaction_type AS category,
         sum(personal_amount) AS value_eur
     FROM transactions
@@ -16,7 +17,7 @@ by_type AS (
 -- so it can safely be built here as just another category.
 result AS (
     SELECT
-        month,
+        month_date,
         'result' AS category,
         sum(CASE WHEN category = 'incomes' THEN value_eur ELSE -value_eur END) AS value_eur
     FROM by_type
@@ -33,7 +34,7 @@ combined AS (
 grid AS (
     {{ monthly_grid(
         relation='combined',
-        date_column='month',
+        date_column='month_date',
         measure='value_eur',
         dims=['category'],
         fill='zero'
@@ -43,7 +44,7 @@ grid AS (
 final AS (
     SELECT
         -------- dims
-        month,
+        month_date,
         category,
 
         -------- measures
@@ -52,7 +53,7 @@ final AS (
         -------- metadata
         is_filled
     FROM grid
-    WHERE month <= date_trunc('month', CURRENT_DATE)
+    WHERE month_date <= date_trunc('month', CURRENT_DATE)
     ORDER BY ALL
 )
 

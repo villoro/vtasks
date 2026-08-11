@@ -6,7 +6,7 @@
 
     WITH _source AS (
         SELECT
-            date_trunc('month', {{ date_column }}) AS month,
+            date_trunc('month', {{ date_column }}) AS month_date,
             {% for dim in dims -%}
                 {{ dim }},
             {% endfor -%}
@@ -17,10 +17,10 @@
 
     _months AS (
         SELECT unnest(range(
-            min(month),
-            max(month) + INTERVAL 1 MONTH,
+            min(month_date),
+            max(month_date) + INTERVAL 1 MONTH,
             INTERVAL 1 MONTH
-        )) :: date AS month
+        )) :: date AS month_date
         FROM _source
     ),
 
@@ -40,14 +40,14 @@
 
     _joined AS (
         SELECT
-            _grid.month,
+            _grid.month_date,
             {% for dim in dims -%}
                 _grid.{{ dim }},
             {% endfor -%}
             _source.{{ measure }} AS _raw_value
         FROM _grid
         LEFT JOIN _source
-            ON _grid.month = _source.month
+            ON _grid.month_date = _source.month_date
             {% for dim in dims -%}
                 AND _grid.{{ dim }} IS NOT DISTINCT FROM _source.{{ dim }}
             {% endfor %}
@@ -55,7 +55,7 @@
 
     _filled AS (
         SELECT
-            month,
+            month_date,
             {% for dim in dims -%}
                 {{ dim }},
             {% endfor -%}
@@ -66,7 +66,7 @@
                     _raw_value,
                     last_value(_raw_value IGNORE NULLS) OVER (
                         {% if dims %}PARTITION BY {{ dims | join(', ') }}{% endif %}
-                        ORDER BY month
+                        ORDER BY month_date
                         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
                     ),
                     0
@@ -98,7 +98,7 @@
     WITH _indexed AS (
         SELECT
             *,
-            date_diff('month', DATE '1970-01-01', month) AS _m
+            date_diff('month', DATE '1970-01-01', month_date) AS _m
         FROM {{ relation }}
     ),
 
@@ -123,7 +123,7 @@
 
     _filtered AS (
         SELECT
-            base.month,
+            base.month_date,
             {% for dim in dims -%}
                 base.{{ dim }},
             {% endfor -%}
@@ -146,14 +146,14 @@
 
     _smoothed AS (
         SELECT
-            month,
+            month_date,
             {% for dim in dims -%}
                 {{ dim }},
             {% endfor -%}
             {% if post_window > 1 -%}
             avg(_savgol) OVER (
                 {% if dims %}PARTITION BY {{ dims | join(', ') }}{% endif %}
-                ORDER BY month
+                ORDER BY month_date
                 ROWS BETWEEN {{ post_half }} PRECEDING AND {{ post_half }} FOLLOWING
             ) AS {{ out_column }}
             {%- else -%}
@@ -167,7 +167,7 @@
         round(_smoothed.{{ out_column }}, 2) AS {{ out_column }}
     FROM {{ relation }} AS source
     INNER JOIN _smoothed
-        ON source.month = _smoothed.month
+        ON source.month_date = _smoothed.month_date
         {% for dim in dims -%}
             AND source.{{ dim }} IS NOT DISTINCT FROM _smoothed.{{ dim }}
         {% endfor %}
