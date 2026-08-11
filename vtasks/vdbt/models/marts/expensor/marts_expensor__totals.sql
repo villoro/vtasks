@@ -4,6 +4,7 @@ WITH account_values AS (
 
 transactions AS (
     SELECT * FROM {{ ref('marts_expensor__transactions') }}
+    WHERE NOT is_excluded
 ),
 
 invested AS (
