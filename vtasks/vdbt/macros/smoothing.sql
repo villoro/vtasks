@@ -172,3 +172,52 @@
             AND source.{{ dim }} IS NOT DISTINCT FROM _smoothed.{{ dim }}
         {% endfor %}
 {% endmacro %}
+
+
+{% macro gaussian_smooth(
+    relation,
+    measure,
+    dims=[],
+    sigma=3,
+    truncate=3,
+    out_column='trend'
+) %}
+
+    {%- set half = (sigma * truncate) | round(0, 'ceil') | int -%}
+
+    WITH _indexed AS (
+        SELECT
+            *,
+            date_diff('month', DATE '1970-01-01', month_date) AS _m
+        FROM {{ relation }}
+    ),
+
+    _smoothed AS (
+        SELECT
+            base.month_date,
+            {% for dim in dims -%}
+                base.{{ dim }},
+            {% endfor -%}
+            -- Dividing by the sum of the weights renormalises the kernel where it is
+            -- truncated, so the edges of the series need no special casing
+            sum(exp(-0.5 * pow((neighbour._m - base._m) / {{ sigma }}.0, 2)) * neighbour.{{ measure }})
+                / sum(exp(-0.5 * pow((neighbour._m - base._m) / {{ sigma }}.0, 2))) AS {{ out_column }}
+        FROM _indexed AS base
+        INNER JOIN _indexed AS neighbour
+            ON abs(neighbour._m - base._m) <= {{ half }}
+            {% for dim in dims -%}
+                AND neighbour.{{ dim }} IS NOT DISTINCT FROM base.{{ dim }}
+            {% endfor %}
+        GROUP BY ALL
+    )
+
+    SELECT
+        source.*,
+        round(_smoothed.{{ out_column }}, 2) AS {{ out_column }}
+    FROM {{ relation }} AS source
+    INNER JOIN _smoothed
+        ON source.month_date = _smoothed.month_date
+        {% for dim in dims -%}
+            AND source.{{ dim }} IS NOT DISTINCT FROM _smoothed.{{ dim }}
+        {% endfor %}
+{% endmacro %}

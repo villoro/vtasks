@@ -1,5 +1,5 @@
 name: vdbt
-version: '7.7.1'
+version: '7.7.2'
 
 profile: vdbt
 
@@ -82,6 +82,10 @@ models:
     core:
       +tags: core
       +materialized: table
+
+      books:
+        +tags: books
+        +schema: core__books
 
       expensor:
         +tags: expensor
