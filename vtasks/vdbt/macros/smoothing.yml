@@ -63,7 +63,7 @@ macros:
 
 
       `relation` must already be a complete monthly grid produced by `monthly_grid`, and it
-      must expose a `month` column, which is what the filter indexes on. The macro expands
+      must expose a `month_date` column, which is what the filter indexes on. The macro expands
       to a full `WITH ... SELECT` query, so the call must be wrapped in its own CTE.
     arguments:
       - name: relation
