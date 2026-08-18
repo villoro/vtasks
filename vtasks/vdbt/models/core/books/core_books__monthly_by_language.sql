@@ -3,7 +3,7 @@ WITH books AS (
     WHERE read_date IS NOT NULL
 ),
 
-by_month AS (
+by_language AS (
     SELECT
         date_trunc('month', read_date) AS month_date,
         language,
@@ -16,8 +16,27 @@ by_month AS (
     GROUP BY ALL
 ),
 
+-- Carried as an extra `language` so a chart gets one trace per language plus
+-- the total from a single breakout. Smoothed as its own series, which for a
+-- linear filter is the same as summing the smoothed languages.
+totals AS (
+    SELECT
+        date_trunc('month', read_date) AS month_date,
+        'total' AS language,
+        count(*) AS books,
+        sum(num_pages) AS pages,
+        sum(coalesce(total_hours, 0)) AS hours
+    FROM books
+    GROUP BY ALL
+),
+
+combined AS (
+    SELECT * FROM by_language UNION ALL BY NAME
+    SELECT * FROM totals
+),
+
 long AS (
-    UNPIVOT by_month
+    UNPIVOT combined
     ON books, pages, hours
     INTO NAME metric VALUE value
 ),
@@ -45,6 +64,7 @@ final AS (
         round(value, 2) AS value,
 
         -------- metadata
+        language = 'total' AS is_total,
         is_filled
     FROM grid
     WHERE month_date <= date_trunc('month', CURRENT_DATE)
