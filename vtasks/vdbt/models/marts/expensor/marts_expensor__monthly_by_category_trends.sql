@@ -29,6 +29,7 @@ final AS (
         trend_eur,
 
         -------- metadata
+        is_total,
         is_filled,
         month_date > (SELECT max(month_date) FROM smoothed) - INTERVAL {{ sigma * truncate }} MONTH
             AS is_provisional_trend
