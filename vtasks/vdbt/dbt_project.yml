@@ -87,6 +87,10 @@ models:
         +tags: books
         +schema: core__books
 
+      gcal:
+        +tags: gcal
+        +schema: core__gcal
+
       expensor:
         +tags: expensor
         +schema: core__expensor
