@@ -6,7 +6,7 @@ models:
       `core_books__monthly_by_language` with a smoothed trend column.
       Long format, so a chart can filter on `metric` and break the series out by
       `language` to plot every language plus the total at once.
-      Anything aggregating across languages must exclude the `total` rows with `is_total`,
+      Anything aggregating across languages must exclude the `Total` rows with `is_total`,
       or it double counts.
       Smoothed with a Gaussian kernel, whose weights cannot produce a negative trend.
 
@@ -23,7 +23,7 @@ models:
         description: First day of the month
         tests: [not_null]
       - name: language
-        description: Language the book is written in, or `total` for the sum across all of them
+        description: Language the book is written in, or `Total` for the sum across all of them
         tests: [not_null]
       - name: metric
         description: Which measure the row holds
@@ -46,7 +46,7 @@ models:
 
       # -------- metadata
       - name: is_total
-        description: True for the `total` rows, which must be excluded when summing across languages
+        description: True for the `Total` rows, which must be excluded when summing across languages
         tests: [not_null]
       - name: is_filled
         description: True when no book was finished in that language that month and the value was filled with 0

@@ -22,7 +22,7 @@ by_language AS (
 totals AS (
     SELECT
         date_trunc('month', read_date) AS month_date,
-        'total' AS language,
+        'Total' AS language,
         count(*) AS books,
         sum(num_pages) AS pages,
         sum(coalesce(total_hours, 0)) AS hours
@@ -64,7 +64,7 @@ final AS (
         round(value, 2) AS value,
 
         -------- metadata
-        language = 'total' AS is_total,
+        language = 'Total' AS is_total,
         is_filled
     FROM grid
     WHERE month_date <= date_trunc('month', CURRENT_DATE)

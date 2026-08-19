@@ -7,7 +7,7 @@ models:
       Category-months with no transaction are present with a value of 0, which is what
       makes the smoothing in `marts_expensor__monthly_by_category_trends` correct.
       Excludes the transactions flagged `is_excluded`.
-      Carries an extra `total` category per transaction_type, so a chart gets one trace
+      Carries an extra `Total` category per transaction_type, so a chart gets one trace
       per category plus the total from a single breakout. Anything aggregating across
       categories must filter it out with `is_total`, or it double counts.
 
@@ -30,7 +30,7 @@ models:
           - accepted_values:
               values: ['incomes', 'expenses']
       - name: category
-        description: Name of the transaction category, or `total` for the sum across all of them
+        description: Name of the transaction category, or `Total` for the sum across all of them
         tests: [not_null]
 
       # -------- measures
@@ -40,7 +40,7 @@ models:
 
       # -------- metadata
       - name: is_total
-        description: True for the `total` rows, which must be excluded when summing across categories
+        description: True for the `Total` rows, which must be excluded when summing across categories
         tests: [not_null]
       - name: is_filled
         description: True when the category had no transaction that month and the value was filled with 0
