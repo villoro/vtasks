@@ -6,7 +6,7 @@ models:
       `core_expensor__monthly_by_category` with a smoothed trend column.
       Long format, so a chart can filter on `transaction_type` and break the series out
       by `category` to plot every expense or income category plus the total at once.
-      Anything aggregating across categories must exclude the `total` rows with
+      Anything aggregating across categories must exclude the `Total` rows with
       `is_total`, or it double counts.
       Note the total here is Gaussian smoothed; `marts_expensor__monthly_trends` keeps the
       Savitzky-Golay one, which tracks turning points faster.
@@ -33,7 +33,7 @@ models:
           - accepted_values:
               values: ['incomes', 'expenses']
       - name: category
-        description: Name of the transaction category, or `total` for the sum across all of them
+        description: Name of the transaction category, or `Total` for the sum across all of them
         tests: [not_null]
 
       # -------- measures
@@ -50,7 +50,7 @@ models:
 
       # -------- metadata
       - name: is_total
-        description: True for the `total` rows, which must be excluded when summing across categories
+        description: True for the `Total` rows, which must be excluded when summing across categories
         tests: [not_null]
       - name: is_filled
         description: True when the category had no transaction that month and the value was filled with 0

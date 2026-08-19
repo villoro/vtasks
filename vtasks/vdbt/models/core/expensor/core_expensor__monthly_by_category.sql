@@ -23,7 +23,7 @@ totals AS (
     SELECT
         date_trunc('month', transaction_date) AS month_date,
         transaction_type,
-        'total' AS category,
+        'Total' AS category,
         sum(personal_amount) AS value_eur
     FROM transactions
     GROUP BY ALL
@@ -59,7 +59,7 @@ final AS (
         round(value_eur, 2) AS value_eur,
 
         -------- metadata
-        category = 'total' AS is_total,
+        category = 'Total' AS is_total,
         is_filled
     FROM grid
     WHERE month_date <= date_trunc('month', CURRENT_DATE)
