@@ -1,12 +1,16 @@
-{% macro monthly_grid(relation, date_column, measure, dims=[], fill='zero') %}
+{% macro date_grid(relation, date_column, measure, dims=[], fill='zero', grain='month') %}
 
     {%- if fill not in ['zero', 'forward'] -%}
-        {{ exceptions.raise_compiler_error("monthly_grid: fill must be 'zero' or 'forward', got '" ~ fill ~ "'") }}
+        {{ exceptions.raise_compiler_error("date_grid: fill must be 'zero' or 'forward', got '" ~ fill ~ "'") }}
     {%- endif -%}
+    {%- if grain not in ['day', 'week', 'month'] -%}
+        {{ exceptions.raise_compiler_error("date_grid: grain must be 'day', 'week' or 'month', got '" ~ grain ~ "'") }}
+    {%- endif -%}
+    {%- set period = grain ~ '_date' -%}
 
     WITH _source AS (
         SELECT
-            date_trunc('month', {{ date_column }}) AS month_date,
+            date_trunc('{{ grain }}', {{ date_column }}) AS {{ period }},
             {% for dim in dims -%}
                 {{ dim }},
             {% endfor -%}
@@ -15,12 +19,12 @@
         GROUP BY ALL
     ),
 
-    _months AS (
+    _periods AS (
         SELECT unnest(range(
-            min(month_date),
-            max(month_date) + INTERVAL 1 MONTH,
-            INTERVAL 1 MONTH
-        )) :: date AS month_date
+            min({{ period }}),
+            max({{ period }}) + INTERVAL 1 {{ grain | upper }},
+            INTERVAL 1 {{ grain | upper }}
+        )) :: date AS {{ period }}
         FROM _source
     ),
 
@@ -30,24 +34,24 @@
     ),
 
     _grid AS (
-        SELECT * FROM _months CROSS JOIN _dims
+        SELECT * FROM _periods CROSS JOIN _dims
     ),
     {%- else -%}
     _grid AS (
-        SELECT * FROM _months
+        SELECT * FROM _periods
     ),
     {%- endif %}
 
     _joined AS (
         SELECT
-            _grid.month_date,
+            _grid.{{ period }},
             {% for dim in dims -%}
                 _grid.{{ dim }},
             {% endfor -%}
             _source.{{ measure }} AS _raw_value
         FROM _grid
         LEFT JOIN _source
-            ON _grid.month_date = _source.month_date
+            ON _grid.{{ period }} = _source.{{ period }}
             {% for dim in dims -%}
                 AND _grid.{{ dim }} IS NOT DISTINCT FROM _source.{{ dim }}
             {% endfor %}
@@ -55,7 +59,7 @@
 
     _filled AS (
         SELECT
-            month_date,
+            {{ period }},
             {% for dim in dims -%}
                 {{ dim }},
             {% endfor -%}
@@ -66,7 +70,7 @@
                     _raw_value,
                     last_value(_raw_value IGNORE NULLS) OVER (
                         {% if dims %}PARTITION BY {{ dims | join(', ') }}{% endif %}
-                        ORDER BY month_date
+                        ORDER BY {{ period }}
                         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
                     ),
                     0
@@ -87,8 +91,11 @@
     window_size=35,
     degree=5,
     post_window=3,
-    out_column='trend'
+    out_column='trend',
+    grain='month'
 ) %}
+
+    {%- set period = grain ~ '_date' -%}
 
     {%- if post_window % 2 == 0 -%}
         {{ exceptions.raise_compiler_error("savgol_smooth: post_window must be odd, got " ~ post_window) }}
@@ -98,7 +105,7 @@
     WITH _indexed AS (
         SELECT
             *,
-            date_diff('month', DATE '1970-01-01', month_date) AS _m
+            date_diff('{{ grain }}', DATE '1970-01-01', {{ period }}) AS _m
         FROM {{ relation }}
     ),
 
@@ -123,7 +130,7 @@
 
     _filtered AS (
         SELECT
-            base.month_date,
+            base.{{ period }},
             {% for dim in dims -%}
                 base.{{ dim }},
             {% endfor -%}
@@ -146,14 +153,14 @@
 
     _smoothed AS (
         SELECT
-            month_date,
+            {{ period }},
             {% for dim in dims -%}
                 {{ dim }},
             {% endfor -%}
             {% if post_window > 1 -%}
             avg(_savgol) OVER (
                 {% if dims %}PARTITION BY {{ dims | join(', ') }}{% endif %}
-                ORDER BY month_date
+                ORDER BY {{ period }}
                 ROWS BETWEEN {{ post_half }} PRECEDING AND {{ post_half }} FOLLOWING
             ) AS {{ out_column }}
             {%- else -%}
@@ -167,7 +174,7 @@
         round(_smoothed.{{ out_column }}, 2) AS {{ out_column }}
     FROM {{ relation }} AS source
     INNER JOIN _smoothed
-        ON source.month_date = _smoothed.month_date
+        ON source.{{ period }} = _smoothed.{{ period }}
         {% for dim in dims -%}
             AND source.{{ dim }} IS NOT DISTINCT FROM _smoothed.{{ dim }}
         {% endfor %}
@@ -180,21 +187,24 @@
     dims=[],
     sigma=3,
     truncate=3,
-    out_column='trend'
+    out_column='trend',
+    grain='month'
 ) %}
+
+    {%- set period = grain ~ '_date' -%}
 
     {%- set half = (sigma * truncate) | round(0, 'ceil') | int -%}
 
     WITH _indexed AS (
         SELECT
             *,
-            date_diff('month', DATE '1970-01-01', month_date) AS _m
+            date_diff('{{ grain }}', DATE '1970-01-01', {{ period }}) AS _m
         FROM {{ relation }}
     ),
 
     _smoothed AS (
         SELECT
-            base.month_date,
+            base.{{ period }},
             {% for dim in dims -%}
                 base.{{ dim }},
             {% endfor -%}
@@ -216,7 +226,7 @@
         round(_smoothed.{{ out_column }}, 2) AS {{ out_column }}
     FROM {{ relation }} AS source
     INNER JOIN _smoothed
-        ON source.month_date = _smoothed.month_date
+        ON source.{{ period }} = _smoothed.{{ period }}
         {% for dim in dims -%}
             AND source.{{ dim }} IS NOT DISTINCT FROM _smoothed.{{ dim }}
         {% endfor %}

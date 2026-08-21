@@ -1,15 +1,17 @@
 version: 2
 
 macros:
-  - name: monthly_grid
+  - name: date_grid
     description: >
-      Aggregates a relation to monthly grain and returns a complete grid with one row per
-      month and dimension combination, filling the months that have no data.
+      Aggregates a relation to the given grain and returns a complete grid with one row per
+      period and dimension combination, filling the periods that have no data.
+      The period column it emits is named after the grain: `month_date`, `week_date` or
+      `day_date`.
 
 
-      This is a required first step before `savgol_smooth`, not an optional cleanup.
-      The smoother matches neighbours by month index, so a missing month does not create
-      a gap: it makes the months on either side of the hole behave as if they were
+      This is a required first step before smoothing, not an optional cleanup.
+      The smoothers match neighbours by period index, so a missing period does not create
+      a gap: it makes the periods on either side of the hole behave as if they were
       consecutive, and the resulting trend is silently wrong. Holes are common in the
       expensor series, where a month can have no income at all, and very common once the
       series is split by category.
@@ -24,23 +26,28 @@ macros:
       - name: relation
         description: Relation to read from, either a `ref()` or the name of an earlier CTE.
       - name: date_column
-        description: Date or timestamp column that is truncated to month.
+        description: Date or timestamp column that is truncated to the grain.
       - name: measure
-        description: Numeric column to sum per month and dimension combination.
+        description: Numeric column to sum per period and dimension combination.
       - name: dims
         description: >
           List of dimension columns the grid is expanded over, for example `['category']`.
           Defaults to an empty list, which produces a single series.
       - name: fill
         description: >
-          How to fill the months with no data. `zero` for flow measures, where a missing
-          month means nothing happened (expenses, hours logged, pages read). `forward` for
-          stock measures, where a missing month means unchanged since last time (account
+          How to fill the periods with no data. `zero` for flow measures, where a missing
+          period means nothing happened (expenses, hours logged, pages read). `forward` for
+          stock measures, where a missing period means unchanged since last time (account
           balances, net worth); filling those with zero would be wrong. Defaults to `zero`.
+      - name: grain
+        description: >
+          Period the series is bucketed into: `month`, `week` or `day`. Also decides the
+          name of the emitted period column. Defaults to `month`.
 
   - name: savgol_smooth
     description: >
-      Use this for dense aggregate series, the monthly totals: incomes, expenses, result.
+      Use this for dense aggregate series, such as the monthly totals: incomes, expenses,
+      result.
       For sparse detail series, such as a breakdown by category, use `gaussian_smooth`
       instead.
 
@@ -50,14 +57,14 @@ macros:
 
 
       A Savitzky-Golay filter fits a polynomial of `degree` over a sliding window of
-      `window_size` months and keeps the value of that fit at the centre of the window.
+      `window_size` periods and keeps the value of that fit at the centre of the window.
       For a fixed pair those weights are constants, independent of the data, which is what
       lets the filter run as a plain weighted sum against the `smoothing_weights` seed.
       Add new pairs with `scripts/gen_smoothing_weights.py`.
 
 
-      The filter is centred, so it uses future months as well as past ones. The trend over
-      the last `window_size / 2` months therefore keeps moving as new data arrives, and
+      The filter is centred, so it uses future periods as well as past ones. The trend over
+      the last `window_size / 2` periods therefore keeps moving as new data arrives, and
       consumers are expected to flag or hide that region.
 
 
@@ -67,9 +74,10 @@ macros:
       rather than sparse ones.
 
 
-      `relation` must already be a complete monthly grid produced by `monthly_grid`, and it
-      must expose a `month_date` column, which is what the filter indexes on. The macro expands
-      to a full `WITH ... SELECT` query, so the call must be wrapped in its own CTE.
+      `relation` must already be a complete grid produced by `date_grid` at the same grain,
+      and it must expose the matching period column, which is what the filter indexes on.
+      The macro expands to a full `WITH ... SELECT` query, so the call must be wrapped in
+      its own CTE.
     arguments:
       - name: relation
         description: Relation holding the complete monthly grid, either a `ref()` or the name of an earlier CTE.
@@ -81,7 +89,7 @@ macros:
           independently. Defaults to an empty list, which smooths a single series.
       - name: window_size
         description: >
-          Number of months the polynomial is fitted over. Must be odd, and must exist in the
+          Number of periods the polynomial is fitted over. Must be odd, and must exist in the
           `smoothing_weights` seed for the given degree. A good starting point is 20-25% of
           the series length, and at least 4x the degree. Defaults to 35.
       - name: degree
@@ -94,17 +102,21 @@ macros:
           disable it. Defaults to 3.
       - name: out_column
         description: Name of the smoothed column that is added. Defaults to `trend`.
+      - name: grain
+        description: >
+          Grain of the grid, which must match the one it was built with: `month`, `week` or
+          `day`. Window and sigma are counted in those periods. Defaults to `month`.
 
   - name: gaussian_smooth
     description: >
-      Use this for sparse detail series, such as a breakdown by category, where months
-      with no data are common. For dense aggregate series, the monthly totals, use
+      Use this for sparse detail series, such as a breakdown by category, where periods
+      with no data are common. For dense aggregate series, such as the monthly totals, use
       `savgol_smooth` instead: it tracks turning points faster.
 
 
       Adds a smoothed column to a monthly series using a Gaussian kernel, that is a
       weighted moving average where the weight of a neighbour falls off with the square of
-      its distance in months.
+      its distance in periods.
 
 
       Unlike `savgol_smooth` the weights are all positive, so the result of smoothing
@@ -119,14 +131,14 @@ macros:
       so any `sigma` works without generating anything first.
 
 
-      The filter is centred, so it uses future months as well as past ones and the most
-      recent months keep moving as data arrives. Where the kernel is truncated, at the
+      The filter is centred, so it uses future periods as well as past ones and the most
+      recent periods keep moving as data arrives. Where the kernel is truncated, at the
       edges of the series, dividing by the sum of the weights renormalises it.
 
 
-      `relation` must already be a complete monthly grid produced by `monthly_grid`, and it
-      must expose a `month_date` column. The macro expands to a full `WITH ... SELECT`
-      query, so the call must be wrapped in its own CTE.
+      `relation` must already be a complete grid produced by `date_grid` at the same grain,
+      and it must expose the matching period column. The macro expands to a full
+      `WITH ... SELECT` query, so the call must be wrapped in its own CTE.
     arguments:
       - name: relation
         description: Relation holding the complete monthly grid, either a `ref()` or the name of an earlier CTE.
@@ -138,7 +150,8 @@ macros:
           independently. Defaults to an empty list, which smooths a single series.
       - name: sigma
         description: >
-          Width of the kernel in months. Larger values give a smoother, flatter curve.
+          Width of the kernel, counted in periods of the grain. Larger values give a
+          smoother, flatter curve.
           Defaults to 3.
       - name: truncate
         description: >
@@ -146,3 +159,7 @@ macros:
           where the neglected weight is under 1% and the cost stays O(n * sigma).
       - name: out_column
         description: Name of the smoothed column that is added. Defaults to `trend`.
+      - name: grain
+        description: >
+          Grain of the grid, which must match the one it was built with: `month`, `week` or
+          `day`. Window and sigma are counted in those periods. Defaults to `month`.

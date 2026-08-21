@@ -14,7 +14,7 @@ by_calendar AS (
 
 -- Calendars come and go, so most of them have months with no event at all.
 grid AS (
-    {{ monthly_grid(
+    {{ date_grid(
         relation='by_calendar',
         date_column='month_date',
         measure='duration_hours',

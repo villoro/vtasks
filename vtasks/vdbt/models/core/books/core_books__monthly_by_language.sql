@@ -44,7 +44,7 @@ long AS (
 -- Most language-months have no book finished at all, so the grid does more
 -- work here than in any other series.
 grid AS (
-    {{ monthly_grid(
+    {{ date_grid(
         relation='long',
         date_column='month_date',
         measure='value',

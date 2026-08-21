@@ -1,0 +1,51 @@
+version: 2
+
+models:
+  - name: marts_gcal__weekly_work_trends
+    description: >
+      `core_gcal__weekly_work` with a smoothed trend column.
+      Break the series out by `calendar_name` to plot paid work and work as two traces.
+      Smoothed with a Gaussian kernel of sigma 4 weeks, whose weights cannot produce a
+      negative trend.
+      Replaces `marts_gcal__working_days`, which smoothed daily rows with plain moving
+      averages over a row window rather than a calendar one.
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - week_date
+            - calendar_name
+
+    columns:
+      # -------- pks
+      - name: week_date
+        description: First day of the week
+        tests: [not_null]
+      - name: calendar_name
+        description: Name of the calendar, either the paid work or the work one
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['11_Paid work', '12_Work']
+
+      # -------- measures
+      - name: duration_hours
+        description: Hours logged for the calendar over the week
+        tests: [not_null]
+      - name: trend_hours
+        description: Smoothed weekly hours
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+
+      # -------- metadata
+      - name: is_filled
+        description: True when the calendar had no event that week and the value was filled with 0
+        tests: [not_null]
+      - name: is_provisional_trend
+        description: >
+          True for the last sigma * truncate weeks, where the centred kernel only sees
+          part of its width and the trend will still move as new weeks arrive.
+        tests: [not_null]

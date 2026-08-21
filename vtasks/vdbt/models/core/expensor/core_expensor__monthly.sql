@@ -32,7 +32,7 @@ combined AS (
 -- Fills the holes: months with no income at all, and later on every
 -- category-month with no transaction.
 grid AS (
-    {{ monthly_grid(
+    {{ date_grid(
         relation='combined',
         date_column='month_date',
         measure='value_eur',
