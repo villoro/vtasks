@@ -39,7 +39,7 @@ combined AS (
 -- expenses. Holes are the norm here: most categories have months with no
 -- transaction at all.
 grid AS (
-    {{ monthly_grid(
+    {{ date_grid(
         relation='combined',
         date_column='month_date',
         measure='value_eur',
