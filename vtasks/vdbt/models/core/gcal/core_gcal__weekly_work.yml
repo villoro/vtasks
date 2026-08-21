@@ -1,0 +1,40 @@
+version: 2
+
+models:
+  - name: core_gcal__weekly_work
+    description: >
+      Hours worked per week, for the paid work and the work calendars, on a complete week
+      grid.
+      Weeks with no work, holidays and time off, are present with a value of 0, which is
+      what makes the smoothing in `marts_gcal__weekly_work_trends` correct.
+      The current week is excluded because its total is always partial.
+      Unlike the model this replaces, no minimum-hours filter is applied: every logged
+      hour counts towards the weekly total.
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - week_date
+            - calendar_name
+
+    columns:
+      # -------- pks
+      - name: week_date
+        description: First day of the week
+        tests: [not_null]
+      - name: calendar_name
+        description: Name of the calendar, either the paid work or the work one
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['11_Paid work', '12_Work']
+
+      # -------- measures
+      - name: duration_hours
+        description: Hours logged for the calendar over the week
+        tests: [not_null]
+
+      # -------- metadata
+      - name: is_filled
+        description: True when the calendar had no event that week and the value was filled with 0
+        tests: [not_null]
