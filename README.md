@@ -94,7 +94,9 @@ This ensures that **relative imports** work correctly.
 3. Deploy all flows manually using Prefect.
 
 ```bash
-set PREFECT_API_URL=http://tnas:6006/api
+set PREFECT_API_URL=http://tnas:6006/api # windows
+# export PREFECT_API_URL=http://tnas:6003/api # linux
+
 uv run prefect --no-prompt deploy --all
 ```
 
