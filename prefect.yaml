@@ -18,7 +18,7 @@ definitions:
       name: default-pool
 
   version: &version
-    version: 7.11.0
+    version: 7.11.1
 
   # Define defaults (that can be overwritten)
   defaults: &defaults
@@ -26,11 +26,25 @@ definitions:
     work_pool: *default-pool
     tags: ["type:prefect"]
 
+  # Defaults for jobs that must cancel a new run if one is already in progress
+  defaults_cancel_new: &defaults_cancel_new
+    <<: *defaults
+    concurrency_limit:
+      limit: 1
+      collision_strategy: CANCEL_NEW
+
+  # Defaults for jobs that should queue a new run instead of dropping it
+  defaults_enqueue: &defaults_enqueue
+    <<: *defaults
+    concurrency_limit:
+      limit: 1
+      collision_strategy: ENQUEUE
+
 
 deployments:
   # ------------------------------ SCHEDULES ------------------------------------
   - name: _hourly
-    <<: *defaults
+    <<: *defaults_cancel_new
     description: Do all hourly tasks
     entrypoint: vtasks/schedules/hourly.py:hourly
     tags: ["schedules", "hourly"]
@@ -46,63 +60,63 @@ deployments:
 
   # ------------------------------ MAINTAIN -------------------------------------
   - name: backups.all
-    <<: *defaults
+    <<: *defaults_enqueue
     description: Do all backups tasks
     entrypoint: vtasks/jobs/backups/main.py:backup_all
     tags: ["backups", "maintain"]
 
   - name: maintain.sync_duckdb
-    <<: *defaults
+    <<: *defaults_enqueue
     description: Sync data between databases with duckdb
     entrypoint: vtasks/jobs/local/maintain.py:sync_duckdb
     tags: ["maintain"]
 
   - name: maintain.upload_marts_to_md
-    <<: *defaults
+    <<: *defaults_enqueue
     description: Upload 'marts' and 'core' data to motherduck
     entrypoint: vtasks/jobs/local/maintain.py:upload_marts_to_md
     tags: ["maintain"]
 
   # ------------------------------ UPDATES --------------------------------------
   - name: crypto.all
-    <<: *defaults
+    <<: *defaults_enqueue
     description: Update all crypto related information
     entrypoint: vtasks/jobs/crypto/main.py:crypto
     tags: ["crypto", "updates"]
 
   - name: indexa.all
-    <<: *defaults
+    <<: *defaults_enqueue
     description: Update all indexa related information
     entrypoint: vtasks/jobs/indexa/main.py:indexa_all
     tags: ["crypto", "updates"]
 
   - name: gsheets.update_fra_work
-    <<: *defaults
+    <<: *defaults_enqueue
     description: Update Fra work data
     entrypoint: vtasks/jobs/gsheets/fra_work.py:update_fra_work
     tags: ["fra", "updates"]
 
   - name: gsheets.update_home_costs
-    <<: *defaults
+    <<: *defaults_enqueue
     description: Update Fra work data
     entrypoint: vtasks/jobs/gsheets/home_costs.py:update_home_costs
     tags: ["updates"]
 
   # ------------------------------ EXTRACTIONS ----------------------------------
   - name: dropbox.money_lover
-    <<: *defaults
+    <<: *defaults_enqueue
     description: Export Money Lover table
     entrypoint: vtasks/jobs/dropbox/money_lover.py:export_money_lover
     tags: ["dropbox", "extract"]
 
   - name: gcal.export
-    <<: *defaults
+    <<: *defaults_enqueue
     description: Export Google calendar data
     entrypoint: vtasks/jobs/gcal/export.py:export_all_gcal
     tags: ["gcal", "extract"]
 
   - name: gsheets.export
-    <<: *defaults
+    <<: *defaults_enqueue
     description: Export Google Sheets data
     entrypoint: vtasks/jobs/gsheets/export_tables.py:export_gsheets_tables
     tags: ["gsheets", "extract"]

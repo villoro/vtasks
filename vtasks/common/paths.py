@@ -1,5 +1,4 @@
 import os
-import platform
 from pathlib import Path
 
 import yaml
@@ -22,14 +21,10 @@ def _infer_environment():
 
     if "GITHUB_ACTIONS" in os.environ:
         return "github"
-    elif platform.system() == "Windows":
-        return "local"
     elif PATH_DATA_NAS.exists():
         return "nas"
     else:
-        raise RuntimeError(
-            "Environment not recognized, unable to determine DuckDB path."
-        )
+        return "local"
 
 
 # Set it only once and reuse it
