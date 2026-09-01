@@ -3,12 +3,19 @@
     The weights for this pair must exist in the `smoothing_weights` seed; add new
     ones with scripts/gen_smoothing_weights.py.
 #}
+
 {% set window_size = 35 %}
 {% set degree = 5 %}
 
-WITH smoothed AS (
+WITH closed_months AS (
+    SELECT *
+    FROM {{ ref('core_expensor__monthly') }}
+    WHERE month_date < date_trunc('month', CURRENT_DATE)
+),
+
+smoothed AS (
     {{ savgol_smooth(
-        relation=ref('core_expensor__monthly'),
+        relation='closed_months',
         measure='value_eur',
         dims=['category'],
         window_size=window_size,

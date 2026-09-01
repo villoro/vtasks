@@ -6,9 +6,15 @@
 {% set sigma = 3 %}
 {% set truncate = 3 %}
 
-WITH smoothed AS (
+WITH closed_months AS (
+    SELECT *
+    FROM {{ ref('core_gcal__monthly') }}
+    WHERE month_date < date_trunc('month', CURRENT_DATE)
+),
+
+smoothed AS (
     {{ gaussian_smooth(
-        relation=ref('core_gcal__monthly'),
+        relation='closed_months',
         measure='duration_hours',
         dims=['calendar_name'],
         sigma=sigma,
