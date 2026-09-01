@@ -1,14 +1,21 @@
 {#
     Gaussian rather than Savitzky-Golay: per category the series is sparse and
-    spiky, and savgol's negative lobes ring below zero around an isolated large
+    spiky, and savgol negative lobes ring below zero around an isolated large
     transaction. Amounts are always positive here, so the trend must be too.
 #}
+
 {% set sigma = 3 %}
 {% set truncate = 3 %}
 
-WITH smoothed AS (
+WITH closed_months AS (
+    SELECT *
+    FROM {{ ref('core_expensor__monthly_by_category') }}
+    WHERE month_date < date_trunc('month', CURRENT_DATE)
+),
+
+smoothed AS (
     {{ gaussian_smooth(
-        relation=ref('core_expensor__monthly_by_category'),
+        relation='closed_months',
         measure='value_eur',
         dims=['transaction_type', 'category'],
         sigma=sigma,
