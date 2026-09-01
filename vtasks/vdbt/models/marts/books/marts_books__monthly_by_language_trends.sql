@@ -6,9 +6,15 @@
 {% set sigma = 4 %}
 {% set truncate = 3 %}
 
-WITH smoothed AS (
+WITH closed_months AS (
+    SELECT *
+    FROM {{ ref('core_books__monthly_by_language') }}
+    WHERE month_date < date_trunc('month', CURRENT_DATE)
+),
+
+smoothed AS (
     {{ gaussian_smooth(
-        relation=ref('core_books__monthly_by_language'),
+        relation='closed_months',
         measure='value',
         dims=['language', 'metric'],
         sigma=sigma,
